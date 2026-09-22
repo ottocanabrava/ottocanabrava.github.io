@@ -183,15 +183,16 @@
   .pcta{ margin-top:18px; display:inline-flex; align-items:center; gap:6px; font-size:.8125rem; font-weight:600; padding:9px 16px; border-radius:var(--r); width:fit-content; transition:background var(--dur), color var(--dur); }
 
   .ppreview{ background:var(--ink); position:relative; padding:20px; display:flex; align-items:center; justify-content:center; min-height:220px; }
-  .pp-chrome{ display:flex; gap:5px; margin-bottom:13px; grid-column:1 / -1; }
-  .pp-chrome span{ width:7px; height:7px; border-radius:50%; background:rgba(19,29,46,.22); }
-  .ppreview[data-dark] .pp-chrome span{ background:rgba(255,255,255,.18); }
+  .pp-chrome{ display:flex; gap:6px; margin-bottom:13px; grid-column:1 / -1; }
+  .pp-chrome span{ width:8px; height:8px; border-radius:50%; }
+  .pp-chrome span:nth-child(1){ background:#FF5F57; }
+  .pp-chrome span:nth-child(2){ background:#FEBC2E; }
+  .pp-chrome span:nth-child(3){ background:#28C840; }
 
   /* mini recreations com conteúdo real de cada projeto */
 
   /* mini recriação da tela real "Fila e execução" do Extrator de Fatura */
-  .mini-extrator{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  @media (max-width:480px){ .mini-extrator{ grid-template-columns:1fr; } }
+  .mini-extrator{ width:100%; display:grid; grid-template-columns:1fr; gap:10px; }
   .me-card{ background:#FFFFFF; border:1px solid #DADFE7; border-radius:8px; padding:11px 12px; }
   .me-head{ display:flex; justify-content:space-between; align-items:center; font-size:.6875rem; font-weight:700; color:#131D2E; margin-bottom:9px; }
   .me-head .me-count{ font-family:"DM Mono",monospace; font-size:.5625rem; font-weight:500; color:#8B93A3; }
@@ -216,8 +217,7 @@
   .me-fill{ height:100%; width:66%; background:#2563EB; border-radius:99px; }
 
   /* mini recriação da tela real "SLA da carteira / Tickets HubSpot" do Dashboard */
-  .mini-ops{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  @media (max-width:480px){ .mini-ops{ grid-template-columns:1fr; } }
+  .mini-ops{ width:100%; display:grid; grid-template-columns:1fr; gap:10px; }
   .mo-card{ background:#FFFFFF; border:1px solid #DADFE7; border-radius:8px; padding:11px 12px; }
   .mo-gauge{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
   .mo-gauge-txt{ display:flex; flex-direction:column; }
