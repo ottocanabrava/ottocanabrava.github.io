@@ -281,16 +281,15 @@
   @media (max-width:640px){ .evo-wrap{ padding:20px; } }
   .evo-label{ font-family:"DM Mono",monospace; font-size:.6875rem; text-transform:uppercase; letter-spacing:.05em; color:var(--info); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
   .evo-label::before{ content:"↻"; font-size:.875rem; }
-  .evo-row{ display:flex; align-items:center; gap:0; }
-  .evo-card{ flex:1; }
-  .evo-arrow{ flex-shrink:0; width:64px; display:flex; flex-direction:column; align-items:center; gap:4px; padding:0 8px; }
-  .evo-arrow .ln{ width:100%; height:1px; background:var(--info); opacity:.4; position:relative; }
-  .evo-arrow .ln::after{ content:"→"; position:absolute; right:-2px; top:50%; transform:translateY(-50%); color:var(--info); font-size:.75rem; }
-  .evo-arrow .lbl{ font-family:"DM Mono",monospace; font-size:.5625rem; color:var(--info); text-transform:uppercase; letter-spacing:.03em; text-align:center; }
+  .evo-row{ display:flex; align-items:center; gap:22px; }
+  .evo-card{ flex:1; min-width:0; }
+  .evo-arrow{ flex-shrink:0; width:104px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
+  .evo-arrow .ar{ font-size:1.5rem; line-height:1; color:var(--info); }
+  .evo-arrow .lbl{ font-family:"DM Mono",monospace; font-size:.625rem; font-weight:600; color:var(--info); text-transform:uppercase; letter-spacing:.03em; text-align:center; white-space:nowrap; background:var(--info-soft); padding:4px 10px; border-radius:99px; }
   @media (max-width:700px){
-    .evo-row{ flex-direction:column; align-items:stretch; gap:14px; }
-    .evo-arrow{ width:auto; flex-direction:row; padding:2px 0; }
-    .evo-arrow .ln::after{ content:"↓"; right:auto; left:50%; transform:translate(-50%,-50%); }
+    .evo-row{ flex-direction:column; align-items:stretch; gap:10px; }
+    .evo-arrow{ width:auto; flex-direction:row; padding:4px 0; }
+    .evo-arrow .ar{ transform:rotate(90deg); }
   }
   .evo-name{ font-size:1rem; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
   .evo-desc{ font-size:.8125rem; color:var(--text-muted); line-height:1.55; margin-bottom:10px; }
@@ -515,7 +514,7 @@
           <div class="evo-tags"><span class="ptag">JavaScript</span><span class="ptag">Zero dependências</span></div>
           <a class="evo-link" href="/ticketscript/">Ver o case →</a>
         </div>
-        <div class="evo-arrow" aria-hidden="true"><span class="ln"></span><span class="lbl">evoluiu para</span></div>
+        <div class="evo-arrow" aria-hidden="true"><span class="ar">→</span><span class="lbl">evoluiu para</span></div>
         <div class="evo-card">
           <div class="evo-name">FormPilot <span class="ptag" style="font-size:.625rem;">Em uso pelo time</span></div>
           <p class="evo-desc">Migração arquitetural de extensão Chrome para app nativo no Zendesk (ZAF ticket_sidebar), sem backend próprio. Lê os dados estruturados do ticket e preenche o PDF da operadora automaticamente via pdf-lib — CPF, datas e códigos de empresa com transforms em runtime — e envia para assinatura via Adobe Sign API (OAuth 2.0, proxy n8n para o client_secret, renovação automática de token). Nova operadora entra editando um JSON, sem alterar código.</p>
