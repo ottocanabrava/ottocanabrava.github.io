@@ -182,12 +182,14 @@
 
   .pcta{ margin-top:18px; display:inline-flex; align-items:center; gap:6px; font-size:.8125rem; font-weight:600; padding:9px 16px; border-radius:var(--r); width:fit-content; transition:background var(--dur), color var(--dur); }
 
-  .ppreview{ background:var(--ink); position:relative; padding:20px; display:flex; align-items:center; justify-content:center; min-height:220px; }
-  .pp-chrome{ display:flex; gap:6px; margin-bottom:13px; grid-column:1 / -1; }
+  .ppreview{ background:var(--ink); position:relative; padding:0; display:flex; flex-direction:column; min-height:220px; overflow:hidden; }
+  .pp-chrome{ display:flex; gap:6px; padding:13px 16px; flex-shrink:0; }
   .pp-chrome span{ width:8px; height:8px; border-radius:50%; }
   .pp-chrome span:nth-child(1){ background:#FF5F57; }
   .pp-chrome span:nth-child(2){ background:#FEBC2E; }
   .pp-chrome span:nth-child(3){ background:#28C840; }
+  .pp-body{ padding:0 16px 16px; flex:1; display:flex; align-items:center; }
+  .pp-body > *{ width:100%; }
 
   /* mini recreations com conteúdo real de cada projeto */
 
@@ -414,8 +416,8 @@
           <a class="pcta" href="/extrator-de-fatura/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
         </div>
         <div class="ppreview" style="background:#E3E6ED;">
-          <div class="mini-extrator" role="img" aria-label="Tela de fila e execução do Extrator de Fatura: fila de acessos e log de execução com progresso de 66%">
-            <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="pp-body"><div class="mini-extrator" role="img" aria-label="Tela de fila e execução do Extrator de Fatura: fila de acessos e log de execução com progresso de 66%">
             <div class="me-card">
               <div class="me-head">Fila de acessos <span class="me-count">3 itens</span></div>
               <div class="me-item"><div class="me-row"><span class="me-name">Estúdio Prisma</span><span class="me-badge done">concluído</span></div></div>
@@ -431,7 +433,7 @@
               </div>
               <div class="me-progress"><span class="lbl">progresso</span><div class="me-track"><div class="me-fill"></div></div><span class="lbl">66%</span></div>
             </div>
-          </div>
+          </div></div>
         </div>
       </article>
 
@@ -450,8 +452,8 @@
           <a class="pcta" href="/daily-ops-dashboard/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
         </div>
         <div class="ppreview" style="background:#E3E6ED;">
-          <div class="mini-ops" role="img" aria-label="SLA da carteira em 81% contra meta de 88%, e fila de tickets HubSpot priorizados por criticidade">
-            <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="pp-body"><div class="mini-ops" role="img" aria-label="SLA da carteira em 81% contra meta de 88%, e fila de tickets HubSpot priorizados por criticidade">
             <div class="mo-card mo-sla">
               <div class="me-head">SLA da carteira<span class="me-count">meta 88%</span></div>
               <div class="mo-gauge">
@@ -472,7 +474,7 @@
               <div class="mo-ticket mo-crit"><span class="mo-prio">Crítico</span><div><div class="mo-subj">Revisão de cadastro corporativo</div><div class="mo-meta">Terraverde Agro S.A. · 8 dias</div></div></div>
               <div class="mo-ticket mo-alta"><span class="mo-prio">Alta</span><div><div class="mo-subj">Atualização de dependentes</div><div class="mo-meta">Meridian Logística · 3 dias</div></div></div>
             </div>
-          </div>
+          </div></div>
         </div>
       </article>
 
@@ -491,8 +493,8 @@
           <a class="pcta" href="/motor-triagem/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
         </div>
         <div class="ppreview" style="background:#E3E6ED;">
-          <div class="mini-diag" role="img" aria-label="Diagnóstico de divergências do ticket Metalmix Componentes, comparando dados do sistema com a fatura linha a linha">
-            <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="pp-body"><div class="mini-diag" role="img" aria-label="Diagnóstico de divergências do ticket Metalmix Componentes, comparando dados do sistema com a fatura linha a linha">
             <div class="md-ticket">
               <span class="md-id">TICKET #1247</span>
               <div class="md-co">Metalmix Componentes S.A.</div>
@@ -507,7 +509,7 @@
                 <tr><td>João T.</td><td>375.824.XXX-0</td><td>375.824.XXX-0</td><td><span class="md-tag green">Pronto</span></td></tr>
               </tbody>
             </table>
-          </div>
+          </div></div>
         </div>
       </article>
 
