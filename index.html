@@ -101,6 +101,11 @@
     font-size: .9375rem;
     color: var(--text-muted);
   }
+  .project .metric {
+    font-size: .8125rem;
+    font-weight: 600;
+    color: var(--text);
+  }
   .project .link {
     font-family: "DM Mono", monospace;
     font-size: .8125rem;
@@ -129,7 +134,8 @@
     <div class="projects">
       <a class="project" href="/confluxo/">
         <h3>Confluxo</h3>
-        <p>Protótipo que reúne boletos espalhados em portais diferentes em uma fila única, automatizada, previsível e auditável.</p>
+        <p>A equipe baixava boletos e demonstrativos manualmente, portal a portal, sem padronização de regras, estrutura ou nomenclatura. Mapeei esse fluxo, estruturei as regras de negócio numa arquitetura de núcleo e módulos, e construí uma ferramenta desktop em Python (RPA com Playwright) que navega nos portais, extrai, padroniza e organiza os arquivos sozinha.</p>
+        <p class="metric">Adotada pela equipe — elimina cerca de 2 a 4 horas de trabalho manual por mês, por cliente, na carteira de cada analista.</p>
         <span class="link">/confluxo/</span>
       </a>
       <a class="project" href="/daily-ops-dashboard/">
