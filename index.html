@@ -183,16 +183,11 @@
   .pcta{ margin-top:18px; display:inline-flex; align-items:center; gap:6px; font-size:.8125rem; font-weight:600; padding:9px 16px; border-radius:var(--r); width:fit-content; transition:background var(--dur), color var(--dur); }
 
   .ppreview{ background:var(--ink); position:relative; padding:20px; display:flex; align-items:center; justify-content:center; min-height:220px; }
-  .pp-chrome{ position:absolute; top:14px; left:18px; display:flex; gap:5px; }
-  .pp-chrome span{ width:7px; height:7px; border-radius:50%; background:rgba(255,255,255,.15); }
+  .pp-chrome{ display:flex; gap:5px; margin-bottom:13px; grid-column:1 / -1; }
+  .pp-chrome span{ width:7px; height:7px; border-radius:50%; background:rgba(19,29,46,.22); }
+  .ppreview[data-dark] .pp-chrome span{ background:rgba(255,255,255,.18); }
 
   /* mini recreations com conteúdo real de cada projeto */
-  .mini-log{ width:100%; font-family:"DM Mono",monospace; font-size:.6875rem; line-height:2.1; }
-  .mini-log .row{ display:flex; gap:10px; }
-  .mini-log .t{ color:#5A6786; flex-shrink:0; }
-  .mini-log .m{ color:#C7CEDC; }
-  .mini-log .ok{ color:#6FD196; }
-  .mini-log .hd{ color:#7FA6F2; font-weight:500; }
 
   /* mini recriação da tela real "Fila e execução" do Extrator de Fatura */
   .mini-extrator{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
@@ -220,25 +215,71 @@
   .me-track{ flex:1; height:5px; background:rgba(255,255,255,.12); border-radius:99px; overflow:hidden; }
   .me-fill{ height:100%; width:66%; background:#2563EB; border-radius:99px; }
 
-  .mini-dash{ width:100%; display:flex; flex-direction:column; gap:8px; }
-  .mini-pcard{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-left:3px solid transparent; border-radius:7px; padding:11px 13px; }
-  .mini-pcard.crit{ border-left-color:#DC2626; }
-  .mini-pcard.warn{ border-left-color:#D97706; }
-  .mini-pcard .co{ font-size:.75rem; font-weight:600; color:#F1F5F9; margin-bottom:6px; }
-  .mini-pcard .sigs{ display:flex; gap:5px; flex-wrap:wrap; }
-  .mini-pcard .sig{ font-family:"DM Mono",monospace; font-size:.5625rem; padding:2px 6px; border-radius:3px; }
-  .mini-pcard.crit .sig{ background:rgba(220,38,38,.18); color:#FCA5A5; }
-  .mini-pcard.warn .sig{ background:rgba(217,119,6,.18); color:#FCD34D; }
+  /* mini recriação da tela real "SLA da carteira / Tickets HubSpot" do Dashboard */
+  .mini-ops{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:480px){ .mini-ops{ grid-template-columns:1fr; } }
+  .mo-card{ background:#FFFFFF; border:1px solid #DADFE7; border-radius:8px; padding:11px 12px; }
+  .mo-gauge{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .mo-gauge-txt{ display:flex; flex-direction:column; }
+  .mo-pct{ font-family:"DM Mono",monospace; font-size:.9375rem; font-weight:600; color:#131D2E; line-height:1; }
+  .mo-sub{ font-size:.5625rem; color:#8B93A3; margin-top:2px; }
+  .mo-rows{ display:flex; flex-direction:column; gap:6px; }
+  .mo-row{ display:flex; align-items:center; gap:6px; }
+  .mo-dot{ width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  .mo-name{ font-size:.5625rem; color:#131D2E; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .mo-bar{ width:36px; height:4px; border-radius:2px; background:#EEF0F4; flex-shrink:0; overflow:hidden; display:block; }
+  .mo-bar span{ display:block; height:100%; border-radius:2px; }
+  .mo-ticket{ display:flex; gap:8px; padding:7px 0; border-top:1px solid #EEF0F4; }
+  .mo-ticket:first-of-type{ border-top:none; }
+  .mo-prio{ font-size:.5625rem; font-weight:700; padding:2px 6px; border-radius:3px; height:fit-content; white-space:nowrap; }
+  .mo-crit .mo-prio{ background:#FEF2F2; color:#DC2626; }
+  .mo-alta .mo-prio{ background:#FFFBEB; color:#B45309; }
+  .mo-subj{ font-size:.625rem; font-weight:600; color:#131D2E; margin-bottom:2px; }
+  .mo-meta{ font-size:.5625rem; color:#8B93A3; }
 
-  .mini-triagem{ width:100%; }
-  .mini-triagem .card{ background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.09); border-radius:9px; padding:13px 15px; margin-bottom:8px; }
-  .mini-triagem .co{ font-size:.8125rem; font-weight:600; color:#F1F5F9; margin-bottom:6px; }
-  .mini-triagem .meta{ font-size:.6875rem; color:#94A3B8; margin-bottom:8px; }
-  .mini-triagem .sigs{ display:flex; gap:5px; flex-wrap:wrap; }
-  .mini-triagem .sig{ font-family:"DM Mono",monospace; font-size:.5625rem; padding:2px 7px; border-radius:3px; }
-  .mini-triagem .sig.red{ background:rgba(220,38,38,.18); color:#FCA5A5; }
-  .mini-triagem .sig.purple{ background:rgba(109,40,217,.28); color:#C4B5FD; }
-  .mini-triagem .callout{ font-size:.6875rem; color:#93C5FD; background:rgba(37,99,235,.14); border:1px solid rgba(37,99,235,.3); border-radius:7px; padding:9px 11px; line-height:1.55; }
+
+  /* mini recriação da tela real "Diagnóstico de divergências" do Motor de Triagem */
+  .mini-diag{ width:100%; background:#131D2E; border-radius:9px; padding:13px 14px; }
+  .md-ticket{ display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
+  .md-id{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8B93A3; }
+  .md-co{ font-size:.75rem; font-weight:600; color:#F1F5F9; flex:1; }
+  .md-badge{ font-family:"DM Mono",monospace; font-size:.5625rem; font-weight:600; background:#DCE6FD; color:#1D4FBF; padding:2px 8px; border-radius:99px; }
+  .md-progress{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .md-progress .lbl{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8FA0BE; white-space:nowrap; }
+  .md-table{ width:100%; border-collapse:collapse; background:#fff; border-radius:6px; overflow:hidden; }
+  .md-table th{ font-family:"DM Mono",monospace; font-size:.5rem; text-transform:uppercase; letter-spacing:.03em; color:#8B93A3; text-align:left; padding:6px 8px; background:#F5F6F8; }
+  .md-table td{ font-size:.625rem; color:#131D2E; padding:6px 8px; border-top:1px solid #EEF0F4; }
+  .md-table td.bad{ color:#DC2626; font-weight:600; }
+  .md-tag{ font-family:"DM Mono",monospace; font-size:.5rem; font-weight:600; padding:2px 6px; border-radius:3px; }
+  .md-tag.red{ background:#FEF2F2; color:#DC2626; }
+  .md-tag.amber{ background:#FFFBEB; color:#B45309; }
+  .md-tag.green{ background:#E1F5E7; color:#0F7A38; }
+
+  /* preview real da evolução TicketScript -> FormPilot */
+  .evo-preview{ margin-top:22px; padding-top:22px; border-top:1px solid var(--border-soft); display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:12px; }
+  @media (max-width:820px){ .evo-preview{ grid-template-columns:1fr; } }
+  .evp-col{ background:#F5F6F8; border:1px solid var(--border); border-radius:9px; padding:10px 11px; font-size:.6875rem; }
+  .evp-hd{ font-family:"DM Mono",monospace; font-size:.5625rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); margin-bottom:8px; }
+  .evp-item{ background:#fff; border:1px solid var(--border); border-radius:6px; padding:8px 9px; margin-bottom:6px; }
+  .evp-item.on{ border-color:var(--ok); border-left-width:3px; }
+  .evp-id{ font-family:"DM Mono",monospace; font-size:.5625rem; color:var(--text-faint); }
+  .evp-subj{ font-size:.6875rem; font-weight:600; color:var(--text); margin:3px 0; }
+  .evp-co{ font-size:.625rem; color:var(--text-muted); }
+  .evp-ticket{ background:#fff; padding:0; overflow:hidden; }
+  .evp-chrome{ background:var(--ink); padding:7px 9px; display:flex; align-items:center; gap:4px; }
+  .evp-chrome span{ width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.2); }
+  .evp-chrome span:first-child{ background:#EF6A5F; } .evp-chrome span:nth-child(2){ background:#F4BF4F; } .evp-chrome span:nth-child(3){ background:#61C454; }
+  .evp-url{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8FA0BE; margin-left:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .evp-tid{ font-family:"DM Mono",monospace; font-size:.5625rem; color:var(--text-faint); padding:9px 11px 0; }
+  .evp-tsub{ font-size:.75rem; font-weight:700; color:var(--text); padding:0 11px; margin:4px 0; }
+  .evp-tbody{ font-size:.625rem; color:var(--text-muted); line-height:1.5; padding:0 11px 11px; }
+  .evp-panel{ background:var(--ink); color:#fff; }
+  .evp-brand{ display:flex; align-items:center; gap:6px; font-size:.75rem; font-weight:700; margin-bottom:10px; }
+  .evp-ico{ width:16px; height:16px; border-radius:50%; border:1.5px solid #fff; display:flex; align-items:center; justify-content:center; font-size:.5625rem; }
+  .evp-lbl{ font-family:"DM Mono",monospace; font-size:.5rem; text-transform:uppercase; letter-spacing:.04em; color:#8B93A3; margin-bottom:6px; }
+  .evp-field{ font-size:.5625rem; color:#8B93A3; margin-bottom:6px; }
+  .evp-field b{ display:block; font-size:.6875rem; color:#F1F5F9; font-weight:600; margin-top:2px; }
+  .evp-btn{ margin-top:8px; background:var(--signal); color:#0B2620; font-size:.625rem; font-weight:700; text-align:center; padding:8px; border-radius:6px; }
 
   /* ---------- evolução ticketscript -> formpilot ---------- */
   .evo-wrap{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r-l); padding:28px 30px; box-shadow:var(--shadow); }
@@ -338,7 +379,7 @@
       <div class="fnode" tabindex="0"><div class="pt">05</div><div class="ft">Automação</div><div class="fc">o sistema executa sozinho</div></div>
       <div class="fnode" tabindex="0"><div class="pt">06</div><div class="ft">Resultado</div><div class="fc">tempo devolvido para o time</div></div>
     </div>
-    <p class="flow-note"><b>Nota de honestidade:</b> hoje só o Extrator de Fatura tem uma métrica de resultado validada fora do ambiente de demonstração — os demais cases mostram entendimento e sistema construídos, com resultado sinalizado como pendente de medição real quando é o caso.</p>
+    <p class="flow-note"><b>Nota de honestidade:</b> Extrator de Fatura e Daily Ops Dashboard têm métricas de resultado validadas fora do ambiente de demonstração — os demais cases mostram entendimento e sistema construídos, com resultado sinalizado como pendente de medição real quando é o caso.</p>
   </section>
 
   <!-- ============ PROJETOS ============ -->
@@ -374,6 +415,7 @@
         </div>
         <div class="ppreview" style="background:#E3E6ED;">
           <div class="mini-extrator" role="img" aria-label="Tela de fila e execução do Extrator de Fatura: fila de acessos e log de execução com progresso de 66%">
+            <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
             <div class="me-card">
               <div class="me-head">Fila de acessos <span class="me-count">3 itens</span></div>
               <div class="me-item"><div class="me-row"><span class="me-name">Estúdio Prisma</span><span class="me-badge done">concluído</span></div></div>
@@ -399,19 +441,37 @@
           <div class="pcard-top">
             <span class="pcard-dot" style="background:#2563EB;"></span>
             <h3 class="pcard-name">Daily Ops Dashboard</h3>
-            <span class="pcard-status" style="background:var(--accent-soft);color:var(--accent-ink);">Protótipo conceitual</span>
+            <span class="pcard-status" style="background:var(--ok-soft);color:var(--ok);">Em uso</span>
           </div>
-          <div class="pfield"><div class="k">Problema</div><div class="v">Sinais de SLA, churn, tickets e faturas espalhados em telas diferentes — a equipe decidia por onde começar o dia sem visão unificada.</div></div>
-          <div class="pfield"><div class="k">Solução</div><div class="v">Painel que cruza esses sinais automaticamente todos os dias e prioriza os clientes que mais precisam de atenção.</div></div>
-          <div class="ptags"><span class="ptag">Priorização automática</span><span class="ptag">Cruzamento de sinais</span></div>
-          <div class="presult pending"><span class="rv">resultado — pendente de métrica real</span></div>
+          <div class="pfield"><div class="k">Problema</div><div class="v">Todo dia a equipe agregava manualmente Zendesk, HubSpot, Drive e bases de SLA para decidir por onde começar — sem um critério único de criticidade.</div></div>
+          <div class="pfield"><div class="k">Solução</div><div class="v">Painel 360 que consolida as 4 fontes com 14 regras de criticidade e gera automaticamente, toda manhã, um guia de priorização por analista (ou por time, para liderança): tickets a priorizar, faturas e bases por multibenefício (Vida, Academia, Mental, Pet, Farmácia) e calendário de prazos com particularidades por cliente.</div></div>
+          <div class="ptags"><span class="ptag">SQL · Snowflake</span><span class="ptag">IA generativa</span><span class="ptag">Zendesk · HubSpot · Drive</span></div>
+          <div class="presult"><span class="rv" style="color:#0F7A5F;">~30 min / dia</span><span class="rl">de agregação manual substituídos</span></div>
           <a class="pcta" href="/daily-ops-dashboard/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
         </div>
-        <div class="ppreview" style="background:#1A2740;">
-          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="mini-dash" role="img" aria-label="Painel do Dashboard priorizando dois clientes por SLA e churn">
-            <div class="mini-pcard crit"><div class="co">Terraverde Agro S.A.</div><div class="sigs"><span class="sig">SLA vencido</span><span class="sig">Churn alto</span></div></div>
-            <div class="mini-pcard warn"><div class="co">Meridian Logística Ltda</div><div class="sigs"><span class="sig">SLA fechando</span><span class="sig">Churn médio</span></div></div>
+        <div class="ppreview" style="background:#E3E6ED;">
+          <div class="mini-ops" role="img" aria-label="SLA da carteira em 81% contra meta de 88%, e fila de tickets HubSpot priorizados por criticidade">
+            <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="mo-card mo-sla">
+              <div class="me-head">SLA da carteira<span class="me-count">meta 88%</span></div>
+              <div class="mo-gauge">
+                <svg width="46" height="46" viewBox="0 0 78 78" aria-hidden="true">
+                  <circle cx="39" cy="39" r="31" fill="none" stroke="#DDE1EA" stroke-width="7"/>
+                  <circle cx="39" cy="39" r="31" fill="none" stroke="#DC2626" stroke-width="7" stroke-dasharray="194.8" stroke-dashoffset="37" stroke-linecap="round"/>
+                </svg>
+                <div class="mo-gauge-txt"><span class="mo-pct">81%</span><span class="mo-sub">atual</span></div>
+              </div>
+              <div class="mo-rows">
+                <div class="mo-row"><span class="mo-dot" style="background:#DC2626;"></span><span class="mo-name">Terraverde Agro</span><span class="mo-bar"><span style="width:52%;background:#DC2626;"></span></span></div>
+                <div class="mo-row"><span class="mo-dot" style="background:#D97706;"></span><span class="mo-name">Meridian Logística</span><span class="mo-bar"><span style="width:74%;background:#D97706;"></span></span></div>
+                <div class="mo-row"><span class="mo-dot" style="background:#16A34A;"></span><span class="mo-name">Bluewave Capital</span><span class="mo-bar"><span style="width:91%;background:#16A34A;"></span></span></div>
+              </div>
+            </div>
+            <div class="mo-card mo-tix">
+              <div class="me-head">Tickets HubSpot<span class="me-count">4</span></div>
+              <div class="mo-ticket mo-crit"><span class="mo-prio">Crítico</span><div><div class="mo-subj">Revisão de cadastro corporativo</div><div class="mo-meta">Terraverde Agro S.A. · 8 dias</div></div></div>
+              <div class="mo-ticket mo-alta"><span class="mo-prio">Alta</span><div><div class="mo-subj">Atualização de dependentes</div><div class="mo-meta">Meridian Logística · 3 dias</div></div></div>
+            </div>
           </div>
         </div>
       </article>
@@ -422,23 +482,31 @@
           <div class="pcard-top">
             <span class="pcard-dot" style="background:#2563EB;"></span>
             <h3 class="pcard-name">Motor de Triagem de Divergências</h3>
-            <span class="pcard-status" style="background:var(--accent-soft);color:var(--accent-ink);">Demo de portfólio</span>
+            <span class="pcard-status" style="background:var(--ok-soft);color:var(--ok);">Recomendada para o time</span>
           </div>
-          <div class="pfield"><div class="k">Problema</div><div class="v">Divergências entre backoffice e fatura eram checadas manualmente, ticket por ticket — cada verificação de CPF e data consumindo tempo do analista.</div></div>
-          <div class="pfield"><div class="k">Solução</div><div class="v">Um agente validador com IA generativa localiza a planilha de conferência, tria linha a linha, valida CPF e data via integração n8n com fonte oficial, e prepara o banco de resoluções — o analista só confirma.</div></div>
-          <div class="ptags"><span class="ptag">IA generativa</span><span class="ptag">n8n</span><span class="ptag">Validação de dados</span></div>
-          <div class="presult pending"><span class="rv">resultado — pendente de métrica real</span></div>
+          <div class="pfield"><div class="k">Problema</div><div class="v">Divergências entre backoffice e fatura eram checadas manualmente, ticket por ticket, sem histórico de duplicidades nem validação cruzada de CPF e data.</div></div>
+          <div class="pfield"><div class="k">Solução</div><div class="v">Diagnóstico com IA generativa: consolida os casos num painel único, identifica duplicidades e histórico de tratamento anterior, valida CPF e data de nascimento via integração com a Receita Federal (n8n) e automatiza a comparação linha a linha.</div></div>
+          <div class="ptags"><span class="ptag">IA generativa</span><span class="ptag">n8n · Receita Federal</span><span class="ptag">Validação de CPF/data</span></div>
+          <div class="presult"><span class="rv" style="color:#0F7A5F;">30–60 min → verificação direta</span><span class="rl">por ticket — aplicado a um backlog de ~200 tickets entre 8 analistas</span></div>
           <a class="pcta" href="/motor-triagem/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
         </div>
-        <div class="ppreview" style="background:#1A2740;">
-          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="mini-triagem" role="img" aria-label="Fila de tickets do Motor de Triagem com diagnóstico automático por IA">
-            <div class="card">
-              <div class="co">Metalmix Componentes S.A.</div>
-              <div class="meta">FlexVida Seguros · Saúde · 5 divergências · 8 dias em aberto</div>
-              <div class="sigs"><span class="sig red">Prioritário</span><span class="sig purple">Novo</span></div>
+        <div class="ppreview" style="background:#E3E6ED;">
+          <div class="mini-diag" role="img" aria-label="Diagnóstico de divergências do ticket Metalmix Componentes, comparando dados do sistema com a fatura linha a linha">
+            <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+            <div class="md-ticket">
+              <span class="md-id">TICKET #1247</span>
+              <div class="md-co">Metalmix Componentes S.A.</div>
+              <span class="md-badge">Novo</span>
             </div>
-            <div class="callout"><strong>Agente validador com IA generativa</strong> — diagnóstico automático de divergências entre backoffice e fatura.</div>
+            <div class="md-progress"><span class="lbl">progresso</span><div class="me-track" style="background:#EEF0F4;"><div class="me-fill" style="width:20%;background:#16A34A;"></div></div><span class="lbl" style="color:#8B93A3;">1 / 5</span></div>
+            <table class="md-table">
+              <thead><tr><th>Beneficiário</th><th>No sistema</th><th>Na fatura</th><th>Class.</th></tr></thead>
+              <tbody>
+                <tr><td>Fernanda L.</td><td>248.591.XXX-01</td><td class="bad">248.591.XXX-10</td><td><span class="md-tag red">Verificar</span></td></tr>
+                <tr><td>Roberto P.</td><td>15/03/1985</td><td class="bad">15/03/1958</td><td><span class="md-tag amber">Atenção</span></td></tr>
+                <tr><td>João T.</td><td>375.824.XXX-0</td><td>375.824.XXX-0</td><td><span class="md-tag green">Pronto</span></td></tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </article>
@@ -459,10 +527,32 @@
         </div>
         <div class="evo-arrow" aria-hidden="true"><span class="ln"></span><span class="lbl">evoluiu para</span></div>
         <div class="evo-card">
-          <div class="evo-name">FormPilot <span class="ptag" style="font-size:.625rem;">Estudo de caso</span></div>
-          <p class="evo-desc">Expandiu o mesmo núcleo — leitura de contexto, injeção de conteúdo, configuração via planilha — para automação de formulários de operadoras de saúde, hoje como painel embutido na ferramenta de atendimento em vez de extensão de navegador.</p>
-          <div class="evo-tags"><span class="ptag">3 operadoras configuradas</span><span class="ptag">Config. por arquivo</span></div>
+          <div class="evo-name">FormPilot <span class="ptag" style="font-size:.625rem;">Em implantação</span></div>
+          <p class="evo-desc">Migração arquitetural de extensão Chrome para app nativo no Zendesk (ZAF ticket_sidebar), sem backend próprio. Lê os dados estruturados do ticket e preenche o PDF da operadora automaticamente via pdf-lib — CPF, datas e códigos de empresa com transforms em runtime — e envia para assinatura via Adobe Sign API (OAuth 2.0, proxy n8n para o client_secret, renovação automática de token). Nova operadora entra editando um JSON, sem alterar código.</p>
+          <div class="evo-tags"><span class="ptag">pdf-lib</span><span class="ptag">Adobe Sign API</span><span class="ptag">4 operadoras · 12+ movimentações</span></div>
+          <div class="presult" style="border-top:none; padding-top:0; margin-top:10px;"><span class="rv" style="color:#0F7A5F;font-size:1.0625rem;">10–20 min → revisão + clique</span><span class="rl">por movimentação</span></div>
           <a class="evo-link" href="/formpilot/">Ver o case →</a>
+        </div>
+      </div>
+      <div class="evo-preview" role="img" aria-label="Fila de chamados do Zendesk, o chamado de inclusão de titular aberto, e o painel do FormPilot identificando operadora, movimentação e beneficiário antes de gerar o formulário">
+        <div class="evp-col evp-queue">
+          <div class="evp-hd">fila de chamados</div>
+          <div class="evp-item on"><span class="evp-id">#4821 · hoje, 09:14</span><div class="evp-subj">Inclusão de titular — Vitalis Saúde</div><span class="evp-co">Nordeste Componentes Ltda</span></div>
+          <div class="evp-item"><span class="evp-id">#4835 · ontem, 16:47</span><div class="evp-subj">Exclusão de dependente — Amparo Seguros</div><span class="evp-co">Grão Fino Alimentos S.A.</span></div>
+        </div>
+        <div class="evp-col evp-ticket">
+          <div class="evp-chrome"><span></span><span></span><span></span><span class="evp-url">atendimento.verobeneficios.com.br/chamados/4821</span></div>
+          <div class="evp-tid">#4821 · MOV-2026-04821</div>
+          <div class="evp-tsub">Inclusão de titular — Vitalis Saúde</div>
+          <div class="evp-tbody">RH — Nordeste Componentes<br>"Precisamos incluir a colaboradora Marina Torres Almeida no plano titular da Vitalis Saúde."</div>
+        </div>
+        <div class="evp-col evp-panel">
+          <div class="evp-brand"><span class="evp-ico">F</span>FormPilot</div>
+          <div class="evp-lbl">Identificado</div>
+          <div class="evp-field">Operadora<b>Vitalis Saúde ✓</b></div>
+          <div class="evp-field">Movimentação<b>Inclusão de titular ✓</b></div>
+          <div class="evp-field">Beneficiário<b>Marina T. Almeida ✓</b></div>
+          <div class="evp-btn">Gerar formulário</div>
         </div>
       </div>
       <p class="evo-note"><b>O que foi reaproveitado:</b> a arquitetura sem backend, o matching por prefixo e as respostas rápidas configuráveis do TicketScript viraram a base técnica do FormPilot — não são dois projetos independentes, é um produto que passou por um segundo ciclo de aprendizado.</p>
