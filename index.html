@@ -25,7 +25,7 @@
     --accent:#2563EB; --accent-soft:#DCE6FD; --accent-ink:#1D4FBF;
 
     /* signal — "sistema em execução / confirmado", formalizado a
-       partir do mint já usado no Confluxo (log ok) e no FormPilot (chip ativo) */
+       partir do mint já usado no Extrator de Fatura (log ok) e no FormPilot (chip ativo) */
     --signal:#5FD1B8; --signal-soft:rgba(95,209,184,.14); --signal-ink:#0F7A5F;
 
     /* semântica compartilhada — idêntica ao Dashboard/FormPilot/Motor de Triagem */
@@ -194,6 +194,32 @@
   .mini-log .ok{ color:#6FD196; }
   .mini-log .hd{ color:#7FA6F2; font-weight:500; }
 
+  /* mini recriação da tela real "Fila e execução" do Extrator de Fatura */
+  .mini-extrator{ width:100%; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  @media (max-width:480px){ .mini-extrator{ grid-template-columns:1fr; } }
+  .me-card{ background:#FFFFFF; border:1px solid #DADFE7; border-radius:8px; padding:11px 12px; }
+  .me-head{ display:flex; justify-content:space-between; align-items:center; font-size:.6875rem; font-weight:700; color:#131D2E; margin-bottom:9px; }
+  .me-head .me-count{ font-family:"DM Mono",monospace; font-size:.5625rem; font-weight:500; color:#8B93A3; }
+  .me-item{ display:flex; flex-direction:column; gap:3px; padding:6px 0; border-top:1px solid #EEF0F4; }
+  .me-item:first-child{ border-top:none; }
+  .me-row{ display:flex; justify-content:space-between; align-items:center; gap:6px; }
+  .me-name{ font-size:.6875rem; font-weight:600; color:#131D2E; }
+  .me-badge{ font-family:"DM Mono",monospace; font-size:.5rem; padding:2px 6px; border-radius:3px; white-space:nowrap; }
+  .me-badge.done{ background:#E1F5E7; color:#0F7A38; }
+  .me-badge.active{ background:#DCE6FD; color:#1D4FBF; }
+  .me-badge.queued{ background:#EEF0F4; color:#8B93A3; }
+  .me-exec{ background:#131D2E; border-color:#131D2E; }
+  .me-exec .me-head{ color:#fff; }
+  .me-exec .me-head .me-count{ color:#8FA0BE; }
+  .me-log{ font-family:"DM Mono",monospace; font-size:.5625rem; line-height:1.9; margin-bottom:10px; }
+  .me-log .t{ color:#5A6786; margin-right:6px; }
+  .me-log .ok{ color:#6FD196; }
+  .me-log .m{ color:#C7CEDC; }
+  .me-progress{ display:flex; align-items:center; gap:8px; }
+  .me-progress .lbl{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8FA0BE; white-space:nowrap; }
+  .me-track{ flex:1; height:5px; background:rgba(255,255,255,.12); border-radius:99px; overflow:hidden; }
+  .me-fill{ height:100%; width:66%; background:#2563EB; border-radius:99px; }
+
   .mini-dash{ width:100%; display:flex; flex-direction:column; gap:8px; }
   .mini-pcard{ background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.08); border-left:3px solid transparent; border-radius:7px; padding:11px 13px; }
   .mini-pcard.crit{ border-left-color:#DC2626; }
@@ -292,7 +318,7 @@
     <p class="dek">Mapeio processos manuais — planilhas, portais soltos, filas de ticket, formulários repetidos — e estruturo isso em sistemas que rodam sozinhos: automação em Python, um agente com IA generativa para triagem de dados, e painéis operacionais que decidem por onde a equipe começa o dia.</p>
     <div class="hero-stats">
       <div class="hstat"><div class="v">5</div><div class="l">soluções construídas, com problema real por trás</div></div>
-      <div class="hstat"><div class="v">2–4h / mês</div><div class="l">economizadas por cliente — resultado medido do Confluxo</div></div>
+      <div class="hstat"><div class="v">2–4h / mês</div><div class="l">economizadas por cliente — resultado medido do Extrator de Fatura</div></div>
       <div class="hstat"><div class="v mono">Python · IA generativa · RPA</div><div class="l">stack aplicado nos sistemas abaixo</div></div>
     </div>
   </header>
@@ -312,7 +338,7 @@
       <div class="fnode" tabindex="0"><div class="pt">05</div><div class="ft">Automação</div><div class="fc">o sistema executa sozinho</div></div>
       <div class="fnode" tabindex="0"><div class="pt">06</div><div class="ft">Resultado</div><div class="fc">tempo devolvido para o time</div></div>
     </div>
-    <p class="flow-note"><b>Nota de honestidade:</b> hoje só o Confluxo tem uma métrica de resultado validada fora do ambiente de demonstração — os demais cases mostram entendimento e sistema construídos, com resultado sinalizado como pendente de medição real quando é o caso.</p>
+    <p class="flow-note"><b>Nota de honestidade:</b> hoje só o Extrator de Fatura tem uma métrica de resultado validada fora do ambiente de demonstração — os demais cases mostram entendimento e sistema construídos, com resultado sinalizado como pendente de medição real quando é o caso.</p>
   </section>
 
   <!-- ============ PROJETOS ============ -->
@@ -327,34 +353,42 @@
       <div class="ck-group"><span class="ck-label">Base do portfólio</span><div class="ck-swatches"><div class="ck-dot" style="background:#ECEEF2;border-color:#ccc;"></div><div class="ck-dot" style="background:#131D2E;"></div></div></div>
       <div class="ck-group"><span class="ck-label">--signal (sistema em ação)</span><div class="ck-swatches"><div class="ck-dot" style="background:#5FD1B8;"></div></div></div>
       <div class="ck-group"><span class="ck-label">Semântica compartilhada</span><div class="ck-swatches"><div class="ck-dot" style="background:#DC2626;"></div><div class="ck-dot" style="background:#D97706;"></div><div class="ck-dot" style="background:#16A34A;"></div><div class="ck-dot" style="background:#7C3AED;"></div></div></div>
-      <div class="ck-group"><span class="ck-label">--project-accent (varia por projeto)</span><div class="ck-swatches"><div class="ck-dot" style="background:#2563EB;" title="Confluxo / Dashboard / Motor de Triagem / TicketScript"></div><div class="ck-dot" style="background:#16A34A;" title="FormPilot"></div></div></div>
+      <div class="ck-group"><span class="ck-label">--project-accent (varia por projeto)</span><div class="ck-swatches"><div class="ck-dot" style="background:#2563EB;" title="Extrator de Fatura / Dashboard / Motor de Triagem / TicketScript"></div><div class="ck-dot" style="background:#16A34A;" title="FormPilot"></div></div></div>
     </div>
 
     <div class="projects">
 
-      <!-- CONFLUXO -->
+      <!-- EXTRATOR DE FATURA -->
       <article class="pcard">
         <div class="pcard-info">
           <div class="pcard-top">
             <span class="pcard-dot" style="background:#2563EB;"></span>
-            <h3 class="pcard-name">Confluxo</h3>
+            <h3 class="pcard-name">Extrator de Fatura</h3>
             <span class="pcard-status" style="background:var(--ok-soft);color:var(--ok);">Adotado pela equipe</span>
           </div>
           <div class="pfield"><div class="k">Problema</div><div class="v">Boletos e demonstrativos baixados manualmente, portal a portal, sem padrão de regra, estrutura ou nomenclatura.</div></div>
           <div class="pfield"><div class="k">Solução</div><div class="v">Mapeei o fluxo, estruturei as regras numa arquitetura de núcleo e módulos, e construí uma ferramenta desktop que navega, extrai, padroniza e organiza os arquivos sozinha.</div></div>
           <div class="ptags"><span class="ptag">Python</span><span class="ptag">Playwright</span><span class="ptag">RPA</span></div>
           <div class="presult"><span class="rv" style="color:#0F7A5F;">2–4h / mês</span><span class="rl">economizadas por cliente, por analista</span></div>
-          <a class="pcta" href="/confluxo/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
+          <a class="pcta" href="/extrator-de-fatura/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
         </div>
-        <div class="ppreview" style="background:#1A2740;">
-          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="mini-log" role="img" aria-label="Log de execução do Confluxo processando um portal automaticamente">
-            <div class="row"><span class="t">12:04:01</span><span class="m hd">abrindo fila · acesso 2/3 · Metron Engenharia</span></div>
-            <div class="row"><span class="t">12:04:03</span><span class="m">conectando a portal.zelohub.fictício</span></div>
-            <div class="row"><span class="t">12:04:06</span><span class="m ok">login validado</span></div>
-            <div class="row"><span class="t">12:04:08</span><span class="m">buscando contrato saúde</span></div>
-            <div class="row"><span class="t">12:04:11</span><span class="m">boleto localizado · competência 08.2026</span></div>
-            <div class="row"><span class="t">12:04:13</span><span class="m ok">arquivo renomeado e salvo</span></div>
+        <div class="ppreview" style="background:#E3E6ED;">
+          <div class="mini-extrator" role="img" aria-label="Tela de fila e execução do Extrator de Fatura: fila de acessos e log de execução com progresso de 66%">
+            <div class="me-card">
+              <div class="me-head">Fila de acessos <span class="me-count">3 itens</span></div>
+              <div class="me-item"><div class="me-row"><span class="me-name">Estúdio Prisma</span><span class="me-badge done">concluído</span></div></div>
+              <div class="me-item"><div class="me-row"><span class="me-name">Metron Engenharia</span><span class="me-badge active">em execução</span></div></div>
+              <div class="me-item"><div class="me-row"><span class="me-name">Copaíba Alimentos</span><span class="me-badge queued">na fila</span></div></div>
+            </div>
+            <div class="me-card me-exec">
+              <div class="me-head">Execução — Metron<span class="me-count">2 de 3</span></div>
+              <div class="me-log">
+                <div><span class="t">12:04:06</span><span class="ok">login validado</span></div>
+                <div><span class="t">12:04:11</span><span class="m">boleto localizado</span></div>
+                <div><span class="t">12:04:13</span><span class="ok">arquivo salvo</span></div>
+              </div>
+              <div class="me-progress"><span class="lbl">progresso</span><div class="me-track"><div class="me-fill"></div></div><span class="lbl">66%</span></div>
+            </div>
           </div>
         </div>
       </article>
