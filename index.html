@@ -143,13 +143,6 @@
   .flow-note{ margin-top:22px; font-size:.8125rem; color:var(--text-faint); }
   .flow-note b{ color:var(--text-muted); font-weight:600; }
 
-  /* ---------- legenda de cor ---------- */
-  .colorkey{ display:flex; flex-wrap:wrap; gap:24px; padding:20px 24px; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-l); margin-bottom:32px; }
-  .ck-group{ display:flex; flex-direction:column; gap:8px; }
-  .ck-group .ck-label{ font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); }
-  .ck-swatches{ display:flex; gap:6px; }
-  .ck-dot{ width:20px; height:20px; border-radius:6px; border:1px solid rgba(0,0,0,.08); }
-
   /* ---------- project cards ---------- */
   .projects{ display:flex; flex-direction:column; gap:20px; }
   .pcard{
@@ -314,11 +307,14 @@
   .skill .sn{ font-size:.875rem; font-weight:600; margin-bottom:4px; }
   .skill .se{ font-family:"DM Mono",monospace; font-size:.6875rem; color:var(--text-faint); }
 
-  /* ---------- pending section ---------- */
-  .pending-sec{ border:1.5px dashed var(--border); border-radius:var(--r-l); padding:32px; text-align:center; }
-  .pending-sec .tag{ display:inline-flex; align-items:center; gap:6px; font-family:"DM Mono",monospace; font-size:.6875rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); background:var(--surface-2); padding:5px 11px; border-radius:99px; margin-bottom:14px; }
-  .pending-sec h3{ margin:0 0 8px; font-size:1rem; color:var(--text-muted); font-weight:600; }
-  .pending-sec p{ margin:0; font-size:.8125rem; color:var(--text-faint); max-width:52ch; margin-inline:auto; line-height:1.6; }
+  /* ---------- experiência ---------- */
+  .exp-group{ display:flex; flex-direction:column; }
+  .exp-item{ padding:20px 0; border-bottom:1px solid var(--border-soft); display:flex; flex-direction:column; gap:3px; }
+  .exp-item:last-child{ border-bottom:none; }
+  .exp-co{ font-size:1rem; font-weight:700; letter-spacing:-.005em; }
+  .exp-role{ font-family:"DM Mono",monospace; font-size:.75rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; }
+  .exp-ctx{ font-size:.875rem; color:var(--text-muted); line-height:1.55; margin:3px 0 0; max-width:64ch; }
+  .exp-badge{ display:inline-flex; align-self:flex-start; margin-top:8px; font-family:"DM Mono",monospace; font-size:.75rem; font-weight:600; padding:4px 11px; border-radius:99px; background:var(--ok-soft); color:var(--ok); }
 
   /* ---------- CTA ---------- */
   .cta-box{ background:var(--ink); color:#fff; border-radius:var(--r-l); padding:44px 40px; display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; }
@@ -361,7 +357,6 @@
     <p class="dek">Mapeio processos manuais — planilhas, portais soltos, filas de ticket, formulários repetidos — e estruturo isso em sistemas que rodam sozinhos: automação em Python, um agente com IA generativa para triagem de dados, e painéis operacionais que decidem por onde a equipe começa o dia.</p>
     <div class="hero-stats">
       <div class="hstat"><div class="v">5</div><div class="l">soluções construídas, com problema real por trás</div></div>
-      <div class="hstat"><div class="v">2–4h / mês</div><div class="l">economizadas por cliente — resultado medido do Extrator de Fatura</div></div>
       <div class="hstat"><div class="v mono">Python · IA generativa · RPA</div><div class="l">stack aplicado nos sistemas abaixo</div></div>
     </div>
   </header>
@@ -387,16 +382,9 @@
   <!-- ============ PROJETOS ============ -->
   <section id="projetos" aria-labelledby="projetos-h">
     <div class="sec-head">
-      <span class="kicker">Sistema de cor · base + assinatura por projeto</span>
+      <span class="kicker">Prova concreta</span>
       <h2 id="projetos-h">Projetos</h2>
-      <p>Cada card carrega a base do portfólio e o <span class="mono">--signal</span> mint sempre que mostra "o sistema em ação" — a cor de destaque principal muda conforme a identidade que cada projeto já tinha, preservada como está.</p>
-    </div>
-
-    <div class="colorkey">
-      <div class="ck-group"><span class="ck-label">Base do portfólio</span><div class="ck-swatches"><div class="ck-dot" style="background:#ECEEF2;border-color:#ccc;"></div><div class="ck-dot" style="background:#131D2E;"></div></div></div>
-      <div class="ck-group"><span class="ck-label">--signal (sistema em ação)</span><div class="ck-swatches"><div class="ck-dot" style="background:#5FD1B8;"></div></div></div>
-      <div class="ck-group"><span class="ck-label">Semântica compartilhada</span><div class="ck-swatches"><div class="ck-dot" style="background:#DC2626;"></div><div class="ck-dot" style="background:#D97706;"></div><div class="ck-dot" style="background:#16A34A;"></div><div class="ck-dot" style="background:#7C3AED;"></div></div></div>
-      <div class="ck-group"><span class="ck-label">--project-accent (varia por projeto)</span><div class="ck-swatches"><div class="ck-dot" style="background:#2563EB;" title="Extrator de Fatura / Dashboard / Motor de Triagem / TicketScript"></div><div class="ck-dot" style="background:#16A34A;" title="FormPilot"></div></div></div>
+      <p>O que eu efetivamente construí — problema, solução, stack e resultado, quando há métrica real.</p>
     </div>
 
     <div class="projects">
@@ -522,14 +510,14 @@
       <span class="evo-label" id="evo-h">Evolução de produto</span>
       <div class="evo-row">
         <div class="evo-card">
-          <div class="evo-name">TicketScript <span class="ptag" style="font-size:.625rem;">Em produção</span></div>
-          <p class="evo-desc">Extensão de navegador (Chrome/Edge) que lê o ticket aberto, identifica operadora e resolução, e preenche a resposta padronizada — projeto solo, fev–mai 2025. Reduziu de 4 passos manuais para 1 clique por ticket, sem backend.</p>
+          <div class="evo-name">TicketScript <span class="ptag" style="font-size:.625rem;">Descontinuado</span></div>
+          <p class="evo-desc">Extensão de navegador (Chrome/Edge) que lê o ticket aberto, identifica operadora e resolução, e preenche a resposta padronizada — projeto solo, fev–mai 2025. Reduziu de 4 passos manuais para 1 clique por ticket, sem backend. Usado até ser descontinuado com a evolução para o FormPilot.</p>
           <div class="evo-tags"><span class="ptag">JavaScript</span><span class="ptag">Zero dependências</span></div>
           <a class="evo-link" href="/ticketscript/">Ver o case →</a>
         </div>
         <div class="evo-arrow" aria-hidden="true"><span class="ln"></span><span class="lbl">evoluiu para</span></div>
         <div class="evo-card">
-          <div class="evo-name">FormPilot <span class="ptag" style="font-size:.625rem;">Em implantação</span></div>
+          <div class="evo-name">FormPilot <span class="ptag" style="font-size:.625rem;">Em uso pelo time</span></div>
           <p class="evo-desc">Migração arquitetural de extensão Chrome para app nativo no Zendesk (ZAF ticket_sidebar), sem backend próprio. Lê os dados estruturados do ticket e preenche o PDF da operadora automaticamente via pdf-lib — CPF, datas e códigos de empresa com transforms em runtime — e envia para assinatura via Adobe Sign API (OAuth 2.0, proxy n8n para o client_secret, renovação automática de token). Nova operadora entra editando um JSON, sem alterar código.</p>
           <div class="evo-tags"><span class="ptag">pdf-lib</span><span class="ptag">Adobe Sign API</span><span class="ptag">4 operadoras · 12+ movimentações</span></div>
           <div class="presult" style="border-top:none; padding-top:0; margin-top:10px;"><span class="rv" style="color:#0F7A5F;font-size:1.0625rem;">10–20 min → revisão + clique</span><span class="rl">por movimentação</span></div>
@@ -578,16 +566,47 @@
     </div>
   </section>
 
-  <!-- ============ EXPERIÊNCIA (pendente) ============ -->
+  <!-- ============ EXPERIÊNCIA ============ -->
   <section aria-labelledby="exp-h">
     <div class="sec-head">
       <span class="kicker">Trajetória</span>
       <h2 id="exp-h">Experiência</h2>
+      <p>De onde vem a experiência prática por trás dos projetos acima.</p>
     </div>
-    <div class="pending-sec">
-      <span class="tag">seção preparada · conteúdo pendente</span>
-      <h3>Ainda não tenho dados reais de cargos/empresas para preencher aqui</h3>
-      <p>Estrutura pronta para receber histórico profissional real quando ele for confirmado — não preenchida com texto genérico para não passar informação falsa.</p>
+    <div class="exp-group">
+      <div class="exp-item">
+        <div class="exp-co">Pipo Saúde</div>
+        <div class="exp-role">Analista de Operações Pleno</div>
+        <p class="exp-ctx">Referência técnica em automação e aplicação de IA em operações, com evolução para a posição de Pleno por performance.</p>
+      </div>
+      <div class="exp-item">
+        <div class="exp-co">VincIT · UNICIV</div>
+        <div class="exp-role">Analista de Sistemas Acadêmicos e Administrativo</div>
+        <p class="exp-ctx">Atuação em sistemas acadêmicos e administrativos, com participação na estruturação do processo de credenciamento institucional junto ao MEC.</p>
+        <span class="exp-badge">Conceito 5 na abertura dos cursos</span>
+      </div>
+    </div>
+
+    <div class="sec-head" style="margin-top:48px;">
+      <span class="kicker">Amplitude e iniciativa</span>
+      <h3 id="exp-ind-h" style="font-size:1.125rem; font-weight:700; margin:0;">Atuação independente</h3>
+    </div>
+    <div class="exp-group">
+      <div class="exp-item">
+        <div class="exp-co">Turing</div>
+        <div class="exp-role">Avaliador de Modelos de IA</div>
+        <p class="exp-ctx">Avaliação comparativa de prompts e outputs entre modelos de IA, com foco em qualidade e consistência das respostas.</p>
+      </div>
+      <div class="exp-item">
+        <div class="exp-co">UPCIV Idiomas</div>
+        <div class="exp-role">Consultor de Tecnologia</div>
+        <p class="exp-ctx">Implantação de LMS com Moodle e estruturação do funil comercial em HubSpot, conduzidas de ponta a ponta.</p>
+      </div>
+      <div class="exp-item">
+        <div class="exp-co">Consultoria independente</div>
+        <div class="exp-role">Implantação de Sistemas</div>
+        <p class="exp-ctx">Estruturação de site, agendamento online, assinatura digital e sistemas operacionais para negócio de serviços.</p>
+      </div>
     </div>
   </section>
 
