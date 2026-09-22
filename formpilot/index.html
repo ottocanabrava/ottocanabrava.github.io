@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>FormPilot — Demo de Portfólio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--paper); color: var(--ink);
+  line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+:root {
+  --paper: #ECEEF2; --surf: #FFFFFF;
+  --line: #E5E7EB; --line-md: #D1D5DB;
+  --ink: #111827; --ink-2: #6B7280; --ink-3: #9CA3AF;
+  --dark: #131D2E; --dark2: #1A2740; --dark3: #2B3B57;
+  --dt1: #F1F5F9; --dt2: #CBD5E1; --dt3: #64748B;
+  --accent: #16A34A; --accent2: #15803D;
+  --accent-l: #F0FDF4; --accent-m: #BBF7D0;
+  --warn: #DC2626; --warn-l: #FEF2F2;
+  --blue: #2563EB; --blue-l: #EFF6FF;
+  --purple: #7C3AED; --purple-l: #EDE9FE;
+  --amber: #D97706; --amber-l: #FFFBEB;
+  --r-s: 4px; --r: 9px; --r-l: 15px;
+  --sh: 0 3px 10px -3px rgba(17,24,39,.14), 0 1px 3px rgba(17,24,39,.08);
+  --sh-lg: 0 22px 44px -12px rgba(17,24,39,.24), 0 6px 16px -6px rgba(17,24,39,.12);
+}
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Nav */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(11,34,51,.97); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--dark3);
+  height: 54px; padding: 0 24px; display: flex; align-items: center;
+}
+.nav-in { max-width: 1100px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; }
+.nav-logo { display: flex; align-items: center; gap: 9px; font-family: 'DM Sans', sans-serif; font-size: 1.0625rem; font-weight: 600; color: var(--dt1); text-decoration: none; }
+.nav-seal { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid var(--accent); display: flex; align-items: center; justify-content: center; font-size: .5625rem; color: var(--accent); font-weight: 700; font-family: 'DM Mono', monospace; }
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-a { padding: 6px 12px; border-radius: var(--r-s); font-size: .8125rem; font-weight: 500; color: var(--dt2); text-decoration: none; transition: color .12s, background .12s; }
+.nav-a:hover { color: var(--dt1); background: var(--dark2); }
+.nav-cta { padding: 6px 15px; border-radius: var(--r-s); background: var(--accent); color: #fff; font-size: .8125rem; font-weight: 600; text-decoration: none; transition: background .12s; }
+.nav-cta:hover { background: var(--accent2); }
+
+/* Hero */
+.hero { background: var(--dark); padding: 76px 24px 62px; border-bottom: 1px solid var(--dark3); background-image: radial-gradient(circle at 88% 8%, rgba(14,124,107,.16), transparent 46%); }
+.hero-in { max-width: 1100px; margin: 0 auto; }
+.hero-chips { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 9999px; font-family: 'DM Mono', monospace; font-size: .6875rem; font-weight: 500; }
+.chip-bd  { border: 1px solid var(--dark3); color: var(--dt2); }
+.chip-ac { background: rgba(14,124,107,.18); color: #5FD1B8; border: 1px solid rgba(14,124,107,.32); }
+.hero h1 { font-family: 'DM Sans', sans-serif; font-size: clamp(2.375rem, 4.6vw, 3.75rem); font-weight: 600; line-height: 1.14; letter-spacing: -.015em; color: var(--dt1); margin-bottom: 20px; max-width: 640px; }
+.hero-sub { font-size: 1.0625rem; color: var(--dt2); max-width: 500px; line-height: 1.65; margin-bottom: 46px; }
+.hero-facts { display: flex; gap: 0; padding-top: 32px; border-top: 1px solid var(--dark3); flex-wrap: wrap; }
+.hf { padding-right: 34px; margin-right: 34px; border-right: 1px solid var(--dark3); }
+.hf:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+.hf-val { font-family: 'DM Sans', sans-serif; font-size: 1.75rem; font-weight: 600; color: var(--dt1); letter-spacing: -.01em; line-height: 1; margin-bottom: 5px; }
+.hf-lbl { font-size: .75rem; color: var(--dt3); line-height: 1.4; max-width: 130px; }
+
+/* Section header */
+.sec { padding: 68px 0; }
+.sh { margin-bottom: 38px; max-width: 620px; }
+.sh h2 { font-family: 'DM Sans', sans-serif; font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 600; letter-spacing: -.015em; line-height: 1.16; color: var(--ink); margin-bottom: 12px; }
+.sh p { font-size: .9375rem; color: var(--ink-2); line-height: 1.65; }
+.stag { font-size: .8125rem; font-weight: 600; color: var(--accent2); display: block; margin-bottom: 12px; }
+.hiw-bg .stag { color: #5FD1B8; }
+
+/* Demo */
+.demo-bg { background: var(--surf); border-bottom: 1px solid var(--line); }
+.demo-grid { display: grid; grid-template-columns: 228px 1fr 280px; gap: 16px; align-items: start; }
+
+/* Queue */
+.q-col { display: flex; flex-direction: column; gap: 8px; }
+.q-hd { font-size: .6875rem; font-weight: 600; color: var(--ink-3); padding: 0 3px; margin-bottom: 2px; }
+.qc { background: var(--surf); border: 1.5px solid var(--line); border-radius: var(--r); padding: 12px 14px; cursor: pointer; transition: border-color .14s, box-shadow .14s; user-select: none; }
+.qc:hover { border-color: var(--line-md); box-shadow: var(--sh); }
+.qc.on { border-color: var(--accent); border-left-width: 3px; padding-left: 12px; box-shadow: 0 0 0 3px rgba(14,124,107,.1); }
+.qc-id { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--ink-3); margin-bottom: 4px; }
+.qc.on .qc-id { color: var(--accent2); }
+.qc-sub { font-size: .8125rem; font-weight: 600; line-height: 1.32; color: var(--ink); margin-bottom: 8px; }
+.qc-op { font-size: .6875rem; color: var(--ink-2); }
+
+/* Ticket viewer */
+.tv { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; box-shadow: var(--sh); }
+.tv-chrome { background: var(--dark); padding: 10px 14px; display: flex; align-items: center; gap: 8px; }
+.tv-dots { display: flex; gap: 5px; }
+.tv-dot { width: 8px; height: 8px; border-radius: 50%; }
+.tv-url { flex: 1; background: rgba(255,255,255,.07); border-radius: 4px; padding: 4px 10px; margin: 0 8px; font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--dt3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tv-ext-btn { width: 24px; height: 24px; background: var(--accent); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .8125rem; cursor: pointer; flex-shrink: 0; transition: background .12s; color: #fff; }
+.tv-ext-btn:hover { background: var(--accent2); }
+.tv-hd { padding: 14px 18px 12px; border-bottom: 1px solid var(--line); background: var(--paper); }
+.tv-id { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--ink-3); margin-bottom: 4px; }
+.tv-sub { font-size: .9375rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
+.tv-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tv-tag { font-size: .6875rem; font-weight: 600; padding: 3px 9px; border-radius: 9999px; }
+.tv-msg { padding: 15px 18px; border-bottom: 1px solid var(--line); }
+.tv-from { font-size: .8125rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.tv-when { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--ink-3); margin-bottom: 10px; }
+.tv-body { font-size: .875rem; color: var(--ink-2); line-height: 1.65; }
+.tv-doc { padding: 15px 18px; }
+.tv-doc-lbl { font-size: .6875rem; font-weight: 600; color: var(--ink-3); margin-bottom: 9px; }
+.tv-paper { border: 1.5px dashed var(--line-md); border-radius: var(--r-s); padding: 14px 16px; position: relative; overflow: hidden; transition: border-color .3s, background .3s; }
+.tv-paper.ready { border-style: solid; border-color: var(--accent-m); background: var(--accent-l); }
+.tv-pl { height: 8px; background: var(--line); border-radius: 3px; margin-bottom: 8px; transition: background .3s; }
+.tv-pl:last-child { margin-bottom: 0; width: 62%; }
+.tv-paper.ready .tv-pl { background: var(--accent-m); }
+.tv-stamp { position: absolute; right: 12px; top: 10px; border: 2px solid var(--accent); color: var(--accent2); font-family: 'DM Mono', monospace; font-size: .5625rem; font-weight: 700; letter-spacing: .06em; padding: 3px 8px; border-radius: 4px; transform: rotate(-6deg); opacity: 0; transition: opacity .3s; background: #fff; }
+.tv-paper.ready .tv-stamp { opacity: 1; }
+.tv-empty { font-size: .8125rem; color: var(--ink-3); font-style: italic; text-align: center; padding: 6px 0; }
+.tv-sent { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: .8125rem; font-weight: 600; color: var(--accent2); opacity: 0; transition: opacity .3s; }
+.tv-sent.vis { opacity: 1; }
+.ok-ck { width: 17px; height: 17px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: .5625rem; flex-shrink: 0; }
+
+/* Extension panel */
+.ep { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; box-shadow: var(--sh-lg); background: var(--surf); position: sticky; top: 68px; }
+.ep-hd { background: var(--dark); padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; }
+.ep-brand { display: flex; align-items: center; gap: 8px; color: #fff; }
+.ep-ico { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--dt1); display: flex; align-items: center; justify-content: center; font-size: .625rem; font-family: 'DM Mono', monospace; font-weight: 700; color: var(--dt1); }
+.ep-name { font-weight: 700; font-size: .9375rem; letter-spacing: -.005em; }
+.ep-ver { font-family: 'DM Mono', monospace; font-size: .5625rem; color: var(--dt3); }
+.ep-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 200px; }
+.ep-lbl { font-size: .6875rem; font-weight: 600; color: var(--ink-3); margin-bottom: 6px; display: block; }
+.ep-idle { padding: 18px 6px; text-align: center; }
+.ep-idle-ico { display: block; margin-bottom: 10px; }
+.ep-idle-ico svg { width: 28px; height: 28px; }
+.ep-idle-txt { font-size: .8125rem; color: var(--ink-2); line-height: 1.55; }
+.ep-abtn { width: 100%; padding: 10px; background: var(--dark); color: var(--dt1); border: none; border-radius: var(--r-s); font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 600; cursor: pointer; transition: background .12s; }
+.ep-abtn:hover { background: var(--dark2); }
+.ep-abtn:disabled { background: var(--ink-3); cursor: not-allowed; }
+.ep-scan { padding: 16px 6px; text-align: center; }
+.ep-scan-bar { height: 3px; background: var(--line); border-radius: 9999px; overflow: hidden; margin-bottom: 9px; }
+.ep-scan-fill { height: 100%; background: var(--accent); border-radius: 9999px; animation: sfill 1.2s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes sfill { from { width: 0 } to { width: 100% } }
+.ep-scan-txt { font-size: .75rem; color: var(--ink-3); font-style: italic; }
+.ep-fields { display: flex; flex-direction: column; gap: 6px; }
+.ep-field { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: var(--r-s); background: var(--paper); border: 1px solid var(--line); }
+.ep-fk { font-size: .625rem; font-weight: 600; color: var(--ink-3); margin-bottom: 2px; }
+.ep-fv { font-size: .8125rem; font-weight: 700; color: var(--ink); }
+.ep-fchk { font-size: .875rem; color: var(--accent); flex-shrink: 0; }
+.ep-ibtn { width: 100%; padding: 10px; background: var(--accent); color: #fff; border: none; border-radius: var(--r-s); font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 700; cursor: pointer; transition: background .12s; }
+.ep-ibtn:hover { background: var(--accent2); }
+.ep-suc { background: var(--accent-l); margin: -12px; padding: 24px 15px; text-align: center; }
+.ep-suc-ico { display: block; margin-bottom: 8px; }
+.ep-suc-ico svg { width: 26px; height: 26px; }
+.ep-suc-ttl { font-weight: 700; font-size: .9375rem; color: var(--accent2); }
+.ep-suc-sub { font-size: .75rem; color: #166534; margin-top: 4px; line-height: 1.55; }
+.ep-proto { font-family: 'DM Mono', monospace; font-size: .6875rem; color: #166534; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--accent-m); }
+.ep-ft { border-top: 1px solid var(--line); padding: 7px 12px; display: flex; align-items: center; justify-content: space-between; }
+.ep-ft-a { font-size: .625rem; color: var(--ink-3); cursor: pointer; font-weight: 500; }
+.ep-ft-a:hover { color: var(--accent); }
+.ep-dbg { font-family: 'DM Mono', monospace; font-size: .5625rem; padding: 2px 7px; border-radius: 3px; background: var(--paper); border: 1px solid var(--line); color: var(--ink-3); cursor: pointer; }
+.ep-dbg:hover { border-color: var(--accent); color: var(--accent2); }
+
+/* Problem */
+.prob-bg { background: var(--paper); }
+.ba-grid { display: grid; grid-template-columns: 1fr 46px 1fr; gap: 20px; align-items: center; margin-top: 40px; }
+.ba-lbl { font-family: 'DM Mono', monospace; font-size: .6875rem; font-weight: 600; display: block; margin-bottom: 11px; }
+.ba-lbl.before { color: var(--warn); }
+.ba-lbl.after  { color: var(--accent2); }
+.ba-steps { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; background: var(--surf); }
+.ba-step { display: flex; align-items: flex-start; gap: 11px; padding: 13px 16px; border-bottom: 1px solid var(--line); }
+.ba-step:last-child { border-bottom: none; }
+.ba-si { width: 22px; height: 22px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
+.ba-si svg { width: 16px; height: 16px; }
+.ba-st { font-weight: 600; font-size: .875rem; color: var(--ink); margin-bottom: 2px; }
+.ba-sd { font-size: .8125rem; color: var(--ink-2); line-height: 1.5; }
+.ba-step.pain { background: var(--warn-l); }
+.ba-step.pain .ba-st { color: var(--warn); }
+.ba-step.pain .ba-si svg { stroke: var(--warn); }
+.ba-arr { display: flex; justify-content: center; align-items: center; font-size: 1.375rem; color: var(--ink-3); }
+.ba-after { border: 1.5px solid var(--accent-m); border-radius: var(--r-l); overflow: hidden; background: var(--surf); }
+.ba-after-top { padding: 26px 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
+.ba-num { font-family: 'DM Sans', sans-serif; font-size: 3rem; font-weight: 600; color: var(--accent2); letter-spacing: -.02em; line-height: 1; }
+.ba-num-s { font-size: .9375rem; color: var(--ink-2); line-height: 1.45; max-width: 280px; }
+.ba-after-ft { background: var(--accent-l); padding: 11px 22px; font-size: .8125rem; color: #166534; font-weight: 500; text-align: center; }
+.ba-note { margin-top: 13px; padding: 13px 16px; background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); font-size: .8125rem; color: var(--ink-2); line-height: 1.6; }
+.ba-note strong { display: block; color: var(--ink); margin-bottom: 3px; font-weight: 600; }
+
+/* How it works */
+.hiw-bg { background: var(--dark); }
+.hiw-bg .sh h2 { color: var(--dt1); }
+.hiw-bg .sh p  { color: var(--dt2); }
+.hiw-list { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
+.hiw-row { display: grid; grid-template-columns: 46px 1fr max-content; gap: 22px; padding: 21px 0; border-bottom: 1px solid var(--dark3); align-items: start; }
+.hiw-row:first-child { border-top: 1px solid var(--dark3); }
+.hiw-n { font-family: 'DM Sans', sans-serif; font-size: 1.375rem; font-weight: 600; color: var(--dark3); padding-top: 1px; }
+.hiw-ttl { font-size: 1.0625rem; font-weight: 700; color: var(--dt1); margin-bottom: 5px; }
+.hiw-desc { font-size: .9375rem; color: var(--dt2); line-height: 1.6; max-width: 540px; }
+.hiw-tag { font-family: 'DM Mono', monospace; font-size: .625rem; font-weight: 500; padding: 5px 9px; border-radius: var(--r-s); background: var(--dark2); border: 1px solid var(--dark3); color: var(--dt2); white-space: nowrap; margin-top: 2px; }
+
+/* Architecture */
+.arch-bg { background: var(--paper); }
+.arch-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 40px; }
+.arch-card { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; }
+.arch-hd { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
+.arch-ico { width: 38px; height: 38px; border-radius: var(--r); display: flex; align-items: center; justify-content: center; }
+.arch-ico svg { width: 19px; height: 19px; }
+.ico-a { background: var(--accent-l); }
+.ico-b { background: #E5E7EB; }
+.ico-c { background: var(--purple-l); }
+.arch-hd h3 { font-size: 1rem; font-weight: 700; color: var(--ink); }
+.arch-hd p { font-size: .8125rem; color: var(--ink-2); margin-top: 1px; }
+.arch-body { padding: 6px 22px 18px; }
+.arch-row { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.arch-row:last-child { border-bottom: none; }
+.arch-ri { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+.arch-ri svg { width: 15px; height: 15px; stroke: var(--accent2); }
+.arch-tt { font-size: .875rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.arch-dd { font-size: .8125rem; color: var(--ink-2); line-height: 1.5; }
+
+/* Decisions */
+.dec-bg { background: var(--surf); border-top: 1px solid var(--line); }
+.dec-table { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; margin-top: 40px; }
+.dec-thead { display: grid; grid-template-columns: 1fr 1fr 1fr; background: var(--dark); }
+.dec-th { padding: 10px 20px; border-right: 1px solid var(--dark3); font-family: 'DM Mono', monospace; font-size: .625rem; font-weight: 600; color: var(--dt3); }
+.dec-th:last-child { border-right: none; }
+.dec-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid var(--line); }
+.dec-cell { padding: 16px 20px; border-right: 1px solid var(--line); font-size: .875rem; line-height: 1.55; }
+.dec-cell:last-child { border-right: none; }
+.dec-cell h4 { font-size: .9375rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+.dec-cell p { color: var(--ink-2); }
+.ok  { color: var(--accent2); font-weight: 600; }
+.trd { color: #B45309; font-weight: 600; }
+
+/* Stack */
+.stack-bg { background: var(--paper); border-top: 1px solid var(--line); }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
+.pill { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9999px; border: 1.5px solid var(--line); background: var(--surf); font-size: .875rem; font-weight: 600; color: var(--ink); transition: border-color .12s; }
+.pill:hover { border-color: var(--accent); }
+.pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
+.pill-ac .pill-dot { background: var(--accent); }
+
+/* Footer */
+footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid var(--dark3); }
+.ft-in { max-width: 1100px; margin: 0 auto; }
+.ft-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap; margin-bottom: 30px; }
+.ft-name { font-family: 'DM Sans', sans-serif; font-size: 1.25rem; font-weight: 600; color: var(--dt1); margin-bottom: 4px; }
+.ft-tag  { font-size: .875rem; color: var(--dt3); }
+.ft-meta { text-align: right; }
+.ft-mi { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--dt3); margin-bottom: 4px; }
+.ft-notice { border-top: 1px solid var(--dark3); padding-top: 20px; font-size: .8125rem; color: var(--dt3); line-height: 1.65; text-align: center; }
+.ft-notice strong { color: var(--dt2); }
+
+/* Responsive */
+@media (max-width: 880px) {
+  .demo-grid { grid-template-columns: 1fr; }
+  .q-col { flex-direction: row; flex-wrap: wrap; gap: 8px; }
+  .qc { flex: 1; min-width: 140px; }
+  .ep { position: static; }
+  .ba-grid { grid-template-columns: 1fr; }
+  .ba-arr { transform: rotate(90deg); }
+  .arch-grid { grid-template-columns: 1fr; }
+  .hiw-row { grid-template-columns: 36px 1fr; }
+  .hiw-tag { display: none; }
+  .dec-thead { display: none; }
+  .dec-row { grid-template-columns: 1fr; }
+  .dec-cell { border-right: none; }
+  nav .nav-a:not(.nav-cta) { display: none; }
+  .hf { margin-right: 20px; padding-right: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ep-scan-fill { animation: none; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <a class="nav-logo" href="#"><span class="nav-seal">F</span>FormPilot</a>
+    <div class="nav-links">
+      <a class="nav-a" href="#demo">Demo</a>
+      <a class="nav-a" href="#problema">Problema</a>
+      <a class="nav-a" href="#como">Como funciona</a>
+      <a class="nav-cta" href="#demo">Ver demo</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="hero-chips">
+      <span class="chip chip-bd">estudo de caso</span>
+      <span class="chip chip-ac">● dados e marca 100% fictícios</span>
+    </div>
+    <h1>Do ticket de RH até a assinatura, sem trocar de aba.</h1>
+    <p class="hero-sub">Um painel que lê o pedido de movimentação, identifica a operadora e o tipo de solicitação, monta o formulário certo e encaminha para assinatura — sem que o analista precise procurar nada manualmente.</p>
+    <div class="hero-facts">
+      <div class="hf"><div class="hf-val">3</div><div class="hf-lbl">operadoras configuradas nesta demo</div></div>
+      <div class="hf"><div class="hf-val">config</div><div class="hf-lbl">nova operadora entra por arquivo, não por código</div></div>
+      <div class="hf"><div class="hf-val">nativo</div><div class="hf-lbl">deixou de ser extensão de navegador — hoje roda como painel embutido na própria ferramenta de atendimento</div></div>
+    </div>
+  </div>
+</header>
+
+<section class="sec demo-bg" id="demo">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">demonstração interativa</span>
+      <h2>Escolha um chamado.<br>Veja o painel montar o formulário.</h2>
+      <p>Selecione qualquer chamado da fila e use o painel do FormPilot à direita. Empresa, pessoas e operadoras são inteiramente fictícias.</p>
+    </div>
+    <div class="demo-grid" id="demo-root"></div>
+  </div>
+</section>
+
+<section class="sec prob-bg" id="problema">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">o problema</span>
+      <h2>Cada operadora, um formulário diferente. Nenhum atalho.</h2>
+      <p>Toda solicitação de inclusão, exclusão ou alteração exigia localizar o modelo certo da operadora, preencher campo a campo e só então seguir para a assinatura.</p>
+    </div>
+    <div class="ba-grid">
+      <div>
+        <span class="ba-lbl before">antes — o mesmo esforço em todo chamado</span>
+        <div class="ba-steps">
+          <div class="ba-step">
+            <span class="ba-si"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M4 5l8 7 8-7"/></svg></span>
+            <div><div class="ba-st">Abrir o chamado</div><div class="ba-sd">Ler o pedido do RH para identificar operadora, tipo de movimentação e dados do beneficiário.</div></div>
+          </div>
+          <div class="ba-step pain">
+            <span class="ba-si"><svg viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.6"><path d="M6 3h9l5 5v13H6z"/><path d="M15 3v5h5"/></svg></span>
+            <div><div class="ba-st">Localizar o modelo certo</div><div class="ba-sd">Encontrar, entre os modelos de cada operadora, aquele que corresponde ao tipo de movimentação pedido.</div></div>
+          </div>
+          <div class="ba-step pain">
+            <span class="ba-si"><svg viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg></span>
+            <div><div class="ba-st">Preencher campo a campo</div><div class="ba-sd">Digitar ou colar cada dado no lugar certo do formulário — um campo trocado significa retrabalho.</div></div>
+          </div>
+          <div class="ba-step">
+            <span class="ba-si"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="1.6"><path d="M4 12l6 6L20 6"/></svg></span>
+            <div><div class="ba-st">Enviar para assinatura</div><div class="ba-sd">Anexar o documento pronto a um fluxo de assinatura separado e acompanhar manualmente o retorno.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ba-arr">→</div>
+      <div>
+        <span class="ba-lbl after">depois — mesmo chamado, um painel</span>
+        <div class="ba-after">
+          <div class="ba-after-top">
+            <div class="ba-num">1×</div>
+            <div class="ba-num-s">Analisar → Gerar formulário → Enviar. O painel identifica a operadora e monta o restante.</div>
+          </div>
+          <div class="ba-after-ft">Os modelos de cada operadora continuam existindo. Só deixam de exigir busca manual.</div>
+        </div>
+        <div class="ba-note">
+          <strong>Por que manter um modelo por operadora?</strong>
+          Cada operadora define seu próprio layout de formulário — isso não muda. A diferença é que o painel guarda essa regra como configuração, então adicionar uma operadora nova não exige reescrever nada, só descrever seus campos.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec hiw-bg" id="como">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">fluxo técnico</span>
+      <h2>O que acontece entre o clique e a assinatura.</h2>
+      <p>Quatro etapas independentes — cada uma pode mudar sem afetar as outras.</p>
+    </div>
+    <div class="hiw-list">
+      <div class="hiw-row">
+        <div class="hiw-n">1</div>
+        <div>
+          <div class="hiw-ttl">O painel lê o chamado</div>
+          <div class="hiw-desc">O texto do pedido é capturado e normalizado — variações de escrita e formatação não podem impedir a identificação do tipo de movimentação pedido.</div>
+        </div>
+        <span class="hiw-tag">leitura · normalização</span>
+      </div>
+      <div class="hiw-row">
+        <div class="hiw-n">2</div>
+        <div>
+          <div class="hiw-ttl">Operadora e tipo de movimentação são identificados</div>
+          <div class="hiw-desc">O conteúdo é cruzado com uma lista de operadoras conhecidas para determinar qual modelo de formulário e quais campos usar.</div>
+        </div>
+        <span class="hiw-tag">detecção por configuração</span>
+      </div>
+      <div class="hiw-row">
+        <div class="hiw-n">3</div>
+        <div>
+          <div class="hiw-ttl">O formulário é montado por coordenada</div>
+          <div class="hiw-desc">Cada campo tem uma posição definida no modelo daquela operadora; os dados do beneficiário são estampados diretamente no documento, sem servidor — tudo roda no navegador do analista.</div>
+        </div>
+        <span class="hiw-tag">geração client-side</span>
+      </div>
+      <div class="hiw-row">
+        <div class="hiw-n">4</div>
+        <div>
+          <div class="hiw-ttl">Documento segue para assinatura via Adobe Sign</div>
+          <div class="hiw-desc">O documento pronto é enviado ao Adobe Sign para coleta de assinatura eletrônica. Como a autenticação OAuth exige um segredo que não pode ficar exposto no navegador, essa chamada passa por um pequeno fluxo de automação (n8n) que atua só como intermediário — o painel acompanha o retorno e atualiza o chamado automaticamente.</div>
+        </div>
+        <span class="hiw-tag">Adobe Sign · OAuth via n8n</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec arch-bg">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">arquitetura</span>
+      <h2>Três camadas, cada uma trocável sozinha.</h2>
+      <p>A ferramenta nasceu como extensão de navegador e hoje roda nativamente dentro da própria plataforma de atendimento, como um painel oficial via Zendesk App Framework (ZAF) — sem mais depender de nada instalado no navegador do analista. Configuração, painel e automação server-side seguem totalmente independentes entre si.</p>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-card">
+        <div class="arch-hd">
+          <div class="arch-ico ico-a"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
+          <div><h3>Configuração</h3><p>Um arquivo por operadora</p></div>
+        </div>
+        <div class="arch-body">
+          <div class="arch-row">
+            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 2v20M2 12h20"/></svg></span>
+            <div><div class="arch-tt">Operadora nova = arquivo novo</div><div class="arch-dd">Adicionar uma operadora não altera nenhuma parte do painel — apenas descreve seus campos, posições e dependências entre eles.</div></div>
+          </div>
+          <div class="arch-row">
+            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7z"/></svg></span>
+            <div><div class="arch-tt">Regras de dependência entre campos</div><div class="arch-dd">Alguns campos só existem se outro campo tiver determinado valor — a configuração descreve isso explicitamente, para não haver campo preenchido "por engano" quando a condição não se aplica.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-hd">
+          <div class="arch-ico ico-b"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></div>
+          <div><h3>Painel nativo (ZAF)</h3><p>Roda dentro da própria ferramenta de atendimento</p></div>
+        </div>
+        <div class="arch-body">
+          <div class="arch-row">
+            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M5 13l4 4L19 7"/></svg></span>
+            <div><div class="arch-tt">Deixou de ser extensão de navegador</div><div class="arch-dd">A versão anterior era uma extensão instalada no navegador de cada analista; hoje é um app oficial da plataforma, carregado automaticamente para todo o time, sem instalação individual.</div></div>
+          </div>
+          <div class="arch-row">
+            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M4 5l8 7 8-7"/></svg></span>
+            <div><div class="arch-tt">Lê o chamado direto da plataforma</div><div class="arch-dd">O painel usa o SDK oficial (ZAF) para ler os dados do chamado em que o analista está — sem depender de raspagem de tela.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="arch-card">
+        <div class="arch-hd">
+          <div class="arch-ico ico-c"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.6"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg></div>
+          <div><h3>Automação server-side</h3><p>n8n como intermediário para Adobe Sign</p></div>
+        </div>
+        <div class="arch-body">
+          <div class="arch-row">
+            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></span>
+            <div><div class="arch-tt">Documento montado no navegador</div><div class="arch-dd">A estampagem dos dados no PDF continua acontecendo no cliente; nenhum dado de beneficiário trafega por um servidor só para gerar o documento.</div></div>
+          </div>
+          <div class="arch-row">
+            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></span>
+            <div><div class="arch-tt">n8n cuida só do que exige segredo</div><div class="arch-dd">Um fluxo de automação (n8n) guarda a credencial OAuth do Adobe Sign e faz a chamada em nome do painel — o segredo nunca chega ao navegador do analista.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec dec-bg">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">decisões de projeto</span>
+      <h2>Trade-offs que definiram a solução.</h2>
+      <p>Escolhas concretas, com o que cada uma custou.</p>
+    </div>
+    <div class="dec-table">
+      <div class="dec-thead">
+        <div class="dec-th">decisão</div>
+        <div class="dec-th">por quê</div>
+        <div class="dec-th">custo aceito</div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>Configuração em vez de código por operadora</h4></div>
+        <div class="dec-cell"><p>Operadora nova entra sem alterar o painel — só descrever seus campos.</p></div>
+        <div class="dec-cell"><p class="trd">Exige manter a configuração correta e testada a cada mudança de layout da operadora.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>Montagem do documento no navegador</h4></div>
+        <div class="dec-cell"><p>Nenhum dado de beneficiário passa por um servidor só para gerar o formulário.</p></div>
+        <div class="dec-cell"><p class="ok">Nenhum custo relevante — a operação é leve o suficiente para rodar no cliente.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>Assinatura via Adobe Sign</h4></div>
+        <div class="dec-cell"><p>Reaproveita uma infraestrutura de assinatura eletrônica já confiável e auditável, em vez de construir isso do zero.</p></div>
+        <div class="dec-cell"><p class="trd">Depende de disponibilidade e limites de uso de um serviço externo.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>Migrar de extensão para app nativo (ZAF)</h4></div>
+        <div class="dec-cell"><p>Elimina a instalação individual em cada navegador e centraliza atualizações para todo o time de uma vez.</p></div>
+        <div class="dec-cell"><p class="trd">Exigiu reescrever a camada de execução inteira para se adequar ao SDK oficial da plataforma.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec stack-bg">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">stack</span>
+      <h2>O que roda por trás do painel.</h2>
+    </div>
+    <div class="pills">
+      <div class="pill pill-ac"><span class="pill-dot"></span>JavaScript</div>
+      <div class="pill"><span class="pill-dot"></span>Zendesk App Framework (ZAF)</div>
+      <div class="pill"><span class="pill-dot"></span>Geração de documento no navegador</div>
+      <div class="pill"><span class="pill-dot"></span>Configuração declarativa (JSON)</div>
+      <div class="pill"><span class="pill-dot"></span>Adobe Sign (assinatura eletrônica)</div>
+      <div class="pill"><span class="pill-dot"></span>n8n (automação / proxy OAuth)</div>
+      <div class="pill"><span class="pill-dot"></span>Planilha como fonte de referência</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="ft-name">FormPilot</div>
+        <div class="ft-tag">estudo de caso de portfólio</div>
+      </div>
+      <div class="ft-meta">
+        <div class="ft-mi">reconstrução conceitual e independente</div>
+        <div class="ft-mi">nenhum dado real utilizado</div>
+      </div>
+    </div>
+    <div class="ft-notice">
+      <strong>Sobre esta demo:</strong> Vero Benefícios, as operadoras, os chamados e todas as pessoas mencionadas são fictícios, criados para demonstrar o tipo de solução — não reproduzem nenhum sistema, dado ou processo real de qualquer empresa.
+    </div>
+  </div>
+</footer>
+
+<script>
+const TICKETS = [
+  {
+    id: '#4821', proto: 'MOV-2026-04821',
+    empresa: 'Nordeste Componentes Ltda',
+    subject: 'Inclusão de titular — Vitalis Saúde',
+    tags: [{l:'inclusão', bg:'#F0FDF4', c:'#15803D'}, {l:'titular', bg:'#E5E7EB', c:'#374151'}],
+    customer: 'RH — Nordeste Componentes',
+    ts: 'hoje, 09:14',
+    body: 'Precisamos incluir a colaboradora Marina Torres Almeida no plano titular da Vitalis Saúde. Admissão em 03/03. Segue CPF e demais dados em anexo.',
+    det: { operadora: 'Vitalis Saúde', tipo: 'Inclusão de titular', beneficiario: 'Marina T. Almeida', proto: 'MOV-2026-04821' }
+  },
+  {
+    id: '#4835', proto: 'MOV-2026-04835',
+    empresa: 'Grão Fino Alimentos S.A.',
+    subject: 'Exclusão de dependente — Amparo Seguros',
+    tags: [{l:'exclusão', bg:'#FEF2F2', c:'#DC2626'}, {l:'dependente', bg:'#E5E7EB', c:'#374151'}],
+    customer: 'RH — Grão Fino Alimentos',
+    ts: 'ontem, 16:47',
+    body: 'Solicitamos a exclusão da dependente Sofia Ramos Costa do plano do titular Eduardo Ramos Costa, na Amparo Seguros. Motivo: fim de vínculo de dependência.',
+    det: { operadora: 'Amparo Seguros', tipo: 'Exclusão de dependente', beneficiario: 'Sofia R. Costa', proto: 'MOV-2026-04835' }
+  },
+  {
+    id: '#4849', proto: 'MOV-2026-04849',
+    empresa: 'Estúdio Cana Design',
+    subject: 'Alteração cadastral — Convênio Prisma',
+    tags: [{l:'alteração', bg:'#EDE9FE', c:'#7C3AED'}, {l:'endereço', bg:'#E5E7EB', c:'#374151'}],
+    customer: 'RH — Estúdio Cana Design',
+    ts: 'seg, 11:02',
+    body: 'A colaboradora Helena Duarte Pires mudou de endereço. Precisamos atualizar o cadastro dela no Convênio Prisma com os novos dados anexados.',
+    det: { operadora: 'Convênio Prisma', tipo: 'Alteração cadastral', beneficiario: 'Helena D. Pires', proto: 'MOV-2026-04849' }
+  }
+];
+
+let cur = 0, st = 'idle';
+
+function render() {
+  document.getElementById('demo-root').innerHTML = queue() + viewer() + popup();
+  bind();
+}
+
+function queue() {
+  return `<div class="q-col">
+    <div class="q-hd">fila de chamados</div>
+    ${TICKETS.map((t,i) => `
+      <div class="qc ${i===cur?'on':''}" data-i="${i}">
+        <div class="qc-id">${t.id} · ${t.ts}</div>
+        <div class="qc-sub">${t.subject}</div>
+        <div class="qc-op">${t.empresa}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function viewer() {
+  const t = TICKETS[cur];
+  const gen = st === 'generated' || st === 'sent';
+  const sent = st === 'sent';
+  return `<div class="tv">
+    <div class="tv-chrome">
+      <div class="tv-dots">
+        <div class="tv-dot" style="background:#DC2626"></div>
+        <div class="tv-dot" style="background:#D97706"></div>
+        <div class="tv-dot" style="background:#16A34A"></div>
+      </div>
+      <div class="tv-url">atendimento.verobeneficios.com.br/chamados/${t.id.replace('#','')}</div>
+      <div class="tv-ext-btn" title="FormPilot — abrir painel">◆</div>
+    </div>
+    <div class="tv-hd">
+      <div class="tv-id">${t.id} · ${t.proto}</div>
+      <div class="tv-sub">${t.subject}</div>
+      <div class="tv-tags">${t.tags.map(g => `<span class="tv-tag" style="background:${g.bg};color:${g.c}">${g.l}</span>`).join('')}</div>
+    </div>
+    <div class="tv-msg">
+      <div class="tv-from">${t.customer}</div>
+      <div class="tv-when">${t.ts}</div>
+      <div class="tv-body">${t.body}</div>
+    </div>
+    <div class="tv-doc">
+      <div class="tv-doc-lbl">Formulário da operadora</div>
+      <div class="tv-paper ${gen?'ready':''}">
+        <div class="tv-stamp">pronto p/ assinar</div>
+        ${gen ? `<div class="tv-pl"></div><div class="tv-pl"></div><div class="tv-pl"></div><div class="tv-pl"></div>` : `<div class="tv-empty">O formulário aparecerá aqui após clicar em Gerar formulário no painel…</div>`}
+      </div>
+      <div class="tv-sent ${sent?'vis':''}">
+        <div class="ok-ck">✓</div>
+        Enviado para assinatura eletrônica
+      </div>
+    </div>
+  </div>`;
+}
+
+function popup() {
+  const t = TICKETS[cur];
+  return `<div class="ep">
+    <div class="ep-hd">
+      <div class="ep-brand"><div class="ep-ico">F</div><span class="ep-name">FormPilot</span></div>
+      <span class="ep-ver">v1.0</span>
+    </div>
+    <div class="ep-body">${corpo(t)}</div>
+    <div class="ep-ft">
+      <span class="ep-ft-a">⚙ Operadoras configuradas</span>
+      <span class="ep-dbg" id="dbg">Detalhes</span>
+    </div>
+  </div>`;
+}
+
+function corpo(t) {
+  if (st === 'idle') return `
+    <div class="ep-idle">
+      <span class="ep-idle-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></span>
+      <div class="ep-idle-txt">Chamado detectado. Clique em Analisar para identificar operadora, tipo de movimentação e beneficiário.</div>
+    </div>
+    <button class="ep-abtn" id="abtn">Analisar chamado</button>`;
+
+  if (st === 'scanning') return `
+    <div class="ep-scan">
+      <div class="ep-scan-bar"><div class="ep-scan-fill"></div></div>
+      <div class="ep-scan-txt">Lendo o conteúdo do chamado…</div>
+    </div>
+    <button class="ep-abtn" disabled>Analisando…</button>`;
+
+  if (st === 'detected') return `
+    <div>
+      <span class="ep-lbl">Identificado</span>
+      <div class="ep-fields">
+        ${[['Operadora', t.det.operadora], ['Movimentação', t.det.tipo], ['Beneficiário', t.det.beneficiario]].map(([k,v]) => `
+          <div class="ep-field">
+            <div><div class="ep-fk">${k}</div><div class="ep-fv">${v}</div></div>
+            <span class="ep-fchk">✓</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    <button class="ep-ibtn" id="gbtn">Gerar formulário</button>`;
+
+  if (st === 'generated') return `
+    <div>
+      <span class="ep-lbl">Identificado</span>
+      <div class="ep-fields">
+        ${[['Operadora', t.det.operadora], ['Movimentação', t.det.tipo]].map(([k,v]) => `
+          <div class="ep-field">
+            <div><div class="ep-fk">${k}</div><div class="ep-fv">${v}</div></div>
+            <span class="ep-fchk">✓</span>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div>
+      <span class="ep-lbl">Formulário montado</span>
+      <div class="ep-field"><div><div class="ep-fk">documento</div><div class="ep-fv">pronto para assinatura</div></div><span class="ep-fchk">✓</span></div>
+    </div>
+    <button class="ep-ibtn" id="sbtn">Enviar para assinatura</button>`;
+
+  if (st === 'sent') return `
+    <div class="ep-suc">
+      <span class="ep-suc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="1.8"><path d="M5 13l4 4L19 7"/></svg></span>
+      <div class="ep-suc-ttl">Enviado</div>
+      <div class="ep-suc-sub">${t.det.operadora} · ${t.det.tipo}<br>Documento encaminhado ao beneficiário para assinatura.</div>
+      <div class="ep-proto">protocolo ${t.det.proto}</div>
+    </div>`;
+}
+
+function bind() {
+  document.querySelectorAll('.qc').forEach(c =>
+    c.addEventListener('click', () => {
+      const i = +c.dataset.i;
+      if (i !== cur) { cur = i; st = 'idle'; render(); }
+    })
+  );
+  const ab = document.getElementById('abtn');
+  if (ab) ab.addEventListener('click', () => {
+    st = 'scanning'; render();
+    setTimeout(() => { st = 'detected'; render(); }, 1250);
+  });
+  const gb = document.getElementById('gbtn');
+  if (gb) gb.addEventListener('click', () => { st = 'generated'; render(); });
+  const sb = document.getElementById('sbtn');
+  if (sb) sb.addEventListener('click', () => { st = 'sent'; render(); });
+  const db = document.getElementById('dbg');
+  if (db) db.addEventListener('click', () => {
+    const t = TICKETS[cur];
+    alert(
+      `Detalhes — ${t.id}\n\n` +
+      `Operadora:      ${st === 'idle' || st === 'scanning' ? '(ainda não analisado)' : t.det.operadora}\n` +
+      `Movimentação:   ${st === 'idle' || st === 'scanning' ? '(ainda não analisado)' : t.det.tipo}\n` +
+      `Beneficiário:   ${st === 'idle' || st === 'scanning' ? '(ainda não analisado)' : t.det.beneficiario}\n\n` +
+      `Estado do painel: ${st}\n` +
+      `Operadoras configuradas: 3\n` +
+      `Protocolo: ${st === 'sent' ? t.det.proto : '(gerado apenas após envio)'}\n\n` +
+      `Todos os dados desta demo são fictícios.`
+    );
+  });
+}
+
+render();
+</script>
+</body>
+</html>

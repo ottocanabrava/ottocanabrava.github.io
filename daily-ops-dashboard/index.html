@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Daily Ops Dashboard — Fintex Solutions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #ECEEF2;
+      --surface:     #FFFFFF;
+      --header:      #131D2E;
+      --hero:        #1A2740;
+      --text:        #111827;
+      --muted:       #6B7280;
+      --faint:       #9CA3AF;
+      --border:      #E5E7EB;
+      --critical:    #DC2626;
+      --crit-bg:     #FEF2F2;
+      --warning:     #D97706;
+      --warn-bg:     #FFFBEB;
+      --ok:          #16A34A;
+      --ok-bg:       #F0FDF4;
+      --purple:      #7C3AED;
+      --purp-bg:     #EDE9FE;
+      --blue:        #2563EB;
+      --blue-bg:     #EFF6FF;
+      --neutral-bg:  #F9FAFB;
+    }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    /* ── HEADER ─────────────────────────────── */
+    header {
+      background: var(--header);
+      padding: 0 32px;
+      height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .h-brand {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 600; color: #E2E8F0;
+    }
+    .h-live {
+      width: 7px; height: 7px; border-radius: 50%; background: #22C55E;
+    }
+    .h-right { display: flex; align-items: center; gap: 20px; }
+    .h-analyst { font-size: 12px; font-weight: 500; color: #CBD5E1; }
+    .h-date    { font-size: 11px; color: #64748B; font-family: 'DM Mono', monospace; }
+
+    /* ── HERO ───────────────────────────────── */
+    .hero {
+      background: var(--hero);
+      padding: 28px 32px 32px;
+    }
+    .hero-eyebrow {
+      font-size: 11px; color: #475569; font-weight: 500;
+      letter-spacing: .02em; margin-bottom: 6px;
+    }
+    .hero-title {
+      font-size: 17px; font-weight: 600; color: #F1F5F9; margin-bottom: 22px;
+    }
+    .priority-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 14px;
+    }
+    .pcard {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-left: 4px solid transparent;
+      border-radius: 8px; padding: 18px;
+    }
+    .pcard.p-critical { border-left-color: var(--critical); }
+    .pcard.p-warning  { border-left-color: var(--warning); }
+    .pcard.p-medium   { border-left-color: var(--purple); }
+    .pcard-seq     { font-family:'DM Mono',monospace; font-size:10px; color:#475569; margin-bottom:8px; }
+    .pcard-company { font-size:15px; font-weight:600; color:#F1F5F9; margin-bottom:8px; }
+    .pcard-reason  { font-size:12px; color:#94A3B8; line-height:1.6; margin-bottom:14px; }
+    .signal-row    { display:flex; flex-wrap:wrap; gap:6px; }
+    .sig {
+      font-size:10px; font-weight:500;
+      font-family:'DM Mono',monospace;
+      padding:2px 8px; border-radius:3px;
+    }
+    .sig-sla    { background:rgba(220,38,38,.18);  color:#FCA5A5; }
+    .sig-churn  { background:rgba(217,119,6,.18);  color:#FCD34D; }
+    .sig-ticket { background:rgba(124,58,237,.18); color:#C4B5FD; }
+    .sig-ok     { background:rgba(22,163,74,.18);  color:#86EFAC; }
+    .sig-fat    { background:rgba(37,99,235,.18);  color:#93C5FD; }
+
+    /* ── MAIN GRID ──────────────────────────── */
+    .main {
+      max-width: 1160px; margin: 0 auto;
+      padding: 24px 32px 32px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 20px; align-items: start;
+    }
+
+    /* ── CARD SHELL ─────────────────────────── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+    }
+    .card + .card { margin-top: 18px; }
+    .card-header {
+      padding: 14px 20px; border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .card-title { font-size:13px; font-weight:600; color:var(--text); }
+    .card-meta  { font-size:11px; color:var(--muted); font-family:'DM Mono',monospace; }
+
+    /* ── TABS ───────────────────────────────── */
+    .tab-bar {
+      display: flex; border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .tab-btn {
+      flex: 1; padding: 12px 16px; font-size: 12px; font-weight: 500;
+      color: var(--muted); background: none; border: none;
+      border-bottom: 2px solid transparent; cursor: pointer;
+      transition: color .15s, border-color .15s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .tab-btn.active {
+      color: var(--text); border-bottom-color: var(--blue);
+    }
+    .tab-btn:hover:not(.active) { color: var(--text); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── SLA GAUGE ──────────────────────────── */
+    .sla-overview {
+      padding: 20px; display: flex; align-items: center;
+      gap: 18px; border-bottom: 1px solid var(--border);
+    }
+    .gauge-wrap { position:relative; width:78px; height:78px; flex-shrink:0; }
+    .gauge-wrap svg { transform: rotate(-90deg); }
+    .gauge-label {
+      position:absolute; inset:0; display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+    }
+    .gauge-pct  { font-family:'DM Mono',monospace; font-size:19px; font-weight:500; color:var(--critical); line-height:1; }
+    .gauge-sub  { font-size:9px; color:var(--faint); margin-top:2px; }
+    .sla-text   { flex:1; }
+    .sla-text-title { font-size:13px; font-weight:600; color:var(--text); margin-bottom:3px; }
+    .sla-text-desc  { font-size:11px; color:var(--muted); line-height:1.5; }
+    .gap-pill {
+      display:inline-block; font-family:'DM Mono',monospace; font-size:10px;
+      background:var(--crit-bg); color:var(--critical);
+      padding:2px 6px; border-radius:3px; margin-top:5px;
+    }
+
+    /* ── CLIENT BARS ────────────────────────── */
+    .client-row {
+      display:flex; align-items:center; padding:10px 20px;
+      gap:10px; border-bottom:1px solid var(--border);
+    }
+    .client-row:last-child { border-bottom:none; }
+    .dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+    .dot-r { background:var(--critical); }
+    .dot-a { background:var(--warning); }
+    .dot-g { background:var(--ok); }
+    .client-name { flex:1; font-size:12px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .bar-group { display:flex; align-items:center; gap:8px; }
+    .bar-track { width:56px; height:4px; background:#F3F4F6; border-radius:2px; overflow:hidden; }
+    .bar-fill  { height:100%; border-radius:2px; }
+    .bar-num   { font-family:'DM Mono',monospace; font-size:11px; color:var(--muted); min-width:28px; text-align:right; }
+
+    /* ── TICKET ROWS ────────────────────────── */
+    .ticket-row {
+      display:flex; align-items:center; gap:12px;
+      padding:13px 20px; border-bottom:1px solid var(--border);
+      border-left:3px solid transparent;
+    }
+    .ticket-row:last-child { border-bottom:none; }
+    .ticket-row:hover { background:#FAFAFA; }
+    .ticket-row.t-critical { border-left-color:var(--critical); }
+    .ticket-row.t-warning  { border-left-color:var(--warning); }
+    .ticket-row.t-medium   { border-left-color:var(--purple); }
+    .ticket-row.t-low      { border-left-color:var(--border); }
+
+    .prio-badge {
+      font-size:10px; font-weight:600; font-family:'DM Mono',monospace;
+      padding:3px 8px; border-radius:3px; min-width:58px; text-align:center; flex-shrink:0;
+    }
+    .b-critical { background:var(--crit-bg); color:var(--critical); }
+    .b-high     { background:var(--warn-bg); color:var(--warning); }
+    .b-medium   { background:var(--purp-bg); color:var(--purple); }
+    .b-low      { background:var(--neutral-bg); color:var(--muted); }
+
+    .ticket-id {
+      font-family:'DM Mono',monospace; font-size:10px; color:var(--faint); flex-shrink:0;
+    }
+    .ticket-body { flex:1; min-width:0; }
+    .ticket-subject {
+      font-size:13px; font-weight:500; color:var(--text);
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+    .ticket-sub-row {
+      display:flex; gap:6px; align-items:center; margin-top:3px; flex-wrap:wrap;
+    }
+    .ticket-client { font-size:11px; color:var(--muted); }
+    .type-tag {
+      font-size:10px; font-weight:500; padding:1px 6px; border-radius:3px;
+      background:var(--blue-bg); color:var(--blue); font-family:'DM Mono',monospace;
+    }
+    .stage-tag {
+      font-size:10px; color:var(--muted); font-style:italic;
+    }
+    .ticket-right { display:flex; align-items:center; gap:7px; flex-shrink:0; }
+    .ticket-age   { font-family:'DM Mono',monospace; font-size:11px; color:var(--faint); min-width:32px; text-align:right; }
+
+    .mini { font-size:9px; font-weight:600; padding:2px 6px; border-radius:3px; }
+    .m-ch-h { background:var(--crit-bg); color:var(--critical); }
+    .m-ch-m { background:var(--warn-bg); color:var(--warning); }
+    .m-ch-l { background:var(--ok-bg);   color:var(--ok); }
+    .m-sl-ok { background:var(--ok-bg);   color:var(--ok); }
+    .m-sl-r  { background:var(--crit-bg); color:var(--critical); }
+    .m-sl-w  { background:var(--warn-bg); color:var(--warning); }
+
+    /* ── FATURA ROWS ────────────────────────── */
+    .fat-row {
+      display:flex; align-items:center; gap:12px;
+      padding:13px 20px; border-bottom:1px solid var(--border);
+      border-left:3px solid transparent;
+    }
+    .fat-row:last-child { border-bottom:none; }
+    .fat-row:hover { background:#FAFAFA; }
+    .fat-row.f-overdue { border-left-color:var(--critical); }
+    .fat-row.f-review  { border-left-color:var(--warning); }
+    .fat-row.f-pending { border-left-color:var(--blue); }
+    .fat-row.f-done    { border-left-color:var(--border); }
+
+    .fat-status {
+      font-size:10px; font-weight:600; font-family:'DM Mono',monospace;
+      padding:3px 8px; border-radius:3px; min-width:76px; text-align:center; flex-shrink:0;
+    }
+    .fs-overdue { background:var(--crit-bg); color:var(--critical); }
+    .fs-review  { background:var(--warn-bg); color:var(--warning); }
+    .fs-pending { background:var(--blue-bg); color:var(--blue); }
+    .fs-done    { background:var(--ok-bg);   color:var(--ok); }
+
+    .fat-body { flex:1; min-width:0; }
+    .fat-company { font-size:13px; font-weight:500; color:var(--text); }
+    .fat-detail  { font-size:11px; color:var(--muted); margin-top:2px; }
+    .fat-right { display:flex; align-items:center; gap:8px; flex-shrink:0; text-align:right; }
+    .fat-prazo {
+      font-family:'DM Mono',monospace; font-size:11px;
+    }
+    .fat-prazo.urgent  { color:var(--critical); }
+    .fat-prazo.warn    { color:var(--warning); }
+    .fat-prazo.ok      { color:var(--ok); }
+    .fat-prazo.neutral { color:var(--faint); }
+    .fat-pending-tag {
+      font-size:9px; font-weight:600; padding:2px 6px; border-radius:3px;
+      background:var(--crit-bg); color:var(--critical);
+    }
+
+    /* ── ARCH NOTE ──────────────────────────── */
+    .arch-note {
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:10px; padding:18px 20px; margin-top:18px;
+    }
+    .arch-title { font-size:12px; font-weight:600; color:var(--text); margin-bottom:12px; }
+    .arch-step {
+      display:flex; align-items:flex-start; gap:10px;
+      font-size:11px; color:var(--muted); line-height:1.5; margin-bottom:8px;
+    }
+    .arch-step:last-child { margin-bottom:0; }
+    .arch-n {
+      font-family:'DM Mono',monospace; font-size:10px;
+      background:var(--bg); color:var(--muted);
+      padding:1px 6px; border-radius:3px; flex-shrink:0; margin-top:1px;
+    }
+
+    /* ── SCORE LEGEND ───────────────────────── */
+    .score-grid {
+      display:grid; grid-template-columns:1fr 1fr; gap:12px;
+      padding:18px 20px;
+    }
+    .score-item { font-size:11px; color:var(--muted); line-height:1.6; }
+    .score-item strong { display:block; font-weight:600; color:var(--text); margin-bottom:3px; }
+
+    /* ── FOOTER ─────────────────────────────── */
+    footer {
+      border-top:1px solid var(--border);
+      max-width:1160px; margin:0 auto 32px;
+      padding:16px 32px 0;
+      display:flex; justify-content:space-between; align-items:center;
+    }
+    .footer-note { font-size:11px; color:var(--faint); }
+    .footer-arch { font-size:10px; color:var(--faint); font-family:'DM Mono',monospace; }
+
+    /* ── RESPONSIVE ─────────────────────────── */
+    @media(max-width:860px){
+      .priority-grid { grid-template-columns:1fr; }
+      .main          { grid-template-columns:1fr; padding:16px; }
+      .hero          { padding:20px 16px 24px; }
+      header         { padding:0 16px; }
+      footer         { padding:14px 16px 0; flex-direction:column; gap:6px; align-items:flex-start; }
+      .ticket-right, .fat-right { display:none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ───────────────────────────────────────── -->
+<header>
+  <div class="h-brand">
+    <span class="h-live"></span>
+    Fintex Solutions — CS Operations
+  </div>
+  <div class="h-right">
+    <span class="h-analyst">Ana Lima</span>
+    <span class="h-date" id="js-date"></span>
+  </div>
+</header>
+
+<!-- ── HERO ─────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-eyebrow">Painel diário · prioridades geradas automaticamente</div>
+  <div class="hero-title">Por onde você começa hoje</div>
+  <div class="priority-grid">
+
+    <div class="pcard p-critical">
+      <div class="pcard-seq">prioridade 1 de 3</div>
+      <div class="pcard-company">Terraverde Agro S.A.</div>
+      <div class="pcard-reason">
+        SLA vencido há 2 dias com 18 movimentações pendentes. Health score 32/100 — risco de cancelamento elevado. Ticket mais antigo completa 8 dias sem resposta. Fatura do mês com 2 divergências abertas bloqueando emissão.
+      </div>
+      <div class="signal-row">
+        <span class="sig sig-sla">SLA vencido</span>
+        <span class="sig sig-churn">Churn alto</span>
+        <span class="sig sig-ticket">Ticket 8d</span>
+        <span class="sig sig-fat">Fatura bloqueada</span>
+      </div>
+    </div>
+
+    <div class="pcard p-warning">
+      <div class="pcard-seq">prioridade 2 de 3</div>
+      <div class="pcard-company">Meridian Logística Ltda</div>
+      <div class="pcard-reason">
+        Janela de SLA fecha em 3 dias com 12 movimentações pendentes. Ticket de atualização de dependentes aberto há 3 dias. Fatura em revisão com 1 divergência — prazo de emissão em 5 dias.
+      </div>
+      <div class="signal-row">
+        <span class="sig sig-sla">SLA fechando</span>
+        <span class="sig sig-churn">Churn médio</span>
+        <span class="sig sig-ticket">Ticket 3d</span>
+        <span class="sig sig-fat">Fatura em revisão</span>
+      </div>
+    </div>
+
+    <div class="pcard p-medium">
+      <div class="pcard-seq">prioridade 3 de 3</div>
+      <div class="pcard-company">Bluewave Capital</div>
+      <div class="pcard-reason">
+        SLA dentro do prazo, mas risco de cancelamento subiu para alto (health score 41/100). Ticket de inclusão aberto ontem. Fatura a emitir — prazo em 10 dias, sem pendências.
+      </div>
+      <div class="signal-row">
+        <span class="sig sig-ok">SLA ok</span>
+        <span class="sig sig-churn">Churn alto</span>
+        <span class="sig sig-ticket">Ticket 1d</span>
+        <span class="sig sig-fat">Fatura ok</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── MAIN GRID ─────────────────────────────────────── -->
+<div class="main">
+
+  <!-- LEFT: SLA -->
+  <div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">SLA da carteira</span>
+        <span class="card-meta">meta 88%</span>
+      </div>
+      <div class="sla-overview">
+        <div class="gauge-wrap">
+          <svg width="78" height="78" viewBox="0 0 78 78">
+            <circle cx="39" cy="39" r="31" fill="none" stroke="#F3F4F6" stroke-width="6"/>
+            <circle cx="39" cy="39" r="31" fill="none" stroke="#DC2626" stroke-width="6"
+              stroke-dasharray="194.8" stroke-dashoffset="37" stroke-linecap="round"/>
+          </svg>
+          <div class="gauge-label">
+            <span class="gauge-pct">81%</span>
+            <span class="gauge-sub">atual</span>
+          </div>
+        </div>
+        <div class="sla-text">
+          <div class="sla-text-title">Abaixo da meta</div>
+          <div class="sla-text-desc">
+            104 de 128 movimentações concluídas no prazo neste mês.
+            <br><span class="gap-pill">−7 p.p. da meta</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="client-row">
+          <div class="dot dot-r"></div><div class="client-name">Terraverde Agro</div>
+          <div class="bar-group"><div class="bar-track"><div class="bar-fill" style="width:52%;background:#DC2626;"></div></div><span class="bar-num" style="color:#DC2626;">52%</span></div>
+        </div>
+        <div class="client-row">
+          <div class="dot dot-a"></div><div class="client-name">Meridian Logística</div>
+          <div class="bar-group"><div class="bar-track"><div class="bar-fill" style="width:74%;background:#D97706;"></div></div><span class="bar-num" style="color:#D97706;">74%</span></div>
+        </div>
+        <div class="client-row">
+          <div class="dot dot-a"></div><div class="client-name">Nuvem Soluções</div>
+          <div class="bar-group"><div class="bar-track"><div class="bar-fill" style="width:79%;background:#D97706;"></div></div><span class="bar-num" style="color:#D97706;">79%</span></div>
+        </div>
+        <div class="client-row">
+          <div class="dot dot-g"></div><div class="client-name">Bluewave Capital</div>
+          <div class="bar-group"><div class="bar-track"><div class="bar-fill" style="width:91%;background:#16A34A;"></div></div><span class="bar-num" style="color:#16A34A;">91%</span></div>
+        </div>
+        <div class="client-row">
+          <div class="dot dot-g"></div><div class="client-name">Grupo Horizonte</div>
+          <div class="bar-group"><div class="bar-track"><div class="bar-fill" style="width:88%;background:#16A34A;"></div></div><span class="bar-num" style="color:#16A34A;">88%</span></div>
+        </div>
+        <div class="client-row">
+          <div class="dot dot-g"></div><div class="client-name">Solaris Tech S.A.</div>
+          <div class="bar-group"><div class="bar-track"><div class="bar-fill" style="width:94%;background:#16A34A;"></div></div><span class="bar-num" style="color:#16A34A;">94%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-note">
+      <div class="arch-title">Como o painel é gerado</div>
+      <div class="arch-step"><span class="arch-n">1</span><span>E-mail do analista resolve identidade nas três fontes: fila de tickets no CRM, carteira de clientes no data warehouse e situação de faturas do mês.</span></div>
+      <div class="arch-step"><span class="arch-n">2</span><span>Fontes cruzadas por identificador único de empresa — não por nome, que varia entre sistemas.</span></div>
+      <div class="arch-step"><span class="arch-n">3</span><span>Score de urgência combina SLA + risco de churn + tempo de ticket + prazo de emissão de fatura. Prioridades geradas a cada execução.</span></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: TABS (Tickets + Faturas) -->
+  <div>
+    <div class="card">
+
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('tickets', this)">
+          Tickets HubSpot <span id="badge-tickets" style="font-family:'DM Mono',monospace;font-size:10px;margin-left:4px;background:#EFF6FF;color:#2563EB;padding:1px 5px;border-radius:3px;">4</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('faturas', this)">
+          Faturas do mês <span id="badge-faturas" style="font-family:'DM Mono',monospace;font-size:10px;margin-left:4px;background:#FEF2F2;color:#DC2626;padding:1px 5px;border-radius:3px;">2 pendentes</span>
+        </button>
+      </div>
+
+      <!-- ── TICKETS TAB ──────────────────────── -->
+      <div id="tab-tickets" class="tab-panel active">
+
+        <div class="ticket-row t-critical">
+          <div class="prio-badge b-critical">Crítico</div>
+          <div class="ticket-id">#4821</div>
+          <div class="ticket-body">
+            <div class="ticket-subject">Revisão de cadastro corporativo</div>
+            <div class="ticket-sub-row">
+              <span class="ticket-client">Terraverde Agro S.A.</span>
+              <span class="type-tag">Divergência</span>
+              <span class="stage-tag">Em análise</span>
+            </div>
+          </div>
+          <div class="ticket-right">
+            <span class="ticket-age">8 dias</span>
+            <span class="mini m-ch-h">churn alto</span>
+            <span class="mini m-sl-r">SLA vencido</span>
+          </div>
+        </div>
+
+        <div class="ticket-row t-warning">
+          <div class="prio-badge b-high">Alta</div>
+          <div class="ticket-id">#4756</div>
+          <div class="ticket-body">
+            <div class="ticket-subject">Atualização de dependentes</div>
+            <div class="ticket-sub-row">
+              <span class="ticket-client">Meridian Logística Ltda</span>
+              <span class="type-tag">Movimentação</span>
+              <span class="stage-tag">Aguardando operadora</span>
+            </div>
+          </div>
+          <div class="ticket-right">
+            <span class="ticket-age">3 dias</span>
+            <span class="mini m-ch-m">churn médio</span>
+            <span class="mini m-sl-w">SLA em risco</span>
+          </div>
+        </div>
+
+        <div class="ticket-row t-medium">
+          <div class="prio-badge b-medium">Média</div>
+          <div class="ticket-id">#4803</div>
+          <div class="ticket-body">
+            <div class="ticket-subject">Inclusão de novo colaborador</div>
+            <div class="ticket-sub-row">
+              <span class="ticket-client">Bluewave Capital</span>
+              <span class="type-tag">Movimentação</span>
+              <span class="stage-tag">Em análise</span>
+            </div>
+          </div>
+          <div class="ticket-right">
+            <span class="ticket-age">1 dia</span>
+            <span class="mini m-ch-h">churn alto</span>
+            <span class="mini m-sl-ok">SLA ok</span>
+          </div>
+        </div>
+
+        <div class="ticket-row t-low">
+          <div class="prio-badge b-low">Baixa</div>
+          <div class="ticket-id">#4791</div>
+          <div class="ticket-body">
+            <div class="ticket-subject">Dúvida sobre cobertura do plano</div>
+            <div class="ticket-sub-row">
+              <span class="ticket-client">Grupo Horizonte</span>
+              <span class="type-tag">Suporte</span>
+              <span class="stage-tag">Aguardando cliente</span>
+            </div>
+          </div>
+          <div class="ticket-right">
+            <span class="ticket-age">1 dia</span>
+            <span class="mini m-ch-l">churn baixo</span>
+            <span class="mini m-sl-ok">SLA ok</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── FATURAS TAB ──────────────────────── -->
+      <div id="tab-faturas" class="tab-panel">
+
+        <div class="fat-row f-overdue">
+          <div class="fat-status fs-overdue">Atrasada</div>
+          <div class="fat-body">
+            <div class="fat-company">Terraverde Agro S.A.</div>
+            <div class="fat-detail">Competência Set/2026 · 2 divergências abertas bloqueando emissão</div>
+          </div>
+          <div class="fat-right">
+            <span class="fat-prazo urgent">vencida há 3d</span>
+            <span class="fat-pending-tag">2 divergências</span>
+          </div>
+        </div>
+
+        <div class="fat-row f-review">
+          <div class="fat-status fs-review">Em revisão</div>
+          <div class="fat-body">
+            <div class="fat-company">Meridian Logística Ltda</div>
+            <div class="fat-detail">Competência Set/2026 · 1 divergência em tratativa</div>
+          </div>
+          <div class="fat-right">
+            <span class="fat-prazo warn">emitir em 5d</span>
+            <span class="fat-pending-tag">1 divergência</span>
+          </div>
+        </div>
+
+        <div class="fat-row f-pending">
+          <div class="fat-status fs-pending">A emitir</div>
+          <div class="fat-body">
+            <div class="fat-company">Nuvem Soluções</div>
+            <div class="fat-detail">Competência Set/2026 · aguardando base do cliente</div>
+          </div>
+          <div class="fat-right">
+            <span class="fat-prazo warn">emitir em 8d</span>
+          </div>
+        </div>
+
+        <div class="fat-row f-pending">
+          <div class="fat-status fs-pending">A emitir</div>
+          <div class="fat-body">
+            <div class="fat-company">Bluewave Capital</div>
+            <div class="fat-detail">Competência Set/2026 · sem pendências identificadas</div>
+          </div>
+          <div class="fat-right">
+            <span class="fat-prazo ok">emitir em 10d</span>
+          </div>
+        </div>
+
+        <div class="fat-row f-done">
+          <div class="fat-status fs-done">Emitida</div>
+          <div class="fat-body">
+            <div class="fat-company">Grupo Horizonte</div>
+            <div class="fat-detail">Competência Set/2026 · emitida em 18/09/2026</div>
+          </div>
+          <div class="fat-right">
+            <span class="fat-prazo neutral">concluída</span>
+          </div>
+        </div>
+
+        <div class="fat-row f-done">
+          <div class="fat-status fs-done">Emitida</div>
+          <div class="fat-body">
+            <div class="fat-company">Solaris Tech S.A.</div>
+            <div class="fat-detail">Competência Set/2026 · emitida em 15/09/2026</div>
+          </div>
+          <div class="fat-right">
+            <span class="fat-prazo neutral">concluída</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Score legend -->
+    <div class="card" style="margin-top:18px;">
+      <div class="card-header">
+        <span class="card-title">Lógica de priorização</span>
+      </div>
+      <div class="score-grid">
+        <div class="score-item"><strong>SLA de movimentação</strong>Movimentações concluídas no prazo ÷ total do mês. Empresas abaixo de 88% pesam mais no score.</div>
+        <div class="score-item"><strong>Risco de churn</strong>Health score consolidado — NPS, engajamento e sinais de insatisfação. Alto eleva urgência mesmo com SLA ok.</div>
+        <div class="score-item"><strong>Ticket em aberto</strong>Dias sem resposta + prioridade + estágio no pipeline. ID do ticket rastreado para evitar retrabalho.</div>
+        <div class="score-item"><strong>Prazo de fatura</strong>Dias até o vencimento de emissão, combinado com número de divergências bloqueantes. Fatura atrasada com divergência aberta é sempre crítico.</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── FOOTER ────────────────────────────────────────── -->
+<footer>
+  <span class="footer-note">Demonstração conceitual · dados 100% fictícios · empresa, nomes e valores não reais</span>
+  <span class="footer-arch">data warehouse + CRM + carteira → score → painel</span>
+</footer>
+
+<script>
+  // Date
+  const d = new Date();
+  document.getElementById('js-date').textContent =
+    d.toLocaleDateString('pt-BR', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  // Tabs
+  function switchTab(id, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+
+</body>
+</html>

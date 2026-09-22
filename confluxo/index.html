@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confluxo — coleta automatizada de documentos financeiros</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #ECEEF2;
+    --header: #131D2E;
+    --hero: #1A2740;
+    --blue: #2563EB;
+    --blue-dim: #DCE6FD;
+    --green: #16A34A;
+    --green-dim: #E1F5E7;
+    --surface: #FFFFFF;
+    --text: #131D2E;
+    --text-muted: #626C7D;
+    --text-faint: #8B93A3;
+    --border: #DADFE7;
+    --radius-card: 10px;
+    --radius-badge: 3px;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "DM Sans", -apple-system, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono{ font-family: "DM Mono", ui-monospace, monospace; }
+
+  a{ color: inherit; }
+
+  /* ---------- top bar ---------- */
+
+  .topbar{
+    background: var(--header);
+    color: #fff;
+    padding: 18px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .topbar .mark{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+  }
+
+  .mark .glyph{
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: var(--blue);
+    display: grid;
+    place-items: center;
+  }
+  .mark .glyph svg{ width: 12px; height: 12px; }
+
+  .topbar nav{
+    display: flex;
+    gap: 28px;
+    font-size: 13.5px;
+    color: #B7BFCE;
+  }
+  .topbar nav a{ text-decoration: none; transition: color .15s; }
+  .topbar nav a:hover{ color: #fff; }
+
+  /* ---------- hero ---------- */
+
+  .hero{
+    background: var(--hero);
+    color: #fff;
+    padding: 64px 40px 72px;
+  }
+
+  .hero-inner{
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+
+  .kicker-badge{
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(37,99,235,0.18);
+    border: 1px solid rgba(37,99,235,0.45);
+    color: #A9C2FB;
+    font-family: "DM Mono", monospace;
+    font-size: 11.5px;
+    padding: 5px 10px 5px 8px;
+    border-radius: var(--radius-badge);
+    margin-bottom: 22px;
+  }
+  .kicker-badge .dot{
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue);
+  }
+
+  .hero h1{
+    font-size: 38px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    max-width: 620px;
+    margin: 0 0 18px;
+    line-height: 1.18;
+  }
+
+  .hero p.lede{
+    max-width: 540px;
+    color: #B7C1D4;
+    font-size: 16px;
+    margin: 0 0 34px;
+  }
+
+  .hero-stats{
+    display: flex;
+    gap: 36px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,0.12);
+    max-width: 620px;
+  }
+  .hero-stats div h3{
+    font-family: "DM Mono", monospace;
+    font-size: 22px;
+    font-weight: 500;
+    margin: 0 0 4px;
+    color: #fff;
+  }
+  .hero-stats div p{
+    margin: 0;
+    font-size: 12.5px;
+    color: #8FA0BE;
+  }
+
+  /* ---------- shell ---------- */
+
+  .shell{
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 40px 80px;
+  }
+
+  .section-head{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
+  }
+  .section-head h2{
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .section-head span{
+    font-size: 12.5px;
+    color: var(--text-faint);
+    font-family: "DM Mono", monospace;
+  }
+
+  /* ---------- dashboard grid ---------- */
+
+  .grid{
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+  }
+
+  .card-head{
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .card-head h3{
+    font-size: 13.5px;
+    font-weight: 600;
+    margin: 0;
+  }
+  .card-head .count{
+    font-family: "DM Mono", monospace;
+    font-size: 11.5px;
+    color: var(--text-faint);
+  }
+
+  /* left column stack */
+
+  .left-col{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* add-access form */
+
+  .form-body{
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .field{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+  }
+  .field input, .field select{
+    font-family: "DM Sans", sans-serif;
+    font-size: 13px;
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    background: #fff;
+  }
+  .field input:focus, .field select:focus{
+    outline: 2px solid var(--blue-dim);
+    border-color: var(--blue);
+  }
+  .btn-add{
+    align-self: flex-start;
+    background: #fff;
+    border: 1px solid var(--blue);
+    color: var(--blue);
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 9px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-add:hover{ background: var(--blue-dim); }
+
+  .opts{
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    padding-top: 10px;
+    margin-top: 2px;
+    border-top: 1px solid var(--border);
+    font-size: 12.5px;
+    color: var(--text-muted);
+  }
+  .opts .radios{ display: flex; gap: 18px; }
+  .chk, .rad{ display: flex; align-items: center; gap: 7px; }
+  input[type="checkbox"], input[type="radio"]{ accent-color: var(--blue); }
+
+  /* action bar below grid */
+
+  .action-bar{
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-top: 16px;
+  }
+  .btn-primary{
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    font-family: "DM Sans", sans-serif;
+    font-weight: 600;
+    font-size: 13.5px;
+    padding: 12px 22px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-primary:hover{ background: #1D4FBF; }
+  .link-folder{
+    font-size: 12.5px;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  .link-folder:hover{ color: var(--blue); }
+
+  /* queue list */
+
+  .queue-item{
+    padding: 12px 18px;
+    border-left: 3px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .queue-item:last-child{ border-bottom: none; }
+  .queue-item[data-state="done"]{ border-left-color: var(--green); }
+  .queue-item[data-state="active"]{ border-left-color: var(--blue); }
+  .queue-item[data-state="queued"]{ border-left-color: var(--border); }
+
+  .queue-item .row1{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .queue-item .name{ font-weight: 500; font-size: 13.5px; }
+  .queue-item .portal{
+    font-size: 11.5px;
+    color: var(--text-muted);
+    font-family: "DM Mono", monospace;
+  }
+
+  .badge{
+    font-family: "DM Mono", monospace;
+    font-size: 10.5px;
+    padding: 2px 7px;
+    border-radius: var(--radius-badge);
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+  }
+  .badge.done{ background: var(--green-dim); color: #0F7A38; }
+  .badge.active{ background: var(--blue-dim); color: #1D4FBF; }
+  .badge.queued{ background: #EEF0F4; color: var(--text-faint); }
+
+  /* log panel */
+
+  .log-panel{
+    background: var(--header);
+    color: #DCE1EA;
+    padding: 16px 18px;
+    font-family: "DM Mono", monospace;
+    font-size: 12.5px;
+    min-height: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .log-line{
+    display: flex;
+    gap: 10px;
+    padding: 3px 0;
+    opacity: 0;
+    transform: translateY(2px);
+    animation: rise .35s ease forwards;
+  }
+  @keyframes rise{ to{ opacity: 1; transform: translateY(0); } }
+
+  .log-line .t{ color: #5A6786; flex-shrink: 0; }
+  .log-line .m{ color: #C7CEDC; }
+  .log-line.ok .m{ color: #6FD196; }
+  .log-line.hd .m{ color: #7FA6F2; font-weight: 500; }
+
+  .progress-wrap{
+    padding: 14px 18px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .progress-track{
+    flex: 1;
+    height: 5px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill{
+    height: 100%;
+    width: 0%;
+    background: var(--blue);
+    border-radius: 3px;
+    animation: fill 5.5s ease-out forwards;
+    animation-delay: .3s;
+  }
+  @keyframes fill{ to{ width: 66%; } }
+  .progress-wrap .label{
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    color: #8FA0BE;
+  }
+
+  /* report table */
+
+  table.report{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  table.report th{
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-faint);
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    font-family: "DM Mono", monospace;
+    text-transform: none;
+  }
+  table.report td{
+    padding: 11px 18px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  table.report tr:last-child td{ border-bottom: none; }
+  table.report td.mono{ font-family: "DM Mono", monospace; font-size: 12.5px; color: var(--text-muted); }
+  table.report td.val{ font-family: "DM Mono", monospace; }
+
+  /* folder tree */
+
+  .tree{
+    padding: 16px 18px;
+    font-family: "DM Mono", monospace;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.9;
+  }
+  .tree .lvl1{ color: var(--text); font-weight: 500; }
+  .tree .lvl2{ padding-left: 20px; }
+  .tree .lvl3{ padding-left: 40px; }
+  .tree .lvl4{ padding-left: 60px; color: var(--text-faint); }
+  .tree .tag{
+    display: inline-block;
+    margin-left: 8px;
+    font-size: 10px;
+    background: var(--green-dim);
+    color: #0F7A38;
+    padding: 1px 6px;
+    border-radius: var(--radius-badge);
+  }
+
+  /* architecture strip */
+
+  .arch-row{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .arch-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--blue);
+    border-radius: var(--radius-card);
+    padding: 16px 18px;
+  }
+  .arch-card h4{
+    margin: 0 0 6px;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+  .arch-card p{
+    margin: 0;
+    font-size: 12.5px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .arch-card .n{
+    font-family: "DM Mono", monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  /* stack tags */
+
+  .tags{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .tag{
+    font-family: "DM Mono", monospace;
+    font-size: 11.5px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 5px 10px;
+    border-radius: var(--radius-badge);
+  }
+
+  /* footer note */
+
+  .footnote{
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    font-size: 12px;
+    color: var(--text-faint);
+  }
+  .footnote p{ margin: 0; max-width: 560px; line-height: 1.6; }
+
+  @media (max-width: 760px){
+    .grid{ grid-template-columns: 1fr; }
+    .arch-row{ grid-template-columns: 1fr; }
+    .topbar nav{ display: none; }
+    .hero h1{ font-size: 29px; }
+    .hero-stats{ flex-wrap: wrap; row-gap: 18px; }
+    .footnote{ flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="mark">
+      <span class="glyph">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 12h6M14 12h6M10 6l4 6-4 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      Confluxo
+    </div>
+    <nav>
+      <a href="#visao">Visão geral</a>
+      <a href="#execucao">Execução</a>
+      <a href="#arquitetura">Arquitetura</a>
+    </nav>
+  </div>
+
+  <div class="hero">
+    <div class="hero-inner">
+      <span class="kicker-badge"><span class="dot"></span>demonstração conceitual · empresa e dados fictícios</span>
+      <h1>Um ponto único para reunir boletos que hoje ficam espalhados em portais diferentes.</h1>
+      <p class="lede">Protótipo conceitual construído para ilustrar como transformar uma rotina manual, repetida em vários sites com comportamentos distintos, em uma fila automatizada, previsível e auditável.</p>
+      <div class="hero-stats">
+        <div><h3>3</h3><p>portais fictícios simulados</p></div>
+        <div><h3>1 fila</h3><p>acessos processados em sequência</p></div>
+        <div><h3>0</h3><p>etapas manuais na coleta</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="shell">
+
+    <div id="visao" class="section-head">
+      <h2>Fila e execução</h2>
+      <span>cenário: Amara Benefícios Corporativos</span>
+    </div>
+
+    <div class="grid">
+
+      <div class="left-col">
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Adicionar acesso</h3>
+          </div>
+          <div class="form-body">
+            <label class="field">
+              <span>Portal</span>
+              <select>
+                <option>Portal Vivare (fictício)</option>
+                <option>Portal Zelohub (fictício)</option>
+                <option>Portal Consolare (fictício)</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Usuário</span>
+              <input type="text" placeholder="usuário de acesso">
+            </label>
+            <label class="field">
+              <span>Senha</span>
+              <input type="password" placeholder="••••••••">
+            </label>
+            <label class="field">
+              <span>Empresa (apelido)</span>
+              <input type="text" placeholder="ex.: Estúdio Prisma">
+            </label>
+            <label class="field">
+              <span>Benefício</span>
+              <input type="text" placeholder="saúde, odonto…">
+            </label>
+            <button class="btn-add">+ Adicionar à fila</button>
+            <div class="opts">
+              <label class="chk"><input type="checkbox" checked> Baixar também os relatórios</label>
+              <div class="radios">
+                <label class="rad"><input type="radio" name="mode" checked> Completo</label>
+                <label class="rad"><input type="radio" name="mode"> Teste (1 acesso)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-head">
+            <h3>Fila de acessos</h3>
+            <span class="count">3 itens</span>
+          </div>
+          <div class="queue-item" data-state="done">
+            <div class="row1">
+              <span class="name">Estúdio Prisma</span>
+              <span class="badge done">concluído</span>
+            </div>
+            <span class="portal">portal.vivare.fictício · saúde</span>
+          </div>
+          <div class="queue-item" data-state="active">
+            <div class="row1">
+              <span class="name">Metron Engenharia</span>
+              <span class="badge active">em execução</span>
+            </div>
+            <span class="portal">portal.zelohub.fictício · saúde + odonto</span>
+          </div>
+          <div class="queue-item" data-state="queued">
+            <div class="row1">
+              <span class="name">Copaíba Alimentos</span>
+              <span class="badge queued">na fila</span>
+            </div>
+            <span class="portal">portal.consolare.fictício · odonto</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="card" id="execucao">
+        <div class="card-head">
+          <h3>Execução — Metron Engenharia</h3>
+          <span class="count mono">acesso 2 de 3</span>
+        </div>
+        <div class="log-panel" id="logPanel"></div>
+        <div class="progress-wrap">
+          <span class="label">progresso da fila</span>
+          <div class="progress-track"><div class="progress-fill"></div></div>
+          <span class="label">66%</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="action-bar">
+      <button class="btn-primary">Iniciar coleta da fila</button>
+      <a class="link-folder" href="#">Abrir pasta de destino</a>
+    </div>
+
+    <div class="section-head" style="margin-top:40px;">
+      <h2>Relatório gerado</h2>
+      <span>competência 08.2026 (fictícia)</span>
+    </div>
+
+    <div class="card">
+      <table class="report">
+        <thead>
+          <tr>
+            <th>Cliente</th>
+            <th>Benefício</th>
+            <th>Competência</th>
+            <th>Vencimento</th>
+            <th>Valor</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Estúdio Prisma</td>
+            <td class="mono">saúde</td>
+            <td class="mono">08.2026</td>
+            <td class="mono">15.09.2026</td>
+            <td class="val">R$ 4.230,00</td>
+            <td><span class="badge done">baixado</span></td>
+          </tr>
+          <tr>
+            <td>Metron Engenharia</td>
+            <td class="mono">saúde</td>
+            <td class="mono">08.2026</td>
+            <td class="mono">18.09.2026</td>
+            <td class="val">R$ 9.870,00</td>
+            <td><span class="badge active">em andamento</span></td>
+          </tr>
+          <tr>
+            <td>Metron Engenharia</td>
+            <td class="mono">odonto</td>
+            <td class="mono">08.2026</td>
+            <td class="mono">18.09.2026</td>
+            <td class="val">R$ 1.140,00</td>
+            <td><span class="badge queued">aguardando</span></td>
+          </tr>
+          <tr>
+            <td>Copaíba Alimentos</td>
+            <td class="mono">odonto</td>
+            <td class="mono">08.2026</td>
+            <td class="mono">20.09.2026</td>
+            <td class="val">R$ 2.615,00</td>
+            <td><span class="badge queued">na fila</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section-head" style="margin-top:40px;">
+      <h2>Saída organizada</h2>
+      <span>gerada automaticamente por execução</span>
+    </div>
+
+    <div class="card">
+      <div class="tree">
+        <div class="lvl1">downloads/</div>
+        <div class="lvl2">Vivare Fictício/</div>
+        <div class="lvl3">Estúdio Prisma/saúde/2026-08/</div>
+        <div class="lvl4">boletos/ · demonstrativos/ · relatorio.csv <span class="tag">ok</span></div>
+        <div class="lvl2">Zelohub Fictício/</div>
+        <div class="lvl3">Metron Engenharia/saúde/2026-08/</div>
+        <div class="lvl4">boletos/ <span class="tag">em progresso</span></div>
+      </div>
+    </div>
+
+    <div id="arquitetura" class="section-head" style="margin-top:48px;">
+      <h2>Como o conceito funciona</h2>
+      <span>núcleo comum + módulos por portal</span>
+    </div>
+
+    <div class="arch-row">
+      <div class="arch-card">
+        <span class="n">núcleo</span>
+        <h4>Regras compartilhadas</h4>
+        <p>Fila, pastas, nomenclatura e relatório vivem em um único lugar, independente de qual portal está sendo processado.</p>
+      </div>
+      <div class="arch-card">
+        <span class="n">módulos</span>
+        <h4>Um adaptador por portal</h4>
+        <p>Cada portal fictício ganha um módulo próprio que só precisa saber navegar até o boleto — o resto é herdado do núcleo.</p>
+      </div>
+      <div class="arch-card">
+        <span class="n">extensão</span>
+        <h4>Crescer sem retrabalho</h4>
+        <p>Adicionar um quarto portal fictício não exige tocar na lógica existente, apenas registrar o novo módulo.</p>
+      </div>
+    </div>
+
+    <div class="tags">
+      <span class="tag">Python</span>
+      <span class="tag">Automação de navegador</span>
+      <span class="tag">Interface desktop</span>
+      <span class="tag">Fila com retomada</span>
+      <span class="tag">Relatório estruturado</span>
+    </div>
+
+    <div class="footnote">
+      <p>Peça conceitual para portfólio. Empresa, portais, pessoas, valores e arquivos deste protótipo são inteiramente fictícios e servem apenas para ilustrar o tipo de problema resolvido e a abordagem de solução.</p>
+      <p class="mono">Confluxo — protótipo de demonstração</p>
+    </div>
+
+  </div>
+
+<script>
+  const lines = [
+    { t: "12:04:01", m: "abrindo fila · acesso 2/3 · Metron Engenharia", cls: "hd" },
+    { t: "12:04:03", m: "conectando a portal.zelohub.fictício", cls: "" },
+    { t: "12:04:06", m: "login validado", cls: "ok" },
+    { t: "12:04:08", m: "buscando contrato saúde", cls: "" },
+    { t: "12:04:11", m: "boleto localizado · competência 08.2026", cls: "" },
+    { t: "12:04:13", m: "arquivo renomeado e salvo", cls: "ok" },
+    { t: "12:04:14", m: "iniciando busca do contrato odonto", cls: "hd" },
+    { t: "12:04:16", m: "aguardando resposta do portal…", cls: "" },
+  ];
+
+  const panel = document.getElementById("logPanel");
+  lines.forEach((line, i) => {
+    const el = document.createElement("div");
+    el.className = "log-line" + (line.cls ? " " + line.cls : "");
+    el.style.animationDelay = (i * 0.45) + "s";
+    el.innerHTML = `<span class="t">${line.t}</span><span class="m">${line.m}</span>`;
+    panel.appendChild(el);
+  });
+</script>
+
+</body>
+</html>
