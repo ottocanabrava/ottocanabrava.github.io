@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Motor de Triagem — Demo de Portfólio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #ECEEF2;
+  --header: #131D2E;
+  --hero: #1A2740;
+  --blue: #2563EB;
+  --surface: #FFFFFF;
+  --surface-2: #F4F5F9;
+  --text: #131D2E;
+  --text-2: #4B5563;
+  --text-3: #9CA3AF;
+  --border: #DDE1EA;
+  --green: #16A34A;
+  --green-bg: #DCFCE7;
+  --green-b: #BBF7D0;
+  --amber: #B45309;
+  --amber-bg: #FEF3C7;
+  --amber-b: #FDE68A;
+  --red: #DC2626;
+  --red-bg: #FEE2E2;
+  --red-b: #FECACA;
+  --purple: #6D28D9;
+  --purple-bg: #EDE9FE;
+  --purple-b: #DDD6FE;
+  --r-card: 10px;
+  --r-badge: 3px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh}
+
+/* ─── HEADER ─── */
+.hdr{background:var(--header);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;z-index:50}
+.hdr-left{display:flex;flex-direction:column}
+.hdr-name{font-size:14px;font-weight:600;color:#fff;letter-spacing:-.2px}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.38);margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.demo-pill{background:rgba(37,99,235,.22);border:1px solid rgba(37,99,235,.45);color:#93C5FD;font-size:10px;font-weight:600;letter-spacing:.08em;padding:3px 8px;border-radius:var(--r-badge);text-transform:uppercase}
+.analyst{display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.55)}
+.avatar{width:26px;height:26px;border-radius:50%;background:rgba(37,99,235,.35);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:#93C5FD}
+
+/* ─── LAYOUT ─── */
+.page{max-width:960px;margin:0 auto;padding:20px 20px 64px}
+.view{display:none}
+.view.active{display:block;animation:fi .18s ease-out}
+@keyframes fi{from{opacity:0;transform:translateY(3px)}to{opacity:1;transform:translateY(0)}}
+
+/* ─── PAGE HEAD ─── */
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
+.ph-kicker{font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:3px}
+.ph-title{font-size:18px;font-weight:600;color:var(--text);letter-spacing:-.3px}
+.ph-date{font-size:11px;color:var(--text-3);padding-top:18px}
+
+/* ─── SECTION ─── */
+.sec-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.sec-label{font-size:10px;font-weight:600;color:var(--text-2);text-transform:uppercase;letter-spacing:.07em}
+.cnt-pill{background:#E4E7EF;color:var(--text-2);font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px}
+
+/* ─── CALLOUT ─── */
+.callout{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:var(--r-card);padding:11px 14px;margin-bottom:14px;font-size:12px;color:var(--text-2);line-height:1.65}
+.callout strong{font-weight:600;color:var(--text)}
+
+/* ─── BADGES ─── */
+.b{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:600;padding:3px 6px;border-radius:var(--r-badge);white-space:nowrap}
+.b-green{background:var(--green-bg);color:var(--green)}
+.b-amber{background:var(--amber-bg);color:var(--amber)}
+.b-red{background:var(--red-bg);color:var(--red)}
+.b-purple{background:var(--purple-bg);color:var(--purple)}
+.b-gray{background:#EBEDF3;color:var(--text-3)}
+.b-blue{background:#DBEAFE;color:#1D4ED8}
+
+/* ─── QUEUE ─── */
+.queue{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.qcard{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--border);border-radius:var(--r-card);padding:11px 14px;display:flex;align-items:center;gap:12px}
+.qcard.pri{border-left-color:var(--blue);background:linear-gradient(90deg,#EFF6FF 0%,#fff 180px)}
+.qcard.wip{border-left-color:var(--amber);opacity:.6}
+.qcard.std{border-left-color:var(--border)}
+.qbody{flex:1;min-width:0}
+.qco{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qmeta{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--text-3)}
+.qright{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.pri-tag{font-size:10px;font-weight:600;background:#DBEAFE;color:var(--blue);padding:2px 6px;border-radius:var(--r-badge);letter-spacing:.04em}
+
+/* ─── STATUS BADGES ─── */
+.st-novo{background:var(--green-bg);color:var(--green);font-size:10px;font-weight:600;padding:3px 7px;border-radius:var(--r-badge)}
+.st-wip{background:var(--amber-bg);color:var(--amber);font-size:10px;font-weight:600;padding:3px 7px;border-radius:var(--r-badge)}
+
+/* ─── BUTTONS ─── */
+.btn{font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;padding:7px 14px;border-radius:6px;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:5px;white-space:nowrap;transition:opacity .12s}
+.btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{opacity:.88}.btn-blue:disabled{opacity:.3;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--text-2);border:1px solid var(--border)}.btn-ghost:hover{background:var(--surface-2)}
+.btn-sm{padding:5px 10px;font-size:11px;border-radius:5px}
+.rbtn-ok{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:4px 10px;border-radius:4px;border:1px solid var(--green-b);background:transparent;color:var(--green);cursor:pointer;transition:background .1s}
+.rbtn-ok:hover{background:var(--green-bg)}
+.rbtn-skip{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:500;padding:4px 9px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--text-3);cursor:pointer;margin-left:4px;transition:background .1s}
+.rbtn-skip:hover{background:var(--surface-2)}
+
+/* ─── STEPS ─── */
+.steps{display:flex;align-items:center;margin-bottom:16px}
+.step{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:500;color:var(--text-3)}
+.step.active{color:var(--blue)}.step.done{color:var(--green)}
+.sdot{width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;flex-shrink:0}
+.step.active .sdot{background:var(--blue);color:#fff;border-color:var(--blue)}
+.step.done .sdot{background:var(--green);color:#fff;border-color:var(--green)}
+.sline{flex:1;height:1px;background:var(--border);margin:0 6px}
+
+/* ─── TICKET HERO ─── */
+.thero{background:var(--hero);border-radius:var(--r-card);padding:14px 16px;margin-bottom:10px;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.th-id{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:rgba(255,255,255,.3);margin-bottom:3px;letter-spacing:.05em}
+.th-co{font-size:15px;font-weight:600;color:#fff;letter-spacing:-.2px}
+.th-meta{display:flex;gap:14px;margin-top:5px}
+.th-mi{font-size:11px;color:rgba(255,255,255,.4)}
+
+/* ─── PROGRESS BAR ─── */
+.pbwrap{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:9px 12px;margin-bottom:10px;display:flex;align-items:center;gap:10px}
+.pb-lbl{font-size:11px;font-weight:500;color:var(--text-2);white-space:nowrap}
+.pb-track{flex:1;height:4px;background:#E4E7EF;border-radius:99px;overflow:hidden}
+.pb-fill{height:100%;background:var(--green);border-radius:99px;width:0%;transition:width .3s}
+.pb-cnt{font-size:11px;font-weight:600;color:var(--text);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+/* ─── LEGEND ─── */
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;align-items:center}
+.li{display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text-3)}
+
+/* ─── TABLE ─── */
+.twrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;overflow-x:auto;margin-bottom:12px}
+.dtbl{width:100%;min-width:740px;border-collapse:collapse}
+.dtbl thead{background:var(--surface-2);border-bottom:1px solid var(--border)}
+.dtbl th{padding:8px 12px;text-align:left;font-size:10px;font-weight:600;color:var(--text-3);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.dtbl tr.mr{border-bottom:1px solid var(--border);border-left:3px solid transparent;cursor:pointer;transition:background .1s,border-left-color .2s}
+.dtbl tr.mr:hover:not(.ok):not(.ig){background:var(--surface-2)}
+.dtbl tr.mr.ok{border-left-color:var(--green);background:#F0FDF4}
+.dtbl tr.mr.ig{border-left-color:#D1D5DB;background:#F9FAFB}
+.dtbl td{padding:9px 12px;vertical-align:middle}
+.pname{font-weight:600;font-size:12px;color:var(--text)}
+.ftype{font-size:11px;color:var(--text-2);white-space:nowrap}
+.vmono{font-family:'DM Mono',monospace;font-size:11px;color:var(--text-2)}
+.vdiff{color:var(--red);font-weight:500}
+.vmiss{color:var(--text-3);font-style:italic}
+.acell{text-align:right;white-space:nowrap}
+.done-lbl{font-size:11px;font-weight:500}
+.done-ok{color:var(--green)}.done-ig{color:var(--text-3)}
+/* detail row */
+.dtbl tr.dr td{padding:0;background:#EFF6FF;border-bottom:1px solid #BFDBFE}
+.dtbl tr.dr.h{display:none}
+.detail-in{padding:9px 14px;display:flex;align-items:flex-start;gap:8px;border-left:3px solid var(--blue)}
+.di-icon{font-size:13px;flex-shrink:0;margin-top:1px}
+.di-body{font-size:12px;color:#1E40AF;line-height:1.55}
+.di-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--blue);display:block;margin-bottom:2px}
+
+/* ─── ACTION BAR ─── */
+.abar{display:flex;justify-content:flex-end;gap:8px}
+
+/* ─── RESULT HERO ─── */
+.rhero{background:var(--hero);border-radius:var(--r-card);padding:18px 20px;margin-bottom:14px;display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.rh-num{font-size:42px;font-weight:600;color:#4ADE80;line-height:1;letter-spacing:-1px}
+.rh-metric{font-size:22px;font-weight:600;color:#4ADE80;line-height:1;letter-spacing:-.4px}
+.rh-u{font-size:11px;color:rgba(255,255,255,.4);margin-top:3px}
+.rh-div{width:1px;height:46px;background:rgba(255,255,255,.1)}
+.rh-copy{flex:1;min-width:160px}
+.rh-title{font-size:14px;font-weight:600;color:#fff;margin-bottom:3px}
+.rh-sub{font-size:12px;color:rgba(255,255,255,.4)}
+
+/* ─── ACTIONS LIST ─── */
+.alist{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden;margin-bottom:14px}
+.arow{padding:8px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;border-left:3px solid transparent}
+.arow:last-child{border-bottom:none}
+.arow.ok{border-left-color:var(--green)}.arow.ig{border-left-color:#D1D5DB}
+.ar-person{font-size:12px;font-weight:600;color:var(--text);min-width:86px}
+.ar-field{font-size:10px;font-weight:500;background:var(--surface-2);color:var(--text-3);padding:2px 6px;border-radius:var(--r-badge);white-space:nowrap}
+.ar-action{font-size:12px;color:var(--text-2);flex:1}
+.ar-st{font-size:11px;font-weight:600;white-space:nowrap}
+.arow.ok .ar-st{color:var(--green)}.arow.ig .ar-st{color:var(--text-3)}
+
+/* ─── RESULT GRID ─── */
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+@media(max-width:600px){.rgrid{grid-template-columns:1fr}}
+.rblock{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden}
+.rb-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.rblock.id .rb-head{background:#FEFCE8;border-bottom-color:#FDE047}
+.rblock.anon .rb-head{background:#F0FDF4;border-bottom-color:#86EFAC}
+.rb-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text)}
+.rb-sub{font-size:10px;color:var(--text-3);margin-top:1px}
+.rb-tag{font-size:10px;font-weight:600;padding:2px 6px;border-radius:var(--r-badge)}
+.rb-tag.id{background:#FDE047;color:#78350F}
+.rb-tag.anon{background:#86EFAC;color:#14532D}
+.rb-body{font-family:'DM Mono',monospace;font-size:11px;line-height:1.75;color:var(--text-2);padding:12px 14px;white-space:pre-wrap;min-height:130px}
+.rblock.id .rb-body{background:#FEFCE8}
+.rblock.anon .rb-body{background:#F0FDF4}
+.rb-foot{padding:8px 14px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;font-size:11px;color:var(--text-3)}
+.rb-foot.lgpd{background:var(--green-bg);border-top-color:var(--green-b);color:var(--green)}
+.copy-btn{font-family:'DM Sans',sans-serif;font-size:10px;font-weight:500;padding:3px 8px;border:1px solid var(--border);border-radius:4px;background:var(--surface);color:var(--text-3);cursor:pointer}
+.copy-btn:hover{color:var(--text-2);background:var(--surface-2)}
+
+.back-row{display:flex;align-items:center;justify-content:space-between}
+.back-note{font-size:11px;color:var(--text-3)}
+.footnote{font-size:11px;color:var(--text-3);margin-top:8px}
+
+/* ─── 4-STEP PROCESS ─── */
+.steps4{margin-top:10px;display:flex;flex-direction:column;gap:5px;padding-top:9px;border-top:1px solid #DBEAFE}
+.s4{display:flex;align-items:flex-start;gap:8px;font-size:12px;color:var(--text-2);line-height:1.5}
+.s4n{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;color:var(--blue);background:#DBEAFE;padding:2px 6px;border-radius:var(--r-badge);flex-shrink:0;margin-top:2px}
+
+/* ─── ANTES × DEPOIS ─── */
+.bxd{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+@media(max-width:580px){.bxd{grid-template-columns:1fr}}
+.bxd-col{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden}
+.bxd-col.before{border-left:3px solid var(--red)}
+.bxd-col.after{border-left:3px solid var(--green)}
+.bxd-head{padding:8px 12px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;border-bottom:1px solid var(--border)}
+.bxd-col.before .bxd-head{background:var(--red-bg);color:var(--red)}
+.bxd-col.after .bxd-head{background:var(--green-bg);color:var(--green)}
+.bxd-item{padding:7px 12px;border-bottom:1px solid var(--border);display:flex;align-items:baseline;gap:8px;font-size:11px;line-height:1.45}
+.bxd-item:last-child{border-bottom:none}
+.bxd-k{font-weight:600;color:var(--text-2);font-size:10px;white-space:nowrap;min-width:94px;flex-shrink:0}
+.bxd-col.before .bxd-item .bxd-v{color:var(--text-3)}
+.bxd-col.after .bxd-item .bxd-v{color:var(--text)}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══ -->
+<header class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-name">Motor de Triagem de Divergências</span>
+    <span class="hdr-sub">AgilBen Corretora · IA generativa aplicada a reconciliação cadastral</span>
+  </div>
+  <div class="hdr-right">
+    <a href="/" style="font-size:11px;color:rgba(255,255,255,.55);text-decoration:none;">← Portfólio</a>
+    <span class="demo-pill">Demo · Dados fictícios</span>
+    <div class="analyst">
+      <div class="avatar">AR</div>
+      <span>Ana Ribeiro</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══ VIEW: FILA ═══ -->
+<div id="v-queue" class="view active">
+  <div class="page">
+    <div class="ph">
+      <div>
+        <div class="ph-kicker">Painel da analista</div>
+        <h1 class="ph-title">Fila de trabalho</h1>
+      </div>
+      <span class="ph-date" id="q-date"></span>
+    </div>
+
+    <div class="callout">
+      <span style="display:block;margin-bottom:7px;">
+        <strong>Agente validador com IA generativa</strong> — diagnóstico automático de divergências
+        entre backoffice e fatura, com checagem de CPF e data via integração n8n
+        com fonte oficial de validação.
+      </span>
+      <span style="display:block;margin-bottom:7px;">
+        Reduz o tempo de análise por ticket de <strong>30–60 minutos para uma verificação direta</strong>
+        — aplicado a um backlog de ~200 tickets por ciclo entre 8 analistas.
+      </span>
+      <span style="display:block;font-size:11px;color:var(--text-3);">
+        A Cowork processa; você decide.
+        Clique em <strong style="color:var(--blue);">Iniciar diagnóstico</strong>
+        no ticket prioritário para ver o fluxo.
+      </span>
+      <div class="steps4">
+        <div class="s4"><span class="s4n">01</span><span><strong>Localiza a planilha</strong> de conferência no Drive automaticamente, sem navegar pasta por pasta</span></div>
+        <div class="s4"><span class="s4n">02</span><span><strong>Tria linha a linha</strong> — compara nome, CPF e data de nascimento; classifica cada divergência e gera painel estruturado</span></div>
+        <div class="s4"><span class="s4n">03</span><span><strong>Valida CPFs e cruza com o mês anterior</strong> — inclusive os de 10 dígitos (zero suprimido pelo Excel) e consulta histórico de resoluções</span></div>
+        <div class="s4"><span class="s4n">04</span><span><strong>Prepara o Banco de Resoluções</strong> de-identificado — sem copiar e colar, só após sua confirmação</span></div>
+      </div>
+    </div>
+
+    <div class="sec-row">
+      <span class="sec-label">Tickets em aberto</span>
+      <span class="cnt-pill">3</span>
+    </div>
+
+    <div class="queue">
+
+      <div class="qcard pri">
+        <div class="qbody">
+          <div class="qco">Metalmix Componentes S.A.</div>
+          <div class="qmeta">
+            <span>FlexVida Seguros · Saúde</span>
+            <span>5 divergências</span>
+            <span>8 dias em aberto</span>
+          </div>
+        </div>
+        <div class="qright">
+          <span class="pri-tag">Prioritário</span>
+          <span class="st-novo">Novo</span>
+          <button class="btn btn-blue btn-sm" onclick="startDiag()">Iniciar diagnóstico →</button>
+        </div>
+      </div>
+
+      <div class="qcard std">
+        <div class="qbody">
+          <div class="qco">Grapex Logística Ltda</div>
+          <div class="qmeta">
+            <span>FlexVida Seguros · Saúde</span>
+            <span>2 divergências</span>
+            <span>3 dias em aberto</span>
+          </div>
+        </div>
+        <div class="qright">
+          <span class="st-novo">Novo</span>
+          <button class="btn btn-ghost btn-sm" disabled style="opacity:.35;cursor:not-allowed">Ver ticket</button>
+        </div>
+      </div>
+
+      <div class="qcard wip">
+        <div class="qbody">
+          <div class="qco">Orbitel Tecnologia</div>
+          <div class="qmeta">
+            <span>ProteVida Seguros · Odonto</span>
+            <span>7 divergências</span>
+            <span>1 dia em aberto</span>
+          </div>
+        </div>
+        <div class="qright">
+          <span class="st-wip">Em validação</span>
+          <button class="btn btn-ghost btn-sm" disabled style="opacity:.35;cursor:not-allowed">Retomar</button>
+        </div>
+      </div>
+
+    </div>
+    <p class="footnote">Tickets atribuídos a Ana Ribeiro · Pipeline de movimentação/faturamento · Apenas não finalizados</p>
+  </div>
+</div>
+
+<!-- ═══ VIEW: DIAGNÓSTICO ═══ -->
+<div id="v-diagnosis" class="view">
+  <div class="page">
+    <div class="ph">
+      <div>
+        <div class="ph-kicker">Análise linha a linha</div>
+        <h1 class="ph-title">Diagnóstico de divergências</h1>
+      </div>
+      <span class="ph-date" id="d-date"></span>
+    </div>
+    <p style="font-size:12px;color:var(--text-3);margin-bottom:14px;line-height:1.55;">A skill localizou a planilha, triou as linhas, validou os CPFs e cruzou com o mês anterior. Clique em uma linha para ver a sugestão — confirme ou ignore cada item.</p>
+
+    <div class="steps">
+      <div class="step done"><div class="sdot">✓</div><span>Fila</span></div>
+      <div class="sline"></div>
+      <div class="step active"><div class="sdot">2</div><span>Diagnóstico</span></div>
+      <div class="sline"></div>
+      <div class="step" id="step3"><div class="sdot">3</div><span>Resultado</span></div>
+    </div>
+
+    <div class="thero">
+      <div>
+        <div class="th-id">TICKET #1247</div>
+        <div class="th-co">Metalmix Componentes S.A.</div>
+        <div class="th-meta">
+          <span class="th-mi">FlexVida Seguros · Saúde</span>
+          <span class="th-mi">Aberto em 14/09/2026</span>
+          <span class="th-mi">5 divergências · incluindo 1 CPF com 10 dígitos</span>
+        </div>
+      </div>
+      <span class="b b-blue">Novo</span>
+    </div>
+
+    <div class="pbwrap">
+      <span class="pb-lbl">Progresso</span>
+      <div class="pb-track"><div class="pb-fill" id="pbf"></div></div>
+      <span class="pb-cnt" id="pbc">0 / 5</span>
+    </div>
+
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px;">
+      <span class="sec-label">Divergências encontradas · clique na linha para ver a sugestão</span>
+      <div class="legend">
+        <div class="li"><span class="b b-green">Pronto</span> ação direta</div>
+        <div class="li"><span class="b b-amber">Atenção</span> confirmar antes</div>
+        <div class="li"><span class="b b-red">Verificar</span> validar na fonte</div>
+        <div class="li"><span class="b b-purple">Investigar</span> analisar</div>
+      </div>
+    </div>
+
+    <div class="twrap">
+      <table class="dtbl">
+        <thead>
+          <tr>
+            <th>Beneficiário</th>
+            <th>Campo</th>
+            <th>No sistema</th>
+            <th>Na fatura</th>
+            <th>Histórico</th>
+            <th>Classificação</th>
+            <th style="text-align:right">Ação</th>
+          </tr>
+        </thead>
+        <tbody id="dtbody"></tbody>
+      </table>
+    </div>
+
+    <div class="abar">
+      <button class="btn btn-ghost btn-sm" onclick="goQueue()">← Voltar à fila</button>
+      <button class="btn btn-blue btn-sm" id="btnfin" disabled onclick="goResult()">Ver resultado →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ VIEW: RESULTADO ═══ -->
+<div id="v-result" class="view">
+  <div class="page">
+    <div class="ph">
+      <div>
+        <div class="ph-kicker">Ticket #1247 · Metalmix Componentes S.A.</div>
+        <h1 class="ph-title">Resultado da triagem</h1>
+      </div>
+      <span class="ph-date" id="r-date"></span>
+    </div>
+
+    <div class="steps">
+      <div class="step done"><div class="sdot">✓</div><span>Fila</span></div>
+      <div class="sline"></div>
+      <div class="step done"><div class="sdot">✓</div><span>Diagnóstico</span></div>
+      <div class="sline"></div>
+      <div class="step active"><div class="sdot">3</div><span>Resultado</span></div>
+    </div>
+
+    <div class="rhero">
+      <div>
+        <div class="rh-num" id="r-num">5/5</div>
+        <div class="rh-u">divergências tratadas</div>
+      </div>
+      <div class="rh-div"></div>
+      <div>
+        <div class="rh-metric">30–60 min</div>
+        <div class="rh-u">→ verificação direta por ticket</div>
+      </div>
+      <div class="rh-div"></div>
+      <div>
+        <div class="rh-metric">~200</div>
+        <div class="rh-u">tickets no backlog</div>
+      </div>
+      <div class="rh-div"></div>
+      <div>
+        <div class="rh-metric">8</div>
+        <div class="rh-u">analistas beneficiados</div>
+      </div>
+      <div class="rh-div"></div>
+      <div class="rh-copy">
+        <div class="rh-title" id="r-title">Triagem concluída</div>
+        <div class="rh-sub" id="r-sub">Todas as linhas foram tratadas</div>
+      </div>
+    </div>
+
+    <div class="sec-row" style="margin-bottom:8px">
+      <span class="sec-label">Ações confirmadas</span>
+    </div>
+    <div class="alist" id="r-alist"></div>
+
+    <div class="sec-row" style="margin-bottom:8px;margin-top:14px">
+      <span class="sec-label">Antes × Depois</span>
+    </div>
+    <div class="bxd">
+      <div class="bxd-col before">
+        <div class="bxd-head">Sem skill — manual</div>
+        <div class="bxd-item"><span class="bxd-k">Planilha</span><span class="bxd-v">Navegação manual a cada ticket</span></div>
+        <div class="bxd-item"><span class="bxd-k">Conferência</span><span class="bxd-v">A olho, sem estrutura</span></div>
+        <div class="bxd-item"><span class="bxd-k">Mês anterior</span><span class="bxd-v">Raramente feito — trabalhoso demais</span></div>
+        <div class="bxd-item"><span class="bxd-k">CPF 10 dígitos</span><span class="bxd-v">Passa em branco — zero cortado invisível</span></div>
+        <div class="bxd-item"><span class="bxd-k">Banco</span><span class="bxd-v">Não existe — sem escala</span></div>
+      </div>
+      <div class="bxd-col after">
+        <div class="bxd-head">Com skill — automatizado</div>
+        <div class="bxd-item"><span class="bxd-k">Planilha</span><span class="bxd-v">Localizada automaticamente no Drive</span></div>
+        <div class="bxd-item"><span class="bxd-k">Conferência</span><span class="bxd-v">Painel comparativo gerado com classificação</span></div>
+        <div class="bxd-item"><span class="bxd-k">Mês anterior</span><span class="bxd-v">Sempre, automático — histórico na mesma triagem</span></div>
+        <div class="bxd-item"><span class="bxd-k">CPF 10 dígitos</span><span class="bxd-v">Detectado e validado em 100% dos CPFs</span></div>
+        <div class="bxd-item"><span class="bxd-k">Banco</span><span class="bxd-v">Gerado, de-identificado, após sua confirmação</span></div>
+      </div>
+    </div>
+
+    <div class="sec-row" style="margin-bottom:8px">
+      <span class="sec-label">Saídas geradas</span>
+    </div>
+    <div class="rgrid">
+      <div class="rblock id">
+        <div class="rb-head">
+          <div>
+            <div class="rb-title">Nota para o ticket</div>
+            <div class="rb-sub">Identificada · para uso interno</div>
+          </div>
+          <span class="rb-tag id">Com nomes</span>
+        </div>
+        <div class="rb-body" id="r-note"></div>
+        <div class="rb-foot">
+          <span>Colar no ticket da ferramenta de gestão</span>
+          <button class="copy-btn" id="copy-note-btn" onclick="copyNote(this)">Copiar</button>
+        </div>
+      </div>
+
+      <div class="rblock anon">
+        <div class="rb-head">
+          <div>
+            <div class="rb-title">Banco de padrões</div>
+            <div class="rb-sub">Após sua confirmação</div>
+          </div>
+          <span class="rb-tag anon">Anonimizado</span>
+        </div>
+        <div class="rb-body" id="r-bank"></div>
+        <div class="rb-foot lgpd">
+          <span>Nenhum dado pessoal gravado — apenas padrões e resoluções</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="back-row">
+      <span class="back-note">Nota gerada. Próximo passo: colar no ticket e marcar como concluído.</span>
+      <button class="btn btn-blue btn-sm" onclick="goQueue()">← Voltar à fila</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DATA = {
+  rows: [
+    {
+      id:0, person:'Carlos M.', field:'Nome',
+      sv:'Carlos Mendes', iv:'Carlos Alberto Mendes',
+      hist:'nova', cls:'pronto',
+      sg:'Nome abreviado no sistema — a fatura traz o nome completo com nome do meio. Corrigir no sistema interno.',
+      na:'Nome ajustado no sistema (acréscimo do nome do meio conforme fatura)',
+      be:'Divergência de nome · Nome abreviado no sistema vs. nome completo na fatura · Resolução: atualização no sistema interno'
+    },
+    {
+      id:1, person:'Fernanda L.', field:'CPF',
+      sv:'248.591.XXX-01', iv:'248.591.XXX-10',
+      hist:'recorrente', hm:2, cls:'verificar',
+      sg:'Divergência de dígito verificador registrada há 2 meses. Validar o CPF correto na fonte oficial antes de qualquer correção.',
+      na:'CPF validado na fonte oficial · dígito verificador corrigido conforme registro oficial',
+      be:'Divergência de CPF · Dígito verificador incorreto (recorrente 2 meses) · Resolução: validação em fonte oficial e correção'
+    },
+    {
+      id:2, person:'Roberto P.', field:'Nascimento',
+      sv:'15/03/1985', iv:'15/03/1958',
+      hist:'nova', cls:'atencao',
+      sg:'Provável transposição de dígitos no ano (1985 ↔ 1958). Confirmar data correta com o titular antes de alterar qualquer registro.',
+      na:'Data de nascimento confirmada com titular · corrigida no sistema interno',
+      be:'Divergência de data de nascimento · Transposição de dígitos no ano · Resolução: confirmação com titular e atualização'
+    },
+    {
+      id:3, person:'Mariana S.', field:'Nome',
+      sv:'Mariana Santos', iv:'Mariana Sousa',
+      hist:'nova', cls:'pronto',
+      sg:'Sobrenomes distintos entre sistema e fatura. Verificar qual está correto com o titular e atualizar o registro.',
+      na:'Sobrenome verificado com titular e corrigido no sistema interno',
+      be:'Divergência de nome · Sobrenome incorreto no sistema · Resolução: verificação e atualização no sistema'
+    },
+    {
+      id:4, person:'João T.', field:'CPF',
+      sv:'375.824.XXX-0', iv:'375.824.XXX-00',
+      hist:'nova', cls:'pronto',
+      sg:'CPF com 10 dígitos no sistema — o zero à esquerda foi suprimido (comportamento padrão do Excel ao salvar CSV). Dígito verificador calculado e confirmado como válido. Corrigir no sistema completando o CPF para 11 dígitos.',
+      na:'CPF corrigido — zero à esquerda restaurado e dígito verificador confirmado por validação automática',
+      be:'CPF com 10 dígitos · Zero à esquerda suprimido pelo Excel ao exportar (padrão recorrente) · Resolução: completado para 11 dígitos após confirmação do dígito verificador'
+    }
+  ]
+};
+
+const ST = { actions:{}, expanded:null };
+
+function fmtDate(){return new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}
+function setDates(){['q-date','d-date','r-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.textContent=fmtDate()})}
+
+const CLS={pronto:'b-green',atencao:'b-amber',verificar:'b-red',investigar:'b-purple'};
+const CLSL={pronto:'Pronto',atencao:'Atenção',verificar:'Verificar',investigar:'Investigar'};
+const CLSIC={pronto:'✓',atencao:'⚠',verificar:'✕',investigar:'?'};
+
+function showView(id){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function startDiag(){
+  ST.actions={}; ST.expanded=null;
+  showView('v-diagnosis');
+  renderTable();
+  updatePB();
+}
+function goQueue(){showView('v-queue')}
+function goResult(){
+  if(Object.keys(ST.actions).length<DATA.rows.length)return;
+  showView('v-result');
+  renderResult();
+}
+
+function renderTable(){
+  const tbody=document.getElementById('dtbody');
+  tbody.innerHTML='';
+  DATA.rows.forEach(r=>{
+    const a=ST.actions[r.id];
+    const isOk=a==='ok', isIg=a==='ig';
+    const differs=r.sv!==r.iv;
+    const histBadge=r.hist==='recorrente'
+      ?`<span class="b b-amber">↩ ${r.hm}m</span>`
+      :`<span class="b b-gray">Nova</span>`;
+    const clsBadge=`<span class="b ${CLS[r.cls]}">${CLSIC[r.cls]} ${CLSL[r.cls]}</span>`;
+    let action;
+    if(isOk) action=`<span class="done-lbl done-ok">✓ Confirmado</span>`;
+    else if(isIg) action=`<span class="done-lbl done-ig">— Ignorado</span>`;
+    else action=`<button class="rbtn-ok" onclick="doAction(${r.id},'ok',event)">Confirmar</button><button class="rbtn-skip" onclick="doAction(${r.id},'ig',event)">Ignorar</button>`;
+
+    const tr=document.createElement('tr');
+    tr.className='mr'+(isOk?' ok':isIg?' ig':'');
+    tr.dataset.id=r.id;
+    tr.onclick=e=>{if(e.target.tagName==='BUTTON')return;toggleDetail(r.id)};
+    tr.innerHTML=`
+      <td><span class="pname">${r.person}</span></td>
+      <td><span class="ftype">${r.field}</span></td>
+      <td><span class="vmono">${r.sv??'<em class="vmiss">Ausente</em>'}</span></td>
+      <td><span class="vmono${differs?' vdiff':''}">${r.iv}</span></td>
+      <td>${histBadge}</td>
+      <td>${clsBadge}</td>
+      <td class="acell">${action}</td>`;
+    tbody.appendChild(tr);
+
+    const td=document.createElement('tr');
+    td.className='dr h';
+    td.id='dr-'+r.id;
+    td.innerHTML=`<td colspan="7"><div class="detail-in"><span class="di-icon">💡</span><div class="di-body"><span class="di-lbl">Sugestão</span>${r.sg}</div></div></td>`;
+    tbody.appendChild(td);
+  });
+  updatePB();
+}
+
+function toggleDetail(id){
+  const el=document.getElementById('dr-'+id);
+  if(!el)return;
+  const isOpen=!el.classList.contains('h');
+  if(ST.expanded!==null&&ST.expanded!==id){
+    const prev=document.getElementById('dr-'+ST.expanded);
+    if(prev)prev.classList.add('h');
+  }
+  el.classList.toggle('h');
+  ST.expanded=isOpen?null:id;
+}
+
+function doAction(id,a,e){
+  e.stopPropagation();
+  ST.actions[id]=a;
+  const dr=document.getElementById('dr-'+id);
+  if(dr)dr.classList.add('h');
+  if(ST.expanded===id)ST.expanded=null;
+  renderTable();
+}
+
+function updatePB(){
+  const done=Object.keys(ST.actions).length;
+  const total=DATA.rows.length;
+  const pct=(done/total)*100;
+  const pbf=document.getElementById('pbf');
+  const pbc=document.getElementById('pbc');
+  const btn=document.getElementById('btnfin');
+  if(pbf)pbf.style.width=pct+'%';
+  if(pbc)pbc.textContent=`${done} / ${total}`;
+  if(btn)btn.disabled=done<total;
+}
+
+function renderResult(){
+  const rows=DATA.rows;
+  const conf=rows.filter(r=>ST.actions[r.id]==='ok');
+  const ign=rows.filter(r=>ST.actions[r.id]==='ig');
+  document.getElementById('r-num').textContent=`${conf.length}/${rows.length}`;
+  document.getElementById('r-sub').textContent=`${conf.length} confirmada${conf.length!==1?'s':''}, ${ign.length} ignorada${ign.length!==1?'s':''}`;
+
+  const alist=document.getElementById('r-alist');
+  alist.innerHTML='';
+  rows.forEach(r=>{
+    const a=ST.actions[r.id];
+    const div=document.createElement('div');
+    div.className='arow '+(a==='ok'?'ok':'ig');
+    div.innerHTML=`<span class="ar-person">${r.person}</span><span class="ar-field">${r.field}</span><span class="ar-action">${a==='ok'?r.na:'—'}</span><span class="ar-st">${a==='ok'?'✓':'-'}</span>`;
+    alist.appendChild(div);
+  });
+
+  const d=fmtDate();
+  let note=`Conferência de divergências — ${d}\n`;
+  conf.forEach(r=>{note+=`• ${r.person} (${r.field}) — ${r.na}\n`});
+  if(ign.length){note+=`\nIgnoradas (${ign.length}): `+ign.map(r=>`${r.person}/${r.field}`).join(', ')}
+  document.getElementById('r-note').textContent=note.trim();
+
+  let bank=`Ticket #1247 — Saúde\n\n`;
+  conf.forEach((r,i)=>{bank+=`[${i+1}] ${r.be}\n`});
+  if(ign.length){bank+=`\nIgnoradas (não eram divergência):\n`;ign.forEach((r,i)=>{bank+=`[i${i+1}] ${r.field} · ${r.person.split(' ')[0][0]}*** — contexto registrado sem resolução\n`})}
+  if(conf.length||ign.length)bank+=`\n— sem nome, CPF ou data pessoal —`;
+  else bank='Nenhuma divergência tratada neste lote.';
+  document.getElementById('r-bank').textContent=bank.trim();
+}
+
+function copyNote(btn){
+  const txt=document.getElementById('r-note').textContent;
+  navigator.clipboard.writeText(txt).catch(()=>{});
+  btn.textContent='Copiado ✓';
+  setTimeout(()=>{btn.textContent='Copiar'},2000);
+}
+
+setDates();
+</script>
+
+<div style="background:#131D2E;color:#B7BFCE;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-family:'DM Mono',monospace;font-size:12px;">
+  <a href="/" style="color:#8FA0BE;text-decoration:none;">← Portfólio</a>
+  <a href="/ticketscript/" style="color:#fff;text-decoration:none;font-weight:500;">Próximo projeto: TicketScript →</a>
+</div>
+
+</body>
+</html>

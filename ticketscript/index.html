@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>TicketScript — Demo de Portfólio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+:root {
+  --bg:         #ECEEF2;
+  --surface:    #FFFFFF;
+  --header:     #131D2E;
+  --hero:       #1A2740;
+  --text:       #111827;
+  --muted:      #6B7280;
+  --faint:      #9CA3AF;
+  --border:     #E5E7EB;
+  --critical:   #DC2626;
+  --crit-bg:    #FEF2F2;
+  --warning:    #D97706;
+  --warn-bg:    #FFFBEB;
+  --ok:         #16A34A;
+  --ok-bg:      #F0FDF4;
+  --purple:     #7C3AED;
+  --purp-bg:    #EDE9FE;
+  --blue:       #2563EB;
+  --blue-bg:    #EFF6FF;
+  --neutral-bg: #F9FAFB;
+}
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--header);
+  padding: 0 32px;
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 200;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.h-brand {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; font-weight: 600; color: #E2E8F0;
+}
+.h-live { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; }
+.h-links { display: flex; align-items: center; gap: 4px; }
+.h-link {
+  padding: 4px 10px; border-radius: 4px;
+  font-size: 12px; font-weight: 500; color: #94A3B8;
+  text-decoration: none; transition: color .12s, background .12s;
+}
+.h-link:hover { color: #E2E8F0; background: rgba(255,255,255,.06); }
+.h-cta {
+  padding: 4px 12px; border-radius: 4px;
+  background: var(--blue); color: #fff;
+  font-size: 12px; font-weight: 600; text-decoration: none;
+  transition: opacity .12s;
+}
+.h-cta:hover { opacity: .88; }
+
+/* ── HERO ── */
+.hero {
+  background: var(--hero);
+  padding: 32px 32px 36px;
+}
+.hero-inner { max-width: 1160px; margin: 0 auto; }
+.hero-eyebrow {
+  font-size: 11px; color: #475569; font-weight: 500;
+  letter-spacing: .02em; margin-bottom: 8px;
+}
+.hero-chips { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
+.chip {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: 3px;
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+}
+.chip-bd  { border: 1px solid rgba(255,255,255,.12); color: #94A3B8; }
+.chip-ok  { background: rgba(22,163,74,.18); color: #86EFAC; }
+
+.hero h1 {
+  font-size: clamp(22px, 3.5vw, 32px); font-weight: 700;
+  line-height: 1.18; letter-spacing: -.015em;
+  color: #F1F5F9; margin-bottom: 10px;
+}
+.hero-hl { color: #93C5FD; }
+.hero-sub { font-size: 13px; color: #64748B; max-width: 540px; line-height: 1.65; margin-bottom: 28px; }
+
+.hero-stats { display: flex; gap: 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.06); flex-wrap: wrap; }
+.h-stat { padding-right: 28px; margin-right: 28px; border-right: 1px solid rgba(255,255,255,.07); }
+.h-stat:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+.h-stat-val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; color: #F1F5F9; line-height: 1; margin-bottom: 4px; }
+.h-stat-lbl { font-size: 11px; color: #475569; }
+
+/* ── WRAP / LAYOUT ── */
+.content { max-width: 1160px; margin: 0 auto; padding: 24px 32px 40px; }
+
+/* ── CARD SHELL ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+}
+.card + .card { margin-top: 16px; }
+.card-header {
+  padding: 13px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.card-meta  { font-size: 11px; color: var(--muted); font-family: 'DM Mono', monospace; }
+.card-body  { padding: 20px; }
+
+/* ── SECTION HEADER (inline cards) ── */
+.sec-hd { margin-bottom: 16px; }
+.sec-hd h2 {
+  font-size: clamp(17px, 2.5vw, 22px); font-weight: 700;
+  letter-spacing: -.015em; line-height: 1.2; color: var(--text); margin-bottom: 5px;
+}
+.sec-hd p { font-size: 12px; color: var(--muted); max-width: 480px; line-height: 1.6; }
+.sec-tag {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+  color: var(--blue); letter-spacing: .04em; display: block; margin-bottom: 6px;
+}
+
+/* ── DEMO GRID ── */
+.demo-grid {
+  display: grid; grid-template-columns: 200px 1fr 252px; gap: 12px; align-items: start;
+}
+
+/* Queue */
+.q-col { display: flex; flex-direction: column; gap: 6px; }
+.q-hd  {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .1em; color: var(--faint); padding: 0 2px; margin-bottom: 1px;
+}
+.qc {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid transparent;
+  border-radius: 8px; padding: 10px 12px;
+  cursor: pointer; transition: border-color .14s, background .14s;
+  user-select: none;
+}
+.qc:hover { background: var(--neutral-bg); }
+.qc.on   { border-left-color: var(--blue); background: var(--blue-bg); }
+.qc-id   { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--faint); margin-bottom: 3px; }
+.qc.on .qc-id { color: var(--blue); }
+.qc-sub  { font-size: 11px; font-weight: 500; line-height: 1.35; color: var(--text); margin-bottom: 6px; }
+.qc-dots { display: flex; gap: 4px; }
+.qc-dot  { width: 6px; height: 6px; border-radius: 50%; }
+
+/* Ticket viewer */
+.tv {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,.06);
+}
+.tv-chrome {
+  background: #1C1C2E; padding: 8px 12px;
+  display: flex; align-items: center; gap: 6px;
+}
+.tv-dots { display: flex; gap: 4px; }
+.tv-dot  { width: 8px; height: 8px; border-radius: 50%; }
+.tv-url  {
+  flex: 1; background: rgba(255,255,255,.06);
+  border-radius: 3px; padding: 3px 8px; margin: 0 6px;
+  font-family: 'DM Mono', monospace; font-size: 9px; color: #4B5563;
+}
+.tv-ext {
+  width: 20px; height: 20px; background: var(--ok); border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; cursor: pointer; flex-shrink: 0; transition: opacity .12s;
+}
+.tv-ext:hover { opacity: .85; }
+
+.tv-hd {
+  padding: 11px 16px 10px; border-bottom: 1px solid var(--border);
+  background: var(--neutral-bg);
+}
+.tv-id  { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--faint); margin-bottom: 2px; }
+.tv-sub { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.tv-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+.tv-tag { font-size: 10px; font-weight: 500; padding: 1px 7px; border-radius: 3px; font-family: 'DM Mono', monospace; }
+
+.tv-msg { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+.tv-from { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 1px; }
+.tv-when { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--faint); margin-bottom: 8px; }
+.tv-body { font-size: 12px; color: var(--muted); line-height: 1.65; }
+
+.tv-reply { padding: 12px 16px; }
+.tv-reply-lbl { font-size: 11px; font-weight: 600; color: var(--faint); margin-bottom: 5px; }
+.tv-box {
+  border: 1px solid var(--border); border-radius: 6px;
+  padding: 9px 11px; min-height: 60px;
+  font-size: 12px; color: var(--faint); line-height: 1.65;
+  font-family: inherit; transition: border-color .25s, background .25s, color .25s;
+  background: var(--neutral-bg);
+}
+.tv-box.filled { border-color: #86EFAC; background: var(--ok-bg); color: #166534; }
+.tv-ok {
+  display: flex; align-items: center; gap: 6px;
+  margin-top: 7px; font-size: 11px; font-weight: 500;
+  color: var(--ok); opacity: 0; transition: opacity .28s;
+}
+.tv-ok.vis { opacity: 1; }
+.ok-ck {
+  width: 14px; height: 14px; background: var(--ok);
+  border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; color: #fff; font-size: 8px; flex-shrink: 0;
+}
+
+/* Extension popup */
+.ep {
+  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.08);
+  background: var(--surface); position: sticky; top: 64px;
+}
+.ep-hd {
+  background: var(--ok); padding: 9px 12px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ep-brand { display: flex; align-items: center; gap: 7px; color: #fff; }
+.ep-ico {
+  width: 20px; height: 20px; background: rgba(255,255,255,.2);
+  border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px;
+}
+.ep-name { font-weight: 600; font-size: 13px; }
+.ep-ver  { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,.6); }
+
+.ep-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+.ep-lbl  {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .08em; color: var(--faint); margin-bottom: 5px; display: block;
+}
+
+.ep-idle { padding: 14px 6px; text-align: center; }
+.ep-idle-ico { font-size: 24px; display: block; margin-bottom: 8px; }
+.ep-idle-txt { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+.ep-abtn {
+  width: 100%; padding: 8px;
+  background: var(--blue); color: #fff; border: none; border-radius: 5px;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: opacity .12s;
+}
+.ep-abtn:hover { opacity: .88; }
+.ep-abtn:disabled { background: var(--faint); cursor: not-allowed; opacity: 1; }
+
+.ep-scan { padding: 12px 6px; text-align: center; }
+.ep-scan-bar { height: 3px; background: var(--border); border-radius: 9999px; overflow: hidden; margin-bottom: 7px; }
+.ep-scan-fill {
+  height: 100%; background: var(--blue); border-radius: 9999px;
+  animation: sfill 1.3s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes sfill { from { width: 0 } to { width: 100% } }
+.ep-scan-txt { font-size: 11px; color: var(--faint); font-style: italic; }
+
+.ep-fields { display: flex; flex-direction: column; gap: 4px; }
+.ep-field {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 6px 9px; border-radius: 5px;
+  background: var(--neutral-bg); border: 1px solid var(--border);
+}
+.ep-fk {
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  color: var(--faint); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px;
+}
+.ep-fv { font-size: 12px; font-weight: 600; color: var(--text); }
+.ep-fchk { font-size: 12px; color: var(--ok); }
+
+.ep-script {
+  background: var(--neutral-bg); border: 1px solid var(--border);
+  border-radius: 5px; padding: 8px;
+  font-size: 11px; line-height: 1.6; color: var(--muted);
+  max-height: 100px; overflow-y: auto;
+}
+
+.ep-ibtn {
+  width: 100%; padding: 8px;
+  background: var(--ok); color: #fff; border: none; border-radius: 5px;
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  cursor: pointer; transition: opacity .12s;
+}
+.ep-ibtn:hover { opacity: .88; }
+
+.ep-suc {
+  background: var(--ok-bg); margin: -10px;
+  padding: 20px 14px; text-align: center;
+}
+.ep-suc-ico { font-size: 22px; display: block; margin-bottom: 6px; }
+.ep-suc-ttl { font-weight: 700; font-size: 13px; color: var(--ok); }
+.ep-suc-sub { font-size: 11px; color: #166534; margin-top: 3px; line-height: 1.55; }
+
+.ep-q-btns { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.ep-q-btn {
+  font-size: 10px; font-weight: 500; padding: 3px 8px;
+  background: var(--neutral-bg); border: 1px solid var(--border);
+  border-radius: 3px; cursor: pointer; color: var(--muted);
+  font-family: 'DM Sans', sans-serif; transition: all .1s;
+}
+.ep-q-btn:hover { background: var(--ok-bg); border-color: #86EFAC; color: #166534; }
+
+.ep-ft {
+  border-top: 1px solid var(--border); padding: 5px 10px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.ep-ft-a { font-size: 10px; color: var(--faint); cursor: pointer; font-weight: 500; }
+.ep-ft-a:hover { color: var(--blue); }
+.ep-dbg {
+  font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 6px;
+  border-radius: 3px; background: var(--neutral-bg); border: 1px solid var(--border); color: var(--faint); cursor: pointer;
+}
+.ep-dbg:hover { border-color: var(--blue); color: var(--blue); }
+
+/* ── BEFORE / AFTER ── */
+.ba-grid { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 16px; align-items: center; margin-top: 4px; }
+.ba-lbl { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: .08em; display: block; margin-bottom: 8px; }
+.ba-lbl.before { color: var(--critical); }
+.ba-lbl.after  { color: var(--ok); }
+
+.ba-steps { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.ba-step {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 11px 14px; border-bottom: 1px solid var(--border);
+  border-left: 3px solid transparent;
+}
+.ba-step:last-child { border-bottom: none; }
+.ba-step.pain { background: var(--crit-bg); border-left-color: var(--critical); }
+.ba-si { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+.ba-st { font-weight: 600; font-size: 12px; color: var(--text); margin-bottom: 2px; }
+.ba-step.pain .ba-st { color: var(--critical); }
+.ba-sd { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+.ba-arr { display: flex; justify-content: center; align-items: center; font-size: 16px; color: var(--faint); font-weight: 700; }
+.ba-after { border: 1px solid #86EFAC; border-radius: 8px; overflow: hidden; }
+.ba-after-top { padding: 22px 18px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.ba-num { font-family: 'DM Mono', monospace; font-size: 32px; font-weight: 500; color: var(--ok); letter-spacing: -.03em; line-height: 1; }
+.ba-num-s { font-size: 12px; color: var(--muted); line-height: 1.45; }
+.ba-after-ft { background: var(--ok-bg); padding: 9px 18px; font-size: 11px; color: #166534; font-weight: 500; text-align: center; }
+.ba-note { margin-top: 10px; padding: 11px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 11px; color: var(--muted); line-height: 1.6; }
+.ba-note strong { display: block; color: var(--text); margin-bottom: 2px; font-weight: 600; font-size: 12px; }
+
+/* ── HOW IT WORKS (inside card) ── */
+.hiw-row {
+  display: flex; align-items: flex-start; gap: 14px;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
+}
+.hiw-row:last-child { border-bottom: none; }
+.hiw-n {
+  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
+  background: var(--bg); color: var(--muted);
+  padding: 1px 7px; border-radius: 3px; flex-shrink: 0; margin-top: 2px;
+  border: 1px solid var(--border);
+}
+.hiw-body { flex: 1; }
+.hiw-ttl { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.hiw-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+.hiw-tag {
+  font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 7px;
+  border-radius: 3px; background: var(--blue-bg); color: var(--blue);
+  display: inline-block; margin-top: 5px;
+}
+
+/* ── ARCHITECTURE ── */
+.arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.arch-hd {
+  padding: 13px 20px 11px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.arch-ico { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.ico-g { background: #E6F4EA; }
+.ico-e { background: var(--ok-bg); }
+.arch-hd h3 { font-size: 13px; font-weight: 600; color: var(--text); }
+.arch-hd p  { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.arch-row {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 10px 20px; border-bottom: 1px solid var(--border);
+}
+.arch-row:last-child { border-bottom: none; }
+.arch-ri { font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+.arch-tt { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 1px; }
+.arch-dd { font-size: 11px; color: var(--muted); line-height: 1.55; }
+
+/* ── DECISIONS TABLE ── */
+.dec-thead { display: grid; grid-template-columns: 1fr 1fr 1fr; background: var(--bg); }
+.dec-th {
+  padding: 9px 16px; border-right: 1px solid var(--border);
+  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
+  letter-spacing: .08em; color: var(--faint);
+}
+.dec-th:last-child { border-right: none; }
+.dec-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid var(--border); }
+.dec-cell { padding: 13px 16px; border-right: 1px solid var(--border); font-size: 12px; line-height: 1.55; }
+.dec-cell:last-child { border-right: none; }
+.dec-cell h4 { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.dec-cell p  { color: var(--muted); }
+.ok-t  { color: var(--ok);      font-weight: 600; }
+.trd-t { color: var(--warning); font-weight: 600; }
+
+/* ── STACK ── */
+.pills { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 9999px;
+  border: 1px solid var(--border); background: var(--surface);
+  font-size: 12px; font-weight: 500; color: var(--text);
+  transition: border-color .12s;
+}
+.pill:hover { border-color: var(--ok); }
+.pill-ico { font-size: 12px; }
+.pill-g { background: var(--ok-bg); border-color: #86EFAC; color: #166534; }
+
+/* ── SCORE LEGEND (decisions note) ── */
+.score-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 16px 20px; }
+.score-item { font-size: 11px; color: var(--muted); line-height: 1.6; }
+.score-item strong { display: block; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+
+/* ── FOOTER ── */
+footer {
+  border-top: 1px solid var(--border);
+  max-width: 1160px; margin: 0 auto 32px;
+  padding: 16px 32px 0;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-note { font-size: 11px; color: var(--faint); }
+.footer-arch { font-size: 10px; color: var(--faint); font-family: 'DM Mono', monospace; }
+
+/* ── SECTION GAPS ── */
+.sec { margin-bottom: 20px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 880px) {
+  .demo-grid { grid-template-columns: 1fr; }
+  .q-col { flex-direction: row; flex-wrap: wrap; gap: 6px; }
+  .qc { flex: 1; min-width: 120px; }
+  .ep { position: static; }
+  .ba-grid { grid-template-columns: 1fr; }
+  .ba-arr { transform: rotate(90deg); }
+  .arch-grid { grid-template-columns: 1fr; }
+  .dec-thead { display: none; }
+  .dec-row { grid-template-columns: 1fr; }
+  .dec-cell { border-right: none; }
+  header { padding: 0 16px; }
+  .content { padding: 16px 16px 32px; }
+  .hero { padding: 24px 16px 28px; }
+  .h-links .h-link { display: none; }
+  footer { padding: 14px 16px 0; flex-direction: column; gap: 4px; align-items: flex-start; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ep-scan-fill { animation: none; width: 100%; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="h-brand">
+    <span class="h-live"></span>
+    TicketScript — Demo de Portfólio
+  </div>
+  <div class="h-links">
+    <a class="h-link" href="/">← Portfólio</a>
+    <a class="h-link" href="#demo">Demo</a>
+    <a class="h-link" href="#problema">Problema</a>
+    <a class="h-link" href="#como">Como funciona</a>
+    <a class="h-link" href="#stack">Stack</a>
+    <a class="h-cta"  href="#demo">Testar demo</a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Extensão de navegador · Chrome e Edge · Projeto solo · Fev–Mai 2025</div>
+    <div class="hero-chips">
+      <span class="chip chip-bd">Chrome + Edge · MV3</span>
+      <span class="chip chip-bd">JavaScript puro</span>
+      <span class="chip chip-bd">Zero dependências</span>
+      <span class="chip chip-ok">Produção</span>
+      <a class="chip" href="/formpilot/" style="background:rgba(124,58,237,.18);color:#C4B5FD;text-decoration:none;">↳ Origem do FormPilot</a>
+    </div>
+    <h1>Um clique.<br><span class="hero-hl">Ticket resolvido.</span></h1>
+    <p class="hero-sub">Extensão para Chrome e Edge que lê o ticket aberto, identifica operadora, tipo de problema e resolução automaticamente, e preenche a resposta padronizada — sem trocar de aba.</p>
+    <div class="hero-stats">
+      <div class="h-stat"><div class="h-stat-val">4 → 1</div><div class="h-stat-lbl">passos por ticket</div></div>
+      <div class="h-stat"><div class="h-stat-val">0</div><div class="h-stat-lbl">backend necessário</div></div>
+      <div class="h-stat"><div class="h-stat-val">0</div><div class="h-stat-lbl">dependências externas</div></div>
+      <div class="h-stat"><div class="h-stat-val">v2.4</div><div class="h-stat-lbl">versão atual</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- DEMO -->
+  <div class="sec" id="demo">
+    <div class="sec-hd">
+      <span class="sec-tag">demonstração interativa</span>
+      <h2>Selecione um ticket. Um clique.</h2>
+      <p>Escolha qualquer ticket da fila e use o painel da extensão à direita. Todos os nomes, operadoras e scripts são fictícios.</p>
+    </div>
+    <div class="demo-grid" id="demo-root"></div>
+  </div>
+
+  <!-- PROBLEM -->
+  <div class="sec" id="problema">
+    <div class="sec-hd">
+      <span class="sec-tag">o problema</span>
+      <h2>Uma planilha que precisava ficar aberta. Sempre.</h2>
+      <p>Cada ticket exigia uma resposta padronizada em uma matriz de operadora × tipo de problema × resolução. A consulta era manual — e constante.</p>
+    </div>
+    <div class="ba-grid">
+      <div>
+        <span class="ba-lbl before">antes — 4 passos em cada ticket</span>
+        <div class="ba-steps">
+          <div class="ba-step">
+            <span class="ba-si">🎫</span>
+            <div><div class="ba-st">Abrir o ticket</div><div class="ba-sd">Identificar operadora, tipo de problema e resolução desejada.</div></div>
+          </div>
+          <div class="ba-step pain">
+            <span class="ba-si">📊</span>
+            <div><div class="ba-st">Trocar de aba para a planilha</div><div class="ba-sd">Percorrer a matriz de combinações para encontrar a linha certa.</div></div>
+          </div>
+          <div class="ba-step pain">
+            <span class="ba-si">📋</span>
+            <div><div class="ba-st">Copiar o script</div><div class="ba-sd">A linha errada significa o script errado enviado ao cliente.</div></div>
+          </div>
+          <div class="ba-step">
+            <span class="ba-si">🔁</span>
+            <div><div class="ba-st">Voltar e colar</div><div class="ba-sd">Repetir dezenas de vezes por dia.</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="ba-arr">→</div>
+      <div>
+        <span class="ba-lbl after">depois — mesmo ticket, um clique</span>
+        <div class="ba-after">
+          <div class="ba-after-top">
+            <div class="ba-num">1×</div>
+            <div class="ba-num-s">Analisar → Inserir.<br>Script vai direto para o campo certo.</div>
+          </div>
+          <div class="ba-after-ft">A planilha ainda existe. Só não precisa mais ficar aberta.</div>
+        </div>
+        <div class="ba-note">
+          <strong>Por que não eliminar a planilha?</strong>
+          Ela é o lugar certo para manter scripts — qualquer pessoa do time edita uma célula sem mexer no código. A extensão a torna invisível no fluxo diário, não obsoleta.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW IT WORKS -->
+  <div class="sec" id="como">
+    <div class="sec-hd">
+      <span class="sec-tag">fluxo técnico</span>
+      <h2>O que acontece entre o clique e a resposta.</h2>
+    </div>
+    <div class="card">
+      <div class="hiw-row">
+        <span class="hiw-n">01</span>
+        <div class="hiw-body">
+          <div class="hiw-ttl">Content script lê a página</div>
+          <div class="hiw-desc">Script injetado na plataforma de suporte captura texto via seletores DOM priorizados. Strings de domínio interno removidas antes da análise — um edge case encontrado em produção.</div>
+          <span class="hiw-tag">content.js · chrome.scripting</span>
+        </div>
+      </div>
+      <div class="hiw-row">
+        <span class="hiw-n">02</span>
+        <div class="hiw-body">
+          <div class="hiw-ttl">Texto normalizado</div>
+          <div class="hiw-desc">Acentos removidos via decomposição NFD. Convertido para minúsculas. Pontuação eliminada. "FleetEx" e "fleetex" viram o mesmo candidato — sem isso qualquer variação quebra o lookup.</div>
+          <span class="hiw-tag">normalizeText()</span>
+        </div>
+      </div>
+      <div class="hiw-row">
+        <span class="hiw-n">03</span>
+        <div class="hiw-body">
+          <div class="hiw-ttl">Valores cruzados com o CSV por prefixo</div>
+          <div class="hiw-desc">Matching via regex encontra valores mesmo quando o ticket usa variantes mais longas. Valores mais longos da planilha têm prioridade — regra necessária para evitar matches ambíguos com termos curtos.</div>
+          <span class="hiw-tag">detectValue() · regex prefixo</span>
+        </div>
+      </div>
+      <div class="hiw-row">
+        <span class="hiw-n">04</span>
+        <div class="hiw-body">
+          <div class="hiw-ttl">Injeção via setter nativo do React</div>
+          <div class="hiw-desc">Campo preenchido com o setter nativo compatível com React. Atribuição direta ao DOM deixa o campo visualmente preenchido mas funcionalmente vazio — o setter nativo dispara o evento corretamente.</div>
+          <span class="hiw-tag">executeScript · Object.getOwnPropertyDescriptor</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ARCHITECTURE -->
+  <div class="sec">
+    <div class="sec-hd">
+      <span class="sec-tag">arquitetura</span>
+      <h2>Duas camadas. Nenhuma infraestrutura.</h2>
+      <p>A camada de dados e a de execução são independentes. Qualquer uma pode mudar sem tocar na outra — nenhuma exige servidor.</p>
+    </div>
+    <div class="arch-grid">
+      <div class="card">
+        <div class="arch-hd">
+          <div class="arch-ico ico-g">📊</div>
+          <div><h3>Camada de dados</h3><p>Google Sheets · CSV público</p></div>
+        </div>
+        <div class="arch-row"><span class="arch-ri">🔗</span><div><div class="arch-tt">Uma URL, sempre atualizada</div><div class="arch-dd">Publicar na web → CSV. Qualquer pessoa do time atualiza scripts imediatamente sem tocar no código da extensão.</div></div></div>
+        <div class="arch-row"><span class="arch-ri">⚡</span><div><div class="arch-tt">Cache diário</div><div class="arch-dd">Dados baixados uma vez por dia e guardados no chrome.storage.local. Refresh manual disponível em Configurações.</div></div></div>
+        <div class="arch-row"><span class="arch-ri">🔓</span><div><div class="arch-tt">Sem autenticação</div><div class="arch-dd">CSV acessível publicamente. Nenhuma chave de API, nenhum OAuth, nenhuma credencial para gerenciar.</div></div></div>
+      </div>
+      <div class="card">
+        <div class="arch-hd">
+          <div class="arch-ico ico-e">🔌</div>
+          <div><h3>Camada de execução</h3><p>Chrome / Edge · Manifest V3</p></div>
+        </div>
+        <div class="arch-row"><span class="arch-ri">🏠</span><div><div class="arch-tt">Tudo local, no navegador</div><div class="arch-dd">Nenhum servidor intermediário. A extensão lê a página, busca o CSV e preenche o campo — só isso.</div></div></div>
+        <div class="arch-row"><span class="arch-ri">📦</span><div><div class="arch-tt">Zero dependências externas</div><div class="arch-dd">Sem npm, sem bundler, sem build step. HTML + CSS + JS + APIs do Chrome. Parser CSV próprio — suporta campos com vírgulas entre aspas.</div></div></div>
+        <div class="arch-row"><span class="arch-ri">✏️</span><div><div class="arch-tt">Respostas Rápidas configuráveis</div><div class="arch-dd">Até 5 respostas configuradas pelo próprio usuário via editor contenteditable — negrito, itálico, listas, emojis. Copiadas como text/html via ClipboardItem, com fallback text/plain para ambientes sem suporte.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DECISIONS -->
+  <div class="sec">
+    <div class="sec-hd">
+      <span class="sec-tag">decisões de design</span>
+      <h2>Trade-offs feitos de propósito.</h2>
+    </div>
+    <div class="card">
+      <div class="dec-thead">
+        <div class="dec-th">Decisão</div>
+        <div class="dec-th">Justificativa</div>
+        <div class="dec-th">Trade-off aceito</div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>CSV em vez de banco de dados</h4><p>Scripts ficam numa planilha, não em banco ou endpoint de API.</p></div>
+        <div class="dec-cell"><p><span class="ok-t">✓</span> Zero infraestrutura. O time já usava planilhas. Novos scripts entram em produção em minutos, editados por qualquer um.</p></div>
+        <div class="dec-cell"><p><span class="trd-t">~</span> Sem sincronização em tempo real. Atualizações aparecem na próxima abertura do dia ou ao forçar atualização.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>Sem backend</h4><p>Tudo roda localmente. Zero componente server-side.</p></div>
+        <div class="dec-cell"><p><span class="ok-t">✓</span> Nada para hospedar, fazer deploy, monitorar ou pagar. Funciona offline após o primeiro fetch do dia.</p></div>
+        <div class="dec-cell"><p><span class="trd-t">~</span> Sem analytics centralizado nem logs. Diagnosticado via modo Debug embutido.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>Matching por prefixo</h4><p>Valor "envio" na planilha bate com "envios" no ticket.</p></div>
+        <div class="dec-cell"><p><span class="ok-t">✓</span> Valores na planilha ficam curtos e legíveis. Variações e plurais tratados automaticamente.</p></div>
+        <div class="dec-cell"><p><span class="trd-t">~</span> Valores mais longos têm prioridade para evitar matches ambíguos. Edge cases resolvidos via Debug.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STACK -->
+  <div class="sec" id="stack">
+    <div class="sec-hd">
+      <span class="sec-tag">stack</span>
+      <h2>Construído com o que o problema exigia.</h2>
+    </div>
+    <div class="card">
+      <div class="card-body">
+        <div class="pills">
+          <div class="pill pill-g"><span class="pill-ico">🧩</span> Chrome Extensions API MV3</div>
+          <div class="pill"><span class="pill-ico">⚡</span> JavaScript vanilla — ES6+</div>
+          <div class="pill"><span class="pill-ico">💾</span> chrome.storage.local</div>
+          <div class="pill"><span class="pill-ico">🔍</span> chrome.scripting.executeScript</div>
+          <div class="pill"><span class="pill-ico">📋</span> ClipboardItem API</div>
+          <div class="pill"><span class="pill-ico">📊</span> Google Sheets CSV</div>
+          <div class="pill"><span class="pill-ico">✏️</span> contenteditable + execCommand</div>
+          <div class="pill"><span class="pill-ico">🤖</span> Claude — dev assistido por IA</div>
+          <div class="pill"><span class="pill-ico">📐</span> Semantic Versioning</div>
+          <div class="pill"><span class="pill-ico">📝</span> Keep a Changelog</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EVOLUÇÃO -->
+  <div class="sec">
+    <div class="card" style="border-left: 3px solid #7C3AED;">
+      <div class="card-body" style="display:flex;align-items:flex-start;gap:14px;">
+        <span style="font-size:22px;flex-shrink:0;margin-top:1px;">🔄</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;">Este projeto evoluiu para o <a href="/formpilot/" style="color:#7C3AED;">FormPilot</a></div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.65;">O TicketScript foi a base conceitual e técnica do FormPilot — uma extensão que expandiu o mesmo núcleo (leitura de contexto no navegador + injeção de conteúdo + configuração via planilha) para automação de formulários de operadoras de saúde. A arquitetura sem backend, o matching por prefixo e as Respostas Rápidas configuráveis foram todos reaproveitados e evoluídos no projeto seguinte.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-note">Demonstração conceitual · dados 100% fictícios · empresa, nomes e operadoras não reais</span>
+  <span class="footer-arch">extensão de navegador → CSV → popup → ticket</span>
+</footer>
+
+<script>
+/* ── Dados fictícios — todos inventados para a demo ── */
+const TICKETS = [
+  {
+    id: 'TKT-4821',
+    subject: 'Pacote não chegou — entrega FleetEx',
+    customer: 'Marcos T.',
+    ts: 'Hoje, 09h14',
+    body: 'Oi, estou esperando há 8 dias e o rastreamento da FleetEx mostra "entregue" desde terça — mas nunca recebi nada. Meu vizinho também não viu. Pedido nº 2847-B. Gostaria que reenviassem o quanto antes.',
+    tags: [
+      { l: 'FleetEx',      bg: '#EFF6FF', c: '#2563EB' },
+      { l: 'Pacote Perdido', bg: '#FEF2F2', c: '#DC2626' },
+      { l: 'Reenvio',      bg: '#F0FDF4', c: '#16A34A' }
+    ],
+    dots: ['#2563EB','#DC2626','#16A34A'],
+    det: { carrier: 'FleetEx', issue: 'Pacote Perdido', resolution: 'Reenvio' },
+    script: 'Obrigado por entrar em contato. Investigamos junto à FleetEx e confirmamos que sua remessa não foi localizada no destino. Um pedido de reposição prioritário foi criado — você receberá um novo código de rastreamento por e-mail em até 24 horas. Pedimos sinceras desculpas por esta experiência.'
+  },
+  {
+    id: 'TKT-5033',
+    subject: 'Caixa danificada — entrega NovaPak',
+    customer: 'Priya S.',
+    ts: 'Hoje, 10h42',
+    body: 'Minha entrega da NovaPak chegou com a caixa completamente amassada de um lado. O item dentro está visivelmente quebrado — tirei fotos. Gostaria de fazer uma troca. Pedido nº 3391-C.',
+    tags: [
+      { l: 'NovaPak',       bg: '#EFF6FF', c: '#2563EB' },
+      { l: 'Item Danificado', bg: '#FEF2F2', c: '#DC2626' },
+      { l: 'Troca',         bg: '#F0FDF4', c: '#16A34A' }
+    ],
+    dots: ['#2563EB','#DC2626','#16A34A'],
+    det: { carrier: 'NovaPak', issue: 'Item Danificado', resolution: 'Troca' },
+    script: 'Lamentamos muito que sua entrega NovaPak tenha chegado em más condições. A troca foi aprovada — uma etiqueta de devolução pré-paga foi enviada para seu e-mail. Envie o item danificado de volta assim que puder e o substituto será despachado assim que processarmos a devolução. Prazo: 3 a 5 dias úteis.'
+  },
+  {
+    id: 'TKT-5119',
+    subject: 'Entrega QuickSend — 10 dias de atraso',
+    customer: 'Jordan L.',
+    ts: 'Ontem, 16h08',
+    body: 'Fiz meu pedido há 12 dias e ainda não chegou. O rastreamento da QuickSend está parado há 6 dias sem atualização. A previsão era há 10 dias. Quero o reembolso — não dá mais para esperar.',
+    tags: [
+      { l: 'QuickSend',        bg: '#EFF6FF', c: '#2563EB' },
+      { l: 'Atraso na Entrega', bg: '#FEF2F2', c: '#DC2626' },
+      { l: 'Reembolso',        bg: '#F0FDF4', c: '#16A34A' }
+    ],
+    dots: ['#2563EB','#DC2626','#16A34A'],
+    det: { carrier: 'QuickSend', issue: 'Atraso na Entrega', resolution: 'Reembolso' },
+    script: 'Pedimos sinceras desculpas pelo atraso prolongado com sua remessa QuickSend — isso está muito abaixo da experiência que buscamos oferecer. O reembolso integral foi processado e deve aparecer no seu método de pagamento original em 3 a 5 dias úteis. Você pode fazer um novo pedido quando quiser.'
+  },
+  {
+    id: 'TKT-5244',
+    subject: 'Item errado enviado — entrega AirDrop',
+    customer: 'Yuki M.',
+    ts: 'Ontem, 11h55',
+    body: 'Pedi a versão azul tamanho M, mas a AirDrop entregou a vermelha tamanho G — completamente errado. Não quero reenvio; prefiro crédito em loja para escolher outra coisa. Pedido nº 4102-A.',
+    tags: [
+      { l: 'AirDrop',      bg: '#EFF6FF', c: '#2563EB' },
+      { l: 'Item Errado',  bg: '#FEF2F2', c: '#DC2626' },
+      { l: 'Crédito em Loja', bg: '#F0FDF4', c: '#16A34A' }
+    ],
+    dots: ['#2563EB','#DC2626','#16A34A'],
+    det: { carrier: 'AirDrop', issue: 'Item Errado', resolution: 'Crédito em Loja' },
+    script: 'Pedimos desculpas pela troca na sua entrega AirDrop. Um crédito em loja equivalente ao valor total da compra foi adicionado à sua conta — ele não expira e pode ser usado em qualquer produto do catálogo. Uma etiqueta de devolução pré-paga para o item incorreto está a caminho do seu e-mail.'
+  }
+];
+
+let cur = 0, st = 'idle';
+
+function render() {
+  document.getElementById('demo-root').innerHTML = fila() + viewer() + popup();
+  bind();
+}
+
+function fila() {
+  return `<div class="q-col">
+    <div class="q-hd">TICKETS ABERTOS</div>
+    ${TICKETS.map((t, i) => `
+      <div class="qc ${i === cur ? 'on' : ''}" data-i="${i}">
+        <div class="qc-id">${t.id}</div>
+        <div class="qc-sub">${t.subject}</div>
+        <div class="qc-dots">${t.dots.map(c => `<div class="qc-dot" style="background:${c}"></div>`).join('')}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function viewer() {
+  const t = TICKETS[cur], ins = st === 'inserted';
+  return `<div class="tv">
+    <div class="tv-chrome">
+      <div class="tv-dots">
+        <div class="tv-dot" style="background:#EF4444"></div>
+        <div class="tv-dot" style="background:#F59E0B"></div>
+        <div class="tv-dot" style="background:#10B981"></div>
+      </div>
+      <div class="tv-url">suporte.helixcommerce.com.br/agente/tickets/${t.id.toLowerCase()}</div>
+      <div class="tv-ext" title="TicketScript">⚡</div>
+    </div>
+    <div class="tv-hd">
+      <div class="tv-id">${t.id} · ${t.ts}</div>
+      <div class="tv-sub">${t.subject}</div>
+      <div class="tv-tags">${t.tags.map(g => `<span class="tv-tag" style="background:${g.bg};color:${g.c}">${g.l}</span>`).join('')}</div>
+    </div>
+    <div class="tv-msg">
+      <div class="tv-from">${t.customer}</div>
+      <div class="tv-when">${t.ts}</div>
+      <div class="tv-body">${t.body}</div>
+    </div>
+    <div class="tv-reply">
+      <div class="tv-reply-lbl">Responder ao cliente</div>
+      <div class="tv-box ${ins ? 'filled' : ''}">
+        ${ins ? t.script : '<span style="font-style:italic">O script aparecerá aqui após clicar em Inserir na extensão…</span>'}
+      </div>
+      <div class="tv-ok ${ins ? 'vis' : ''}">
+        <div class="ok-ck">✓</div>
+        Script inserido pelo TicketScript
+      </div>
+    </div>
+  </div>`;
+}
+
+function popup() {
+  const t = TICKETS[cur];
+  return `<div class="ep">
+    <div class="ep-hd">
+      <div class="ep-brand"><div class="ep-ico">⚡</div><span class="ep-name">TicketScript</span></div>
+      <span class="ep-ver">v2.4</span>
+    </div>
+    <div class="ep-body">${corpo(t)}</div>
+    <div class="ep-ft">
+      <span class="ep-ft-a">⚙ Configurações</span>
+      <span class="ep-dbg" id="dbg">Debug</span>
+    </div>
+  </div>`;
+}
+
+function corpo(t) {
+  if (st === 'idle') return `
+    <div class="ep-idle"><span class="ep-idle-ico">🎫</span>
+    <div class="ep-idle-txt">Ticket detectado. Clique em Analisar para identificar operadora, tipo de problema e resolução automaticamente.</div></div>
+    <button class="ep-abtn" id="abtn">Analisar ticket</button>${atalhos()}`;
+
+  if (st === 'scanning') return `
+    <div class="ep-scan"><div class="ep-scan-bar"><div class="ep-scan-fill"></div></div>
+    <div class="ep-scan-txt">Lendo o conteúdo do ticket…</div></div>
+    <button class="ep-abtn" disabled>Analisando…</button>${atalhos()}`;
+
+  if (st === 'detected') return `
+    <div><span class="ep-lbl">Detectado</span>
+    <div class="ep-fields">
+      ${[['Operadora', t.det.carrier], ['Tipo de problema', t.det.issue], ['Resolução', t.det.resolution]].map(([k, v]) => `
+        <div class="ep-field">
+          <div><div class="ep-fk">${k}</div><div class="ep-fv">${v}</div></div>
+          <span class="ep-fchk">✓</span>
+        </div>`).join('')}
+    </div></div>
+    <div><span class="ep-lbl">Script gerado</span><div class="ep-script">${t.script}</div></div>
+    <button class="ep-ibtn" id="ibtn">Inserir no ticket</button>${atalhos()}`;
+
+  if (st === 'inserted') return `
+    <div class="ep-suc"><span class="ep-suc-ico">✅</span>
+    <div class="ep-suc-ttl">Inserido</div>
+    <div class="ep-suc-sub">${t.det.carrier} · ${t.det.issue}<br>Script inserido no campo de resposta.</div></div>
+    ${atalhos()}`;
+}
+
+function atalhos() {
+  return `<div><span class="ep-lbl">Respostas rápidas <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--faint);">· configuráveis pelo usuário</span></span>
+    <div class="ep-q-btns">
+      <button class="ep-q-btn">⏳ Preciso de mais tempo</button>
+      <button class="ep-q-btn">📞 Escalar</button>
+      <button class="ep-q-btn">✅ Resolvido</button>
+    </div></div>`;
+}
+
+function bind() {
+  document.querySelectorAll('.qc').forEach(c =>
+    c.addEventListener('click', () => {
+      const i = +c.dataset.i;
+      if (i !== cur) { cur = i; st = 'idle'; render(); }
+    })
+  );
+  const ab = document.getElementById('abtn');
+  if (ab) ab.addEventListener('click', () => {
+    st = 'scanning'; render();
+    setTimeout(() => { st = 'detected'; render(); }, 1350);
+  });
+  const ib = document.getElementById('ibtn');
+  if (ib) ib.addEventListener('click', () => { st = 'inserted'; render(); });
+  const db = document.getElementById('dbg');
+  if (db) db.addEventListener('click', () => {
+    const t = TICKETS[cur];
+    alert(
+      `Debug — ${t.id}\n\n` +
+      `Operadora:        ${st === 'idle' ? '(não analisado)' : t.det.carrier}\n` +
+      `Tipo de problema: ${st === 'idle' ? '(não analisado)' : t.det.issue}\n` +
+      `Resolução:        ${st === 'idle' ? '(não analisado)' : t.det.resolution}\n\n` +
+      `Estado: ${st}\nLinhas no CSV: 48\nCache: atualizado (hoje)\n` +
+      `URL: suporte.helixcommerce.com.br/agente/tickets/${t.id.toLowerCase()}`
+    );
+  });
+}
+
+render();
+</script>
+
+<div style="background:#131D2E;color:#B7BFCE;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-family:'DM Mono',monospace;font-size:12px;">
+  <a href="/" style="color:#8FA0BE;text-decoration:none;">← Portfólio</a>
+  <a href="/formpilot/" style="color:#fff;text-decoration:none;font-weight:500;">Próximo projeto: FormPilot (evolução deste projeto) →</a>
+</div>
+
+</body>
+</html>
