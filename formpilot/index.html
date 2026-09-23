@@ -230,6 +230,23 @@ nav {
 .ok  { color: var(--accent2); font-weight: 600; }
 .trd { color: #B45309; font-weight: 600; }
 
+/* Mapeamento (Ancora) */
+.map-bg { background: var(--surf); border-top: 1px solid var(--line); }
+.ancora-frame { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; box-shadow: var(--sh); }
+.ancora-bar { background: var(--dark); color: #fff; padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; font-family: 'DM Mono', monospace; font-size: .75rem; }
+.ancora-bar .ancora-tag { color: #8FA0BE; white-space: nowrap; }
+@media (max-width: 480px) { .ancora-bar { font-size: .6875rem; } }
+.ancora-frame iframe { width: 100%; height: 900px; border: 0; display: block; background: #ECEEF2; }
+@media (max-width: 700px) { .ancora-frame iframe { height: 640px; } }
+.ancora-open { text-align: right; margin-top: 10px; }
+.ancora-open a { color: var(--accent); font-weight: 600; font-size: .8125rem; }
+.ancora-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
+@media (max-width: 700px) { .ancora-meta { grid-template-columns: 1fr; } }
+.ancora-meta-k { font-family: 'DM Mono', monospace; font-size: .6875rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-3); margin-bottom: 6px; }
+.ancora-meta-v { font-size: .875rem; color: var(--ink-2); line-height: 1.6; }
+.ancora-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.ancora-chip { font-family: 'DM Mono', monospace; font-size: .6875rem; padding: 4px 10px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); background: var(--paper); }
+
 /* Stack */
 .stack-bg { background: var(--paper); border-top: 1px solid var(--line); }
 .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
@@ -281,6 +298,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
       <a class="nav-a" href="#demo">Demo</a>
       <a class="nav-a" href="#problema">Problema</a>
       <a class="nav-a" href="#como">Como funciona</a>
+      <a class="nav-a" href="#mapeamento">Mapeamento</a>
       <a class="nav-cta" href="#demo">Ver demo</a>
     </div>
   </div>
@@ -461,6 +479,33 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
             <div><div class="arch-tt">n8n cuida só do que exige segredo</div><div class="arch-dd">Um fluxo de automação (n8n) guarda a credencial OAuth do Adobe Sign e faz a chamada em nome do painel — o segredo nunca chega ao navegador do analista.</div></div>
           </div>
         </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec map-bg" id="mapeamento">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">protótipo em avaliação</span>
+      <h2>Mapear uma operadora nova sem escrever configuração à mão.</h2>
+      <p>Hoje, adicionar uma operadora significa descrever manualmente onde cada campo fica no documento — nome, CPF, datas, tabela de dependentes, cada posição e regra. Este é um protótipo de motor de mapeamento genérico: em vez de configurar por código, você aponta os campos num documento de exemplo e o motor aprende a estrutura — reutilizável para qualquer formulário no mesmo padrão.</p>
+    </div>
+
+    <div class="ancora-frame">
+      <div class="ancora-bar"><span>ancora · motor de mapeamento e preenchimento</span><span class="ancora-tag">protótipo · dados fictícios</span></div>
+      <iframe src="ancora-demo.html" title="Demo do motor de mapeamento Ancora" loading="lazy"></iframe>
+    </div>
+    <div class="ancora-open"><a href="ancora-demo.html" target="_blank" rel="noopener">Abrir o demo em tela cheia ↗</a></div>
+
+    <div class="ancora-meta">
+      <div>
+        <div class="ancora-meta-k">Resultado</div>
+        <div class="ancora-meta-v">Em avaliação — se validado, o objetivo é reduzir o tempo hoje gasto configurando cada operadora nova manualmente.</div>
+      </div>
+      <div>
+        <div class="ancora-meta-k">Tecnologias e abordagem</div>
+        <div class="ancora-chips"><span class="ancora-chip">Motor de mapeamento genérico</span><span class="ancora-chip">Configuração por exemplo</span><span class="ancora-chip">Protótipo conceitual</span></div>
       </div>
     </div>
   </div>
