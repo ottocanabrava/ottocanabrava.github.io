@@ -246,6 +246,10 @@ nav {
 .ancora-meta-v { font-size: .875rem; color: var(--ink-2); line-height: 1.6; }
 .ancora-chips { display: flex; flex-wrap: wrap; gap: 8px; }
 .ancora-chip { font-family: 'DM Mono', monospace; font-size: .6875rem; padding: 4px 10px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); background: var(--paper); }
+.ancora-thesis { font-size: 1.0625rem; font-weight: 600; color: var(--ink); margin: 14px 0 0; line-height: 1.5; max-width: 62ch; }
+.ancora-thesis strong { color: var(--accent2); }
+.config-meta-note { font-size: .875rem; color: var(--ink-2); line-height: 1.6; margin-bottom: 20px; background: var(--paper); border-left: 3px solid var(--accent); border-radius: 4px; padding: 12px 16px; max-width: 68ch; }
+.config-meta-note strong { color: var(--ink); }
 
 /* Stack */
 .stack-bg { background: var(--paper); border-top: 1px solid var(--line); }
@@ -487,25 +491,28 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
 <section class="sec map-bg" id="mapeamento">
   <div class="wrap">
     <div class="sh">
-      <span class="stag">protótipo em avaliação</span>
-      <h2>Mapear uma operadora nova sem escrever configuração à mão.</h2>
-      <p>Hoje, adicionar uma operadora significa descrever manualmente onde cada campo fica no documento — nome, CPF, datas, tabela de dependentes, cada posição e regra. Este é um protótipo de motor de mapeamento genérico: em vez de configurar por código, você aponta os campos num documento de exemplo e o motor aprende a estrutura — reutilizável para qualquer formulário no mesmo padrão.</p>
+      <span class="stag">arquitetura · demonstração</span>
+      <h2>O formulário muda. O motor continua o mesmo.</h2>
+      <p>No FormPilot, cada operadora define seu próprio layout de formulário — isso nunca muda. O que muda é que adicionar uma operadora deixou de significar escrever código: significa descrever, uma vez, onde cada campo fica e que regras ele segue. É essa configuração que um motor genérico interpreta para montar, preencher e validar o documento.</p>
+      <p class="ancora-thesis">Formulários diferentes passaram a ser <strong>configurações de um mesmo motor</strong>, em vez de exigirem uma nova implementação a cada documento.</p>
     </div>
 
+    <div class="config-meta-note"><strong>Ancora</strong>, logo abaixo, é uma reconstrução conceitual e anonimizada dessa etapa de mapeamento — a mesma lógica de arquitetura usada no FormPilot, aplicada a um documento, operadora e dados fictícios, para mostrar como o motor funciona sem expor sistemas ou informações reais.</div>
+
     <div class="ancora-frame">
-      <div class="ancora-bar"><span>ancora · motor de mapeamento e preenchimento</span><span class="ancora-tag">protótipo · dados fictícios</span></div>
+      <div class="ancora-bar"><span>ancora · reconstrução do motor de mapeamento</span><span class="ancora-tag">demonstração anonimizada</span></div>
       <iframe src="ancora-demo.html" title="Demo do motor de mapeamento Ancora" loading="lazy"></iframe>
     </div>
     <div class="ancora-open"><a href="ancora-demo.html" target="_blank" rel="noopener">Abrir o demo em tela cheia ↗</a></div>
 
     <div class="ancora-meta">
       <div>
-        <div class="ancora-meta-k">Resultado</div>
-        <div class="ancora-meta-v">Em avaliação — se validado, o objetivo é reduzir o tempo hoje gasto configurando cada operadora nova manualmente.</div>
+        <div class="ancora-meta-k">Como isso funciona no FormPilot</div>
+        <div class="ancora-meta-v">Mapear uma operadora nova é trabalho de configuração, feito uma vez. A partir daí, toda solicitação daquela operadora reaproveita a mesma configuração — sem código novo.</div>
       </div>
       <div>
         <div class="ancora-meta-k">Tecnologias e abordagem</div>
-        <div class="ancora-chips"><span class="ancora-chip">Motor de mapeamento genérico</span><span class="ancora-chip">Configuração por exemplo</span><span class="ancora-chip">Protótipo conceitual</span></div>
+        <div class="ancora-chips"><span class="ancora-chip">Motor de configuração genérico</span><span class="ancora-chip">Mapeamento por configuração</span><span class="ancora-chip">Demonstração anonimizada</span></div>
       </div>
     </div>
   </div>
