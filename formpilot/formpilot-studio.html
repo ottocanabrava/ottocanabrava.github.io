@@ -7,6 +7,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+  /* Embutido como iframe no case FormPilot: a navegação própria some (o case já é o contexto). */
+  (function(){ var e; try{ e = window.self !== window.top; }catch(_){ e = true; } if(e) document.documentElement.classList.add("is-embedded"); })();
+</script>
 <style>
   :root{
     --bg:#ECEEF2;
@@ -658,6 +662,24 @@
 
   .actions-row{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;}
 
+  /* ---------- navegação de volta ao case (oculta quando embutido) ---------- */
+  .case-crumb{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 12px;font-size:12.5px;}
+  .case-crumb a{color:var(--ink-700);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:6px;padding:4px 0;}
+  .case-crumb a:hover,.case-crumb a:focus-visible{color:var(--blue);}
+  .case-crumb .ctx{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-500);}
+  .case-nav{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .case-nav a{display:flex;flex-direction:column;gap:3px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);text-decoration:none;color:var(--ink-900);transition:border-color .15s;}
+  .case-nav a:hover,.case-nav a:focus-visible{border-color:var(--blue);}
+  .case-nav .dir{font-family:var(--font-mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-500);}
+  .case-nav .nm{font-size:15px;font-weight:700;}
+  .case-nav .sm{font-size:12.5px;color:var(--ink-500);}
+  .case-nav .next{text-align:right;align-items:flex-end;}
+  @media (max-width:600px){
+    .case-nav{grid-template-columns:1fr;}
+    .case-nav .next{text-align:left;align-items:flex-start;}
+  }
+  .is-embedded .case-crumb,.is-embedded .case-nav{display:none;}
+
   .foot-tag{
     margin-top:30px;
     padding-top:12px;
@@ -672,6 +694,11 @@
 <body>
 
 <div class="app">
+
+  <nav class="case-crumb" aria-label="Contexto do case">
+    <a href="/formpilot/" target="_top">← Voltar ao FormPilot</a>
+    <span class="ctx">parte do case FormPilot · demonstração conceitual</span>
+  </nav>
 
   <header class="top">
     <div class="brand-row">
@@ -880,6 +907,11 @@
   </main>
 
   <div class="foot-tag">reconstrução conceitual do FormPilot · dados fictícios · sem vínculo com sistemas ou documentos reais</div>
+
+  <nav class="case-nav" aria-label="Continuar navegando">
+    <a href="/formpilot/" target="_top"><span class="dir">← Voltar ao case</span><span class="nm">FormPilot</span><span class="sm">O Studio demonstra a etapa de configuração deste case</span></a>
+    <a class="next" href="/#projetos" target="_top"><span class="dir">Portfólio</span><span class="nm">Ver outros projetos →</span><span class="sm">Extrator, Daily Ops, Motor de Triagem, TicketScript</span></a>
+  </nav>
 
 </div>
 

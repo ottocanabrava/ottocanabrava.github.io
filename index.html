@@ -281,8 +281,25 @@
   @media (max-width:640px){ .evo-wrap{ padding:20px; } }
   .evo-label{ font-family:"DM Mono",monospace; font-size:.6875rem; text-transform:uppercase; letter-spacing:.05em; color:var(--info); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
   .evo-label::before{ content:"↻"; font-size:.875rem; }
-  .evo-row{ display:flex; align-items:center; gap:22px; }
-  .evo-card{ flex:1; min-width:0; }
+  .evo-intro{ font-size:.875rem; color:var(--text-muted); line-height:1.6; margin:-6px 0 22px; max-width:70ch; }
+  .evo-row{ display:flex; align-items:stretch; gap:22px; }
+  .evo-card{ flex:1; min-width:0; display:flex; flex-direction:column; }
+  .evo-step{ font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.05em; color:var(--info); margin-bottom:6px; }
+  .evo-card .evo-name{ margin-bottom:14px; }
+  .evo-card .evo-tags{ margin-bottom:16px; }
+  .evo-card .evo-impact{ margin:0 0 14px; }
+  .evo-roles{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin:2px 0 16px; border:1px solid var(--border-soft); border-radius:var(--r); font-size:.75rem; color:var(--text-muted); line-height:1.4; }
+  .evo-roles > div{ padding:9px 11px; border-left:1px solid var(--border-soft); }
+  .evo-roles > div:first-child{ border-left:none; }
+  .evo-roles .k{ display:block; font-family:"DM Mono",monospace; font-size:.5625rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); margin-bottom:3px; }
+  @media (max-width:520px){
+    .evo-roles{ grid-template-columns:1fr; }
+    .evo-roles > div{ border-left:none; border-top:1px solid var(--border-soft); }
+    .evo-roles > div:first-child{ border-top:none; }
+  }
+  .evo-links{ display:flex; flex-direction:column; gap:8px; }
+  .evo-sublink{ font-size:.75rem; color:var(--text-muted); line-height:1.45; transition:color var(--dur); }
+  .evo-sublink:hover, .evo-sublink:focus-visible{ color:var(--accent); }
   .evo-arrow{ flex-shrink:0; width:104px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
   .evo-arrow .ar{ font-size:1.5rem; line-height:1; color:var(--info); }
   .evo-arrow .lbl{ font-family:"DM Mono",monospace; font-size:.625rem; font-weight:600; color:var(--info); text-transform:uppercase; letter-spacing:.03em; text-align:center; white-space:nowrap; background:var(--info-soft); padding:4px 10px; border-radius:99px; }
@@ -313,14 +330,50 @@
   .skill .sn{ font-size:.875rem; font-weight:600; margin-bottom:4px; }
   .skill .se{ font-family:"DM Mono",monospace; font-size:.6875rem; color:var(--text-faint); }
 
-  /* ---------- experiência ---------- */
-  .exp-group{ display:flex; flex-direction:column; }
-  .exp-item{ padding:20px 0; border-bottom:1px solid var(--border-soft); display:flex; flex-direction:column; gap:3px; }
-  .exp-item:last-child{ border-bottom:none; }
-  .exp-co{ font-size:1rem; font-weight:700; letter-spacing:-.005em; }
-  .exp-role{ font-family:"DM Mono",monospace; font-size:.75rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; }
-  .exp-ctx{ font-size:.875rem; color:var(--text-muted); line-height:1.55; margin:3px 0 0; max-width:64ch; }
-  .exp-badge{ display:inline-flex; align-self:flex-start; margin-top:8px; font-family:"DM Mono",monospace; font-size:.75rem; font-weight:600; padding:4px 11px; border-radius:99px; background:var(--ok-soft); color:var(--ok); }
+  /* ---------- experiência (timeline em painel, mesmo sistema do .evo-wrap) ---------- */
+  .xp{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r-l); box-shadow:var(--shadow); padding:30px 32px; }
+  @media (max-width:640px){ .xp{ padding:22px 20px; } }
+  .xp-line{ list-style:none; margin:0; padding:0; }
+  .xp-item{ display:grid; grid-template-columns:150px 1fr; gap:0 24px; position:relative; padding-bottom:28px; }
+  .xp-item:last-child{ padding-bottom:0; }
+  /* trilho vertical + marcador, no início da coluna de conteúdo */
+  .xp-body{ position:relative; padding-left:26px; min-width:0; }
+  .xp-body::before{ content:""; position:absolute; left:4px; top:14px; bottom:-28px; width:1px; background:var(--border); }
+  .xp-item:last-child .xp-body::before{ display:none; }
+  .xp-body::after{ content:""; position:absolute; left:0; top:6px; width:9px; height:9px; border-radius:50%; background:var(--surface); border:1.5px solid var(--text-faint); }
+  .xp-item.now .xp-body::after{ background:var(--signal); border-color:var(--signal); box-shadow:0 0 0 4px var(--signal-soft); }
+  .xp-when{ font-family:"DM Mono",monospace; font-size:.75rem; color:var(--text-muted); line-height:1.5; padding-top:2px; }
+  .xp-when span{ display:block; color:var(--text-faint); font-size:.6875rem; }
+  .xp-head{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:2px; }
+  .xp-co{ font-size:1.0625rem; font-weight:700; letter-spacing:-.005em; margin:0; }
+  .xp-now{ font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.04em; padding:3px 8px; border-radius:99px; background:var(--signal-soft); color:var(--signal-ink); }
+  .xp-role{ font-family:"DM Mono",monospace; font-size:.75rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:10px; }
+  .xp-ctx{ font-size:.875rem; color:var(--text-muted); line-height:1.55; margin:0 0 12px; max-width:62ch; }
+  .xp-body .ptags{ margin-bottom:0; }
+  .xp-fact{ margin:12px 0 0; font-size:.8125rem; color:var(--text-muted); display:flex; align-items:baseline; gap:8px; }
+  .xp-fact .k{ font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); flex-shrink:0; }
+  .xp-fact a{ color:var(--accent); font-weight:600; }
+  @media (max-width:640px){
+    .xp-item{ grid-template-columns:1fr; }
+    .xp-when{ padding:0 0 6px 26px; }
+    .xp-when span{ display:inline; }
+    .xp-when span::before{ content:" · "; }
+  }
+  /* atuação em paralelo: lista compacta, sem timeline */
+  .xp-side{ margin-top:28px; padding-top:22px; border-top:1px solid var(--border-soft); }
+  .xp-side-k{ font-family:"DM Mono",monospace; font-size:.6875rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); margin:0 0 14px; }
+  .xp-side-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
+  @media (max-width:820px){ .xp-side-grid{ grid-template-columns:1fr; } }
+  .xp-mini{ padding:0 20px; border-left:1px solid var(--border-soft); }
+  .xp-mini:first-child{ padding-left:0; border-left:none; }
+  @media (max-width:820px){
+    .xp-mini{ padding:12px 0; border-left:none; border-top:1px solid var(--border-soft); }
+    .xp-mini:first-child{ padding-top:0; border-top:none; }
+  }
+  .xp-mini-co{ font-size:.9375rem; font-weight:700; }
+  .xp-mini-role{ font-family:"DM Mono",monospace; font-size:.6875rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin:2px 0 6px; }
+  .xp-mini-role span{ text-transform:none; letter-spacing:0; }
+  .xp-mini p{ font-size:.8125rem; color:var(--text-muted); line-height:1.5; margin:0; }
 
   /* ---------- CTA ---------- */
   .cta-box{ background:var(--ink); color:#fff; border-radius:var(--r-l); padding:44px 40px; display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; }
@@ -349,6 +402,7 @@
       <a href="#metodo">Método</a>
       <a href="#projetos">Projetos</a>
       <a href="#skills">Competências</a>
+      <a href="#experiencia">Experiência</a>
       <a href="#contato">Contato</a>
     </div>
   </div>
@@ -514,24 +568,42 @@
   <section aria-labelledby="evo-h">
     <div class="evo-wrap">
       <span class="evo-label" id="evo-h">Evolução de produto</span>
+      <p class="evo-intro">Um mesmo trabalho em duas etapas: o TicketScript resolveu a resposta padronizada no ticket; o FormPilot levou a mesma base para o formulário de movimentação e a assinatura.</p>
       <div class="evo-row">
         <div class="evo-card">
+          <span class="evo-step">Etapa 1 · fev–mai 2025</span>
           <div class="evo-name">TicketScript <span class="ptag" style="font-size:.625rem;">Descontinuado</span></div>
-          <p class="evo-desc">Extensão de navegador (Chrome/Edge) que lê o ticket aberto, identifica operadora e resolução, e preenche a resposta padronizada — projeto solo, fev–mai 2025. Reduziu de 4 passos manuais para 1 clique por ticket, sem backend. Usado até ser descontinuado com a evolução para o FormPilot.</p>
-          <div class="evo-tags"><span class="ptag">JavaScript</span><span class="ptag">Zero dependências</span></div>
+          <div class="pfield"><div class="k">Problema</div><div class="v">Cada ticket pedia uma resposta padronizada, escolhida numa planilha de operadora × tipo de problema × resolução. A consulta era manual, com troca de aba em todo atendimento — e a linha errada virava o script errado enviado ao cliente.</div></div>
+          <div class="pfield"><div class="k">Solução</div><div class="v">Extensão de navegador (Chrome/Edge) que lê o texto do ticket aberto, cruza com a planilha publicada em CSV por correspondência de prefixo e insere o script no campo de resposta quando o analista aciona. A planilha segue como fonte editável pelo time; nada roda em servidor.</div></div>
+          <div class="evo-tags"><span class="ptag">JavaScript · MV3</span><span class="ptag">Google Sheets (CSV)</span><span class="ptag">Sem backend</span></div>
+          <div class="evo-impact">
+            <div class="ei-item before"><span class="ei-val">4 passos</span><span class="ei-lbl">manuais por ticket</span></div>
+            <span class="ei-arrow">→</span>
+            <div class="ei-item after"><span class="ei-val">1 clique</span><span class="ei-lbl">usado em produção até dar lugar ao FormPilot</span></div>
+          </div>
           <a class="evo-link" href="/ticketscript/">Ver o case →</a>
         </div>
         <div class="evo-arrow" aria-hidden="true"><span class="ar">→</span><span class="lbl">evoluiu para</span></div>
         <div class="evo-card">
+          <span class="evo-step">Etapa 2</span>
           <div class="evo-name">FormPilot <span class="ptag" style="font-size:.625rem;">Em uso pelo time</span></div>
-          <p class="evo-desc">Migração arquitetural de extensão Chrome para app nativo no Zendesk (ZAF ticket_sidebar), sem backend próprio. Lê os dados estruturados do ticket e preenche o PDF da operadora automaticamente via pdf-lib — CPF, datas e códigos de empresa com transforms em runtime — e envia para assinatura via Adobe Sign API (OAuth 2.0, proxy n8n para o client_secret, renovação automática de token). Nova operadora entra editando um JSON, sem alterar código.</p>
-          <div class="evo-tags"><span class="ptag">pdf-lib</span><span class="ptag">Adobe Sign API</span><span class="ptag">4 operadoras · 12+ movimentações</span></div>
+          <div class="pfield"><div class="k">Problema</div><div class="v">O esforço maior estava nas movimentações: cada inclusão, exclusão ou alteração exigia localizar o formulário da operadora, preencher campo a campo e enviar para assinatura num fluxo separado. E a extensão precisava ser instalada no navegador de cada analista.</div></div>
+          <div class="pfield"><div class="k">Solução</div><div class="v">App nativo no Zendesk (ZAF), sem backend próprio. Lê os dados estruturados do ticket, usa a configuração da operadora (JSON) para estampar os campos no PDF via pdf-lib e envia para assinatura via Adobe Sign — com o segredo OAuth guardado num proxy n8n.</div></div>
+          <div class="evo-roles">
+            <div><span class="k">Configuração</span>uma vez por operadora, sem alterar código</div>
+            <div><span class="k">Automação</span>leitura do ticket, preenchimento e envio</div>
+            <div><span class="k">Revisão humana</span>antes de cada envio</div>
+          </div>
+          <div class="evo-tags"><span class="ptag">ZAF</span><span class="ptag">pdf-lib</span><span class="ptag">Adobe Sign API · n8n</span></div>
           <div class="evo-impact">
             <div class="ei-item before"><span class="ei-val">10–20 min</span><span class="ei-lbl">processo manual por movimentação</span></div>
             <span class="ei-arrow">→</span>
             <div class="ei-item after"><span class="ei-val">~2 min</span><span class="ei-lbl">revisão + geração por movimentação, já configurada</span></div>
           </div>
-          <a class="evo-link" href="/formpilot/">Ver o case →</a>
+          <div class="evo-links">
+            <a class="evo-link" href="/formpilot/">Ver o case →</a>
+            <a class="evo-sublink" href="/formpilot/#mapeamento">↳ FormPilot Studio: demonstração conceitual da etapa de configuração, dentro do case</a>
+          </div>
         </div>
       </div>
       <div class="evo-preview" role="img" aria-label="Fila de chamados do Zendesk, o chamado de inclusão de titular aberto, e o painel do FormPilot identificando operadora, movimentação e beneficiário antes de gerar o formulário">
@@ -577,45 +649,55 @@
   </section>
 
   <!-- ============ EXPERIÊNCIA ============ -->
-  <section aria-labelledby="exp-h">
+  <section id="experiencia" aria-labelledby="exp-h">
     <div class="sec-head">
       <span class="kicker">Trajetória</span>
       <h2 id="exp-h">Experiência</h2>
-      <p>De onde vem a experiência prática por trás dos projetos acima.</p>
+      <p>Experiência prática construída entre operações, tecnologia, automação e sistemas.</p>
     </div>
-    <div class="exp-group">
-      <div class="exp-item">
-        <div class="exp-co">Pipo Saúde</div>
-        <div class="exp-role">Analista de Operações Pleno</div>
-        <p class="exp-ctx">Referência técnica em automação e aplicação de IA em operações, com evolução para a posição de Pleno por performance.</p>
-      </div>
-      <div class="exp-item">
-        <div class="exp-co">VincIT · UNICIV</div>
-        <div class="exp-role">Analista de Sistemas Acadêmicos e Administrativo</div>
-        <p class="exp-ctx">Atuação em sistemas acadêmicos e administrativos, com participação na estruturação do processo de credenciamento institucional junto ao MEC.</p>
-        <span class="exp-badge">Conceito 5 na abertura dos cursos</span>
-      </div>
-    </div>
+    <div class="xp">
+      <ol class="xp-line">
+        <li class="xp-item now">
+          <div class="xp-when">abr 2022 — atual<span>remoto</span></div>
+          <div class="xp-body">
+            <div class="xp-head"><h3 class="xp-co">Pipo Saúde</h3><span class="xp-now">Atual</span></div>
+            <div class="xp-role">Analista de Operações Pleno</div>
+            <p class="xp-ctx">Operações de benefícios corporativos B2B numa healthtech, na interface entre áreas de negócio, TI e operadoras de saúde.</p>
+            <div class="ptags"><span class="ptag">Mapeamento de processos · BPMN</span><span class="ptag">Requisitos e regras de negócio</span><span class="ptag">Automação e IA na operação</span></div>
+            <p class="xp-fact"><span class="k">Atuação</span><span>Construção e evolução de soluções de automação e sistemas internos. Promovido a Pleno por performance.</span></p>
+          </div>
+        </li>
+        <li class="xp-item">
+          <div class="xp-when">out 2017 — abr 2022<span>Maringá, PR</span></div>
+          <div class="xp-body">
+            <div class="xp-head"><h3 class="xp-co">VincIT · UNICIV</h3></div>
+            <div class="xp-role">Analista de Sistemas Acadêmicos e Administrativo</div>
+            <p class="xp-ctx">Centro de inovação de uma instituição de ensino — de estágio a analista, com a responsabilidade administrativa da área.</p>
+            <div class="ptags"><span class="ptag">Sistemas acadêmicos</span><span class="ptag">Implantação de AVA · Moodle</span><span class="ptag">Credenciamento MEC</span></div>
+            <p class="xp-fact"><span class="k">MEC</span><span>Conceito 5 na abertura dos cursos.</span></p>
+          </div>
+        </li>
+      </ol>
 
-    <div class="sec-head" style="margin-top:48px;">
-      <span class="kicker">Amplitude e iniciativa</span>
-      <h3 id="exp-ind-h" style="font-size:1.125rem; font-weight:700; margin:0;">Atuação independente</h3>
-    </div>
-    <div class="exp-group">
-      <div class="exp-item">
-        <div class="exp-co">Turing</div>
-        <div class="exp-role">Avaliador de Modelos de IA</div>
-        <p class="exp-ctx">Avaliação comparativa de prompts e outputs entre modelos de IA, com foco em qualidade e consistência das respostas.</p>
-      </div>
-      <div class="exp-item">
-        <div class="exp-co">UPCIV Idiomas</div>
-        <div class="exp-role">Consultor de Tecnologia</div>
-        <p class="exp-ctx">Implantação de LMS com Moodle e estruturação do funil comercial em HubSpot, conduzidas de ponta a ponta.</p>
-      </div>
-      <div class="exp-item">
-        <div class="exp-co">Consultoria independente</div>
-        <div class="exp-role">Implantação de Sistemas</div>
-        <p class="exp-ctx">Estruturação de site, agendamento online, assinatura digital e sistemas operacionais para negócio de serviços.</p>
+      <div class="xp-side">
+        <h3 class="xp-side-k">Em paralelo · atuação independente</h3>
+        <div class="xp-side-grid">
+          <div class="xp-mini">
+            <div class="xp-mini-co">UPCIV Idiomas</div>
+            <div class="xp-mini-role">Consultor de Tecnologia <span>· 2023 — 2025</span></div>
+            <p>Implantação de LMS com Moodle e do funil comercial em HubSpot para uma escola de idiomas.</p>
+          </div>
+          <div class="xp-mini">
+            <div class="xp-mini-co">Turing</div>
+            <div class="xp-mini-role">Avaliador de Modelos de IA</div>
+            <p>Avaliação comparativa de prompts e outputs entre modelos de IA, com foco em qualidade e consistência.</p>
+          </div>
+          <div class="xp-mini">
+            <div class="xp-mini-co">Consultoria independente</div>
+            <div class="xp-mini-role">Implantação de Sistemas</div>
+            <p>Site, agendamento online, assinatura digital e sistemas operacionais para um negócio de serviços.</p>
+          </div>
+        </div>
       </div>
     </div>
   </section>

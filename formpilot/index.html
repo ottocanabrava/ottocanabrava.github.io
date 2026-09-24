@@ -795,9 +795,47 @@ function bind() {
 render();
 </script>
 
-<div style="background:#131D2E;color:#B7BFCE;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;font-family:'DM Mono',monospace;font-size:12px;">
-  <a href="/" style="color:#8FA0BE;text-decoration:none;">← Portfólio</a>
-  <a href="/extrator-de-fatura/" style="color:#fff;text-decoration:none;font-weight:500;">Próximo projeto: Extrator de Fatura →</a>
+<!-- CONTINUE EXPLORANDO: sequência Extrator → Daily Ops → Motor → TicketScript → FormPilot (mesma ordem da home) -->
+<style>
+  /* Continue explorando — navegação entre cases (estilos isolados, prefixo cx-) */
+  .cx{ background:#131D2E; color:#B7BFCE; padding:40px 24px 44px; font-family:'DM Sans',-apple-system,'Segoe UI',sans-serif; line-height:1.45; }
+  .cx *{ box-sizing:border-box; }
+  .cx-in{ max-width:1120px; margin:0 auto; }
+  .cx-hd{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin:0 0 16px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+  .cx-k{ display:inline-flex; align-items:center; gap:8px; color:#5FD1B8; font-weight:500; margin:0; font-size:inherit; letter-spacing:inherit; }
+  .cx-k::before{ content:""; width:7px; height:7px; border-radius:50%; background:#5FD1B8; }
+  .cx-pos{ color:#6B7A96; }
+  .cx-grid{ display:grid; grid-template-columns:1fr minmax(180px,.7fr) 1fr; gap:12px; }
+  .cx-card{ display:flex; flex-direction:column; gap:4px; min-width:0; padding:16px 18px; border:1px solid rgba(255,255,255,.1); border-radius:10px; background:rgba(255,255,255,.03); color:inherit; text-decoration:none; transition:border-color .15s, background .15s; }
+  a.cx-card:hover, a.cx-card:focus-visible{ border-color:rgba(255,255,255,.34); background:rgba(255,255,255,.06); }
+  a.cx-card:focus-visible{ outline:2px solid #5FD1B8; outline-offset:2px; }
+  .cx-dir{ font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#8FA0BE; }
+  .cx-name{ font-size:16px; font-weight:600; color:#fff; }
+  .cx-sum{ font-size:13px; color:#8FA0BE; }
+  .cx-rel{ align-self:flex-start; margin-top:4px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.04em; text-transform:uppercase; color:#C4B5FD; background:rgba(124,58,237,.18); padding:3px 8px; border-radius:99px; }
+  .cx-next{ text-align:right; align-items:flex-end; }
+  .cx-next .cx-rel{ align-self:flex-end; }
+  .cx-all{ justify-content:center; align-items:center; text-align:center; }
+  .cx-edge{ justify-content:center; border-style:dashed; background:none; }
+  .cx-edge .cx-name{ font-size:14px; font-weight:500; color:#6B7A96; }
+  @media (max-width:720px){
+    .cx{ padding:32px 18px 36px; }
+    .cx-grid{ grid-template-columns:1fr; }
+    .cx-next{ text-align:left; align-items:flex-start; }
+    .cx-next .cx-rel{ align-self:flex-start; }
+    .cx-all{ order:3; align-items:flex-start; text-align:left; }
+    .cx-edge{ display:none; }
+  }
+</style>
+<div class="cx" role="navigation" aria-labelledby="cx-h">
+  <div class="cx-in">
+  <div class="cx-hd"><h2 class="cx-k" id="cx-h">Continue explorando</h2><span class="cx-pos">Projeto 5 de 5</span></div>
+  <div class="cx-grid">
+    <a class="cx-card cx-prev" href="/ticketscript/"><span class="cx-dir">← Anterior</span><span class="cx-name">TicketScript</span><span class="cx-sum">Resposta padronizada no ticket · etapa 1</span><span class="cx-rel">origem deste projeto</span></a>
+    <a class="cx-card cx-all" href="/#projetos"><span class="cx-dir">Portfólio</span><span class="cx-name">Todos os projetos</span></a>
+    <div class="cx-card cx-next cx-edge" aria-hidden="true"><span class="cx-dir">Próximo →</span><span class="cx-name">Este é o último projeto</span></div>
+  </div>
+  </div>
 </div>
 
 </body>
