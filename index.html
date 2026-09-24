@@ -294,6 +294,13 @@
   .evo-name{ font-size:1rem; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
   .evo-desc{ font-size:.8125rem; color:var(--text-muted); line-height:1.55; margin-bottom:10px; }
   .evo-tags{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .evo-impact{ display:flex; align-items:center; gap:12px; border-top:1px solid var(--border-soft); padding-top:14px; margin-top:auto; flex-wrap:wrap; }
+  .evo-impact .ei-item{ display:flex; flex-direction:column; }
+  .evo-impact .ei-val{ font-family:"DM Mono",monospace; font-size:1.0625rem; font-weight:600; }
+  .evo-impact .ei-item.before .ei-val{ color:var(--text-faint); text-decoration:line-through; text-decoration-color:var(--border); }
+  .evo-impact .ei-item.after .ei-val{ color:#0F7A5F; }
+  .evo-impact .ei-lbl{ font-size:.6875rem; color:var(--text-faint); max-width:16ch; line-height:1.35; margin-top:2px; }
+  .evo-impact .ei-arrow{ color:var(--text-faint); flex-shrink:0; }
   .evo-link{ font-size:.8125rem; font-weight:600; color:var(--accent); }
   .evo-note{ margin-top:20px; padding-top:18px; border-top:1px solid var(--border-soft); font-size:.8125rem; color:var(--text-faint); line-height:1.6; }
   .evo-note b{ color:var(--text-muted); }
@@ -519,7 +526,11 @@
           <div class="evo-name">FormPilot <span class="ptag" style="font-size:.625rem;">Em uso pelo time</span></div>
           <p class="evo-desc">Migração arquitetural de extensão Chrome para app nativo no Zendesk (ZAF ticket_sidebar), sem backend próprio. Lê os dados estruturados do ticket e preenche o PDF da operadora automaticamente via pdf-lib — CPF, datas e códigos de empresa com transforms em runtime — e envia para assinatura via Adobe Sign API (OAuth 2.0, proxy n8n para o client_secret, renovação automática de token). Nova operadora entra editando um JSON, sem alterar código.</p>
           <div class="evo-tags"><span class="ptag">pdf-lib</span><span class="ptag">Adobe Sign API</span><span class="ptag">4 operadoras · 12+ movimentações</span></div>
-          <div class="presult" style="border-top:none; padding-top:0; margin-top:10px;"><span class="rv" style="color:#0F7A5F;font-size:1.0625rem;">~2 min</span><span class="rl">revisão + geração por movimentação, após a configuração</span></div>
+          <div class="evo-impact">
+            <div class="ei-item before"><span class="ei-val">10–20 min</span><span class="ei-lbl">processo manual por movimentação</span></div>
+            <span class="ei-arrow">→</span>
+            <div class="ei-item after"><span class="ei-val">~2 min</span><span class="ei-lbl">revisão + geração por movimentação, já configurada</span></div>
+          </div>
           <a class="evo-link" href="/formpilot/">Ver o case →</a>
         </div>
       </div>

@@ -58,7 +58,8 @@ nav {
 .chip-bd  { border: 1px solid var(--dark3); color: var(--dt2); }
 .chip-ac { background: rgba(14,124,107,.18); color: #5FD1B8; border: 1px solid rgba(14,124,107,.32); }
 .hero h1 { font-family: 'DM Sans', sans-serif; font-size: clamp(2.375rem, 4.6vw, 3.75rem); font-weight: 600; line-height: 1.14; letter-spacing: -.015em; color: var(--dt1); margin-bottom: 20px; max-width: 640px; }
-.hero-sub { font-size: 1.0625rem; color: var(--dt2); max-width: 500px; line-height: 1.65; margin-bottom: 46px; }
+.hero-sub { font-size: 1.0625rem; color: var(--dt2); max-width: 500px; line-height: 1.65; margin-bottom: 14px; }
+.hero-role { font-family: 'DM Mono', monospace; font-size: .8125rem; color: var(--dt3); max-width: 500px; line-height: 1.5; margin-bottom: 46px; }
 .hero-facts { display: flex; gap: 0; padding-top: 32px; border-top: 1px solid var(--dark3); flex-wrap: wrap; }
 .hf { padding-right: 34px; margin-right: 34px; border-right: 1px solid var(--dark3); }
 .hf:last-child { border-right: none; padding-right: 0; margin-right: 0; }
@@ -183,6 +184,11 @@ nav {
 .ba-after-ft { background: var(--accent-l); padding: 11px 22px; font-size: .8125rem; color: #166534; font-weight: 500; text-align: center; }
 .ba-note { margin-top: 13px; padding: 13px 16px; background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); font-size: .8125rem; color: var(--ink-2); line-height: 1.6; }
 .ba-note strong { display: block; color: var(--ink); margin-bottom: 3px; font-weight: 600; }
+.ba-flow { font-family: 'DM Mono', monospace; font-weight: 600; font-size: 1.125rem; color: var(--accent2); letter-spacing: -.01em; }
+.ba-time { margin-top: 12px; padding: 10px 14px; border-radius: var(--r); font-family: 'DM Mono', monospace; font-size: .8125rem; display: flex; align-items: baseline; gap: 7px; }
+.ba-time b { font-size: 1.0625rem; }
+.ba-time.before { background: var(--warn-l); color: var(--warn); }
+.ba-time.after { background: var(--accent-l); color: var(--accent2); }
 
 /* How it works */
 .hiw-bg { background: var(--dark); }
@@ -230,7 +236,7 @@ nav {
 .ok  { color: var(--accent2); font-weight: 600; }
 .trd { color: #B45309; font-weight: 600; }
 
-/* Mapeamento (Ancora) */
+/* Mapeamento (FormPilot Studio) */
 .map-bg { background: var(--surf); border-top: 1px solid var(--line); }
 .ancora-frame { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; box-shadow: var(--sh); }
 .ancora-bar { background: var(--dark); color: #fff; padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; font-family: 'DM Mono', monospace; font-size: .75rem; }
@@ -317,6 +323,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     </div>
     <h1>Do ticket de RH até a assinatura, sem trocar de aba.</h1>
     <p class="hero-sub">Um painel que lê o pedido de movimentação, identifica a operadora e o tipo de solicitação, monta o formulário certo e encaminha para assinatura — sem que o analista precise procurar nada manualmente.</p>
+    <p class="hero-role">Idealizei, arquitetei, desenvolvi, integrei, validei e mantenho o FormPilot de ponta a ponta — da extensão original ao app nativo em uso hoje.</p>
     <div class="hero-facts">
       <div class="hf"><div class="hf-val">3</div><div class="hf-lbl">operadoras configuradas nesta demo</div></div>
       <div class="hf"><div class="hf-val">config</div><div class="hf-lbl">nova operadora entra por arquivo, não por código</div></div>
@@ -364,17 +371,19 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
             <div><div class="ba-st">Enviar para assinatura</div><div class="ba-sd">Anexar o documento pronto a um fluxo de assinatura separado e acompanhar manualmente o retorno.</div></div>
           </div>
         </div>
+        <div class="ba-time before"><b>10–20 min</b> por movimentação — processo manual, do início ao fim.</div>
       </div>
       <div class="ba-arr">→</div>
       <div>
         <span class="ba-lbl after">depois — mesmo chamado, um painel</span>
         <div class="ba-after">
           <div class="ba-after-top">
-            <div class="ba-num">1×</div>
-            <div class="ba-num-s">Analisar → Gerar formulário → Enviar. O painel identifica a operadora e monta o restante.</div>
+            <div class="ba-flow">Identificar → Gerar → Revisar → Enviar</div>
+            <div class="ba-num-s">O painel identifica a operadora e monta o formulário; a revisão humana continua antes do envio.</div>
           </div>
           <div class="ba-after-ft">Os modelos de cada operadora continuam existindo. Só deixam de exigir busca manual.</div>
         </div>
+        <div class="ba-time after"><b>~2 min</b> por movimentação — revisão + geração, com a operadora já configurada.</div>
         <div class="ba-note">
           <strong>Por que manter um modelo por operadora?</strong>
           Cada operadora define seu próprio layout de formulário — isso não muda. A diferença é que o painel guarda essa regra como configuração, então adicionar uma operadora nova não exige reescrever nada, só descrever seus campos.
@@ -497,24 +506,18 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
       <p class="ancora-thesis">Formulários diferentes passaram a ser <strong>configurações de um mesmo motor</strong>, em vez de exigirem uma nova implementação a cada documento.</p>
     </div>
 
-    <!-- NOME EM DEFINIÇÃO: "Ancora" ainda não é final. Ao renomear, atualizar apenas
-         os pontos de nome visível: o <strong>Ancora</strong> logo abaixo, o texto
-         "ancora · reconstrução do motor de mapeamento" na barra do demo, o title
-         do iframe, e em formpilot/ancora-demo.html (o <title>, .mark, .tagline e
-         o texto do rodapé). O arquivo ancora-demo.html e as classes CSS .ancora-*
-         são só identificadores internos e não precisam mudar. -->
-    <div class="config-meta-note"><strong>Ancora</strong>, logo abaixo, é uma reconstrução conceitual e anonimizada dessa etapa de mapeamento — a mesma lógica de arquitetura usada no FormPilot, aplicada a um documento, operadora e dados fictícios, para mostrar como o motor funciona sem expor sistemas ou informações reais.</div>
+    <div class="config-meta-note">FormPilot é o projeto real. <strong>FormPilot Studio</strong>, logo abaixo, é a reconstrução conceitual e anonimizada dessa etapa de mapeamento — a mesma lógica de arquitetura usada no FormPilot, aplicada a um documento, operadora e dados fictícios, para mostrar como o motor funciona sem expor sistemas ou informações reais.</div>
 
     <div class="ancora-frame">
-      <div class="ancora-bar"><span>ancora · reconstrução do motor de mapeamento</span><span class="ancora-tag">demonstração anonimizada</span></div>
-      <iframe src="ancora-demo.html" title="Demo do motor de mapeamento Ancora" loading="lazy"></iframe>
+      <div class="ancora-bar"><span>FormPilot Studio · workbench de mapeamento e configuração</span><span class="ancora-tag">reconstrução conceitual</span></div>
+      <iframe src="formpilot-studio.html" title="FormPilot Studio — workbench de mapeamento e configuração" loading="lazy"></iframe>
     </div>
-    <div class="ancora-open"><a href="ancora-demo.html" target="_blank" rel="noopener">Abrir o demo em tela cheia ↗</a></div>
+    <div class="ancora-open"><a href="formpilot-studio.html" target="_blank" rel="noopener">Abrir o FormPilot Studio em tela cheia ↗</a></div>
 
     <div class="ancora-meta">
       <div>
         <div class="ancora-meta-k">Configuração × operação</div>
-        <div class="ancora-meta-v">Mapear uma operadora nova é trabalho de configuração, feito uma vez — sem código novo. Depois de configurada, cada movimentação é uma operação: antes, 10 a 20 minutos de preenchimento manual; hoje, cerca de <strong>2 minutos</strong> entre revisão e geração do documento.</div>
+        <div class="ancora-meta-v">Mapear uma operadora nova é trabalho de configuração, feito uma vez — sem código novo. Depois de configurada, cada movimentação é uma operação: antes, 10 a 20 minutos de preenchimento manual; hoje, cerca de <strong>2 minutos</strong> entre revisão e geração do documento. O ganho não é só velocidade — é menos exposição a erro de preenchimento e uma operação mais consistente entre analistas.</div>
       </div>
       <div>
         <div class="ancora-meta-k">Tecnologias e abordagem</div>
