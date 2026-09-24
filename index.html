@@ -210,6 +210,18 @@
   .me-progress .lbl{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8FA0BE; white-space:nowrap; }
   .me-track{ flex:1; height:5px; background:rgba(255,255,255,.12); border-radius:99px; overflow:hidden; }
   .me-fill{ height:100%; width:66%; background:#2563EB; border-radius:99px; }
+  /* microinteração do Extrator: só ativa com JS e sem prefers-reduced-motion (classe .is-live);
+     sem ela, o preview fica no estado estático acima. Mesma gramática do FormPilot Studio:
+     pendente → em andamento (azul) → concluído (verde). Nada muda de altura ou largura do card. */
+  .mini-extrator.is-live [data-xtr-step]{ transition:opacity .35s ease; }
+  .mini-extrator.is-live [data-xtr-step] span{ transition:color .35s ease; }
+  .mini-extrator.is-live [data-xtr-step][data-state="pending"]{ opacity:.28; }
+  .mini-extrator.is-live [data-xtr-step][data-state="active"] span:last-child{ color:#8FB2FF; }
+  .mini-extrator.is-live [data-xtr-pct]{ min-width:4ch; text-align:right; font-variant-numeric:tabular-nums; }
+  .mini-extrator.is-live .me-fill{ transition:background-color .35s ease, opacity .3s ease; }
+  .mini-extrator.is-live .me-badge{ transition:background-color .35s ease, color .35s ease; }
+  .mini-extrator.is-done .me-fill{ background:#16A34A; }
+  .mini-extrator.is-resetting .me-fill{ opacity:0; }
 
   /* mini recriação da tela real "SLA da carteira / Tickets HubSpot" do Dashboard */
   .mini-ops{ width:100%; display:grid; grid-template-columns:1fr; gap:10px; }
@@ -464,21 +476,21 @@
         </div>
         <div class="ppreview" style="background:#E3E6ED;">
           <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="pp-body"><div class="mini-extrator" role="img" aria-label="Tela de fila e execução do Extrator de Fatura: fila de acessos e log de execução com progresso de 66%">
+          <div class="pp-body"><div class="mini-extrator" data-xtr role="img" aria-label="Tela de fila e execução do Extrator de Fatura: fila de acessos e log de execução com progresso de 66%">
             <div class="me-card">
               <div class="me-head">Fila de acessos <span class="me-count">3 itens</span></div>
               <div class="me-item"><div class="me-row"><span class="me-name">Estúdio Prisma</span><span class="me-badge done">concluído</span></div></div>
-              <div class="me-item"><div class="me-row"><span class="me-name">Metron Engenharia</span><span class="me-badge active">em execução</span></div></div>
+              <div class="me-item"><div class="me-row"><span class="me-name">Metron Engenharia</span><span class="me-badge active" data-xtr-badge>em execução</span></div></div>
               <div class="me-item"><div class="me-row"><span class="me-name">Copaíba Alimentos</span><span class="me-badge queued">na fila</span></div></div>
             </div>
             <div class="me-card me-exec">
               <div class="me-head">Execução — Metron<span class="me-count">2 de 3</span></div>
               <div class="me-log">
-                <div><span class="t">12:04:06</span><span class="ok">login validado</span></div>
-                <div><span class="t">12:04:11</span><span class="m">boleto localizado</span></div>
-                <div><span class="t">12:04:13</span><span class="ok">arquivo salvo</span></div>
+                <div data-xtr-step><span class="t">12:04:06</span><span class="ok">login validado</span></div>
+                <div data-xtr-step><span class="t">12:04:11</span><span class="m">boleto localizado</span></div>
+                <div data-xtr-step><span class="t">12:04:13</span><span class="ok">arquivo salvo</span></div>
               </div>
-              <div class="me-progress"><span class="lbl">progresso</span><div class="me-track"><div class="me-fill"></div></div><span class="lbl">66%</span></div>
+              <div class="me-progress"><span class="lbl">progresso</span><div class="me-track"><div class="me-fill" data-xtr-fill></div></div><span class="lbl" data-xtr-pct>66%</span></div>
             </div>
           </div></div>
         </div>
@@ -719,5 +731,64 @@
     <a href="#conteudo">↑ Voltar ao topo</a>
   </footer>
 </div>
+<script>
+/* Microinteração do preview do Extrator de Fatura: login → boleto → arquivo salvo → 100% → concluído → pausa → reinicia.
+   Roda só quando o preview está visível, a aba está ativa e o usuário não pediu movimento reduzido. */
+(function(){
+  var root = document.querySelector("[data-xtr]");
+  if(!root || !window.requestAnimationFrame || !window.matchMedia) return;
+  var steps = root.querySelectorAll("[data-xtr-step]");
+  var fill = root.querySelector("[data-xtr-fill]");
+  var pct = root.querySelector("[data-xtr-pct]");
+  var badge = root.querySelector("[data-xtr-badge]");
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var initial = { badgeClass: badge.className, badgeText: badge.textContent, pct: pct.textContent };
+  var timers = [], raf = 0, cur = 0, live = false, visible = false;
+
+  function clear(){ timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf); }
+  function at(ms, fn){ timers.push(setTimeout(fn, ms)); }
+  function setProgress(v){ cur = v; fill.style.width = v + "%"; pct.textContent = Math.round(v) + "%"; }
+  function tween(to, dur){
+    var from = cur, t0 = performance.now();
+    cancelAnimationFrame(raf);
+    (function frame(now){
+      var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      setProgress(from + (to - from) * e);
+      if(k < 1) raf = requestAnimationFrame(frame);
+    })(t0);
+  }
+  function state(i, s){ steps[i].setAttribute("data-state", s); }
+  function setBadge(done){ badge.className = "me-badge " + (done ? "done" : "active"); badge.textContent = done ? "concluído" : "em execução"; }
+
+  function cycle(){
+    clear();
+    root.classList.remove("is-done", "is-resetting");
+    for(var i = 0; i < steps.length; i++) state(i, "pending");
+    setBadge(false); setProgress(0);
+    at(600,  function(){ state(0, "active"); tween(33, 900); });
+    at(1500, function(){ state(0, "done"); state(1, "active"); tween(66, 1100); });
+    at(2600, function(){ state(1, "done"); state(2, "active"); tween(100, 1000); });
+    at(3600, function(){ state(2, "done"); root.classList.add("is-done"); setBadge(true); });
+    at(6400, function(){ root.classList.add("is-resetting"); });
+    at(6800, cycle);
+  }
+  function start(){ if(live) return; live = true; root.classList.add("is-live"); cycle(); }
+  function stop(){
+    if(!live) return; live = false; clear();
+    root.classList.remove("is-live", "is-done", "is-resetting");
+    for(var i = 0; i < steps.length; i++) steps[i].removeAttribute("data-state");
+    badge.className = initial.badgeClass; badge.textContent = initial.badgeText;
+    fill.style.width = ""; pct.textContent = initial.pct; cur = 0;
+  }
+  function update(){ (visible && !reduce.matches && !document.hidden) ? start() : stop(); }
+
+  if("IntersectionObserver" in window){
+    new IntersectionObserver(function(entries){ visible = entries[0].isIntersecting; update(); }, { threshold: 0.4 }).observe(root);
+  } else { visible = true; }
+  document.addEventListener("visibilitychange", update);
+  if(reduce.addEventListener) reduce.addEventListener("change", update); else if(reduce.addListener) reduce.addListener(update);
+  update();
+})();
+</script>
 </body>
 </html>
