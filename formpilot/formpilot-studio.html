@@ -121,6 +121,7 @@
   .stepper button.active .num{background:var(--blue);border-color:var(--blue);color:#fff;}
   .stepper button.done .num{background:var(--green-700);border-color:var(--green-700);color:#fff;}
   .stepper .sep{color:#3A4A66;font-size:12px;padding:0 1px;}
+  .stepper button, .stepper button .num{transition:color .35s ease,border-color .35s ease,background-color .35s ease;}
 
   main{padding-top:4px;}
   section.screen{display:none;}
@@ -433,7 +434,12 @@
     animation:bannerFade 3.2s ease forwards;
   }
   .fill-banner .fb-sep{color:var(--ink-300);font-family:var(--font-sans);}
-  @keyframes bannerFade{0%{opacity:1;}70%{opacity:1;}100%{opacity:0;height:0;padding-top:0;padding-bottom:0;margin-bottom:0;overflow:hidden;}}
+  /* altura não interpola a partir de auto: recolhe por max-height, com padding/margem fixos até 70%,
+     para o banner ficar legível ~2,2 s antes de sumir */
+  @keyframes bannerFade{
+    0%,70%{opacity:1;max-height:240px;padding-top:9px;padding-bottom:9px;margin-bottom:16px;overflow:hidden;}
+    100%{opacity:0;max-height:0;padding-top:0;padding-bottom:0;margin-bottom:0;overflow:hidden;}
+  }
 
   .context-head{margin-bottom:16px;}
   .context-head .badge-line{margin-top:10px;}
@@ -639,6 +645,7 @@
     font-size:11.5px;
     color:var(--ink-500);
   }
+  .status-step{transition:border-color .35s ease,color .35s ease;}
   .status-step.reached{border-bottom-color:var(--blue);color:var(--blue-700);font-weight:600;}
   .status-step.done{border-bottom-color:var(--green-700);color:var(--green-700);font-weight:600;}
 
@@ -1531,7 +1538,8 @@
     var idx = order.indexOf(signStatus);
     document.querySelectorAll(".status-step").forEach(function(el, i){
       el.classList.remove("reached","done");
-      if(i < idx) el.classList.add("done");
+      // "Assinado" é o estado final: ao chegar nele, todos os passos ficam concluídos (verde)
+      if(i < idx || signStatus === "assinado") el.classList.add("done");
       else if(i === idx) el.classList.add("reached");
     });
   }

@@ -222,6 +222,20 @@
   .mini-extrator.is-live .me-badge{ transition:background-color .35s ease, color .35s ease; }
   .mini-extrator.is-done .me-fill{ background:#16A34A; }
   .mini-extrator.is-resetting .me-fill{ opacity:0; }
+  /* mesmas regras para Daily Ops (gauge), Motor de Triagem (classificação) e FormPilot (painel) */
+  .mini-ops.is-live [data-ops-arc]{ transition:opacity .3s ease; }
+  .mini-ops.is-resetting [data-ops-arc]{ opacity:0; }
+  .mini-ops.is-live [data-ops-pct]{ display:inline-block; min-width:3ch; font-variant-numeric:tabular-nums; }
+  .mini-diag [data-mtr-tag]{ display:inline-block; min-width:calc(11ch + 12px); text-align:center; }
+  .mini-diag.is-live [data-mtr-tag]{ transition:background-color .35s ease, color .35s ease; }
+  .mini-diag [data-mtr-tag].pending{ background:#EEF0F4; color:#8B93A3; }
+  .mini-diag.is-live [data-mtr-fill]{ transition:opacity .3s ease; }
+  .mini-diag.is-resetting [data-mtr-fill]{ opacity:0; }
+  .evo-preview.is-live [data-evp-field] b, .evo-preview.is-live [data-evp-check]{ transition:opacity .35s ease; }
+  .evo-preview.is-live [data-evp-field][data-state="pending"] b{ opacity:.45; }
+  .evo-preview.is-live [data-evp-field][data-state="pending"] [data-evp-check]{ opacity:0; }
+  .evo-preview.is-live .evp-btn{ transition:background-color .35s ease, color .35s ease; }
+  .evo-preview .evp-btn.is-pending{ background:rgba(255,255,255,.12); color:#8FA0BE; }
 
   /* mini recriação da tela real "SLA da carteira / Tickets HubSpot" do Dashboard */
   .mini-ops{ width:100%; display:grid; grid-template-columns:1fr; gap:10px; }
@@ -512,15 +526,15 @@
         </div>
         <div class="ppreview" style="background:#E3E6ED;">
           <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="pp-body"><div class="mini-ops" role="img" aria-label="SLA da carteira em 81% contra meta de 88%, e fila de tickets HubSpot priorizados por criticidade">
+          <div class="pp-body"><div class="mini-ops" data-ops role="img" aria-label="SLA da carteira em 81% contra meta de 88%, e fila de tickets HubSpot priorizados por criticidade">
             <div class="mo-card mo-sla">
               <div class="me-head">SLA da carteira<span class="me-count">meta 88%</span></div>
               <div class="mo-gauge">
                 <svg width="46" height="46" viewBox="0 0 78 78" aria-hidden="true">
                   <circle cx="39" cy="39" r="31" fill="none" stroke="#DDE1EA" stroke-width="7"/>
-                  <circle cx="39" cy="39" r="31" fill="none" stroke="#DC2626" stroke-width="7" stroke-dasharray="194.8" stroke-dashoffset="37" stroke-linecap="round"/>
+                  <circle data-ops-arc cx="39" cy="39" r="31" fill="none" stroke="#DC2626" stroke-width="7" stroke-dasharray="194.8" stroke-dashoffset="37" stroke-linecap="round"/>
                 </svg>
-                <div class="mo-gauge-txt"><span class="mo-pct">81%</span><span class="mo-sub">atual</span></div>
+                <div class="mo-gauge-txt"><span class="mo-pct" data-ops-pct>81%</span><span class="mo-sub">atual</span></div>
               </div>
               <div class="mo-rows">
                 <div class="mo-row"><span class="mo-dot" style="background:#DC2626;"></span><span class="mo-name">Terraverde Agro</span><span class="mo-bar"><span style="width:52%;background:#DC2626;"></span></span></div>
@@ -553,19 +567,19 @@
         </div>
         <div class="ppreview" style="background:#E3E6ED;">
           <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="pp-body"><div class="mini-diag" role="img" aria-label="Diagnóstico de divergências do ticket Metalmix Componentes, comparando dados do sistema com a fatura linha a linha">
+          <div class="pp-body"><div class="mini-diag" data-mtr role="img" aria-label="Diagnóstico de divergências do ticket Metalmix Componentes, comparando dados do sistema com a fatura linha a linha">
             <div class="md-ticket">
               <span class="md-id">TICKET #1247</span>
               <div class="md-co">Metalmix Componentes S.A.</div>
               <span class="md-badge">Novo</span>
             </div>
-            <div class="md-progress"><span class="lbl">progresso</span><div class="me-track" style="background:#EEF0F4;"><div class="me-fill" style="width:20%;background:#16A34A;"></div></div><span class="lbl" style="color:#8B93A3;">1 / 5</span></div>
+            <div class="md-progress"><span class="lbl">progresso</span><div class="me-track" style="background:#EEF0F4;"><div class="me-fill" data-mtr-fill style="width:20%;background:#16A34A;"></div></div><span class="lbl" data-mtr-count style="color:#8B93A3;">1 / 5</span></div>
             <table class="md-table">
               <thead><tr><th>Beneficiário</th><th>No sistema</th><th>Na fatura</th><th>Class.</th></tr></thead>
               <tbody>
-                <tr><td>Fernanda L.</td><td>248.591.XXX-01</td><td class="bad">248.591.XXX-10</td><td><span class="md-tag red">Verificar</span></td></tr>
-                <tr><td>Roberto P.</td><td>15/03/1985</td><td class="bad">15/03/1958</td><td><span class="md-tag amber">Atenção</span></td></tr>
-                <tr><td>João T.</td><td>375.824.XXX-0</td><td>375.824.XXX-0</td><td><span class="md-tag green">Pronto</span></td></tr>
+                <tr><td>Fernanda L.</td><td>248.591.XXX-01</td><td class="bad">248.591.XXX-10</td><td><span class="md-tag red" data-mtr-tag>Verificar</span></td></tr>
+                <tr><td>Roberto P.</td><td>15/03/1985</td><td class="bad">15/03/1958</td><td><span class="md-tag amber" data-mtr-tag>Atenção</span></td></tr>
+                <tr><td>João T.</td><td>375.824.XXX-0</td><td>375.824.XXX-0</td><td><span class="md-tag green" data-mtr-tag>Pronto</span></td></tr>
               </tbody>
             </table>
           </div></div>
@@ -617,7 +631,7 @@
           </div>
         </div>
       </div>
-      <div class="evo-preview" role="img" aria-label="Fila de chamados do Zendesk, o chamado de inclusão de titular aberto, e o painel do FormPilot identificando operadora, movimentação e beneficiário antes de gerar o formulário">
+      <div class="evo-preview" data-evp role="img" aria-label="Fila de chamados do Zendesk, o chamado de inclusão de titular aberto, e o painel do FormPilot identificando operadora, movimentação e beneficiário antes de gerar o formulário">
         <div class="evp-col evp-queue">
           <div class="evp-hd">fila de chamados</div>
           <div class="evp-item on"><span class="evp-id">#4821 · hoje, 09:14</span><div class="evp-subj">Inclusão de titular — Vitalis Saúde</div><span class="evp-co">Nordeste Componentes Ltda</span></div>
@@ -632,10 +646,10 @@
         <div class="evp-col evp-panel">
           <div class="evp-brand"><span class="evp-ico">F</span>FormPilot</div>
           <div class="evp-lbl">Identificado</div>
-          <div class="evp-field">Operadora<b>Vitalis Saúde ✓</b></div>
-          <div class="evp-field">Movimentação<b>Inclusão de titular ✓</b></div>
-          <div class="evp-field">Beneficiário<b>Marina T. Almeida ✓</b></div>
-          <div class="evp-btn">Gerar formulário</div>
+          <div class="evp-field" data-evp-field>Operadora<b>Vitalis Saúde <span data-evp-check>✓</span></b></div>
+          <div class="evp-field" data-evp-field>Movimentação<b>Inclusão de titular <span data-evp-check>✓</span></b></div>
+          <div class="evp-field" data-evp-field>Beneficiário<b>Marina T. Almeida <span data-evp-check>✓</span></b></div>
+          <div class="evp-btn" data-evp-btn>Gerar formulário</div>
         </div>
       </div>
       <p class="evo-note"><b>O que foi reaproveitado:</b> a arquitetura sem backend, o matching por prefixo e as respostas rápidas configuráveis do TicketScript viraram a base técnica do FormPilot — não são dois projetos independentes, é um produto que passou por um segundo ciclo de aprendizado.</p>
@@ -732,62 +746,106 @@
   </footer>
 </div>
 <script>
-/* Microinteração do preview do Extrator de Fatura: login → boleto → arquivo salvo → 100% → concluído → pausa → reinicia.
-   Roda só quando o preview está visível, a aba está ativa e o usuário não pediu movimento reduzido. */
+/* Microinterações dos previews da home (Extrator, Daily Ops, Motor de Triagem, FormPilot).
+   Cada preview só anima quando está visível, a aba está ativa e o usuário não pediu movimento
+   reduzido; fora disso volta exatamente ao markup estático original. Nada muda de tamanho. */
 (function(){
-  var root = document.querySelector("[data-xtr]");
-  if(!root || !window.requestAnimationFrame || !window.matchMedia) return;
-  var steps = root.querySelectorAll("[data-xtr-step]");
-  var fill = root.querySelector("[data-xtr-fill]");
-  var pct = root.querySelector("[data-xtr-pct]");
-  var badge = root.querySelector("[data-xtr-badge]");
+  if(!window.requestAnimationFrame || !window.matchMedia) return;
   var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var initial = { badgeClass: badge.className, badgeText: badge.textContent, pct: pct.textContent };
-  var timers = [], raf = 0, cur = 0, live = false, visible = false;
+  var ease = function(k){ return 1 - Math.pow(1 - k, 3); };
 
-  function clear(){ timers.forEach(clearTimeout); timers = []; cancelAnimationFrame(raf); }
-  function at(ms, fn){ timers.push(setTimeout(fn, ms)); }
-  function setProgress(v){ cur = v; fill.style.width = v + "%"; pct.textContent = Math.round(v) + "%"; }
-  function tween(to, dur){
-    var from = cur, t0 = performance.now();
-    cancelAnimationFrame(raf);
-    (function frame(now){
-      var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
-      setProgress(from + (to - from) * e);
-      if(k < 1) raf = requestAnimationFrame(frame);
-    })(t0);
+  function micro(root, length, run){
+    if(!root) return;
+    var snapshot = root.innerHTML, timers = [], frames = [], live = false, visible = false;
+    var api = {
+      q: function(sel){ return root.querySelector(sel); },
+      qa: function(sel){ return root.querySelectorAll(sel); },
+      at: function(ms, fn){ timers.push(setTimeout(fn, ms)); },
+      tween: function(from, to, dur, step){
+        var t0 = performance.now(), h = { id: 0 };
+        frames.push(h);
+        (function frame(now){
+          var k = Math.min(1, (now - t0) / dur);
+          step(from + (to - from) * ease(k));
+          if(k < 1) h.id = requestAnimationFrame(frame);
+        })(t0);
+      }
+    };
+    function clear(){
+      timers.forEach(clearTimeout); timers = [];
+      frames.forEach(function(h){ cancelAnimationFrame(h.id); }); frames = [];
+    }
+    function loop(){
+      clear();
+      root.classList.remove("is-done", "is-resetting");
+      run(api, root);
+      api.at(length - 400, function(){ root.classList.add("is-resetting"); });
+      api.at(length, loop);
+    }
+    function start(){ if(live) return; live = true; root.classList.add("is-live"); loop(); }
+    function stop(){
+      if(!live) return; live = false; clear();
+      root.classList.remove("is-live", "is-done", "is-resetting");
+      root.innerHTML = snapshot;
+    }
+    function update(){ (visible && !reduce.matches && !document.hidden) ? start() : stop(); }
+    if("IntersectionObserver" in window){
+      new IntersectionObserver(function(entries){ visible = entries[0].isIntersecting; update(); }, { threshold: 0.4 }).observe(root);
+    } else { visible = true; }
+    document.addEventListener("visibilitychange", update);
+    if(reduce.addEventListener) reduce.addEventListener("change", update); else if(reduce.addListener) reduce.addListener(update);
+    update();
   }
-  function state(i, s){ steps[i].setAttribute("data-state", s); }
-  function setBadge(done){ badge.className = "me-badge " + (done ? "done" : "active"); badge.textContent = done ? "concluído" : "em execução"; }
 
-  function cycle(){
-    clear();
-    root.classList.remove("is-done", "is-resetting");
+  /* Extrator de Fatura: login → boleto → arquivo salvo → 100% → concluído (verde) */
+  micro(document.querySelector("[data-xtr]"), 6800, function(a, root){
+    var steps = a.qa("[data-xtr-step]"), fill = a.q("[data-xtr-fill]"), pct = a.q("[data-xtr-pct]"), badge = a.q("[data-xtr-badge]");
+    function progress(v){ fill.style.width = v + "%"; pct.textContent = Math.round(v) + "%"; }
+    function state(i, s){ steps[i].setAttribute("data-state", s); }
+    function setBadge(done){ badge.className = "me-badge " + (done ? "done" : "active"); badge.textContent = done ? "concluído" : "em execução"; }
     for(var i = 0; i < steps.length; i++) state(i, "pending");
-    setBadge(false); setProgress(0);
-    at(600,  function(){ state(0, "active"); tween(33, 900); });
-    at(1500, function(){ state(0, "done"); state(1, "active"); tween(66, 1100); });
-    at(2600, function(){ state(1, "done"); state(2, "active"); tween(100, 1000); });
-    at(3600, function(){ state(2, "done"); root.classList.add("is-done"); setBadge(true); });
-    at(6400, function(){ root.classList.add("is-resetting"); });
-    at(6800, cycle);
-  }
-  function start(){ if(live) return; live = true; root.classList.add("is-live"); cycle(); }
-  function stop(){
-    if(!live) return; live = false; clear();
-    root.classList.remove("is-live", "is-done", "is-resetting");
-    for(var i = 0; i < steps.length; i++) steps[i].removeAttribute("data-state");
-    badge.className = initial.badgeClass; badge.textContent = initial.badgeText;
-    fill.style.width = ""; pct.textContent = initial.pct; cur = 0;
-  }
-  function update(){ (visible && !reduce.matches && !document.hidden) ? start() : stop(); }
+    setBadge(false); progress(0);
+    a.at(600,  function(){ state(0, "active"); a.tween(0, 33, 900, progress); });
+    a.at(1500, function(){ state(0, "done"); state(1, "active"); a.tween(33, 66, 1100, progress); });
+    a.at(2600, function(){ state(1, "done"); state(2, "active"); a.tween(66, 100, 1000, progress); });
+    a.at(3600, function(){ state(2, "done"); root.classList.add("is-done"); setBadge(true); });
+  });
 
-  if("IntersectionObserver" in window){
-    new IntersectionObserver(function(entries){ visible = entries[0].isIntersecting; update(); }, { threshold: 0.4 }).observe(root);
-  } else { visible = true; }
-  document.addEventListener("visibilitychange", update);
-  if(reduce.addEventListener) reduce.addEventListener("change", update); else if(reduce.addListener) reduce.addListener(update);
-  update();
+  /* Daily Ops: o arco do SLA se preenche até 81% junto com o número */
+  micro(document.querySelector("[data-ops]"), 6800, function(a){
+    var arc = a.q("[data-ops-arc]"), pct = a.q("[data-ops-pct]"), full = 194.8, target = 81;
+    function gauge(v){ arc.setAttribute("stroke-dashoffset", (full * (1 - v / 100)).toFixed(1)); pct.textContent = Math.round(v) + "%"; }
+    gauge(0);
+    a.at(500, function(){ a.tween(0, target, 1600, gauge); });
+  });
+
+  /* Motor de Triagem: cada linha sai de "verificando" para a classificação, e o progresso avança até 1 / 5 */
+  micro(document.querySelector("[data-mtr]"), 6800, function(a){
+    var tags = a.qa("[data-mtr-tag]"), fill = a.q("[data-mtr-fill]"), count = a.q("[data-mtr-count]");
+    var finals = [];
+    function bar(v){ fill.style.width = v + "%"; }
+    for(var i = 0; i < tags.length; i++){
+      finals.push({ cls: tags[i].className, txt: tags[i].textContent });
+      tags[i].className = "md-tag pending"; tags[i].textContent = "verificando";
+    }
+    bar(0); count.textContent = "0 / 5";
+    [0, 1, 2].forEach(function(i){
+      a.at(700 + i * 900, function(){
+        tags[i].className = finals[i].cls; tags[i].textContent = finals[i].txt;
+        a.tween(i * 20 / 3, (i + 1) * 20 / 3, 700, bar);
+      });
+    });
+    a.at(3300, function(){ count.textContent = "1 / 5"; });
+  });
+
+  /* FormPilot: operadora, movimentação e beneficiário recebem ✓ em sequência; depois o botão fica disponível */
+  micro(document.querySelector("[data-evp]"), 6800, function(a){
+    var fields = a.qa("[data-evp-field]"), btn = a.q("[data-evp-btn]");
+    for(var i = 0; i < fields.length; i++) fields[i].setAttribute("data-state", "pending");
+    btn.classList.add("is-pending"); btn.textContent = "Analisando…";
+    [0, 1, 2].forEach(function(i){ a.at(700 + i * 800, function(){ fields[i].setAttribute("data-state", "done"); }); });
+    a.at(3100, function(){ btn.classList.remove("is-pending"); btn.textContent = "Gerar formulário"; });
+  });
 })();
 </script>
 </body>
