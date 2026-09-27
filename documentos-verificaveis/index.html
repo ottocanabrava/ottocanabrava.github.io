@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Documentos Verificáveis — Demo de Portfólio</title>
+<meta name="description" content="Estudo de caso: emissão de certificados e declarações a partir de uma planilha, com validação pública por QR code. Implementação técnica de um projeto real, com dados fictícios.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: var(--paper); color: var(--ink);
+  line-height: 1.6; -webkit-font-smoothing: antialiased;
+}
+:root {
+  /* base comum aos cases */
+  --paper: #ECEEF2; --surf: #FFFFFF;
+  --line: #E5E7EB; --line-md: #D1D5DB;
+  --ink: #111827; --ink-2: #6B7280; --ink-3: #9CA3AF;
+  --dark: #131D2E; --dark2: #1A2740; --dark3: #2B3B57;
+  --dt1: #F1F5F9; --dt2: #CBD5E1; --dt3: #64748B;
+  /* acento deste case: o teal da identidade padrão do projeto (página de validação e documentos) */
+  --accent: #0E7C7B; --accent2: #0B6463;
+  --accent-l: #E8F4F3; --accent-m: #B5DCD9;
+  --ok: #1D7A45; --ok-l: #E6F4EA;
+  --warn: #B3261E; --warn-l: #FDECEA;
+  --r-s: 4px; --r: 9px; --r-l: 15px;
+  --sh: 0 3px 10px -3px rgba(17,24,39,.14), 0 1px 3px rgba(17,24,39,.08);
+  --sh-lg: 0 22px 44px -12px rgba(17,24,39,.24), 0 6px 16px -6px rgba(17,24,39,.12);
+}
+section[id], header.hero { scroll-margin-top: 54px; }
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+@media (max-width: 640px) { .wrap { padding: 0 18px; } }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.mono { font-family: 'DM Mono', ui-monospace, monospace; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.skip-link { position: absolute; left: -9999px; top: 0; background: var(--dark); color: #fff; padding: 10px 16px; border-radius: 0 0 8px 0; z-index: 300; font-size: .875rem; }
+.skip-link:focus { left: 0; }
+
+/* Nav */
+nav.top {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(11,34,51,.97); backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--dark3);
+  height: 54px; padding: 0 24px; display: flex; align-items: center;
+}
+.nav-in { max-width: 1100px; margin: 0 auto; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.nav-logo { display: flex; align-items: center; gap: 9px; font-size: 1.0625rem; font-weight: 600; color: var(--dt1); text-decoration: none; white-space: nowrap; }
+.nav-seal { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #5FD1B8; display: flex; align-items: center; justify-content: center; font-size: .5625rem; color: #5FD1B8; font-weight: 700; font-family: 'DM Mono', monospace; }
+.nav-links { display: flex; align-items: center; gap: 4px; }
+.nav-a { padding: 6px 12px; border-radius: var(--r-s); font-size: .8125rem; font-weight: 500; color: var(--dt2); text-decoration: none; transition: color .12s, background .12s; white-space: nowrap; }
+.nav-a:hover { color: var(--dt1); background: var(--dark2); }
+.nav-cta { padding: 6px 15px; border-radius: var(--r-s); background: var(--accent); color: #fff; font-size: .8125rem; font-weight: 600; text-decoration: none; transition: background .12s; white-space: nowrap; }
+.nav-cta:hover { background: var(--accent2); }
+nav.top :focus-visible { outline-color: #5FD1B8; }
+
+/* Hero */
+.hero { background: var(--dark); padding: 76px 24px 62px; border-bottom: 1px solid var(--dark3); background-image: radial-gradient(circle at 88% 8%, rgba(14,124,123,.2), transparent 46%); }
+.hero-in { max-width: 1100px; margin: 0 auto; }
+.hero-chips { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 9999px; font-family: 'DM Mono', monospace; font-size: .6875rem; font-weight: 500; }
+.chip-bd { border: 1px solid var(--dark3); color: var(--dt2); }
+.chip-ac { background: rgba(14,124,107,.18); color: #5FD1B8; border: 1px solid rgba(14,124,107,.32); }
+.hero h1 { font-size: clamp(2.125rem, 4.6vw, 3.5rem); font-weight: 600; line-height: 1.14; letter-spacing: -.015em; color: var(--dt1); margin-bottom: 20px; max-width: 700px; text-wrap: balance; }
+.hero-sub { font-size: 1.0625rem; color: var(--dt2); max-width: 560px; line-height: 1.65; margin-bottom: 14px; }
+.hero-role { font-family: 'DM Mono', monospace; font-size: .8125rem; color: var(--dt3); max-width: 560px; line-height: 1.55; margin-bottom: 46px; }
+.hero-facts { display: flex; gap: 0; padding-top: 32px; border-top: 1px solid var(--dark3); flex-wrap: wrap; row-gap: 20px; }
+.hf { padding-right: 34px; margin-right: 34px; border-right: 1px solid var(--dark3); }
+.hf:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+.hf-val { font-size: 1.75rem; font-weight: 600; color: var(--dt1); letter-spacing: -.01em; line-height: 1; margin-bottom: 5px; }
+.hf-lbl { font-size: .75rem; color: var(--dt3); line-height: 1.4; max-width: 150px; }
+@media (max-width: 640px) { .hero { padding: 48px 18px 44px; } }
+
+/* Section header */
+.sec { padding: 68px 0; }
+@media (max-width: 640px) { .sec { padding: 48px 0; } }
+.sh { margin-bottom: 38px; max-width: 640px; }
+.sh h2 { font-size: clamp(1.625rem, 3vw, 2.375rem); font-weight: 600; letter-spacing: -.015em; line-height: 1.16; color: var(--ink); margin-bottom: 12px; text-wrap: balance; }
+.sh p { font-size: .9375rem; color: var(--ink-2); line-height: 1.65; }
+.sh p + p { margin-top: 10px; }
+.stag { font-size: .8125rem; font-weight: 600; color: var(--accent2); display: block; margin-bottom: 12px; }
+
+/* Visual principal: ilustração da arquitetura (PNG 3200×1800, usado sem alterações) */
+.fv-bg { background: var(--surf); border-bottom: 1px solid var(--line); }
+.fv { margin: 0; }
+.fv-media { border-radius: var(--r-l); overflow: hidden; border: 1px solid var(--line); }
+.fv-media img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; }
+.fv-open { display: none; }
+.fv figcaption { margin-top: 14px; font-size: .8125rem; color: var(--ink-2); line-height: 1.6; max-width: 72ch; }
+/* No celular a arte horizontal ficaria ilegível reduzida à largura da tela:
+   ela mantém uma largura mínima legível e rola na horizontal dentro do próprio quadro. */
+@media (max-width: 760px) {
+  .fv-media { overflow-x: auto; overscroll-behavior-x: contain; }
+  .fv-media img { width: 900px; max-width: none; }
+  .fv-media:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .fv-open { display: block; margin-top: 8px; font-size: .8125rem; font-weight: 600; color: var(--accent2); }
+}
+
+/* Problema */
+.prob-bg { background: var(--paper); }
+.need-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.need { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r-l); padding: 22px 22px 20px; }
+.need-k { font-family: 'DM Mono', monospace; font-size: .6875rem; text-transform: uppercase; letter-spacing: .04em; color: var(--accent2); margin-bottom: 8px; }
+.need h3 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; line-height: 1.35; }
+.need p { font-size: .875rem; color: var(--ink-2); line-height: 1.6; }
+.ctx-note { margin-top: 20px; font-size: .875rem; color: var(--ink-2); line-height: 1.6; background: var(--surf); border-left: 3px solid var(--accent); border-radius: 4px; padding: 12px 16px; max-width: 76ch; }
+.ctx-note strong { color: var(--ink); }
+@media (max-width: 820px) { .need-grid { grid-template-columns: 1fr; } }
+
+/* Demo */
+.demo-bg { background: var(--surf); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.demo { scroll-margin-top: 66px; border: 1px solid var(--line); border-radius: var(--r-l); background: var(--paper); box-shadow: var(--sh); overflow: hidden; }
+.stepper { list-style: none; display: grid; grid-template-columns: repeat(5, 1fr); background: var(--dark); }
+.stepper li { min-width: 0; }
+.stepper button {
+  width: 100%; height: 100%; display: flex; align-items: center; gap: 9px; padding: 13px 16px;
+  background: none; border: 0; border-right: 1px solid var(--dark3); color: var(--dt3);
+  font: 600 .8125rem 'DM Sans', sans-serif; text-align: left; cursor: pointer; transition: color .12s, background .12s;
+}
+.stepper li:last-child button { border-right: 0; }
+.stepper button:hover:not(:disabled) { color: var(--dt1); background: var(--dark2); }
+.stepper button:disabled { cursor: default; opacity: .55; }
+.stepper button:focus-visible { outline: 2px solid #5FD1B8; outline-offset: -3px; }
+.stepper .n { flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--dark3); display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: .6875rem; }
+.stepper .done .n { border-color: #5FD1B8; color: #5FD1B8; }
+.stepper [aria-current="step"] { color: var(--dt1); background: var(--dark2); box-shadow: inset 0 -3px 0 #5FD1B8; }
+.stepper [aria-current="step"] .n { background: #5FD1B8; border-color: #5FD1B8; color: var(--dark); }
+@media (max-width: 640px) {
+  .stepper button { flex-direction: column; gap: 4px; padding: 10px 2px; font-size: .6875rem; text-align: center; justify-content: flex-start; }
+}
+
+.stage { padding: 26px 26px 24px; }
+@media (max-width: 640px) { .stage { padding: 20px 16px; } }
+.st-head { margin-bottom: 18px; max-width: 72ch; }
+.st-head h3 { font-size: 1.1875rem; font-weight: 700; margin-bottom: 4px; letter-spacing: -.005em; }
+.st-head h3:focus { outline: none; }
+.st-head p { font-size: .875rem; color: var(--ink-2); line-height: 1.6; }
+.st-grid { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 20px; align-items: start; }
+@media (max-width: 880px) { .st-grid { grid-template-columns: minmax(0, 1fr); } }
+.st-actions { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; padding: 10px 18px; border-radius: var(--r-s); border: 1.5px solid transparent; font: 600 .875rem 'DM Sans', sans-serif; cursor: pointer; text-decoration: none; transition: background .12s, border-color .12s, color .12s; }
+.btn-pri { background: var(--accent); color: #fff; }
+.btn-pri:hover { background: var(--accent2); }
+.btn-pri:disabled { background: var(--ink-3); cursor: not-allowed; }
+.btn-sec { background: var(--surf); color: var(--ink); border-color: var(--line-md); }
+.btn-sec:hover { border-color: var(--accent); color: var(--accent2); }
+.btn-sm { padding: 6px 12px; font-size: .8125rem; }
+
+/* notas laterais */
+.side { display: flex; flex-direction: column; gap: 12px; }
+.note { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: 14px 16px; font-size: .8125rem; color: var(--ink-2); line-height: 1.6; }
+.note-k { display: block; font-family: 'DM Mono', monospace; font-size: .625rem; text-transform: uppercase; letter-spacing: .05em; color: var(--ink-3); margin-bottom: 6px; }
+.note strong { color: var(--ink); }
+.note.alert { border-color: #F3C7C3; background: #FFF8F7; }
+.note code, .st-head code, .sh code, .dec-cell code { font-family: 'DM Mono', monospace; font-size: .92em; background: var(--paper); border: 1px solid var(--line); border-radius: 3px; padding: 0 4px; }
+
+/* passo 1: planilha */
+.sheet { background: var(--surf); border: 1px solid var(--line-md); border-radius: var(--r); overflow: hidden; }
+.sheet-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; background: #F8FAF9; border-bottom: 1px solid var(--line); font-size: .75rem; color: var(--ink-2); }
+.sheet-ico { width: 14px; height: 18px; border-radius: 2px; background: #188038; position: relative; flex-shrink: 0; }
+.sheet-ico::after { content: ""; position: absolute; inset: 5px 3px 4px; border: 1.5px solid #fff; border-radius: 1px; }
+.sheet-scroll { overflow-x: auto; }
+.sheet table { border-collapse: collapse; font-family: 'DM Mono', monospace; font-size: .6875rem; min-width: 100%; }
+.sheet th, .sheet td { padding: 8px 10px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
+.sheet th { background: #F3F4F6; color: var(--ink-2); font-weight: 500; }
+.sheet td { color: var(--ink); }
+.sheet .rn { width: 34px; text-align: center; color: var(--ink-3); background: #F3F4F6; }
+.sheet tbody tr { cursor: pointer; }
+.sheet tbody tr:hover td { background: #F7FBFB; }
+.sheet tbody tr.sel td { background: var(--accent-l); }
+.sheet tbody tr.sel .rn { background: var(--accent); color: #fff; }
+.sheet input[type=radio] { accent-color: var(--accent); width: 15px; height: 15px; vertical-align: middle; cursor: pointer; }
+.sheet .st-ativo { color: var(--ok); } .sheet .st-rev { color: var(--warn); }
+.sheet .empty { color: var(--ink-3); }
+.sheet-more { padding: 7px 12px; font-size: .6875rem; color: var(--ink-3); background: #FAFAFA; }
+
+/* passo 2: área de emissão (reprodução da tela /emitir da versão Python) */
+.adm { background: #f2f5f5; border: 1px solid var(--line-md); border-radius: var(--r); overflow: hidden; font-family: system-ui, sans-serif; color: #1f2a2b; }
+.adm-h { background: #0f3d3e; color: #fff; padding: 14px 16px; font-size: .875rem; font-weight: 700; letter-spacing: .04em; }
+.adm-b { padding: 14px; }
+.adm-card { background: #fff; border-radius: 12px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+.adm-card h4 { font-size: .9375rem; margin: 0 0 4px; }
+.adm-muted { color: #5f6f70; font-size: .8125rem; margin-bottom: 10px; }
+.adm-scroll { overflow-x: auto; }
+.adm table { width: 100%; border-collapse: collapse; font-size: .8125rem; }
+.adm th, .adm td { text-align: left; padding: 8px 6px; border-bottom: 1px solid #e1e9e9; white-space: nowrap; }
+.adm-btn { display: inline-block; padding: 6px 12px; border-radius: 6px; background: #0e7c7b; color: #fff; border: 0; font: 600 .8125rem system-ui, sans-serif; cursor: pointer; }
+.adm-btn:hover { background: #0b6463; }
+.adm-btn:focus-visible { outline: 2px solid #0f3d3e; outline-offset: 2px; }
+.checks { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
+.checks li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; background: var(--surf); border: 1px solid var(--line); border-radius: var(--r-s); padding: 10px 12px; font-size: .8125rem; color: var(--ink-2); line-height: 1.5; }
+.checks b { color: var(--ink); font-weight: 600; }
+.ck { width: 18px; height: 18px; border-radius: 50%; background: var(--ok); color: #fff; font-size: .625rem; display: flex; align-items: center; justify-content: center; margin-top: 1px; }
+.ck.no { background: var(--warn); }
+.ck.skip { background: var(--line-md); color: var(--ink-2); }
+.checks li.out { background: var(--accent-l); border-color: var(--accent-m); }
+.checks li.out .ck { background: var(--accent); }
+
+/* passo 3: PDF */
+.pdf { background: #525659; border-radius: var(--r); overflow: hidden; box-shadow: var(--sh); }
+.pdf-bar { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #323639; color: #E8EAED; font-size: .75rem; }
+.pdf-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pdf-pages { display: flex; gap: 4px; flex-shrink: 0; }
+.pdf-pages button { background: none; border: 1px solid #5F6368; color: #E8EAED; border-radius: 4px; padding: 3px 8px; font: 500 .6875rem 'DM Sans', sans-serif; cursor: pointer; }
+.pdf-pages button[aria-pressed="true"] { background: #E8EAED; color: #202124; border-color: #E8EAED; }
+.pdf-pages button:focus-visible { outline: 2px solid #5FD1B8; outline-offset: 1px; }
+.pdf-view { padding: 16px; display: flex; justify-content: center; }
+.pdf-view img { display: block; max-width: 100%; height: auto; box-shadow: 0 2px 10px rgba(0,0,0,.35); background: #fff; }
+.pdf-view.portrait img { max-height: 620px; width: auto; }
+@media (max-width: 640px) { .pdf-view { padding: 10px; } .pdf-view.portrait img { max-height: none; width: 100%; } }
+
+/* passo 4: QR */
+.qr-wrap { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 640px) { .qr-wrap { grid-template-columns: 1fr; } }
+.qr-card { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); padding: 16px; text-align: center; }
+.qr-card img { display: block; width: 100%; max-width: 188px; height: auto; margin: 0 auto 8px; image-rendering: pixelated; }
+.qr-card span { font-size: .6875rem; color: var(--ink-3); }
+.url-box { background: var(--dark); color: var(--dt2); border-radius: var(--r-s); padding: 12px 14px; font-family: 'DM Mono', monospace; font-size: .75rem; line-height: 1.6; overflow-wrap: anywhere; margin: 6px 0 14px; }
+.url-box mark { background: rgba(95,209,184,.18); color: #5FD1B8; border-radius: 2px; padding: 0 2px; }
+.id-facts { list-style: none; display: flex; flex-direction: column; gap: 6px; font-size: .8125rem; color: var(--ink-2); margin-bottom: 4px; }
+.id-facts li { padding-left: 16px; position: relative; line-height: 1.55; }
+.id-facts li::before { content: ""; position: absolute; left: 2px; top: .62em; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+
+/* passo 5: página pública de validação (CSS da rota /validar da versão Python) */
+.phone { width: 100%; max-width: 360px; margin: 0 auto; border: 10px solid #1B1F27; border-radius: 34px; background: #1B1F27; box-shadow: var(--sh-lg); overflow: hidden; }
+.phone-url { background: #1B1F27; color: #9AA3B5; font-family: 'DM Mono', monospace; font-size: .5625rem; text-align: center; padding: 2px 10px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vp { font-family: system-ui, sans-serif; background: #f2f5f5; color: #1f2a2b; min-height: 470px; border-radius: 22px; overflow: hidden; line-height: 1.5; }
+.vp header { background: #0f3d3e; color: #fff; padding: 22px 16px; text-align: center; }
+.vp header h4 { margin: 0; font-size: 1.05rem; letter-spacing: .04em; }
+.vp header p { margin: 6px 0 0; opacity: .75; font-size: .85rem; }
+.vp-main { padding: 20px 14px; }
+.vp form { display: flex; gap: 8px; }
+.vp input { flex: 1; min-width: 0; padding: 10px 12px; font-size: 1rem; border: 1px solid #c3d0d0; border-radius: 8px; font-family: inherit; color: inherit; }
+.vp input:focus-visible { outline: 2px solid #0e7c7b; outline-offset: 1px; }
+.vp button { padding: 10px 14px; font-size: 1rem; border: 0; border-radius: 8px; background: #0e7c7b; color: #fff; cursor: pointer; font-family: inherit; }
+.vp button:focus-visible { outline: 2px solid #0f3d3e; outline-offset: 2px; }
+.vp .card { margin-top: 18px; background: #fff; border-radius: 12px; padding: 18px; box-shadow: 0 1px 3px rgba(0,0,0,.08); font-size: .95rem; }
+.vp .card:focus { outline: none; }
+.vp .status { font-weight: 700; font-size: 1.05rem; margin: 0 0 12px; }
+.vp .ok { color: #1d7a45; } .vp .bad { color: #b3261e; }
+.vp dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 8px 14px; }
+.vp dt { color: #5f6f70; } .vp dd { margin: 0; font-weight: 600; }
+.vp .linkedin { display: block; margin-top: 16px; padding: 10px 16px; border-radius: 8px; background: #0a66c2; color: #fff; text-align: center; font-weight: 600; opacity: .55; cursor: not-allowed; }
+.vp .demo-tag { display: block; margin-top: 6px; font-size: .6875rem; color: #5f6f70; text-align: center; }
+.trace { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.trace li { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; font-size: .8125rem; color: var(--ink-2); line-height: 1.5; }
+.trace b { color: var(--ink); font-weight: 600; display: block; }
+.try { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.sheet-toggle { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+.pill-st { font-family: 'DM Mono', monospace; font-size: .75rem; padding: 2px 8px; border-radius: 99px; }
+.pill-st.ativo { background: var(--ok-l); color: var(--ok); } .pill-st.revogado { background: var(--warn-l); color: var(--warn); }
+
+/* Implementação (fundo escuro, como o "fluxo técnico" dos outros cases) */
+.impl-bg { background: var(--dark); }
+.impl-bg .sh h2 { color: var(--dt1); }
+.impl-bg .sh p { color: var(--dt2); }
+.impl-bg .stag { color: #5FD1B8; }
+.impl-bg .sh code { background: var(--dark2); border-color: var(--dark3); color: var(--dt1); }
+.impl-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 820px) { .impl-grid { grid-template-columns: 1fr; } }
+.impl { background: var(--dark2); border: 1px solid var(--dark3); border-radius: var(--r-l); overflow: hidden; }
+.impl-hd { padding: 18px 22px 14px; border-bottom: 1px solid var(--dark3); }
+.impl-hd h3 { font-size: 1.0625rem; font-weight: 700; color: var(--dt1); }
+.impl-hd p { font-size: .8125rem; color: var(--dt3); margin-top: 2px; }
+.impl dl { padding: 6px 22px 16px; }
+.impl dl > div { display: grid; grid-template-columns: 118px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--dark3); }
+.impl dl > div:last-child { border-bottom: 0; }
+.impl dt { font-family: 'DM Mono', monospace; font-size: .6875rem; color: var(--dt3); padding-top: 2px; }
+.impl dd { font-size: .875rem; color: var(--dt2); line-height: 1.55; }
+.impl dd strong { color: var(--dt1); font-weight: 600; }
+@media (max-width: 480px) { .impl dl > div { grid-template-columns: 1fr; gap: 2px; } }
+.shot { margin: 28px 0 0; }
+.shot img { display: block; width: 100%; max-width: 1000px; height: auto; border-radius: var(--r); border: 1px solid var(--dark3); }
+.shot figcaption { margin-top: 10px; font-size: .8125rem; color: var(--dt3); line-height: 1.55; max-width: 80ch; }
+
+/* Decisões */
+.dec-bg { background: var(--surf); border-bottom: 1px solid var(--line); }
+.dec-table { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; }
+.dec-thead { display: grid; grid-template-columns: 1fr 1.1fr 1.2fr; background: var(--dark); }
+.dec-th { padding: 10px 20px; border-right: 1px solid var(--dark3); font-family: 'DM Mono', monospace; font-size: .625rem; font-weight: 600; color: var(--dt3); }
+.dec-th:last-child { border-right: none; }
+.dec-row { display: grid; grid-template-columns: 1fr 1.1fr 1.2fr; border-top: 1px solid var(--line); }
+.dec-cell { padding: 16px 20px; border-right: 1px solid var(--line); font-size: .875rem; line-height: 1.55; }
+.dec-cell:last-child { border-right: none; }
+.dec-cell h4 { font-size: .9375rem; font-weight: 700; color: var(--ink); }
+.dec-cell p { color: var(--ink-2); }
+.dec-cell .trd { color: var(--ink); }
+@media (max-width: 880px) {
+  .dec-thead { display: none; }
+  .dec-row { grid-template-columns: 1fr; }
+  .dec-cell { border-right: none; padding: 10px 18px; }
+  .dec-cell:first-child { padding-top: 16px; }
+  .dec-cell:last-child { padding-bottom: 16px; }
+}
+
+/* O que pode ser validado */
+.val-bg { background: var(--paper); }
+.val-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 820px) { .val-grid { grid-template-columns: 1fr; } }
+.val { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r-l); padding: 22px 24px; }
+.val.yes { border-top: 3px solid var(--ok); }
+.val.no { border-top: 3px solid var(--warn); }
+.val h3 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+.val ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+.val li { font-size: .875rem; color: var(--ink-2); line-height: 1.55; padding-left: 22px; position: relative; }
+.val.yes li::before { content: "✓"; position: absolute; left: 0; color: var(--ok); font-weight: 700; }
+.val.no li::before { content: "✗"; position: absolute; left: 0; color: var(--warn); font-weight: 700; }
+.scope { margin-top: 16px; background: var(--surf); border: 1px solid var(--line); border-radius: var(--r-l); padding: 18px 24px; }
+.scope-k { font-family: 'DM Mono', monospace; font-size: .6875rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-3); margin-bottom: 8px; }
+.scope p { font-size: .875rem; color: var(--ink-2); line-height: 1.6; }
+
+/* Stack */
+.stack-bg { background: var(--surf); border-top: 1px solid var(--line); }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; }
+.pill { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9999px; border: 1.5px solid var(--line); background: var(--surf); font-size: .875rem; font-weight: 600; color: var(--ink); }
+.pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
+.pill-ac .pill-dot { background: var(--accent); }
+
+/* Footer */
+footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid var(--dark3); }
+.ft-in { max-width: 1100px; margin: 0 auto; }
+.ft-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap; margin-bottom: 30px; }
+.ft-name { font-size: 1.25rem; font-weight: 600; color: var(--dt1); margin-bottom: 4px; }
+.ft-tag { font-size: .875rem; color: var(--dt3); }
+.ft-meta { text-align: right; }
+.ft-mi { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--dt3); margin-bottom: 4px; }
+.ft-notice { border-top: 1px solid var(--dark3); padding-top: 20px; font-size: .8125rem; color: var(--dt3); line-height: 1.65; text-align: center; }
+.ft-notice strong { color: var(--dt2); }
+@media (max-width: 640px) { .ft-meta { text-align: left; } }
+
+@media (max-width: 880px) {
+  nav.top .nav-a:not(.nav-cta):not(.nav-back) { display: none; }
+  .hf { margin-right: 20px; padding-right: 20px; }
+}
+@media (max-width: 420px) {
+  nav.top { padding: 0 14px; }
+  .nav-logo { font-size: .9375rem; }
+  .nav-back { display: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+
+<nav class="top" aria-label="Navegação do case">
+  <div class="nav-in">
+    <a class="nav-logo" href="#"><span class="nav-seal" aria-hidden="true">✓</span>Documentos Verificáveis</a>
+    <div class="nav-links">
+      <a class="nav-a nav-back" href="/">← Portfólio</a>
+      <a class="nav-a" href="#problema">Problema</a>
+      <a class="nav-a" href="#demo">Demo</a>
+      <a class="nav-a" href="#implementacao">Implementação</a>
+      <a class="nav-a" href="#validacao">Validação</a>
+      <a class="nav-cta" href="#demo">Ver demo</a>
+    </div>
+  </div>
+</nav>
+
+<main id="conteudo">
+<header class="hero">
+  <div class="hero-in">
+    <div class="hero-chips">
+      <span class="chip chip-bd">estudo de caso</span>
+      <span class="chip chip-ac">● escola e dados fictícios</span>
+      <span class="chip chip-bd">implementação técnica de projeto real</span>
+    </div>
+    <h1>Certificados e declarações que qualquer pessoa confere pelo QR code.</h1>
+    <p class="hero-sub">Emissão de documentos em PDF a partir de uma planilha do Google, com um ID aleatório e um QR code em cada um. O QR abre uma página pública que confirma se o documento existe e se continua válido, sem mostrar CPF, RG ou endereço.</p>
+    <p class="hero-role">Fui o responsável pelo projeto, da especificação às duas implementações. Usei IA como ferramenta de desenvolvimento e também nos testes.</p>
+    <div class="hero-facts">
+      <div class="hf"><div class="hf-val">5</div><div class="hf-lbl">tipos de documento, todos com ID, QR e validação</div></div>
+      <div class="hf"><div class="hf-val">2</div><div class="hf-lbl">implementações da mesma especificação: Python e n8n</div></div>
+      <div class="hf"><div class="hf-val">144</div><div class="hf-lbl">testes automatizados na versão Python</div></div>
+    </div>
+  </div>
+</header>
+
+<section class="sec fv-bg" id="fluxo" aria-labelledby="fluxo-h">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">visão geral</span>
+      <h2 id="fluxo-h">Da linha da planilha à página de validação.</h2>
+    </div>
+    <figure class="fv">
+      <div class="fv-media" tabindex="0" role="region" aria-label="Ilustração da arquitetura; no celular, role para os lados">
+        <img src="img/arquitetura.png" width="3200" height="1800" alt="Diagrama da arquitetura, em quatro etapas: Dados, Emissão, Documento e Validação. À esquerda, a planilha de registros com as colunas id, tipo, curso e carga horária. Ela alimenta a emissão, feita por uma de duas implementações alternativas: Python com Flask, com as rotas GET /emitir e GET /emitir/&lt;id&gt;.pdf, ou um workflow n8n. A emissão gera o certificado em PDF com QR code e ID. O QR leva à página /validar, que mostra Documento válido com tipo, nome, curso, carga horária e data.">
+      </div>
+      <a class="fv-open" href="img/arquitetura.png" target="_blank" rel="noopener">Abrir a ilustração em tamanho real ↗</a>
+      <figcaption>O sistema não tem banco próprio: a planilha é o registro. A emissão lê a linha e gera o PDF; a validação lê a mesma linha e responde se o documento está ativo ou revogado. Python/Flask e n8n são implementações alternativas da mesma emissão, não etapas em sequência.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="sec prob-bg" id="problema" aria-labelledby="problema-h">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">o problema</span>
+      <h2 id="problema-h">Documentos conferidos por quem não tem acesso aos dados da escola.</h2>
+      <p>A escola precisava emitir certificados e declarações e permitir que quem os recebe confira se são válidos. A conferência tinha de funcionar para qualquer pessoa, sem expor os dados pessoais dos alunos e dentro das restrições do ambiente da escola.</p>
+    </div>
+    <div class="need-grid">
+      <div class="need">
+        <div class="need-k">quem confere</div>
+        <h3>Terceiros, com rigor</h3>
+        <p>Parte dos alunos estuda por meio de empresas clientes, que acompanham os certificados e declarações entregues aos seus funcionários. Quem recebe precisa saber se o documento existe e se continua válido.</p>
+      </div>
+      <div class="need">
+        <div class="need-k">o que não pode aparecer</div>
+        <h3>Dados pessoais das declarações</h3>
+        <p>As declarações levam CPF, RG e endereço. A consulta pública precisa confirmar o documento sem mostrar nenhum desses dados.</p>
+      </div>
+      <div class="need">
+        <div class="need-k">onde precisa rodar</div>
+        <h3>No ambiente de quem emite</h3>
+        <p>Com as restrições desse ambiente: hospedagem que pode não executar Python e uma política do Google Workspace que bloqueia chaves de conta de serviço, mantida em vez de desativada.</p>
+      </div>
+    </div>
+    <p class="ctx-note"><strong>Contexto:</strong> implementação técnica de um projeto real, feito para uma escola de cursos livres. A escola não é identificada, e escola, alunos, cursos e documentos desta página são fictícios. Não é um produto nem um serviço oferecido.</p>
+  </div>
+</section>
+
+<section class="sec demo-bg" id="demo" aria-labelledby="demo-h">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">demonstração interativa</span>
+      <h2 id="demo-h">Siga um documento do registro até a validação.</h2>
+      <p>Escolha uma linha da planilha e avance pelas etapas. Os PDFs e os QR codes foram gerados pelo código do projeto, com dados fictícios; a planilha e as telas são reproduções, sem servidor por trás.</p>
+    </div>
+    <div class="demo">
+      <ol class="stepper" id="stepper" aria-label="Etapas da demonstração"></ol>
+      <div class="stage" id="stage"></div>
+      <p class="sr-only" id="live" aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec impl-bg" id="implementacao" aria-labelledby="impl-h">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">como foi implementado</span>
+      <h2 id="impl-h">Uma especificação, dois ambientes.</h2>
+      <p>Uma única especificação define as regras: colunas da planilha, tipos de documento, formato do ID, campos públicos, revogação e o link do LinkedIn. Ela tem duas implementações, que não são produtos diferentes: são o mesmo contrato rodando em ambientes diferentes. Onde dá para hospedar um contêiner, a referência é a versão Python; onde não dá, ou a equipe já opera n8n, os fluxos cobrem as mesmas regras.</p>
+      <p>O custo dessa escolha é explícito: toda regra nova entra primeiro na especificação e depois nas duas implementações.</p>
+    </div>
+    <div class="impl-grid">
+      <div class="impl">
+        <div class="impl-hd"><h3>Python</h3><p>serviço num contêiner</p></div>
+        <dl>
+          <div><dt>situação</dt><dd><strong>Pronta.</strong></dd></div>
+          <div><dt>stack</dt><dd>Flask, ReportLab, gspread, Docker</dd></div>
+          <div><dt>PDF</dt><dd>Desenhado em código; a fonte diminui para caber nomes e conteúdos longos</dd></div>
+          <div><dt>emissão</dt><dd>Senha, com bloqueio temporário após tentativas erradas</dd></div>
+          <div><dt>validação</dt><dd>10 consultas por minuto por visitante; planilha em cache por 30 s</dd></div>
+          <div><dt>testes</dt><dd>144 automatizados, incluindo o fluxo registro → PDF → QR → página</dd></div>
+        </dl>
+      </div>
+      <div class="impl">
+        <div class="impl-hd"><h3>n8n</h3><p>fluxos, sem hospedar código</p></div>
+        <dl>
+          <div><dt>situação</dt><dd><strong>Validação pronta.</strong> Emissão testada até a geração do PDF, que depende da configuração do Google no ambiente</dd></div>
+          <div><dt>stack</dt><dd>n8n, Google Sheets, Google Slides</dd></div>
+          <div><dt>PDF</dt><dd>Modelo no Google Slides preenchido pelo fluxo, com tamanho de fonte fixo</dd></div>
+          <div><dt>emissão</dt><dd>Login com a conta Google, liberado só para e-mails ou domínios autorizados</dd></div>
+          <div><dt>cadastro</dt><dd>Formulário, importação de CSV ou direto na planilha; vários PDFs num ZIP</dd></div>
+          <div><dt>testes</dt><dd>Validação manual dos fluxos</dd></div>
+        </dl>
+      </div>
+    </div>
+    <figure class="shot">
+      <img src="img/n8n-emissao-lista.webp" width="1500" height="608" loading="lazy" alt="Tela de emissão da versão n8n: lista com três documentos fictícios, cada um com tipo, curso, data e status (dois ativos, um revogado), botões Baixar PDF, Baixar marcados (ZIP), Importar CSV e Novo documento">
+      <figcaption>Emissão na versão n8n: a tela de lista, gerada a partir do fluxo exportado com os mesmos registros fictícios da demo.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="sec dec-bg" aria-labelledby="dec-h">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">decisões de projeto</span>
+      <h2 id="dec-h">O que foi decidido e o que cada escolha custou.</h2>
+    </div>
+    <div class="dec-table">
+      <div class="dec-thead" aria-hidden="true">
+        <div class="dec-th">decisão</div>
+        <div class="dec-th">por quê</div>
+        <div class="dec-th">consequência</div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>A planilha é o registro; sem banco próprio</h4></div>
+        <div class="dec-cell"><p>O emissor mantém as linhas; a validação só lê.</p></div>
+        <div class="dec-cell"><p class="trd">Revogar é mudar o <code>status</code>. Cada leitura custa chamadas à API do Google, com cota baixa: a versão Python guarda a planilha em cache por 30 s na rota pública.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>PDF gerado sob demanda, nunca armazenado</h4></div>
+        <div class="dec-cell"><p>O documento sai sempre do estado atual da planilha.</p></div>
+        <div class="dec-cell"><p class="trd">Não há cópia do que foi entregue antes. Reemitir gera o PDF de novo, a partir da linha.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>A validação mostra só os campos públicos</h4></div>
+        <div class="dec-cell"><p>CPF, RG, endereço e dia de aula ficam só na emissão.</p></div>
+        <div class="dec-cell"><p class="trd">O PDF das declarações nunca é servido pela página pública.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>ID de 12 letras ou dígitos, aleatório</h4></div>
+        <div class="dec-cell"><p>Inviável descobrir documentos por tentativa (~71 bits). Sem <code>-</code> ou <code>_</code>: na planilha, um valor começando com <code>-</code> viraria fórmula.</p></div>
+        <div class="dec-cell"><p class="trd">O formato é conferido antes de qualquer consulta. É um identificador difícil de adivinhar, não uma prova de autenticidade.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>Acesso ao Google sem chave persistente</h4></div>
+        <div class="dec-cell"><p>A política que bloqueia chaves de conta de serviço foi mantida, não desativada.</p></div>
+        <div class="dec-cell"><p class="trd">Python usa a identidade do ambiente; n8n, o login OAuth da conta do emissor.</p></div>
+      </div>
+      <div class="dec-row">
+        <div class="dec-cell"><h4>URL de validação vem da configuração</h4></div>
+        <div class="dec-cell"><p>O QR e o link do LinkedIn não dependem do endereço da requisição.</p></div>
+        <div class="dec-cell"><p class="trd">Sem a URL configurada, a emissão falha em vez de gerar documento sem QR.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec val-bg" id="validacao" aria-labelledby="val-h">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">o que pode ser validado</span>
+      <h2 id="val-h">O que a consulta confirma, e o que ela não prova.</h2>
+      <p>A página de validação é uma consulta ao registro do emissor. Ela não inspeciona o arquivo que a pessoa tem em mãos.</p>
+    </div>
+    <div class="val-grid">
+      <div class="val yes">
+        <h3>Confirma</h3>
+        <ul>
+          <li>Que existe no registro do emissor um documento com aquele ID.</li>
+          <li>O tipo, o nome, o curso, a carga horária e a data de emissão desse documento.</li>
+          <li>Se ele está ativo ou revogado, conforme a leitura mais recente da planilha (até 30 s de cache no Python; sem cache no n8n).</li>
+        </ul>
+      </div>
+      <div class="val no">
+        <h3>Não prova</h3>
+        <ul>
+          <li>Que o PDF não foi alterado depois de emitido: os documentos não têm assinatura digital nem hash. Quem confere compara os dados da página com os do documento.</li>
+          <li>Os campos que a página não mostra, como CPF, RG, endereço, horário das aulas e conteúdo programático.</li>
+          <li>A origem por si só: o QR é um atalho para a consulta, e a confiança depende de a página aberta ser do domínio do emissor.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="scope">
+      <div class="scope-k">fora do escopo</div>
+      <p>Integridade do arquivo (assinatura digital ou hash), guarda dos PDFs emitidos, histórico de quem emitiu o quê e quando, e limite de consultas entre várias instâncias. São problemas diferentes, que pediriam outra arquitetura.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec stack-bg" aria-labelledby="stack-h">
+  <div class="wrap">
+    <div class="sh">
+      <span class="stag">stack</span>
+      <h2 id="stack-h">O que roda por trás.</h2>
+    </div>
+    <div class="pills">
+      <div class="pill pill-ac"><span class="pill-dot"></span>Python</div>
+      <div class="pill"><span class="pill-dot"></span>Flask</div>
+      <div class="pill"><span class="pill-dot"></span>ReportLab (PDF e QR)</div>
+      <div class="pill"><span class="pill-dot"></span>gspread</div>
+      <div class="pill"><span class="pill-dot"></span>pytest</div>
+      <div class="pill"><span class="pill-dot"></span>Docker</div>
+      <div class="pill pill-ac"><span class="pill-dot"></span>n8n</div>
+      <div class="pill"><span class="pill-dot"></span>Google Sheets</div>
+      <div class="pill"><span class="pill-dot"></span>Google Slides</div>
+      <div class="pill"><span class="pill-dot"></span>Google OAuth</div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="ft-in">
+    <div class="ft-top">
+      <div>
+        <div class="ft-name">Documentos Verificáveis</div>
+        <div class="ft-tag">estudo de caso de portfólio</div>
+      </div>
+      <div class="ft-meta">
+        <div class="ft-mi">implementação técnica de projeto real</div>
+        <div class="ft-mi">escola, alunos e documentos fictícios</div>
+      </div>
+    </div>
+    <div class="ft-notice">
+      <strong>Sobre esta página:</strong> a escola para a qual o projeto foi feito não é identificada. Escola Exemplo de Cursos Livres, alunos, cursos, IDs e documentos são fictícios; os PDFs, os QR codes e a tela de emissão n8n foram gerados pelo código do projeto com esses dados. Não é um produto nem um serviço oferecido.
+    </div>
+  </div>
+</footer>
+
+<script>
+/* Demo: reprodução controlada do fluxo real, sem servidor. As regras abaixo são as da
+   especificação do projeto (formato do ID, busca por linha única, status "ativo",
+   campos públicos, LinkedIn só em certificado válido). Tudo avança por ação do visitante. */
+(function () {
+  const BASE = 'https://ottocanabrava.github.io/documentos-verificaveis/';
+  const EMISSOR = 'Escola Exemplo de Cursos Livres';
+  const TIPOS = {
+    certificado_curso: { nome: 'Certificado de conclusão de curso', req: ['nome', 'curso', 'carga_horaria'], extra: 'e o conteúdo do curso, lido da planilha de conteúdos' },
+    certificado_trimestre: { nome: 'Certificado de conclusão de trimestre', req: ['nome', 'curso', 'carga_horaria'] },
+    declaracao_matricula: { nome: 'Declaração de matrícula', req: ['nome', 'curso', 'cpf', 'rg', 'endereco'] }
+  };
+  const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+  /* planilha, na ordem das linhas (mais antigas primeiro) */
+  const REG = [
+    { id: 'Hx3pV9sKd7Qe', tipo_documento: 'certificado_trimestre', nome: 'Carlos Exemplo Pereira', curso: 'Oratória', carga_horaria: '80', data_emissao: '10/02/2026', status: 'revogado', cpf: '', rg: '', endereco: '', pages: ['img/doc-Hx3pV9sKd7Qe.webp'] },
+    { id: 'k7Qm2xPz9aBc', tipo_documento: 'certificado_curso', nome: 'Maria Exemplo da Silva', curso: 'Comunicação Não Violenta', carga_horaria: '20', data_emissao: '15/03/2026', status: 'ativo', cpf: '', rg: '', endereco: '', pages: ['img/doc-k7Qm2xPz9aBc-p1.webp', 'img/doc-k7Qm2xPz9aBc-p2.webp'] },
+    { id: 'Zr4tW8nLq2Ys', tipo_documento: 'declaracao_matricula', nome: 'João Exemplo Souza', curso: 'Escrita Profissional', carga_horaria: '', data_emissao: '14/09/2026', status: 'ativo', cpf: '000.000.000-00', rg: '00000000', endereco: 'Rua Fictícia, nº 1, Bairro: Jardim…', pages: ['img/doc-Zr4tW8nLq2Ys.webp'], portrait: true }
+  ];
+  const STEPS = ['Registro', 'Emissão', 'PDF', 'QR code', 'Validação'];
+
+  const S = { step: 0, reached: 0, sel: null, emitted: false, page: 0, query: '', res: null, dirty: false };
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+  const rec = () => REG[S.sel];
+  const dataExtenso = d => { const [dd, mm, aa] = d.split('/'); return `${+dd} de ${MESES[mm - 1]} de ${aa}`; };
+  const url = id => `${BASE}?id=${id}`;
+  const ck = (kind, t) => `<span class="ck ${kind || ''}" aria-hidden="true">${t || '✓'}</span>`;
+
+  /* mesmas regras de src/validation.py e da rota /validar */
+  function validar(raw) {
+    const q = raw.trim();
+    if (!q) return null;
+    if (!/^[A-Za-z0-9]{12}$/.test(q)) return { kind: 'nao_encontrado', formato: false };
+    const m = REG.filter(r => r.id === q);
+    if (m.length !== 1) return { kind: 'nao_encontrado', formato: true, achou: false };
+    const r = m[0];
+    return { kind: r.status === 'ativo' ? 'valido' : 'invalido', formato: true, achou: true, r };
+  }
+
+  function stepper() {
+    $('stepper').innerHTML = STEPS.map((s, i) => `<li><button type="button" data-go="${i}" ${i > S.reached ? 'disabled' : ''}
+      class="${i < S.reached && i !== S.step ? 'done' : ''}" ${i === S.step ? 'aria-current="step"' : ''}>
+      <span class="n">${i < S.reached && i !== S.step ? '✓' : i + 1}</span>${s}</button></li>`).join('');
+  }
+
+  function head(t, p) { return `<div class="st-head"><h3 id="st-title" tabindex="-1">${t}</h3><p>${p}</p></div>`; }
+  function actions(back, next) {
+    return `<div class="st-actions">${back ? `<button type="button" class="btn btn-sec" data-go="${S.step - 1}">← Voltar</button>` : '<span></span>'}${next || ''}</div>`;
+  }
+
+  /* 1. Registro */
+  function s1() {
+    const cols = ['id', 'tipo_documento', 'nome', 'curso', 'carga_horaria', 'data_emissao', 'status', 'cpf', 'rg', 'endereco'];
+    return head('Selecione um registro', 'Cada documento é uma linha da planilha do Google, que é o registro do sistema: não há banco de dados. Escolha uma linha para emitir.') +
+      `<div class="st-grid"><div class="sheet">
+        <div class="sheet-bar"><span class="sheet-ico" aria-hidden="true"></span>Documentos emitidos · planilha de exemplo</div>
+        <div class="sheet-scroll"><table>
+          <caption class="sr-only">Planilha de documentos. Selecione uma linha.</caption>
+          <thead><tr><th class="rn" scope="col"><span class="sr-only">Selecionar</span></th>${cols.map(c => `<th scope="col">${c}</th>`).join('')}</tr></thead>
+          <tbody>${REG.map((r, i) => `<tr class="${S.sel === i ? 'sel' : ''}" data-row="${i}">
+            <td class="rn"><input type="radio" name="reg" id="reg-${i}" value="${i}" ${S.sel === i ? 'checked' : ''} aria-label="${esc(r.nome)}, ${TIPOS[r.tipo_documento].nome}, ${r.status}"></td>
+            ${cols.map(c => `<td class="${c === 'status' ? (r.status === 'ativo' ? 'st-ativo' : 'st-rev') : ''}${r[c] ? '' : ' empty'}">${esc(r[c] || '')}</td>`).join('')}</tr>`).join('')}</tbody>
+        </table></div>
+        <div class="sheet-more">+ colunas dia_aula e semestre_conteudo · colunas em texto simples, para preservar datas e zeros à esquerda</div>
+      </div>
+      <div class="side">
+        <div class="note"><span class="note-k">o que está na linha</span>Os dados do documento, o <code>status</code> e, nas declarações, CPF, RG e endereço. Só <code>ativo</code> vale na validação; revogar é mudar essa célula.</div>
+        <div class="note"><span class="note-k">o ID</span>12 letras ou dígitos aleatórios. Na versão Python, a emissão sugere IDs novos para colar na planilha; na n8n, o ID é gerado no cadastro.</div>
+      </div></div>` +
+      actions(false, `<button type="button" class="btn btn-pri" data-go="1" ${S.sel === null ? 'disabled' : ''}>Emitir este documento →</button>`);
+  }
+
+  /* 2. Emissão */
+  function s2() {
+    const r = rec(), t = TIPOS[r.tipo_documento];
+    const checks = S.emitted ? `<ul class="checks" aria-label="Conferências feitas antes de gerar o PDF">
+        <li>${ck()}<span><b>Tipo reconhecido:</b> <code>${r.tipo_documento}</code> (${t.nome})</span></li>
+        <li>${ck()}<span><b>Campos obrigatórios preenchidos:</b> ${t.req.join(', ')}, além de id e data_emissao${t.extra ? ', ' + t.extra : ''}</span></li>
+        <li>${ck()}<span><b>ID no formato</b> e sem repetição na planilha: um ID repetido não gera nem valida nenhuma linha</span></li>
+        <li>${ck()}<span><b>URL de validação configurada:</b> sem ela, o PDF não é gerado, para não sair documento sem QR</span></li>
+        <li class="out">${ck('', '→')}<span><b>PDF gerado na hora</b>, a partir da linha, e entregue só a quem emitiu. Nada é armazenado.</span></li>
+      </ul>` : '';
+    return head('Emita o documento', 'A emissão fica numa área restrita a quem emite (senha na versão Python; login com a conta Google na n8n). O PDF é gerado sob demanda, a partir da linha.') +
+      `<div class="st-grid"><div>
+        <div class="adm" role="group" aria-label="Reprodução da área de emissão">
+          <div class="adm-h">EMISSÃO DE DOCUMENTOS · ${EMISSOR}</div>
+          <div class="adm-b"><div class="adm-card">
+            <h4>Documentos da planilha</h4>
+            <p class="adm-muted">Linha selecionada (as demais foram omitidas nesta reprodução).</p>
+            <div class="adm-scroll"><table>
+              <thead><tr><th scope="col">Nome</th><th scope="col">Documento</th><th scope="col">Curso</th><th scope="col">Emissão</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Ação</span></th></tr></thead>
+              <tbody><tr><td>${esc(r.nome)}</td><td>${r.tipo_documento}</td><td>${esc(r.curso)}</td><td>${r.data_emissao}</td><td>${r.status}</td>
+                <td><button type="button" class="adm-btn" id="emit">Baixar PDF</button></td></tr></tbody>
+            </table></div>
+          </div></div>
+        </div>
+        ${checks}
+      </div>
+      <div class="side">
+        <div class="note"><span class="note-k">a tela</span>Reprodução da tela <code>/emitir</code> da versão Python, com o mesmo layout e as mesmas cores.</div>
+        ${S.emitted ? '' : '<div class="note"><span class="note-k">sua vez</span>Clique em <strong>Baixar PDF</strong> para ver o que a emissão confere antes de gerar o documento.</div>'}
+      </div></div>` +
+      actions(true, `<button type="button" class="btn btn-pri" data-go="2" ${S.emitted ? '' : 'disabled'}>Ver o PDF →</button>`);
+  }
+
+  /* 3. PDF */
+  function s3() {
+    const r = rec(), t = TIPOS[r.tipo_documento], two = r.pages.length > 1;
+    const alt = S.page === 1
+      ? `Segunda página do certificado: conteúdo programático do curso de ${r.curso}, em módulos, com o nome e o ID de validação no rodapé`
+      : r.portrait
+        ? `${t.nome} de ${r.nome}, curso de ${r.curso}, com CPF, RG e endereço no texto, assinatura e QR code com o ID de validação no rodapé`
+        : `${t.nome} de ${r.nome}, curso de ${r.curso}, ${r.carga_horaria} horas, com assinatura, ID de validação e QR code no canto inferior direito`;
+    const pages = two ? `<div class="pdf-pages" role="group" aria-label="Páginas">${r.pages.map((_, i) =>
+      `<button type="button" data-page="${i}" aria-pressed="${S.page === i}">${i === 0 ? 'Página 1' : 'Página 2 · conteúdo'}</button>`).join('')}</div>` : '';
+    const nota = r.portrait
+      ? `<div class="note alert"><span class="note-k">dados pessoais</span>Esta declaração traz <strong>CPF, RG e endereço</strong>. Por isso o PDF é entregue só a quem emitiu e <strong>nunca é servido pela página pública</strong>.</div>`
+      : r.status !== 'ativo'
+        ? `<div class="note alert"><span class="note-k">linha revogada</span>A emissão continua gerando o PDF desta linha. Quem responde que ele não vale mais é a validação, pelo <code>status</code> na planilha.</div>`
+        : `<div class="note"><span class="note-k">no certificado de curso</span>A segunda página lista o conteúdo programático, lido de outra planilha (curso · semestre · item). Sem conteúdo cadastrado, o certificado não é gerado.</div>`;
+    return head('Veja o PDF gerado', 'Documento gerado pelo código real do projeto (versão Python), com os dados fictícios desta linha. O ID vai no rodapé e o QR code no canto.') +
+      `<div class="st-grid"><div class="pdf">
+        <div class="pdf-bar"><span class="pdf-name">${esc(t.nome)} - ${esc(r.nome)}.pdf</span>${pages}</div>
+        <div class="pdf-view${r.portrait ? ' portrait' : ''}"><img src="${r.pages[S.page]}" width="${r.portrait ? 1075 : 1521}" height="${r.portrait ? 1521 : 1075}" alt="${esc(alt)}"></div>
+      </div>
+      <div class="side">${nota}
+        <div class="note"><span class="note-k">layout</span>Um módulo de layout por tipo de documento. No Python o PDF é desenhado em código; no n8n, sai de um modelo no Google Slides.</div>
+      </div></div>` +
+      actions(true, `<button type="button" class="btn btn-pri" data-go="3">Ler o QR code →</button>`);
+  }
+
+  /* 4. QR */
+  function s4() {
+    const r = rec();
+    return head('Leia o QR code', 'O QR não carrega os dados do documento: carrega só o endereço da página de validação com o ID.') +
+      `<div class="qr-wrap">
+        <div class="qr-card"><img src="img/qr-${r.id}.svg" width="41" height="41" alt="QR code do documento de ${esc(r.nome)}, que abre a validação do ID ${r.id}"><span>QR impresso no documento</span></div>
+        <div>
+          <span class="note-k">o que o QR contém</span>
+          <div class="url-box">${BASE}?id=<mark>${r.id}</mark></div>
+          <ul class="id-facts">
+            <li>No sistema, o QR aponta para <code>URL_DE_VALIDACAO?id=&lt;id&gt;</code>, com a URL vinda da configuração. Aqui, aponta para esta página: escaneado com o celular, abre esta demo já na validação deste documento.</li>
+            <li>O ID tem 12 letras ou dígitos aleatórios (~71 bits): não dá para descobrir outros documentos por tentativa.</li>
+            <li>Na versão Python, o QR também é um link clicável dentro do PDF.</li>
+          </ul>
+        </div>
+      </div>` +
+      actions(true, `<button type="button" class="btn btn-pri" data-go="4" data-scan="1">Abrir a validação →</button>`);
+  }
+
+  /* 5. Validação */
+  function resultado() {
+    const x = S.res;
+    if (!x) return '';
+    if (x.kind === 'nao_encontrado') return `<div class="card" id="vp-res" tabindex="-1"><p class="status bad">Documento não encontrado.</p>Confira o ID e tente de novo.</div>`;
+    if (x.kind === 'invalido') return `<div class="card" id="vp-res" tabindex="-1"><p class="status bad">✗ Este documento não é mais válido.</p></div>`;
+    const r = x.r, cert = r.tipo_documento.startsWith('certificado_');
+    return `<div class="card" id="vp-res" tabindex="-1"><p class="status ok">✓ Documento válido</p><dl>
+      <dt>Documento</dt><dd>${TIPOS[r.tipo_documento].nome}</dd>
+      <dt>Nome</dt><dd>${esc(r.nome)}</dd>
+      <dt>Curso</dt><dd>${esc(r.curso)}</dd>
+      ${r.carga_horaria ? `<dt>Carga horária</dt><dd>${r.carga_horaria} horas</dd>` : ''}
+      <dt>Emissão</dt><dd>${dataExtenso(r.data_emissao)}</dd></dl>
+      ${cert ? `<span class="linkedin" role="link" aria-disabled="true">Adicionar ao LinkedIn</span><span class="demo-tag">Desativado na demo. No sistema, abre o formulário de certificação do LinkedIn já preenchido.</span>` : ''}</div>`;
+  }
+
+  function trace() {
+    const x = S.res;
+    if (!x) return `<p class="note">Digite um ID e toque em <strong>Validar</strong>.</p>`;
+    const f = x.formato, a = x.achou;
+    const st = x.r ? x.r.status : null;
+    return `<ol class="trace">
+      <li>${f ? ck() : ck('no', '✗')}<span><b>Formato do ID</b>${f ? '12 letras ou dígitos.' : 'Fora do formato: recusado antes de qualquer consulta à planilha.'}</span></li>
+      <li>${!f ? ck('skip', '–') : a ? ck() : ck('no', '✗')}<span><b>Consulta ao registro</b>${!f ? 'Não feita.' : a ? 'Uma única linha com esse ID.' : 'Nenhuma linha única com esse ID. A resposta é a mesma de um ID malformado, sem erro técnico.'}</span></li>
+      <li>${!a ? ck('skip', '–') : st === 'ativo' ? ck() : ck('no', '✗')}<span><b>Status</b>${!a ? 'Não se aplica.' : st === 'ativo' ? '<code>ativo</code>: documento válido.' : `<code>${st}</code>: qualquer valor diferente de ativo invalida o documento.`}</span></li>
+      <li>${x.kind === 'valido' ? ck() : ck('skip', '–')}<span><b>Resposta</b>${x.kind === 'valido' ? 'Só tipo, nome, curso, carga horária e data. CPF, RG e endereço nunca aparecem.' : 'Nenhum dado do documento é mostrado.'}</span></li>
+    </ol>`;
+  }
+
+  function s5() {
+    const r = rec();
+    const toggle = r ? `<div class="note"><span class="note-k">na planilha</span>A linha de <strong>${esc(r.nome)}</strong> está com status <span class="pill-st ${r.status}" id="st-pill">${r.status}</span>
+        <div class="sheet-toggle"><button type="button" class="btn btn-sec btn-sm" id="toggle">${r.status === 'ativo' ? 'Revogar na planilha' : 'Reativar na planilha'}</button></div>
+        <p id="toggle-msg" style="margin-top:8px;">${S.dirty ? 'Planilha alterada. Toque em <strong>Validar</strong> de novo para consultar.' : 'Na versão Python, uma mudança aparece em até 30 s (cache); na n8n, na consulta seguinte.'}</p></div>` : '';
+    return head('Valide o documento', 'A página pública de validação, reproduzida com o layout e as regras da versão Python. Experimente também outros IDs.') +
+      `<div class="st-grid"><div>
+        <div class="phone"><div class="phone-url" id="phone-url">${esc(BASE)}${S.query ? '?id=' + esc(S.query) : ''}</div><div class="vp">
+          <header><h4>VALIDAÇÃO DE DOCUMENTOS</h4><p>${EMISSOR}</p></header>
+          <div class="vp-main">
+            <form id="vp-form" role="search" aria-label="Validar documento"><input id="vp-id" name="id" value="${esc(S.query)}" placeholder="ID de validação" aria-label="ID de validação" maxlength="64" autocomplete="off" spellcheck="false"><button type="submit">Validar</button></form>
+            <div id="vp-out">${resultado()}</div>
+          </div>
+        </div></div>
+      </div>
+      <div class="side">
+        <div class="note"><span class="note-k">o que a validação fez</span><div id="vp-trace">${trace()}</div></div>
+        ${toggle}
+        <div class="note"><span class="note-k">tente também</span>Outros IDs, que também podem ser digitados no campo:
+          <div class="try"><button type="button" class="btn btn-sec btn-sm" data-try="aB3dE5gH7jK9">ID inexistente</button><button type="button" class="btn btn-sec btn-sm" data-try="123-abc">ID malformado</button>${REG.filter(x => x !== r).map(x => `<button type="button" class="btn btn-sec btn-sm" data-try="${x.id}">${esc(x.nome.split(' ')[0])}</button>`).join('')}</div></div>
+      </div></div>` +
+      actions(!!r, `<button type="button" class="btn btn-pri" data-restart="1">${r ? 'Recomeçar com outro registro' : 'Começar pelo registro'}</button>`);
+  }
+
+  function renderResult(announce) {
+    $('vp-out').innerHTML = resultado();
+    $('vp-trace').innerHTML = trace();
+    $('phone-url').textContent = BASE + (S.query ? '?id=' + S.query : '');
+    if (announce) {
+      const x = S.res;
+      $('live').textContent = !x ? '' : x.kind === 'valido' ? 'Documento válido.' : x.kind === 'invalido' ? 'Este documento não é mais válido.' : 'Documento não encontrado.';
+    }
+  }
+
+  function render(focus) {
+    stepper();
+    $('stage').innerHTML = [s1, s2, s3, s4, s5][S.step]();
+    if (focus === 'title') $('st-title').focus({ preventScroll: true });
+    else if (focus) { const el = document.getElementById(focus) || document.querySelector(focus); if (el) el.focus(); }
+  }
+
+  function go(i, opts) {
+    if (i < 0 || i > 4) return;
+    if (i > S.reached + 1 || (i >= 1 && S.sel === null) || (i >= 2 && !S.emitted && S.reached < 2)) return;
+    S.step = i; S.reached = Math.max(S.reached, i);
+    if (i === 4 && opts && opts.scan) { S.query = rec().id; S.res = validar(S.query); S.dirty = false; }
+    render('title');
+    $('live').textContent = `Etapa ${i + 1} de 5: ${STEPS[i]}.`;
+    const box = document.querySelector('#demo .demo');
+    if (box.getBoundingClientRect().top < 54) box.scrollIntoView({ block: 'start' });
+  }
+
+  function select(i) {
+    if (S.sel !== i) { S.sel = i; S.emitted = false; S.page = 0; S.reached = 0; S.res = null; S.query = ''; S.dirty = false; }
+    render('reg-' + i);
+  }
+
+  const stageEl = $('stage');
+  document.getElementById('demo').addEventListener('click', e => {
+    const b = e.target.closest('[data-go]');
+    if (b && !b.disabled) return go(+b.dataset.go, { scan: !!b.dataset.scan });
+    const row = e.target.closest('[data-row]');
+    if (row) return select(+row.dataset.row);
+    if (e.target.closest('#emit')) { S.emitted = true; S.reached = Math.max(S.reached, 1); render('.checks li.out'); $('live').textContent = 'PDF gerado.'; return; }
+    const pg = e.target.closest('[data-page]');
+    if (pg) { S.page = +pg.dataset.page; render(`[data-page="${S.page}"]`); return; }
+    const tr = e.target.closest('[data-try]');
+    if (tr) { $('vp-id').value = tr.dataset.try; S.query = tr.dataset.try; S.res = validar(S.query); renderResult(true); return; }
+    if (e.target.closest('#toggle')) {
+      const r = rec(); r.status = r.status === 'ativo' ? 'revogado' : 'ativo'; S.dirty = true;
+      render('#toggle'); $('live').textContent = `Status alterado para ${r.status} na planilha.`; return;
+    }
+    if (e.target.closest('[data-restart]')) {
+      S.step = 0; S.reached = 0; S.sel = null; S.emitted = false; S.page = 0; S.res = null; S.query = ''; S.dirty = false;
+      render('title'); $('live').textContent = 'Etapa 1 de 5: Registro.';
+    }
+  });
+  stageEl.addEventListener('change', e => { if (e.target.name === 'reg') select(+e.target.value); });
+  stageEl.addEventListener('submit', e => {
+    if (!e.target.matches('#vp-form')) return; /* form.id seria o campo name="id" */
+    e.preventDefault();
+    S.query = $('vp-id').value.trim(); S.res = validar(S.query); S.dirty = false;
+    const msg = $('toggle-msg'); if (msg) msg.textContent = 'Na versão Python, uma mudança aparece em até 30 s (cache); na n8n, na consulta seguinte.';
+    renderResult(true);
+  });
+
+  /* Chegada pelo QR (?id=): abre direto na validação, como o QR real faz. */
+  const qid = new URLSearchParams(location.search).get('id');
+  if (qid !== null) {
+    const i = REG.findIndex(r => r.id === qid.trim());
+    if (i >= 0) { S.sel = i; S.emitted = true; }
+    S.step = 4; S.reached = i >= 0 ? 4 : 0; S.query = qid.trim().slice(0, 64); S.res = validar(S.query);
+    render();
+    requestAnimationFrame(() => document.querySelector('#demo .demo').scrollIntoView({ block: 'start' }));
+  } else {
+    render();
+  }
+})();
+</script>
+
+<!-- CONTINUE EXPLORANDO: sequência Extrator → Daily Ops → Motor → TicketScript → FormPilot → Documentos Verificáveis (mesma ordem da home) -->
+<style>
+  /* Continue explorando — navegação entre cases (estilos isolados, prefixo cx-) */
+  .cx{ background:#131D2E; color:#B7BFCE; padding:40px 24px 44px; font-family:'DM Sans',-apple-system,'Segoe UI',sans-serif; line-height:1.45; border-top:1px solid #2B3B57; }
+  .cx *{ box-sizing:border-box; }
+  .cx-in{ max-width:1120px; margin:0 auto; }
+  .cx-hd{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin:0 0 16px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+  .cx-k{ display:inline-flex; align-items:center; gap:8px; color:#5FD1B8; font-weight:500; margin:0; font-size:inherit; letter-spacing:inherit; }
+  .cx-k::before{ content:""; width:7px; height:7px; border-radius:50%; background:#5FD1B8; }
+  .cx-pos{ color:#6B7A96; }
+  .cx-grid{ display:grid; grid-template-columns:1fr minmax(180px,.7fr) 1fr; gap:12px; }
+  .cx-card{ display:flex; flex-direction:column; gap:4px; min-width:0; padding:16px 18px; border:1px solid rgba(255,255,255,.1); border-radius:10px; background:rgba(255,255,255,.03); color:inherit; text-decoration:none; transition:border-color .15s, background .15s; }
+  a.cx-card:hover, a.cx-card:focus-visible{ border-color:rgba(255,255,255,.34); background:rgba(255,255,255,.06); }
+  a.cx-card:focus-visible{ outline:2px solid #5FD1B8; outline-offset:2px; }
+  .cx-dir{ font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#8FA0BE; }
+  .cx-name{ font-size:16px; font-weight:600; color:#fff; }
+  .cx-sum{ font-size:13px; color:#8FA0BE; }
+  .cx-next{ text-align:right; align-items:flex-end; }
+  .cx-all{ justify-content:center; align-items:center; text-align:center; }
+  .cx-edge{ justify-content:center; border-style:dashed; background:none; }
+  .cx-edge .cx-name{ font-size:14px; font-weight:500; color:#6B7A96; }
+  @media (max-width:720px){
+    .cx{ padding:32px 18px 36px; }
+    .cx-grid{ grid-template-columns:1fr; }
+    .cx-next{ text-align:left; align-items:flex-start; }
+    .cx-all{ order:3; align-items:flex-start; text-align:left; }
+    .cx-edge{ display:none; }
+  }
+</style>
+<div class="cx" role="navigation" aria-labelledby="cx-h">
+  <div class="cx-in">
+  <div class="cx-hd"><h2 class="cx-k" id="cx-h">Continue explorando</h2><span class="cx-pos">Projeto 6 de 6</span></div>
+  <div class="cx-grid">
+    <a class="cx-card cx-prev" href="/formpilot/"><span class="cx-dir">← Anterior</span><span class="cx-name">FormPilot</span><span class="cx-sum">Formulário de movimentação até a assinatura · etapa 2</span></a>
+    <a class="cx-card cx-all" href="/#projetos"><span class="cx-dir">Portfólio</span><span class="cx-name">Todos os projetos</span></a>
+    <div class="cx-card cx-next cx-edge" aria-hidden="true"><span class="cx-dir">Próximo →</span><span class="cx-name">Este é o último projeto</span></div>
+  </div>
+  </div>
+</div>
+
+</body>
+</html>

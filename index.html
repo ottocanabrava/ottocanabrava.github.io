@@ -300,6 +300,27 @@
   .evp-field b{ display:block; font-size:.6875rem; color:#F1F5F9; font-weight:600; margin-top:2px; }
   .evp-btn{ margin-top:8px; background:var(--signal); color:#0B2620; font-size:.625rem; font-weight:700; text-align:center; padding:8px; border-radius:6px; }
 
+  /* mini recriação do certificado e da página de validação do Documentos Verificáveis */
+  .mini-dv{ width:100%; display:grid; grid-template-columns:1.15fr 1fr; gap:10px; align-items:center; }
+  .dv-cert{ background:#fff; border-radius:6px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+  .dv-band{ background:#0f3d3e; padding:12px 10px 11px; text-align:center; }
+  .dv-t{ font-size:.4375rem; font-weight:700; letter-spacing:.18em; color:#fff; margin-bottom:7px; }
+  .dv-n{ font-size:.75rem; font-weight:700; color:#fff; line-height:1.15; }
+  .dv-c{ font-size:.5625rem; font-weight:800; letter-spacing:.08em; color:#3fd6d0; margin-top:5px; }
+  .dv-foot{ display:flex; justify-content:space-between; align-items:flex-end; padding:7px 8px; gap:6px; }
+  .dv-id{ font-family:"DM Mono",monospace; font-size:.4375rem; color:#8B93A3; }
+  .dv-qr{ width:24px; height:24px; display:block; border-radius:2px; }
+  .dv-val{ background:#f2f5f5; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.12); }
+  .dv-vh{ background:#0f3d3e; color:#fff; font-size:.4375rem; font-weight:700; letter-spacing:.08em; text-align:center; padding:7px 4px; }
+  .dv-card{ background:#fff; margin:7px; border-radius:6px; padding:8px 9px; }
+  .dv-ok{ font-size:.625rem; font-weight:700; color:#1d7a45; margin-bottom:5px; }
+  .dv-row{ display:flex; justify-content:space-between; gap:6px; font-size:.5rem; color:#5f6f70; padding:2px 0; }
+  .dv-row b{ color:#1f2a2b; font-weight:600; text-align:right; }
+  .mini-dv.is-live [data-dv-res]{ transition:opacity .35s ease; }
+  .mini-dv.is-live [data-dv-res][data-state="pending"]{ opacity:0; }
+  .mini-dv.is-live .dv-qr{ transition:box-shadow .3s ease; }
+  .mini-dv.is-live .dv-qr[data-state="active"]{ box-shadow:0 0 0 2px #5FD1B8; }
+
   /* ---------- evolução ticketscript -> formpilot ---------- */
   .evo-wrap{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r-l); padding:28px 30px; box-shadow:var(--shadow); }
   @media (max-width:640px){ .evo-wrap{ padding:20px; } }
@@ -437,7 +458,7 @@
     <h1>Transformo processos operacionais manuais em <span class="hl">sistemas</span>.</h1>
     <p class="dek">Mapeio processos manuais — planilhas, portais soltos, filas de ticket, formulários repetidos — e estruturo isso em sistemas que rodam sozinhos: automação em Python, um agente com IA generativa para triagem de dados, e painéis operacionais que decidem por onde a equipe começa o dia.</p>
     <div class="hero-stats">
-      <div class="hstat"><div class="v">5</div><div class="l">soluções construídas, com problema real por trás</div></div>
+      <div class="hstat"><div class="v">6</div><div class="l">soluções construídas, com problema real por trás</div></div>
       <div class="hstat"><div class="v mono">Python · IA generativa · RPA</div><div class="l">stack aplicado nos sistemas abaixo</div></div>
     </div>
   </header>
@@ -651,6 +672,44 @@
     </div>
   </section>
 
+  <!-- ============ DOCUMENTOS VERIFICÁVEIS ============ -->
+  <section aria-label="Documentos Verificáveis">
+    <div class="projects">
+      <article class="pcard">
+        <div class="pcard-info">
+          <div class="pcard-top">
+            <span class="pcard-dot" style="background:#2563EB;"></span>
+            <h3 class="pcard-name">Documentos Verificáveis</h3>
+            <span class="pcard-status" style="background:var(--surface-2);color:var(--text-muted);">Implementação técnica</span>
+          </div>
+          <div class="pfield"><div class="k">Problema</div><div class="v">Certificados e declarações de uma escola de cursos livres precisavam ser conferidos por terceiros, como as empresas clientes que acompanham os documentos dos funcionários, sem expor CPF, RG ou endereço dos alunos.</div></div>
+          <div class="pfield"><div class="k">Solução</div><div class="v">Emissão dos PDFs a partir de uma planilha do Google, cada um com ID aleatório e QR code para uma página pública que mostra só os dados públicos e se o documento continua válido. Uma especificação, duas implementações: Python e n8n.</div></div>
+          <div class="ptags"><span class="ptag">Python · Flask · ReportLab</span><span class="ptag">n8n</span><span class="ptag">Google Sheets</span></div>
+          <div class="presult"><span class="rv">5 tipos de documento</span><span class="rl">com ID, QR code e validação pública · dados fictícios</span></div>
+          <a class="pcta" href="/documentos-verificaveis/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
+        </div>
+        <div class="ppreview" style="background:#E3E6ED;">
+          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
+          <div class="pp-body"><div class="mini-dv" data-dv role="img" aria-label="Certificado fictício de Maria Exemplo da Silva com QR code, ao lado da página de validação mostrando documento válido">
+            <div class="dv-cert">
+              <div class="dv-band"><div class="dv-t">CERTIFICADO DE CONCLUSÃO</div><div class="dv-n">Maria Exemplo da Silva</div><div class="dv-c">COMUNICAÇÃO NÃO VIOLENTA</div></div>
+              <div class="dv-foot"><span class="dv-id">ID de validação: k7Qm2xPz9aBc</span><img class="dv-qr" data-dv-qr src="/documentos-verificaveis/img/qr-k7Qm2xPz9aBc.svg" alt="" width="24" height="24"></div>
+            </div>
+            <div class="dv-val">
+              <div class="dv-vh">VALIDAÇÃO DE DOCUMENTOS</div>
+              <div class="dv-card" data-dv-res>
+                <div class="dv-ok">✓ Documento válido</div>
+                <div class="dv-row">Curso<b>Comunicação Não Violenta</b></div>
+                <div class="dv-row">Carga horária<b>20 horas</b></div>
+                <div class="dv-row">Emissão<b>15/03/2026</b></div>
+              </div>
+            </div>
+          </div></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
   <!-- ============ SKILLS ============ -->
   <section id="skills" aria-labelledby="skills-h">
     <div class="sec-head">
@@ -741,7 +800,7 @@
   </footer>
 </div>
 <script>
-/* Microinterações dos previews da home (Extrator, Daily Ops, Motor de Triagem, FormPilot).
+/* Microinterações dos previews da home (Extrator, Daily Ops, Motor de Triagem, FormPilot, Documentos Verificáveis).
    Cada preview só anima quando está visível, a aba está ativa e o usuário não pediu movimento
    reduzido; fora disso volta exatamente ao markup estático original. Nada muda de tamanho. */
 (function(){
@@ -831,6 +890,14 @@
       });
     });
     a.at(3300, function(){ count.textContent = "1 / 5"; });
+  });
+
+  /* Documentos Verificáveis: o QR é destacado e, em seguida, a validação mostra o documento válido */
+  micro(document.querySelector("[data-dv]"), 6800, function(a){
+    var qr = a.q("[data-dv-qr]"), res = a.q("[data-dv-res]");
+    res.setAttribute("data-state", "pending");
+    a.at(600, function(){ qr.setAttribute("data-state", "active"); });
+    a.at(1600, function(){ qr.removeAttribute("data-state"); res.setAttribute("data-state", "done"); });
   });
 
   /* FormPilot: operadora, movimentação e beneficiário recebem ✓ em sequência; depois o botão fica disponível */
