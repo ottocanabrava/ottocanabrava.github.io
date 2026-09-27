@@ -528,30 +528,30 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
   <div class="wrap">
     <div class="sh">
       <span class="stag">o que pode ser validado</span>
-      <h2 id="val-h">O que a consulta confirma, e o que ela não prova.</h2>
-      <p>A página de validação é uma consulta ao registro do emissor. Ela não inspeciona o arquivo que a pessoa tem em mãos.</p>
+      <h2 id="val-h">O que a consulta confirma, e até onde ela vai.</h2>
+      <p>Cada documento tem um registro correspondente na planilha do emissor. A consulta pelo QR code ou pelo ID recupera esse registro e mostra os dados gravados na emissão, para que sejam comparados com as informações apresentadas no PDF. Uma divergência entre os dois indica que o documento não corresponde ao registro original.</p>
     </div>
     <div class="val-grid">
       <div class="val yes">
         <h3>Confirma</h3>
         <ul>
           <li>Que existe no registro do emissor um documento com aquele ID.</li>
-          <li>O tipo, o nome, o curso, a carga horária e a data de emissão desse documento.</li>
+          <li>O tipo, o nome, o curso, a carga horária e a data de emissão registrados para esse documento, que podem ser comparados com os do PDF. Uma alteração em algum desses campos aparece como divergência nessa comparação.</li>
           <li>Se ele está ativo ou revogado, conforme a leitura mais recente da planilha (até 30 s de cache no Python; sem cache no n8n).</li>
         </ul>
       </div>
       <div class="val no">
-        <h3>Não prova</h3>
+        <h3>Não faz</h3>
         <ul>
-          <li>Que o PDF não foi alterado depois de emitido: os documentos não têm assinatura digital nem hash. Quem confere compara os dados da página com os do documento.</li>
-          <li>Os campos que a página não mostra, como CPF, RG, endereço, horário das aulas e conteúdo programático.</li>
-          <li>A origem por si só: o QR é um atalho para a consulta, e a confiança depende de a página aberta ser do domínio do emissor.</li>
+          <li>Não compara o arquivo automaticamente: a página mostra o registro, e a comparação com o PDF é feita por quem confere. A solução não usa assinatura digital nem hash, e o PDF não se torna um arquivo criptograficamente imutável.</li>
+          <li>Não cobre os campos que a página não mostra, como CPF, RG, endereço, horário das aulas e conteúdo programático: uma alteração neles não aparece na comparação.</li>
+          <li>Não garante a origem por si só: o QR é um atalho para a consulta, e a confiança depende de a página aberta ser do domínio do emissor.</li>
         </ul>
       </div>
     </div>
     <div class="scope">
       <div class="scope-k">fora do escopo</div>
-      <p>Integridade do arquivo (assinatura digital ou hash), guarda dos PDFs emitidos, histórico de quem emitiu o quê e quando, e limite de consultas entre várias instâncias. São problemas diferentes, que pediriam outra arquitetura.</p>
+      <p>Integridade criptográfica do arquivo (assinatura digital ou hash), guarda dos PDFs emitidos, histórico de quem emitiu o quê e quando, e limite de consultas entre várias instâncias. São problemas diferentes, que pediriam outra arquitetura.</p>
     </div>
   </div>
 </section>
