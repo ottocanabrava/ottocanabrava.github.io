@@ -24,9 +24,7 @@ body {
   --accent: #16A34A; --accent2: #15803D;
   --accent-l: #F0FDF4; --accent-m: #BBF7D0;
   --warn: #DC2626; --warn-l: #FEF2F2;
-  --blue: #2563EB; --blue-l: #EFF6FF;
   --purple: #7C3AED; --purple-l: #EDE9FE;
-  --amber: #D97706; --amber-l: #FFFBEB;
   --r-s: 4px; --r: 9px; --r-l: 15px;
   --sh: 0 3px 10px -3px rgba(17,24,39,.14), 0 1px 3px rgba(17,24,39,.08);
   --sh-lg: 0 22px 44px -12px rgba(17,24,39,.24), 0 6px 16px -6px rgba(17,24,39,.12);
@@ -157,8 +155,6 @@ nav {
 .ep-ft { border-top: 1px solid var(--line); padding: 7px 12px; display: flex; align-items: center; justify-content: space-between; }
 .ep-ft-a { font-size: .625rem; color: var(--ink-3); cursor: pointer; font-weight: 500; }
 .ep-ft-a:hover { color: var(--accent); }
-.ep-dbg { font-family: 'DM Mono', monospace; font-size: .5625rem; padding: 2px 7px; border-radius: 3px; background: var(--paper); border: 1px solid var(--line); color: var(--ink-3); cursor: pointer; }
-.ep-dbg:hover { border-color: var(--accent); color: var(--accent2); }
 
 /* Problem */
 .prob-bg { background: var(--paper); }
@@ -700,7 +696,6 @@ function popup() {
     <div class="ep-body">${corpo(t)}</div>
     <div class="ep-ft">
       <span class="ep-ft-a">⚙ Operadoras configuradas</span>
-      <span class="ep-dbg" id="dbg">Detalhes</span>
     </div>
   </div>`;
 }
@@ -775,20 +770,6 @@ function bind() {
   if (gb) gb.addEventListener('click', () => { st = 'generated'; render(); });
   const sb = document.getElementById('sbtn');
   if (sb) sb.addEventListener('click', () => { st = 'sent'; render(); });
-  const db = document.getElementById('dbg');
-  if (db) db.addEventListener('click', () => {
-    const t = TICKETS[cur];
-    alert(
-      `Detalhes — ${t.id}\n\n` +
-      `Operadora:      ${st === 'idle' || st === 'scanning' ? '(ainda não analisado)' : t.det.operadora}\n` +
-      `Movimentação:   ${st === 'idle' || st === 'scanning' ? '(ainda não analisado)' : t.det.tipo}\n` +
-      `Beneficiário:   ${st === 'idle' || st === 'scanning' ? '(ainda não analisado)' : t.det.beneficiario}\n\n` +
-      `Estado do painel: ${st}\n` +
-      `Operadoras configuradas: 3\n` +
-      `Protocolo: ${st === 'sent' ? t.det.proto : '(gerado apenas após envio)'}\n\n` +
-      `Todos os dados desta demo são fictícios.`
-    );
-  });
 }
 
 render();
