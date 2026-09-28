@@ -17,7 +17,7 @@
   :root{
     /* base — idêntica nas páginas de projeto (DNA já existente) */
     --bg:#ECEEF2; --surface:#FFFFFF; --surface-2:#E3E6ED;
-    --ink:#131D2E; --ink-2:#1A2740;
+    --ink:#131D2E;
     --text:#131D2E; --text-muted:#626C7D; --text-faint:#8B93A3;
     --border:#DADFE7; --border-soft:#E7E9EF;
 
@@ -30,43 +30,26 @@
 
     /* semântica compartilhada — idêntica ao Dashboard/FormPilot/Motor de Triagem */
     --ok:#16A34A; --ok-soft:#E1F5E7;
-    --warn:#D97706; --warn-soft:#FFFBEB;
-    --crit:#DC2626; --crit-soft:#FEF2F2;
     --info:#7C3AED; --info-soft:#EDE9FE;
 
     /* escala */
-    --r-s:4px; --r:8px; --r-l:14px;
+    --r:8px; --r-l:14px;
     --shadow:0 1px 2px rgba(19,29,46,.04), 0 12px 28px -16px rgba(19,29,46,.18);
     --dur:150ms;
     color-scheme: light dark;
   }
   @media (prefers-color-scheme: dark){
-    :root:not([data-theme="light"]){
+    :root{
       --bg:#0F1115; --surface:#171B22; --surface-2:#1D222B;
-      --ink:#ECEEF2; --ink-2:#C7CEDC;
+      --ink:#ECEEF2;
       --text:#ECEEF2; --text-muted:#9AA3B5; --text-faint:#6B7385;
       --border:#262C38; --border-soft:#1E232D;
       --accent:#6C8CFF; --accent-soft:#1B2450; --accent-ink:#B9C6FF;
       --signal:#5FD1B8; --signal-soft:rgba(95,209,184,.12); --signal-ink:#8FE9D2;
       --ok:#4ADE94; --ok-soft:#123322;
-      --warn:#E8A94C; --warn-soft:#3A2A11;
-      --crit:#F0776E; --crit-soft:#3A1817;
       --info:#B79BFF; --info-soft:#251B47;
       --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 28px -16px rgba(0,0,0,.6);
     }
-  }
-  :root[data-theme="dark"]{
-    --bg:#0F1115; --surface:#171B22; --surface-2:#1D222B;
-    --ink:#ECEEF2; --ink-2:#C7CEDC;
-    --text:#ECEEF2; --text-muted:#9AA3B5; --text-faint:#6B7385;
-    --border:#262C38; --border-soft:#1E232D;
-    --accent:#6C8CFF; --accent-soft:#1B2450; --accent-ink:#B9C6FF;
-    --signal:#5FD1B8; --signal-soft:rgba(95,209,184,.12); --signal-ink:#8FE9D2;
-    --ok:#4ADE94; --ok-soft:#123322;
-    --warn:#E8A94C; --warn-soft:#3A2A11;
-    --crit:#F0776E; --crit-soft:#3A1817;
-    --info:#B79BFF; --info-soft:#251B47;
-    --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 28px -16px rgba(0,0,0,.6);
   }
 
   *{ box-sizing:border-box; }
