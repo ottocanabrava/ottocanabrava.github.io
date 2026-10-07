@@ -171,7 +171,6 @@
   .after a:hover i{ transform:translateX(5px); }
   .after a i{ font-style:normal; transition:transform .3s var(--ease); }
   .after .note{ margin-top:48px; font-size:.8125rem; color:var(--ink-3); max-width:52ch; line-height:1.6; }
-  .after-static{ display:none; }
 
   /* celular: a mesma cena, em coluna */
   @media (max-width:760px){
@@ -362,8 +361,10 @@
 
   /* sem animação (movimento reduzido ou sem biblioteca): o estado final, parado */
   html.static .p1, html.static .p2{ height:auto; min-height:100vh; }
-  html.static .close, html.static .big, html.static .band{ display:none; }
-  html.static .after-static{ display:flex; }
+  html.static .big, html.static .band{ display:none; }
+  html.static .close{ position:static; align-items:flex-start; padding:56px clamp(20px,6vw,96px) 0; }
+  html.static .close .steps{ display:none; }
+  html.static .close .nums{ position:static; opacity:1 !important; }
   html.static .scn{ height:auto; overflow:visible; padding:96px 0 24px; }
   html.static .scn .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none !important; opacity:1 !important; padding:0 clamp(20px,6vw,96px) 32px; }
   html.static .scn .sf{ position:relative; left:auto; right:auto; top:auto; width:auto; margin:0 clamp(12px,2.4vw,40px); height:70vh; opacity:1 !important; transform:none !important; }
@@ -374,6 +375,8 @@
   html.static .p2 .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none !important; opacity:1 !important; padding:96px clamp(20px,6vw,96px) 32px; }
   html.static .p2{ height:auto; }
   html.static .p2 .sf{ position:relative; left:auto; right:auto; top:auto; margin:0 clamp(12px,2.4vw,40px); height:70vh; opacity:1 !important; transform:none !important; }
+  html.static .scn .sf.dv{ height:auto; }
+  html.static #documentos .d-va{ position:relative; inset:auto; padding:clamp(28px,4vw,48px) clamp(16px,3.4vw,56px); }
   html.static .end-ln{ transform:none; }
   html.static .end-pt{ opacity:1; }
 </style>
@@ -554,7 +557,7 @@
     <div class="big one" aria-hidden="true"><p>1 clique<span class="dot">.</span></p></div>
     <div class="big but" aria-hidden="true"><p>Mas o problema não parava ali.</p></div>
 
-    <div class="close" aria-hidden="true">
+    <div class="close">
       <div class="steps"><span>Mapear</span><i></i><span>Preencher</span><i></i><span>Validar</span><i></i><span>Assinar</span></div>
       <div class="nums">
         <div class="from"><b>10–20 min</b> <small>manual, por movimentação</small></div>
@@ -565,10 +568,6 @@
   </section>
 
   <section class="after">
-    <div class="after-static nums" style="position:static;opacity:1;flex-direction:row;flex-wrap:wrap;margin-bottom:24px;">
-      <div class="from"><b>10–20 min</b> <small>manual, por movimentação</small></div>
-      <div><b>~2 min</b> <small>com o FormPilot: revisão + geração</small></div>
-    </div>
     <a href="/ticketscript/">TicketScript <span>fev–mai 2025</span><i>→</i></a>
     <a href="/formpilot/">FormPilot <span>em uso pelo time</span><i>→</i></a>
   </section>
