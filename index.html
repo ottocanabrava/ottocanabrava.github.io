@@ -3,896 +3,1621 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Otto Canabrava — Portfólio</title>
-<meta name="description" content="Transformo problemas operacionais em soluções de automação e sistemas: entendo o processo, mapeio as regras e construo ferramentas que reduzem trabalho manual.">
+<title>Otto Canabrava — Fluxos complexos, sistemas simples</title>
+<meta name="description" content="Transformo fluxos complexos em sistemas simples: entendo o processo, mapeio as regras e construo ferramentas que reduzem trabalho manual, organizam decisões e conectam sistemas.">
+<meta name="theme-color" content="#FAFAFB" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0A0C10" media="(prefers-color-scheme: dark)">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
 <style>
   /* ============================================================
-     DESIGN SYSTEM DO PORTFÓLIO
-     Escopo: só a camada do portfólio (esta página). As páginas de
-     projeto mantêm seus próprios tokens e não consomem estes.
+     PORTFÓLIO — sistema visual
+     A página é um sistema: cada projeto é um fluxo com estados.
+     Tokens só desta página; os cases mantêm os próprios.
      ============================================================ */
   :root{
-    /* base — idêntica nas páginas de projeto (DNA já existente) */
-    --bg:#ECEEF2; --surface:#FFFFFF; --surface-2:#E3E6ED;
-    --ink:#131D2E;
-    --text:#131D2E; --text-muted:#626C7D; --text-faint:#8B93A3;
-    --border:#DADFE7; --border-soft:#E7E9EF;
-
-    /* acento do portfólio */
-    --accent:#2563EB; --accent-soft:#DCE6FD; --accent-ink:#1D4FBF;
-
-    /* signal — "sistema em execução / confirmado", formalizado a
-       partir do mint já usado no Extrator de Fatura (log ok) e no FormPilot (chip ativo) */
-    --signal:#5FD1B8; --signal-soft:rgba(95,209,184,.14); --signal-ink:#0F7A5F;
-
-    /* semântica compartilhada — idêntica ao Dashboard/FormPilot/Motor de Triagem */
-    --ok:#16A34A; --ok-soft:#E1F5E7;
-    --info:#7C3AED; --info-soft:#EDE9FE;
-
-    /* escala */
-    --r:8px; --r-l:14px;
-    --shadow:0 1px 2px rgba(19,29,46,.04), 0 12px 28px -16px rgba(19,29,46,.18);
-    --dur:150ms;
-    color-scheme: light dark;
+    --bg:#FAFAFB; --bg-2:#F3F4F6; --surface:#FFFFFF;
+    --ink:#0B1220; --ink-2:#3E4757; --ink-3:#7A8394; --ink-4:#A9B0BC; --dim:#8C94A1;
+    --line:#E3E6EB; --line-2:#EEF0F3;
+    --blue:#2F5BEA; --blue-2:#E6ECFD;
+    --green:#12805A; --green-2:#E2F2EA;
+    --screen:#EEF0F3;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    --ease-io:cubic-bezier(.65,0,.35,1);
+    --gut:24px; --max:1200px;
+    color-scheme:light dark;
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#0F1115; --surface:#171B22; --surface-2:#1D222B;
-      --ink:#ECEEF2;
-      --text:#ECEEF2; --text-muted:#9AA3B5; --text-faint:#6B7385;
-      --border:#262C38; --border-soft:#1E232D;
-      --accent:#6C8CFF; --accent-soft:#1B2450; --accent-ink:#B9C6FF;
-      --signal:#5FD1B8; --signal-soft:rgba(95,209,184,.12); --signal-ink:#8FE9D2;
-      --ok:#4ADE94; --ok-soft:#123322;
-      --info:#B79BFF; --info-soft:#251B47;
-      --shadow:0 1px 2px rgba(0,0,0,.3), 0 12px 28px -16px rgba(0,0,0,.6);
+      --bg:#0A0C10; --bg-2:#101319; --surface:#14171E;
+      --ink:#F1F3F6; --ink-2:#B7BECB; --ink-3:#848D9D; --ink-4:#596172; --dim:#646C7C;
+      --line:#242934; --line-2:#1A1E26;
+      --blue:#7C9BFF; --blue-2:#18224A;
+      --green:#4BD49A; --green-2:#10291F;
+      --screen:#E6E9EE;
     }
   }
+  @media (max-width:640px){ :root{ --gut:20px; } }
 
   *{ box-sizing:border-box; }
-  html{ scroll-behavior:smooth; }
-  @media (prefers-reduced-motion: reduce){ html{ scroll-behavior:auto; } }
+  html{ scroll-behavior:smooth; -webkit-text-size-adjust:100%; }
   body{
-    background:var(--bg); color:var(--text); margin:0;
-    font-family:"DM Sans",-apple-system,"Segoe UI",sans-serif;
-    font-size:15.5px; line-height:1.55; -webkit-font-smoothing:antialiased;
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; overflow-x:clip;
   }
-  .mono{ font-family:"DM Mono",ui-monospace,monospace; }
+  .mono{ font-family:"Geist Mono",ui-monospace,"SF Mono",monospace; }
   a{ color:inherit; text-decoration:none; }
-  ::selection{ background:var(--signal-soft); }
-  :focus-visible{ outline:2px solid var(--accent); outline-offset:2px; border-radius:2px; }
-  .skip-link{ position:absolute; left:-9999px; top:0; background:var(--ink); color:#fff; padding:10px 16px; border-radius:0 0 8px 0; z-index:200; font-size:.875rem; }
-  .skip-link:focus{ left:0; }
-
-  .wrap{ max-width:1120px; margin:0 auto; padding-inline:24px; }
-  @media (max-width:640px){ .wrap{ padding-inline:18px; } }
+  button{ font:inherit; color:inherit; background:none; border:0; padding:0; cursor:pointer; }
+  ::selection{ background:var(--blue-2); }
+  :focus-visible{ outline:2px solid var(--blue); outline-offset:3px; border-radius:4px; }
+  .skip{ position:absolute; left:-9999px; top:0; z-index:100; background:var(--ink); color:var(--bg); padding:10px 16px; font-size:.875rem; }
+  .skip:focus{ left:0; }
+  .wrap{ max-width:var(--max); margin:0 auto; padding-inline:var(--gut); }
+  .k{ font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); }
 
   /* ---------- nav ---------- */
-  nav.top{
-    position:sticky; top:0; z-index:20;
-    background:color-mix(in srgb, var(--bg) 88%, transparent);
-    backdrop-filter:blur(10px);
-    border-bottom:1px solid var(--border);
-  }
-  .nav-in{ max-width:1120px; margin:0 auto; padding:14px 24px; display:flex; align-items:center; justify-content:space-between; }
-  @media (max-width:640px){ .nav-in{ padding:12px 18px; } }
-  .nav-brand{ font-weight:700; font-size:.9375rem; letter-spacing:-.01em; }
-  .nav-links{ display:flex; gap:22px; font-size:.8125rem; color:var(--text-muted); }
-  .nav-links a{ transition:color var(--dur); }
-  .nav-links a:hover, .nav-links a:focus-visible{ color:var(--accent); }
-  @media (max-width:640px){ .nav-links{ display:none; } }
+  .nav{ position:fixed; inset:0 0 auto 0; z-index:50; transition:background-color .4s var(--ease), border-color .4s var(--ease); border-bottom:1px solid transparent; }
+  .nav.is-scrolled{ background:color-mix(in srgb, var(--bg) 82%, transparent); -webkit-backdrop-filter:saturate(1.4) blur(14px); backdrop-filter:saturate(1.4) blur(14px); border-bottom-color:var(--line); }
+  .nav-in{ max-width:var(--max); margin:0 auto; padding:0 var(--gut); height:56px; display:flex; align-items:center; justify-content:space-between; }
+  .brand{ display:flex; align-items:center; gap:10px; font-weight:600; font-size:.9375rem; letter-spacing:-.01em; }
+  .brand-mark{ width:22px; height:10px; position:relative; flex-shrink:0; }
+  .brand-mark::before, .brand-mark::after{ content:""; position:absolute; top:2px; width:6px; height:6px; border-radius:50%; border:1.5px solid var(--ink); }
+  .brand-mark::before{ left:0; }
+  .brand-mark::after{ right:0; background:var(--ink); }
+  .brand-mark i{ position:absolute; left:6px; right:6px; top:4.5px; height:1px; background:var(--ink); }
+  .nav-links{ display:flex; align-items:center; gap:28px; font-size:.875rem; color:var(--ink-2); }
+  .nav-links a{ transition:color .2s; }
+  .nav-links a:hover{ color:var(--ink); }
+  .nav-cta{ color:var(--ink) !important; border:1px solid var(--line); padding:6px 14px; border-radius:99px; transition:border-color .2s; }
+  .nav-cta:hover{ border-color:var(--ink-3); }
+  @media (max-width:520px){ .nav-links{ gap:18px; font-size:.8125rem; } .brand-name{ display:none; } }
 
-  section{ padding-block:64px; }
-  @media (max-width:640px){ section{ padding-block:44px; } }
+  /* ---------- tipografia de seção ---------- */
+  .sec{ padding-block:clamp(96px,14vw,176px); }
+  .sec-hd{ max-width:780px; margin-bottom:clamp(48px,7vw,88px); }
+  .sec-hd .k{ display:block; margin-bottom:20px; }
+  h2.t2{ font-size:clamp(2.125rem,4.6vw,3.5rem); font-weight:600; letter-spacing:-.035em; line-height:1.04; margin:0 0 20px; text-wrap:balance; }
+  .t2 .dim{ color:var(--dim); }
+  .lede{ font-size:clamp(1.0625rem,1.6vw,1.25rem); line-height:1.5; color:var(--ink-2); margin:0; max-width:58ch; text-wrap:pretty; }
 
-  /* ---------- hero ---------- */
-  .hero{ padding-block:76px 60px; border-bottom:1px solid var(--border); }
-  @media (max-width:640px){ .hero{ padding-block:44px 40px; } }
-  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-family:"DM Mono",monospace; font-size:.75rem; letter-spacing:.06em; text-transform:uppercase; color:var(--signal-ink); margin-bottom:22px; }
-  .eyebrow::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--signal); }
-  .hero h1{ font-size:clamp(2rem,5vw,3.1rem); font-weight:700; letter-spacing:-.02em; line-height:1.1; max-width:17ch; margin:0 0 22px; text-wrap:balance; }
-  .hero h1 .hl{ color:var(--accent); }
-  .hero .dek{ font-size:1.0625rem; color:var(--text-muted); max-width:58ch; line-height:1.65; margin:0 0 36px; }
-  .hero-stats{ display:flex; gap:0; flex-wrap:wrap; border-top:1px solid var(--border); padding-top:28px; }
-  .hstat{ padding-right:32px; margin-right:32px; border-right:1px solid var(--border); }
-  .hstat:last-child{ border-right:none; margin-right:0; padding-right:0; }
-  .hstat .v{ font-family:"DM Mono",monospace; font-size:1.375rem; font-weight:600; color:var(--text); line-height:1; margin-bottom:6px; }
-  .hstat .l{ font-size:.75rem; color:var(--text-faint); max-width:18ch; line-height:1.4; }
-  @media (max-width:640px){ .hero-stats{ flex-direction:column; gap:18px; } .hstat{ padding-right:0; margin-right:0; border-right:none; } }
+  /* ============================================================
+     HERO — o trabalho manual se reorganiza em sistema
+     ============================================================ */
+  .hero{ padding-top:clamp(108px,14vh,144px); padding-bottom:clamp(56px,8vw,96px); }
+  .hero .k{ display:block; margin-bottom:28px; }
+  .hero h1{ font-size:clamp(2.5rem,6.2vw,5rem); font-weight:600; letter-spacing:-.045em; line-height:1; margin:0; max-width:17ch; text-wrap:balance; }
+  .hero h1 .dim{ color:var(--dim); }
+  .hero .lede{ max-width:56ch; margin-top:clamp(40px,6vw,64px); }
 
-  /* ---------- section head ---------- */
-  .sec-head{ margin-bottom:32px; max-width:70ch; }
-  .sec-head .kicker{ font-family:"DM Mono",monospace; font-size:.75rem; color:var(--accent); letter-spacing:.05em; text-transform:uppercase; display:block; margin-bottom:10px; }
-  .sec-head h2{ font-size:clamp(1.5rem,3vw,2rem); font-weight:700; margin:0 0 12px; letter-spacing:-.01em; }
-  .sec-head p{ color:var(--text-muted); line-height:1.6; margin:0; font-size:.9375rem; }
+  .hc{ position:relative; height:320px; margin-top:clamp(36px,5vw,56px); }
+  .hc svg{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; }
+  .hc-e{ fill:none; stroke:var(--ink-4); stroke-width:1; stroke-dasharray:3 4; transition:stroke .8s var(--ease); }
+  .hc.is-system .hc-e{ stroke:var(--line); stroke-dasharray:none; stroke-width:1.25; }
+  @media (prefers-color-scheme: dark){ .hc.is-system .hc-e{ stroke:var(--ink-4); } }
+  .hc-run{ fill:none; stroke:var(--blue); stroke-width:1.5; stroke-linecap:round; stroke-dasharray:0 1; opacity:0; }
+  .hc.is-run .hc-run{ opacity:1; animation:hc-run 2.8s var(--ease-io) forwards; }
+  @keyframes hc-run{ 0%{ stroke-dasharray:0 1; } 100%{ stroke-dasharray:1 0; } }
 
-  /* ---------- método / fluxo ---------- */
-  .flow{ display:flex; align-items:stretch; gap:0; position:relative; margin-top:8px; }
-  .flow::before{ content:""; position:absolute; top:19px; left:19px; right:19px; height:1px; background:var(--border); z-index:0; }
-  .fnode{ flex:1; position:relative; z-index:1; display:flex; flex-direction:column; align-items:center; text-align:center; padding:0 6px; }
-  .fnode .pt{ width:38px; height:38px; border-radius:50%; background:var(--surface); border:1.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-family:"DM Mono",monospace; font-size:.6875rem; font-weight:600; color:var(--text-faint); margin-bottom:14px; transition:border-color var(--dur), color var(--dur), background var(--dur); }
-  .fnode:hover .pt, .fnode:focus-within .pt{ border-color:var(--signal); color:var(--signal-ink); background:var(--signal-soft); }
-  .fnode .ft{ font-size:.8125rem; font-weight:700; margin-bottom:5px; }
-  .fnode .fc{ font-size:.75rem; color:var(--text-faint); line-height:1.45; max-width:15ch; }
+  .hn{ position:absolute; left:0; top:0; width:0; height:0; will-change:transform; }
+  .hn-dot{ position:absolute; left:-5px; top:-5px; width:10px; height:10px; border-radius:50%; background:var(--bg); border:1.5px solid var(--ink-3); transition:border-color .6s var(--ease), background-color .6s var(--ease); }
+  .hc.is-system .hn-dot{ border-color:var(--ink); }
+  .hc.is-run .hn-dot{ animation:hn-lit .6s var(--ease) forwards; animation-delay:calc(var(--i) * .45s); }
+  .hc.is-run .hn:last-of-type .hn-dot{ animation-name:hn-done; }
+  @keyframes hn-lit{ to{ border-color:var(--blue); background:var(--blue); } }
+  @keyframes hn-done{ to{ border-color:var(--green); background:var(--green); box-shadow:0 0 0 5px var(--green-2); } }
+  .hn-a, .hn-b{ position:absolute; white-space:nowrap; }
+  .hn-a{ top:16px; left:0; transform:translateX(-50%); font-family:"Geist Mono",monospace; font-size:.75rem; color:var(--ink-3); border:1px dashed var(--ink-4); border-radius:99px; padding:4px 11px; background:var(--bg); transition:opacity .5s var(--ease) .1s; }
+  .hn-b{ top:20px; left:0; transform:translateX(-50%); text-align:center; opacity:0; transition:opacity .7s var(--ease); white-space:normal; width:clamp(108px,13.5vw,160px); }
+  .hn-b .k{ display:block; font-size:.6875rem; margin-bottom:6px; }
+  .hn-b b{ display:block; font-size:1rem; font-weight:600; letter-spacing:-.01em; margin-bottom:4px; }
+  .hn-b small{ display:block; font-size:.8125rem; line-height:1.4; color:var(--ink-3); }
+  .hc.is-system .hn-a{ opacity:0; transition-delay:0s; }
+  .hc.is-system .hn-b{ opacity:1; transition-delay:calc(.9s + var(--i) * .06s); }
+  /* vertical (celular): o rótulo fica à direita do nó */
+  .hc.nar .hn-a{ top:-13px; left:16px; transform:none; }
+  .hc.nar .hn-b{ top:-11px; left:22px; transform:none; text-align:left; width:min(240px, 62vw); }
+  .hc.nar .hn-b .k{ display:inline; margin:0 8px 0 0; }
+  .hc.nar .hn-b b{ display:inline; }
+  .hc.nar .hn-b small{ margin-top:2px; }
+  /* sem JS: o método como uma sequência simples */
+  html:not(.js) .hc{ height:auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:24px; }
+  html:not(.js) .hc svg, html:not(.js) .hn-a, html:not(.js) .hn-dot{ display:none; }
+  html:not(.js) .hn{ position:static; width:auto; height:auto; }
+  html:not(.js) .hn-b{ position:static; opacity:1; transform:none; text-align:left; width:auto; }
+
+  .hero-ctrl{ display:flex; align-items:center; justify-content:space-between; gap:20px; flex-wrap:wrap; margin-top:24px; padding-top:24px; border-top:1px solid var(--line); }
+  .seg{ display:inline-flex; padding:3px; border-radius:99px; background:var(--bg-2); border:1px solid var(--line); }
+  .seg button{ font-size:.8125rem; padding:6px 16px; border-radius:99px; color:var(--ink-3); transition:background-color .3s var(--ease), color .3s var(--ease); }
+  .seg button[aria-pressed="true"]{ background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(11,18,32,.08), 0 0 0 1px var(--line); }
+  .hero-cap{ font-size:.875rem; color:var(--ink-3); margin:0; flex:1; min-width:240px; }
+  .hero-cap b{ color:var(--ink-2); font-weight:500; }
+  html:not(.js) .hero-ctrl{ display:none; }
+
+  .facts{ display:grid; grid-template-columns:repeat(3,1fr); border-top:1px solid var(--line); margin-top:clamp(40px,6vw,64px); }
+  .facts > *{ padding:22px 24px 0 0; }
+  .facts > * + *{ padding-left:24px; border-left:1px solid var(--line); }
+  .facts .v{ font-size:1.0625rem; font-weight:600; letter-spacing:-.01em; margin-bottom:4px; }
+  .facts .l{ font-size:.8125rem; color:var(--ink-3); line-height:1.45; }
+  .facts a.go{ display:flex; flex-direction:column; justify-content:flex-start; }
+  .facts a.go .v{ color:var(--blue); }
   @media (max-width:760px){
-    .flow{ flex-direction:column; gap:18px; }
-    .flow::before{ display:none; }
-    .fnode{ flex-direction:row; text-align:left; align-items:flex-start; gap:14px; }
-    .fnode .pt{ margin-bottom:0; flex-shrink:0; }
+    .facts{ grid-template-columns:1fr; }
+    .facts > *, .facts > * + *{ padding:18px 0; border-left:0; border-bottom:1px solid var(--line); }
   }
 
-  /* ---------- project cards ---------- */
-  .projects{ display:flex; flex-direction:column; gap:20px; }
-  .pcard{
-    display:grid; grid-template-columns:1fr 1fr; gap:0;
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-l);
-    overflow:hidden; box-shadow:var(--shadow);
-    transition:transform var(--dur);
+  /* ============================================================
+     MAPA — entradas reais → sistemas → saída
+     ============================================================ */
+  .map{ position:relative; display:grid; grid-template-columns:minmax(180px,230px) minmax(64px,1fr) minmax(0,3.2fr); }
+  .map-lines{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; }
+  .map-lines path{ fill:none; stroke:var(--line); stroke-width:1.25; transition:stroke .35s var(--ease), opacity .35s var(--ease); }
+  .map-lines path.evo{ stroke-dasharray:3 4; stroke:var(--ink-4); }
+  .map.has-focus .map-lines path{ opacity:.35; }
+  .map.has-focus .map-lines path.is-hot{ stroke:var(--blue); opacity:1; stroke-width:1.5; }
+  .map-hd{ grid-column:1/-1; display:grid; grid-template-columns:subgrid; padding-bottom:16px; border-bottom:1px solid var(--line); margin-bottom:8px; }
+  .map-hd .k:last-child{ grid-column:3; }
+  .src-l{ list-style:none; margin:0; padding:8px 0; display:flex; flex-direction:column; justify-content:space-around; gap:6px; }
+  .src{ position:relative; display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:.9375rem; color:var(--ink-2); padding:9px 0; cursor:default; transition:color .3s var(--ease), opacity .3s var(--ease); }
+  .src small{ font-family:"Geist Mono",monospace; font-size:.6875rem; color:var(--ink-4); }
+  .port{ width:7px; height:7px; border-radius:50%; background:var(--bg); border:1.5px solid var(--ink-4); flex-shrink:0; transition:border-color .3s, background-color .3s; }
+  .sys-l{ grid-column:3; list-style:none; margin:0; padding:0; }
+  .sys{ border-bottom:1px solid var(--line-2); }
+  .sys:last-child{ border-bottom:0; }
+  .sys a{ display:grid; grid-template-columns:14px 40px minmax(0,1fr) minmax(0,.8fr) 20px; align-items:center; gap:0 14px; padding:22px 0; transition:opacity .3s var(--ease); }
+  .sys .port{ justify-self:start; }
+  .sys-n{ font-size:.75rem; color:var(--ink-4); }
+  .sys-name{ display:block; font-size:clamp(1.125rem,1.8vw,1.375rem); font-weight:600; letter-spacing:-.02em; line-height:1.2; }
+  .sys-flow{ display:block; font-size:.75rem; color:var(--ink-3); margin-top:5px; letter-spacing:.01em; }
+  .sys-out{ font-size:.875rem; color:var(--ink-2); line-height:1.4; }
+  .sys-out .k{ display:block; font-size:.625rem; margin-bottom:3px; }
+  .sys-ar{ color:var(--ink-4); transition:transform .3s var(--ease), color .3s; }
+  .sys-in{ display:none; }
+  .sys-evo{ display:inline-block; margin-left:8px; font-size:.625rem; vertical-align:middle; color:var(--ink-3); border:1px dashed var(--ink-4); border-radius:99px; padding:2px 8px; font-weight:400; letter-spacing:.04em; text-transform:uppercase; }
+  .map.has-focus .sys:not(.is-hot) a, .map.has-focus .src:not(.is-hot){ opacity:.38; }
+  .sys.is-hot .port, .src.is-hot .port{ border-color:var(--blue); background:var(--blue); }
+  .sys.is-hot .sys-ar{ color:var(--ink); transform:translateX(3px); }
+  .src.is-hot{ color:var(--ink); }
+  @media (max-width:860px){
+    .map{ display:block; }
+    .map-lines, .map-hd, .src-l, .sys .port{ display:none; }
+    .sys a{ grid-template-columns:32px minmax(0,1fr) 16px; padding:22px 0; }
+    .sys-out{ grid-column:2; grid-row:2; margin-top:12px; }
+    .sys-in{ display:block; grid-column:2; grid-row:3; margin-top:8px; font-size:.6875rem; color:var(--ink-3); }
+    .sys-ar{ grid-column:3; grid-row:1; }
   }
-  .pcard:hover{ transform:translateY(-2px); }
-  @media (max-width:820px){ .pcard{ grid-template-columns:1fr; } }
 
-  .pcard-info{ padding:30px 32px; display:flex; flex-direction:column; }
-  @media (max-width:640px){ .pcard-info{ padding:22px 22px; } }
-  .pcard-top{ display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap; }
-  .pcard-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
-  .pcard-name{ font-size:1.125rem; font-weight:700; letter-spacing:-.005em; }
-  .pcard-status{ margin-left:auto; font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.04em; padding:4px 9px; border-radius:99px; white-space:nowrap; }
-
-  .pfield{ margin-bottom:14px; }
-  .pfield .k{ font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); margin-bottom:4px; }
-  .pfield .v{ font-size:.875rem; color:var(--text); line-height:1.55; }
-
-  .ptags{ display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
-  .ptag{ font-family:"DM Mono",monospace; font-size:.6875rem; padding:4px 9px; border-radius:99px; background:var(--surface-2); border:1px solid var(--border); color:var(--text-muted); }
-
-  .presult{ margin-top:auto; padding-top:16px; border-top:1px solid var(--border-soft); display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
-  .presult .rv{ font-family:"DM Mono",monospace; font-size:1.25rem; font-weight:600; }
-  .presult .rl{ font-size:.75rem; color:var(--text-faint); }
-  .presult.pending .rv{ font-size:.8125rem; font-weight:500; font-style:italic; color:var(--text-faint); }
-
-  .pcta{ margin-top:18px; display:inline-flex; align-items:center; gap:6px; font-size:.8125rem; font-weight:600; padding:9px 16px; border-radius:var(--r); width:fit-content; transition:background var(--dur), color var(--dur); }
-
-  .ppreview{ background:var(--ink); position:relative; padding:0; display:flex; flex-direction:column; min-height:220px; overflow:hidden; }
-  .pp-chrome{ display:flex; gap:6px; padding:13px 16px; flex-shrink:0; }
-  .pp-chrome span{ width:8px; height:8px; border-radius:50%; }
-  .pp-chrome span:nth-child(1){ background:#FF5F57; }
-  .pp-chrome span:nth-child(2){ background:#FEBC2E; }
-  .pp-chrome span:nth-child(3){ background:#28C840; }
-  .pp-body{ padding:0 16px 16px; flex:1; display:flex; align-items:center; }
-  .pp-body > *{ width:100%; }
-
-  /* mini recreations com conteúdo real de cada projeto */
-
-  /* mini recriação da tela real "Fila e execução" do Extrator de Fatura */
-  .mini-extrator{ width:100%; display:grid; grid-template-columns:1fr; gap:10px; }
-  .me-card{ background:#FFFFFF; border:1px solid #DADFE7; border-radius:8px; padding:11px 12px; }
-  .me-head{ display:flex; justify-content:space-between; align-items:center; font-size:.6875rem; font-weight:700; color:#131D2E; margin-bottom:9px; }
-  .me-head .me-count{ font-family:"DM Mono",monospace; font-size:.5625rem; font-weight:500; color:#8B93A3; }
-  .me-item{ display:flex; flex-direction:column; gap:3px; padding:6px 0; border-top:1px solid #EEF0F4; }
-  .me-item:first-child{ border-top:none; }
-  .me-row{ display:flex; justify-content:space-between; align-items:center; gap:6px; }
-  .me-name{ font-size:.6875rem; font-weight:600; color:#131D2E; }
-  .me-badge{ font-family:"DM Mono",monospace; font-size:.5rem; padding:2px 6px; border-radius:3px; white-space:nowrap; }
-  .me-badge.done{ background:#E1F5E7; color:#0F7A38; }
-  .me-badge.active{ background:#DCE6FD; color:#1D4FBF; }
-  .me-badge.queued{ background:#EEF0F4; color:#8B93A3; }
-  .me-exec{ background:#131D2E; border-color:#131D2E; }
-  .me-exec .me-head{ color:#fff; }
-  .me-exec .me-head .me-count{ color:#8FA0BE; }
-  .me-log{ font-family:"DM Mono",monospace; font-size:.5625rem; line-height:1.9; margin-bottom:10px; }
-  .me-log .t{ color:#5A6786; margin-right:6px; }
-  .me-log .ok{ color:#6FD196; }
-  .me-log .m{ color:#C7CEDC; }
-  .me-progress{ display:flex; align-items:center; gap:8px; }
-  .me-progress .lbl{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8FA0BE; white-space:nowrap; }
-  .me-track{ flex:1; height:5px; background:rgba(255,255,255,.12); border-radius:99px; overflow:hidden; }
-  .me-fill{ height:100%; width:66%; background:#2563EB; border-radius:99px; }
-  /* microinteração do Extrator: só ativa com JS e sem prefers-reduced-motion (classe .is-live);
-     sem ela, o preview fica no estado estático acima. Mesma gramática do FormPilot Studio:
-     pendente → em andamento (azul) → concluído (verde). Nada muda de altura ou largura do card. */
-  .mini-extrator.is-live [data-xtr-step]{ transition:opacity .35s ease; }
-  .mini-extrator.is-live [data-xtr-step] span{ transition:color .35s ease; }
-  .mini-extrator.is-live [data-xtr-step][data-state="pending"]{ opacity:.28; }
-  .mini-extrator.is-live [data-xtr-step][data-state="active"] span:last-child{ color:#8FB2FF; }
-  .mini-extrator.is-live [data-xtr-pct]{ min-width:4ch; text-align:right; font-variant-numeric:tabular-nums; }
-  .mini-extrator.is-live .me-fill{ transition:background-color .35s ease, opacity .3s ease; }
-  .mini-extrator.is-live .me-badge{ transition:background-color .35s ease, color .35s ease; }
-  .mini-extrator.is-done .me-fill{ background:#16A34A; }
-  .mini-extrator.is-resetting .me-fill{ opacity:0; }
-  /* mesmas regras para Daily Ops (gauge), Motor de Triagem (classificação) e FormPilot (painel) */
-  .mini-ops.is-live [data-ops-arc]{ transition:opacity .3s ease; }
-  .mini-ops.is-resetting [data-ops-arc]{ opacity:0; }
-  .mini-ops.is-live [data-ops-pct]{ display:inline-block; min-width:3ch; font-variant-numeric:tabular-nums; }
-  .mini-diag [data-mtr-tag]{ display:inline-block; min-width:calc(11ch + 12px); text-align:center; }
-  .mini-diag.is-live [data-mtr-tag]{ transition:background-color .35s ease, color .35s ease; }
-  .mini-diag [data-mtr-tag].pending{ background:#EEF0F4; color:#8B93A3; }
-  .mini-diag.is-live [data-mtr-fill]{ transition:opacity .3s ease; }
-  .mini-diag.is-resetting [data-mtr-fill]{ opacity:0; }
-  .evo-preview.is-live [data-evp-field] b, .evo-preview.is-live [data-evp-check]{ transition:opacity .35s ease; }
-  .evo-preview.is-live [data-evp-field][data-state="pending"] b{ opacity:.45; }
-  .evo-preview.is-live [data-evp-field][data-state="pending"] [data-evp-check]{ opacity:0; }
-  .evo-preview.is-live .evp-btn{ transition:background-color .35s ease, color .35s ease; }
-  .evo-preview .evp-btn.is-pending{ background:rgba(255,255,255,.12); color:#8FA0BE; }
-
-  /* mini recriação da tela real "SLA da carteira / Tickets HubSpot" do Dashboard */
-  .mini-ops{ width:100%; display:grid; grid-template-columns:1fr; gap:10px; }
-  .mo-card{ background:#FFFFFF; border:1px solid #DADFE7; border-radius:8px; padding:11px 12px; }
-  .mo-gauge{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
-  .mo-gauge-txt{ display:flex; flex-direction:column; }
-  .mo-pct{ font-family:"DM Mono",monospace; font-size:.9375rem; font-weight:600; color:#131D2E; line-height:1; }
-  .mo-sub{ font-size:.5625rem; color:#8B93A3; margin-top:2px; }
-  .mo-rows{ display:flex; flex-direction:column; gap:6px; }
-  .mo-row{ display:flex; align-items:center; gap:6px; }
-  .mo-dot{ width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-  .mo-name{ font-size:.5625rem; color:#131D2E; flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .mo-bar{ width:36px; height:4px; border-radius:2px; background:#EEF0F4; flex-shrink:0; overflow:hidden; display:block; }
-  .mo-bar span{ display:block; height:100%; border-radius:2px; }
-  .mo-ticket{ display:flex; gap:8px; padding:7px 0; border-top:1px solid #EEF0F4; }
-  .mo-ticket:first-of-type{ border-top:none; }
-  .mo-prio{ font-size:.5625rem; font-weight:700; padding:2px 6px; border-radius:3px; height:fit-content; white-space:nowrap; }
-  .mo-crit .mo-prio{ background:#FEF2F2; color:#DC2626; }
-  .mo-alta .mo-prio{ background:#FFFBEB; color:#B45309; }
-  .mo-subj{ font-size:.625rem; font-weight:600; color:#131D2E; margin-bottom:2px; }
-  .mo-meta{ font-size:.5625rem; color:#8B93A3; }
-
-
-  /* mini recriação da tela real "Diagnóstico de divergências" do Motor de Triagem */
-  .mini-diag{ width:100%; background:#131D2E; border-radius:9px; padding:13px 14px; }
-  .md-ticket{ display:flex; align-items:center; gap:8px; margin-bottom:10px; flex-wrap:wrap; }
-  .md-id{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8B93A3; }
-  .md-co{ font-size:.75rem; font-weight:600; color:#F1F5F9; flex:1; }
-  .md-badge{ font-family:"DM Mono",monospace; font-size:.5625rem; font-weight:600; background:#DCE6FD; color:#1D4FBF; padding:2px 8px; border-radius:99px; }
-  .md-progress{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-  .md-progress .lbl{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8FA0BE; white-space:nowrap; }
-  .md-table{ width:100%; border-collapse:collapse; background:#fff; border-radius:6px; overflow:hidden; }
-  .md-table th{ font-family:"DM Mono",monospace; font-size:.5rem; text-transform:uppercase; letter-spacing:.03em; color:#8B93A3; text-align:left; padding:6px 8px; background:#F5F6F8; }
-  .md-table td{ font-size:.625rem; color:#131D2E; padding:6px 8px; border-top:1px solid #EEF0F4; }
-  .md-table td.bad{ color:#DC2626; font-weight:600; }
-  .md-tag{ font-family:"DM Mono",monospace; font-size:.5rem; font-weight:600; padding:2px 6px; border-radius:3px; }
-  .md-tag.red{ background:#FEF2F2; color:#DC2626; }
-  .md-tag.amber{ background:#FFFBEB; color:#B45309; }
-  .md-tag.green{ background:#E1F5E7; color:#0F7A38; }
-
-  /* preview real da evolução TicketScript -> FormPilot */
-  /* recriação de telas claras: mantém as cores do tema claro também no modo escuro, como os demais previews */
-  .evo-preview{ --text:#131D2E; --text-muted:#626C7D; --text-faint:#8B93A3; --border:#DADFE7; --ink:#131D2E; --ok:#16A34A; }
-  .evo-preview{ margin-top:22px; padding-top:22px; border-top:1px solid var(--border-soft); display:grid; grid-template-columns:1fr 1.4fr 1fr; gap:12px; }
-  @media (max-width:820px){ .evo-preview{ grid-template-columns:1fr; } }
-  .evp-col{ background:#F5F6F8; border:1px solid var(--border); border-radius:9px; padding:10px 11px; font-size:.6875rem; }
-  .evp-hd{ font-family:"DM Mono",monospace; font-size:.5625rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-faint); margin-bottom:8px; }
-  .evp-item{ background:#fff; border:1px solid var(--border); border-radius:6px; padding:8px 9px; margin-bottom:6px; }
-  .evp-item.on{ border-color:var(--ok); border-left-width:3px; }
-  .evp-id{ font-family:"DM Mono",monospace; font-size:.5625rem; color:var(--text-faint); }
-  .evp-subj{ font-size:.6875rem; font-weight:600; color:var(--text); margin:3px 0; }
-  .evp-co{ font-size:.625rem; color:var(--text-muted); }
-  .evp-ticket{ background:#fff; padding:0; overflow:hidden; }
-  .evp-chrome{ background:var(--ink); padding:7px 9px; display:flex; align-items:center; gap:4px; }
-  .evp-chrome span{ width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.2); }
-  .evp-chrome span:first-child{ background:#EF6A5F; } .evp-chrome span:nth-child(2){ background:#F4BF4F; } .evp-chrome span:nth-child(3){ background:#61C454; }
-  .evp-url{ font-family:"DM Mono",monospace; font-size:.5rem; color:#8FA0BE; margin-left:6px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .evp-tid{ font-family:"DM Mono",monospace; font-size:.5625rem; color:var(--text-faint); padding:9px 11px 0; }
-  .evp-tsub{ font-size:.75rem; font-weight:700; color:var(--text); padding:0 11px; margin:4px 0; }
-  .evp-tbody{ font-size:.625rem; color:var(--text-muted); line-height:1.5; padding:0 11px 11px; }
-  .evp-panel{ background:var(--ink); color:#fff; }
-  .evp-brand{ display:flex; align-items:center; gap:6px; font-size:.75rem; font-weight:700; margin-bottom:10px; }
-  .evp-ico{ width:16px; height:16px; border-radius:50%; border:1.5px solid #fff; display:flex; align-items:center; justify-content:center; font-size:.5625rem; }
-  .evp-lbl{ font-family:"DM Mono",monospace; font-size:.5rem; text-transform:uppercase; letter-spacing:.04em; color:#8B93A3; margin-bottom:6px; }
-  .evp-field{ font-size:.5625rem; color:#8B93A3; margin-bottom:6px; }
-  .evp-field b{ display:block; font-size:.6875rem; color:#F1F5F9; font-weight:600; margin-top:2px; }
-  .evp-btn{ margin-top:8px; background:var(--signal); color:#0B2620; font-size:.625rem; font-weight:700; text-align:center; padding:8px; border-radius:6px; }
-
-  /* mini recriação do certificado e da página de validação do Documentos Verificáveis */
-  .mini-dv{ width:100%; display:grid; grid-template-columns:1.15fr 1fr; gap:10px; align-items:center; }
-  .dv-cert{ background:#fff; border-radius:6px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.12); }
-  .dv-band{ background:#0f3d3e; padding:12px 10px 11px; text-align:center; }
-  .dv-t{ font-size:.4375rem; font-weight:700; letter-spacing:.18em; color:#fff; margin-bottom:7px; }
-  .dv-n{ font-size:.75rem; font-weight:700; color:#fff; line-height:1.15; }
-  .dv-c{ font-size:.5625rem; font-weight:800; letter-spacing:.08em; color:#3fd6d0; margin-top:5px; }
-  .dv-foot{ display:flex; justify-content:space-between; align-items:flex-end; padding:7px 8px; gap:6px; }
-  .dv-id{ font-family:"DM Mono",monospace; font-size:.4375rem; color:#8B93A3; }
-  .dv-qr{ width:24px; height:24px; display:block; border-radius:2px; }
-  .dv-val{ background:#f2f5f5; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.12); }
-  .dv-vh{ background:#0f3d3e; color:#fff; font-size:.4375rem; font-weight:700; letter-spacing:.08em; text-align:center; padding:7px 4px; }
-  .dv-card{ background:#fff; margin:7px; border-radius:6px; padding:8px 9px; }
-  .dv-ok{ font-size:.625rem; font-weight:700; color:#1d7a45; margin-bottom:5px; }
-  .dv-row{ display:flex; justify-content:space-between; gap:6px; font-size:.5rem; color:#5f6f70; padding:2px 0; }
-  .dv-row b{ color:#1f2a2b; font-weight:600; text-align:right; }
-  .mini-dv.is-live [data-dv-res]{ transition:opacity .35s ease; }
-  .mini-dv.is-live [data-dv-res][data-state="pending"]{ opacity:0; }
-  .mini-dv.is-live .dv-qr{ transition:box-shadow .3s ease; }
-  .mini-dv.is-live .dv-qr[data-state="active"]{ box-shadow:0 0 0 2px #5FD1B8; }
-
-  /* ---------- evolução ticketscript -> formpilot ---------- */
-  .evo-wrap{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r-l); padding:28px 30px; box-shadow:var(--shadow); }
-  @media (max-width:640px){ .evo-wrap{ padding:20px; } }
-  .evo-label{ font-family:"DM Mono",monospace; font-size:.6875rem; text-transform:uppercase; letter-spacing:.05em; color:var(--info); margin-bottom:18px; display:flex; align-items:center; gap:8px; }
-  .evo-label::before{ content:"↻"; font-size:.875rem; }
-  .evo-intro{ font-size:.875rem; color:var(--text-muted); line-height:1.6; margin:-6px 0 22px; max-width:70ch; }
-  .evo-row{ display:flex; align-items:stretch; gap:22px; }
-  .evo-card{ flex:1; min-width:0; display:flex; flex-direction:column; }
-  .evo-step{ font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.05em; color:var(--info); margin-bottom:6px; }
-  .evo-card .evo-name{ margin-bottom:14px; }
-  .evo-card .evo-tags{ margin-bottom:16px; }
-  .evo-card .evo-impact{ margin:0 0 14px; }
-  .evo-roles{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin:2px 0 16px; border:1px solid var(--border-soft); border-radius:var(--r); font-size:.75rem; color:var(--text-muted); line-height:1.4; }
-  .evo-roles > div{ padding:9px 11px; border-left:1px solid var(--border-soft); }
-  .evo-roles > div:first-child{ border-left:none; }
-  .evo-roles .k{ display:block; font-family:"DM Mono",monospace; font-size:.5625rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); margin-bottom:3px; }
-  @media (max-width:520px){
-    .evo-roles{ grid-template-columns:1fr; }
-    .evo-roles > div{ border-left:none; border-top:1px solid var(--border-soft); }
-    .evo-roles > div:first-child{ border-top:none; }
+  /* ============================================================
+     CAPÍTULO — um sistema = um fluxo com estados
+     ============================================================ */
+  .chapters{ border-top:1px solid var(--line); }
+  .ch{ display:grid; grid-template-columns:minmax(0,5fr) minmax(0,7fr); gap:clamp(40px,6vw,96px); padding-block:clamp(88px,12vw,152px); border-bottom:1px solid var(--line); scroll-margin-top:40px; }
+  .ch-text{ align-self:start; }
+  .ch-run{ align-self:start; position:sticky; top:88px; }
+  .ch-meta{ display:flex; align-items:center; gap:12px; margin-bottom:22px; flex-wrap:wrap; }
+  .status{ font-family:"Geist Mono",monospace; font-size:.6875rem; letter-spacing:.04em; text-transform:uppercase; color:var(--ink-2); display:inline-flex; align-items:center; gap:7px; }
+  .status::before{ content:""; width:6px; height:6px; border-radius:50%; background:var(--green); }
+  .status.off::before{ background:var(--ink-4); }
+  .status.tech::before{ background:var(--blue); }
+  .ch h3{ font-size:clamp(2rem,3.6vw,3rem); font-weight:600; letter-spacing:-.035em; line-height:1.04; margin:0 0 16px; }
+  .ch-thesis{ font-size:clamp(1.0625rem,1.5vw,1.1875rem); color:var(--ink-2); line-height:1.5; margin:0 0 36px; max-width:40ch; text-wrap:pretty; }
+  .spec{ margin:0; display:grid; gap:0; border-top:1px solid var(--line); }
+  .spec > div{ display:grid; grid-template-columns:96px minmax(0,1fr); gap:16px; padding:16px 0; border-bottom:1px solid var(--line-2); }
+  .spec dt{ font-family:"Geist Mono",monospace; font-size:.6875rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); padding-top:3px; }
+  .spec dd{ margin:0; font-size:.9375rem; color:var(--ink-2); line-height:1.55; }
+  .spec .stack{ font-family:"Geist Mono",monospace; font-size:.8125rem; color:var(--ink-2); }
+  .result{ display:flex; flex-direction:column; gap:4px; margin:28px 0 0; }
+  .result .v{ font-size:clamp(1.625rem,2.6vw,2.25rem); font-weight:600; letter-spacing:-.03em; line-height:1.08; font-variant-numeric:tabular-nums; }
+  .result .v s{ color:var(--ink-4); text-decoration-thickness:1.5px; }
+  .result .l{ font-size:.875rem; color:var(--ink-3); max-width:44ch; }
+  .open{ display:inline-flex; align-items:center; gap:8px; margin-top:32px; font-size:.9375rem; font-weight:500; color:var(--blue); }
+  .open span{ transition:transform .3s var(--ease); }
+  .open:hover span{ transform:translateX(4px); }
+  @media (max-width:900px){
+    .ch{ grid-template-columns:1fr; gap:40px; }
+    .ch-run{ position:static; }
+    .ch-text .spec, .ch-text .result, .ch-text .open{ display:none; }
+    .ch-text-b{ display:block !important; }
   }
-  .evo-links{ display:flex; flex-direction:column; gap:8px; }
-  .evo-sublink{ font-size:.75rem; color:var(--text-muted); line-height:1.45; transition:color var(--dur); }
-  .evo-sublink:hover, .evo-sublink:focus-visible{ color:var(--accent); }
-  .evo-arrow{ flex-shrink:0; width:104px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; }
-  .evo-arrow .ar{ font-size:1.5rem; line-height:1; color:var(--info); }
-  .evo-arrow .lbl{ font-family:"DM Mono",monospace; font-size:.625rem; font-weight:600; color:var(--info); text-transform:uppercase; letter-spacing:.03em; text-align:center; white-space:nowrap; background:var(--info-soft); padding:4px 10px; border-radius:99px; }
-  @media (max-width:700px){
-    .evo-row{ flex-direction:column; align-items:stretch; gap:10px; }
-    .evo-arrow{ width:auto; flex-direction:row; padding:4px 0; }
-    .evo-arrow .ar{ transform:rotate(90deg); }
+  .ch-text-b{ display:none; }
+
+  /* fluxo: os passos são a navegação do capítulo */
+  .flow{ --n:4; list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(var(--n),minmax(0,1fr)); position:relative; }
+  .flow::before, .flow::after{ content:""; position:absolute; top:7px; height:1px; left:calc(50% / var(--n)); }
+  .flow::before{ right:calc(50% / var(--n)); background:var(--line); }
+  .flow::after{ width:calc((100% - 100% / var(--n)) * var(--f, 0)); background:var(--ink); transition:width 1s var(--ease-io); }
+  .fs{ position:relative; z-index:1; width:100%; display:flex; flex-direction:column; align-items:center; gap:12px; padding-bottom:4px; }
+  .fs-dot{ width:15px; height:15px; border-radius:50%; background:var(--bg); border:1.5px solid var(--ink-4); display:grid; place-items:center; transition:border-color .5s var(--ease), background-color .5s var(--ease), box-shadow .5s var(--ease); }
+  .fs-dot::after{ content:""; width:5px; height:5px; border-radius:50%; background:transparent; transition:background-color .5s var(--ease); }
+  .fs-k{ font-family:"Geist Mono",monospace; font-size:.6875rem; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-3); text-align:center; transition:color .4s var(--ease); }
+  .fs:hover .fs-k{ color:var(--ink); }
+  .fs.is-past .fs-dot{ border-color:var(--ink); background:var(--ink); }
+  .fs.is-now .fs-dot{ border-color:var(--blue); box-shadow:0 0 0 4px var(--blue-2); }
+  .fs.is-now .fs-dot::after{ background:var(--blue); }
+  .fs.is-now .fs-k{ color:var(--ink); }
+  .stg.done .fs.is-now .fs-dot{ border-color:var(--green); box-shadow:0 0 0 4px var(--green-2); }
+  .stg.done .fs.is-now .fs-dot::after{ background:var(--green); }
+  .flow-cap{ display:flex; align-items:baseline; justify-content:space-between; gap:16px; margin:22px 0 22px; min-height:3em; }
+  .flow-cap p{ margin:0; font-size:.9375rem; color:var(--ink-2); line-height:1.5; }
+  .replay{ font-family:"Geist Mono",monospace; font-size:.6875rem; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); white-space:nowrap; opacity:0; pointer-events:none; transition:opacity .4s var(--ease), color .2s; }
+  .stg.done .replay{ opacity:1; pointer-events:auto; }
+  .replay:hover{ color:var(--ink); }
+  @media (max-width:420px){ .fs-k{ font-size:.5625rem; letter-spacing:.04em; } }
+
+  /* tela: o produto em si, sempre no tema claro */
+  .screen{
+    --u-ink:#131D2E; --u-mut:#626C7D; --u-faint:#8B93A3; --u-line:#DADFE7; --u-line-2:#EEF0F4; --u-bg:#F5F6F8;
+    --u-blue:#2563EB; --u-blue-2:#DCE6FD; --u-green:#16A34A; --u-green-ink:#0F7A38; --u-green-2:#E1F5E7;
+    --u-red:#DC2626; --u-red-2:#FEF2F2; --u-amber:#B45309; --u-amber-2:#FFFBEB; --u-navy:#131D2E;
+    position:relative; background:var(--screen); border-radius:22px; padding:clamp(14px,2.2vw,24px); color:var(--u-ink);
+    font-size:13px; line-height:1.45; border:1px solid var(--line);
   }
-  .evo-name{ font-size:1rem; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px; }
-  .evo-tags{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
-  .evo-impact{ display:flex; align-items:center; gap:12px; border-top:1px solid var(--border-soft); padding-top:14px; margin-top:auto; flex-wrap:wrap; }
-  .evo-impact .ei-item{ display:flex; flex-direction:column; }
-  .evo-impact .ei-val{ font-family:"DM Mono",monospace; font-size:1.0625rem; font-weight:600; }
-  .evo-impact .ei-item.before .ei-val{ color:var(--text-faint); text-decoration:line-through; text-decoration-color:var(--border); }
-  .evo-impact .ei-item.after .ei-val{ color:#0F7A5F; }
-  .evo-impact .ei-lbl{ font-size:.6875rem; color:var(--text-faint); max-width:16ch; line-height:1.35; margin-top:2px; }
-  .evo-impact .ei-arrow{ color:var(--text-faint); flex-shrink:0; }
-  .evo-link{ font-size:.8125rem; font-weight:600; color:var(--accent); }
-  .evo-note{ margin-top:20px; padding-top:18px; border-top:1px solid var(--border-soft); font-size:.8125rem; color:var(--text-faint); line-height:1.6; }
-  .evo-note b{ color:var(--text-muted); }
+  .card{ background:#fff; border:1px solid var(--u-line); border-radius:10px; padding:14px; }
+  .card-hd{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; font-size:12px; font-weight:600; margin-bottom:10px; }
+  .card-hd .mono{ font-size:10px; font-weight:400; color:var(--u-faint); }
+  .badge{ font-family:"Geist Mono",monospace; font-size:10px; padding:2px 7px; border-radius:4px; white-space:nowrap; transition:background-color .5s var(--ease), color .5s var(--ease); }
+  .b-done{ background:var(--u-green-2); color:var(--u-green-ink); }
+  .b-run{ background:var(--u-blue-2); color:#1D4FBF; }
+  .b-q{ background:var(--u-line-2); color:var(--u-faint); }
+  .bar{ height:5px; border-radius:99px; background:var(--u-line-2); overflow:hidden; }
+  .bar i{ display:block; height:100%; width:calc(var(--p,0) * 1%); border-radius:inherit; background:var(--u-blue); transition:width .9s var(--ease-io), background-color .5s; }
+  .stg.done .bar i{ background:var(--u-green); }
+  .sk{ display:block; height:7px; border-radius:4px; background:var(--u-line-2); }
 
-  /* ---------- skills ---------- */
-  .skills-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
-  @media (max-width:760px){ .skills-grid{ grid-template-columns:repeat(2,1fr); } }
-  @media (max-width:480px){ .skills-grid{ grid-template-columns:1fr; } }
-  .skill{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r); padding:16px 18px; }
-  .skill .sn{ font-size:.875rem; font-weight:600; margin-bottom:4px; }
-  .skill .se{ font-family:"DM Mono",monospace; font-size:.6875rem; color:var(--text-faint); }
+  /* revelação por estado: .fN aparece a partir do passo N; .tN some a partir do passo N */
+  .f1,.f2,.f3,.f4,.f5,.f6,.f7,.f8,.t1,.t2s,.t3,.t4,.t5,.t6,.t7,.t8{ transition:opacity .55s var(--ease), transform .55s var(--ease); }
+  .js .stg:not(.g1) .f1, .js .stg:not(.g2) .f2, .js .stg:not(.g3) .f3, .js .stg:not(.g4) .f4,
+  .js .stg:not(.g5) .f5, .js .stg:not(.g6) .f6, .js .stg:not(.g7) .f7, .js .stg:not(.g8) .f8{ opacity:0; transform:translateY(4px); }
+  .js .stg.g1 .t1, .js .stg.g2 .t2s, .js .stg.g3 .t3, .js .stg.g4 .t4, .js .stg.g5 .t5, .js .stg.g6 .t6, .js .stg.g7 .t7, .js .stg.g8 .t8{ opacity:0; }
 
-  /* ---------- experiência (timeline em painel, mesmo sistema do .evo-wrap) ---------- */
-  .xp{ background:var(--surface); border:1px solid var(--border); border-radius:var(--r-l); box-shadow:var(--shadow); padding:30px 32px; }
-  @media (max-width:640px){ .xp{ padding:22px 20px; } }
-  .xp-line{ list-style:none; margin:0; padding:0; }
-  .xp-item{ display:grid; grid-template-columns:150px 1fr; gap:0 24px; position:relative; padding-bottom:28px; }
-  .xp-item:last-child{ padding-bottom:0; }
-  /* trilho vertical + marcador, no início da coluna de conteúdo */
-  .xp-body{ position:relative; padding-left:26px; min-width:0; }
-  .xp-body::before{ content:""; position:absolute; left:4px; top:14px; bottom:-28px; width:1px; background:var(--border); }
-  .xp-item:last-child .xp-body::before{ display:none; }
-  .xp-body::after{ content:""; position:absolute; left:0; top:6px; width:9px; height:9px; border-radius:50%; background:var(--surface); border:1.5px solid var(--text-faint); }
-  .xp-item.now .xp-body::after{ background:var(--signal); border-color:var(--signal); box-shadow:0 0 0 4px var(--signal-soft); }
-  .xp-when{ font-family:"DM Mono",monospace; font-size:.75rem; color:var(--text-muted); line-height:1.5; padding-top:2px; }
-  .xp-when span{ display:block; color:var(--text-faint); font-size:.6875rem; }
-  .xp-head{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:2px; }
-  .xp-co{ font-size:1.0625rem; font-weight:700; letter-spacing:-.005em; margin:0; }
-  .xp-now{ font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.04em; padding:3px 8px; border-radius:99px; background:var(--signal-soft); color:var(--signal-ink); }
-  .xp-role{ font-family:"DM Mono",monospace; font-size:.75rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin-bottom:10px; }
-  .xp-ctx{ font-size:.875rem; color:var(--text-muted); line-height:1.55; margin:0 0 12px; max-width:62ch; }
-  .xp-body .ptags{ margin-bottom:0; }
-  .xp-fact{ margin:12px 0 0; font-size:.8125rem; color:var(--text-muted); display:flex; align-items:baseline; gap:8px; }
-  .xp-fact .k{ font-family:"DM Mono",monospace; font-size:.625rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); flex-shrink:0; }
-  .xp-fact a{ color:var(--accent); font-weight:600; }
+  /* ---------- 01 Extrator: linear, uma etapa libera a próxima ---------- */
+  .ux-x{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.15fr); gap:12px; }
+  .x-q .row{ display:flex; justify-content:space-between; align-items:center; gap:8px; padding:9px 0; border-top:1px solid var(--u-line-2); font-size:12.5px; font-weight:500; }
+  .x-q .row:first-of-type{ border-top:0; }
+  .x-q .row.is-cur{ font-weight:600; }
+  .swap{ display:inline-grid; }
+  .swap > *{ grid-area:1/1; }
+  .x-run{ background:var(--u-navy); border-color:var(--u-navy); color:#fff; }
+  .x-run .card-hd .mono{ color:#8FA0BE; }
+  .x-log{ list-style:none; margin:0 0 14px; padding:0; font-family:"Geist Mono",monospace; font-size:11px; line-height:2; }
+  .x-log .t{ color:#5A6786; margin-right:8px; }
+  .x-log .ok{ color:#6FD196; }
+  .x-log .m{ color:#C7CEDC; }
+  .x-prog{ display:flex; align-items:center; gap:10px; font-family:"Geist Mono",monospace; font-size:10px; color:#8FA0BE; }
+  .x-prog .bar{ flex:1; background:rgba(255,255,255,.12); }
+  .x-prog [data-pct]{ min-width:4ch; text-align:right; font-variant-numeric:tabular-nums; }
+  .x-tree{ grid-column:1/-1; font-family:"Geist Mono",monospace; font-size:11.5px; line-height:1.9; color:var(--u-mut); }
+  .x-tree div:nth-child(2){ padding-left:16px; } .x-tree div:nth-child(3){ padding-left:32px; } .x-tree div:nth-child(4){ padding-left:48px; color:var(--u-ink); }
+  .x-tree .badge{ margin-left:6px; }
+  @media (max-width:560px){ .ux-x{ grid-template-columns:1fr; } }
+
+  /* ---------- 02 Daily Ops: convergência, quatro fontes viram um guia ---------- */
+  .ux-o{ display:grid; grid-template-columns:minmax(84px,.7fr) 40px minmax(84px,.62fr) 28px minmax(0,1.6fr); align-items:stretch; }
+  .o-src{ display:flex; flex-direction:column; }
+  .o-src > div{ flex:1; display:flex; align-items:center; }
+  .o-src span, .o-rule{ background:#fff; border:1px solid var(--u-line); border-radius:8px; padding:7px 10px; font-size:11.5px; font-weight:500; width:100%; transition:border-color .5s var(--ease), box-shadow .5s var(--ease); }
+  .stg.g0 .o-src span{ border-color:#BFCBEA; }
+  .o-wire{ width:100%; height:100%; overflow:visible; }
+  .o-wire path{ fill:none; stroke:#B8C0CE; stroke-width:1.25; vector-effect:non-scaling-stroke; stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset 1.1s var(--ease-io), stroke .5s; }
+  .stg.g0 .o-wire.w1 path{ stroke-dashoffset:0; }
+  .stg.g1 .o-wire.w2 path{ stroke-dashoffset:0; }
+  .o-mid{ display:flex; align-items:center; }
+  .o-rule{ text-align:center; padding:12px 8px; }
+  .o-rule b{ display:block; font-size:22px; font-weight:600; letter-spacing:-.02em; line-height:1; }
+  .o-rule small{ display:block; font-size:10px; color:var(--u-faint); margin-top:4px; font-weight:400; line-height:1.3; }
+  .stg.g1 .o-rule{ border-color:var(--u-blue); box-shadow:0 0 0 3px var(--u-blue-2); }
+  .stg.g2 .o-rule{ border-color:var(--u-line); box-shadow:none; }
+  .o-guide .card-hd{ margin-bottom:12px; }
+  .o-gauge{ display:flex; align-items:center; gap:10px; padding-bottom:12px; border-bottom:1px solid var(--u-line-2); margin-bottom:8px; }
+  .o-gauge circle.arc{ stroke-dashoffset:calc(194.8 * (1 - var(--p,0) / 100)); transition:stroke-dashoffset 1.2s var(--ease-io); }
+  .o-pct{ font-family:"Geist Mono",monospace; font-size:17px; font-weight:500; line-height:1; }
+  .o-sub{ font-size:10px; color:var(--u-faint); }
+  .o-tk{ display:flex; gap:8px; align-items:flex-start; padding:8px 0; border-top:1px solid var(--u-line-2); }
+  .o-tk:first-of-type{ border-top:0; }
+  .prio{ font-size:10px; font-weight:600; padding:2px 7px; border-radius:4px; white-space:nowrap; background:var(--u-line-2); color:var(--u-faint); transition:background-color .5s var(--ease), color .5s var(--ease); }
+  .stg.g1 .p-crit{ background:var(--u-red-2); color:var(--u-red); }
+  .stg.g1 .p-alta{ background:var(--u-amber-2); color:var(--u-amber); }
+  .o-subj{ font-size:11.5px; font-weight:600; }
+  .o-meta{ font-size:10.5px; color:var(--u-faint); }
+  .o-ben{ display:flex; flex-wrap:wrap; gap:4px; margin-top:10px; }
+  .o-ben span{ font-family:"Geist Mono",monospace; font-size:9.5px; padding:2px 7px; border-radius:99px; background:var(--u-bg); border:1px solid var(--u-line); color:var(--u-mut); }
   @media (max-width:640px){
-    .xp-item{ grid-template-columns:1fr; }
-    .xp-when{ padding:0 0 6px 26px; }
-    .xp-when span{ display:inline; }
-    .xp-when span::before{ content:" · "; }
+    .ux-o{ grid-template-columns:1fr; gap:0; }
+    .o-src{ display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+    .o-wire{ display:none; }
+    .o-mid{ justify-content:center; padding:18px 0; position:relative; }
+    .o-mid::before, .o-mid::after{ content:""; position:absolute; left:50%; width:1px; height:14px; background:#B8C0CE; }
+    .o-mid::before{ top:2px; } .o-mid::after{ bottom:2px; }
+    .o-rule{ width:auto; padding:10px 22px; }
   }
-  /* atuação em paralelo: lista compacta, sem timeline */
-  .xp-side{ margin-top:28px; padding-top:22px; border-top:1px solid var(--border-soft); }
-  .xp-side-k{ font-family:"DM Mono",monospace; font-size:.6875rem; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); margin:0 0 14px; }
-  .xp-side-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0; }
-  @media (max-width:820px){ .xp-side-grid{ grid-template-columns:1fr; } }
-  .xp-mini{ padding:0 20px; border-left:1px solid var(--border-soft); }
-  .xp-mini:first-child{ padding-left:0; border-left:none; }
-  @media (max-width:820px){
-    .xp-mini{ padding:12px 0; border-left:none; border-top:1px solid var(--border-soft); }
-    .xp-mini:first-child{ padding-top:0; border-top:none; }
+
+  /* ---------- 03 Motor de Triagem: verificação, cada linha sai classificada ---------- */
+  .m-hd{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:12px; }
+  .m-id{ font-family:"Geist Mono",monospace; font-size:10.5px; color:var(--u-faint); }
+  .m-co{ font-size:14px; font-weight:600; flex:1; }
+  .m-checks{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px; }
+  .chk{ font-family:"Geist Mono",monospace; font-size:10px; padding:4px 9px; border-radius:99px; border:1px solid var(--u-line); background:#fff; color:var(--u-faint); display:inline-flex; gap:6px; align-items:center; transition:color .5s var(--ease), border-color .5s var(--ease), background-color .5s; }
+  .chk::before{ content:""; width:5px; height:5px; border-radius:50%; background:currentColor; }
+  .stg.g0 .chk.c0, .stg.g1 .chk.c1, .stg.g2 .chk.c2, .stg.g3 .chk.c3{ color:#1D4FBF; border-color:#BFCBEA; background:#F5F8FF; }
+  .stg.done .chk{ color:var(--u-green-ink); border-color:#BFE3CB; background:#F3FBF6; }
+  .m-tb{ width:100%; border-collapse:collapse; background:#fff; border:1px solid var(--u-line); border-radius:10px; overflow:hidden; font-size:12px; }
+  .m-tb th{ font-family:"Geist Mono",monospace; font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; font-weight:400; color:var(--u-faint); text-align:left; padding:8px 10px; background:var(--u-bg); }
+  .m-tb td{ padding:9px 10px; border-top:1px solid var(--u-line-2); font-variant-numeric:tabular-nums; transition:color .5s var(--ease), background-color .5s; white-space:nowrap; }
+  .m-tb td.v{ font-family:"Geist Mono",monospace; font-size:11px; }
+  .stg.g3 td.bad{ color:var(--u-red); font-weight:600; background:#FFF8F8; }
+  .tag{ font-family:"Geist Mono",monospace; font-size:9.5px; font-weight:500; padding:3px 7px; border-radius:4px; display:inline-block; min-width:9ch; text-align:center; background:var(--u-line-2); color:var(--u-faint); transition:background-color .5s var(--ease), color .5s var(--ease); }
+  .stg.g3 .tag-r{ background:var(--u-red-2); color:var(--u-red); }
+  .stg.g3 .tag-a{ background:var(--u-amber-2); color:var(--u-amber); }
+  .stg.g3 .tag-g{ background:var(--u-green-2); color:var(--u-green-ink); }
+  .m-rv{ display:flex; align-items:center; gap:6px; margin-top:12px; font-family:"Geist Mono",monospace; font-size:10px; color:var(--u-faint); }
+  .m-rv .bar{ flex:1; }
+  .m-rv .bar i{ background:var(--u-green); }
+  @media (max-width:520px){ .m-tb th:nth-child(1), .m-tb td:nth-child(1){ display:none; } }
+
+  /* ---------- 06 Documentos: emissão → conferência por terceiros ---------- */
+  .ux-d{ display:grid; grid-template-columns:minmax(0,1.1fr) 18px minmax(0,1.1fr) 18px minmax(0,1fr); align-items:center; }
+  .d-link{ height:1px; background:#B8C0CE; position:relative; transform-origin:left; transition:transform .8s var(--ease-io); }
+  .js .stg:not(.g1) .d-link.l1, .js .stg:not(.g3) .d-link.l2{ transform:scaleX(0); }
+  .d-sheet .row{ display:flex; justify-content:space-between; gap:8px; font-size:11px; padding:5px 0; border-top:1px solid var(--u-line-2); }
+  .d-sheet .row:first-of-type{ border-top:0; }
+  .d-sheet .row span{ color:var(--u-faint); font-family:"Geist Mono",monospace; font-size:9.5px; padding-top:1px; }
+  .d-sheet .row b{ font-weight:500; text-align:right; }
+  .d-sheet .hl{ background:#F5F8FF; border-radius:6px; padding:4px 8px; margin:0 -8px; outline:1px solid #BFCBEA; }
+  .d-cert{ background:#fff; border-radius:8px; overflow:hidden; box-shadow:0 1px 3px rgba(0,0,0,.1), 0 0 0 1px var(--u-line); }
+  .d-band{ background:#0f3d3e; padding:16px 10px 14px; text-align:center; color:#fff; }
+  .d-band .t{ font-size:7.5px; font-weight:700; letter-spacing:.18em; margin-bottom:8px; }
+  .d-band .n{ font-size:13px; font-weight:700; line-height:1.15; }
+  .d-band .c{ font-size:8.5px; font-weight:800; letter-spacing:.08em; color:#3fd6d0; margin-top:6px; }
+  .d-foot{ display:flex; justify-content:space-between; align-items:flex-end; gap:8px; padding:9px 10px; }
+  .d-id{ font-family:"Geist Mono",monospace; font-size:8.5px; color:var(--u-faint); line-height:1.4; }
+  .d-qr{ width:34px; height:34px; display:block; border-radius:3px; transition:box-shadow .5s var(--ease); }
+  .stg.g2:not(.g3) .d-qr{ box-shadow:0 0 0 3px #5FD1B8; }
+  .d-val{ background:#f2f5f5; border-radius:10px; overflow:hidden; box-shadow:0 0 0 1px var(--u-line); }
+  .d-vh{ background:#0f3d3e; color:#fff; font-size:7.5px; font-weight:700; letter-spacing:.08em; text-align:center; padding:8px 4px; }
+  .d-vc{ background:#fff; margin:8px; border-radius:7px; padding:10px; min-height:118px; }
+  .d-ok{ font-size:12px; font-weight:700; color:#1d7a45; margin-bottom:6px; }
+  .d-vc .row{ display:flex; justify-content:space-between; gap:6px; font-size:10px; color:#5f6f70; padding:2px 0; }
+  .d-vc .row b{ color:#1f2a2b; font-weight:600; text-align:right; }
+  .d-priv{ margin-top:8px; padding-top:7px; border-top:1px dashed var(--u-line); font-family:"Geist Mono",monospace; font-size:9px; color:var(--u-faint); }
+  .d-priv s{ text-decoration-thickness:1px; }
+  .d-wait{ font-family:"Geist Mono",monospace; font-size:10px; color:var(--u-faint); text-align:center; padding-top:38px; }
+  .d-vc{ display:grid; }
+  .d-vc > *{ grid-area:1/1; }
+  @media (max-width:640px){
+    .ux-d{ grid-template-columns:1fr; }
+    .d-link{ width:1px; height:20px; justify-self:center; transform-origin:top; }
+    .js .stg:not(.g1) .d-link.l1, .js .stg:not(.g3) .d-link.l2{ transform:scaleY(0); }
+    .d-cert, .d-val{ max-width:300px; width:100%; justify-self:center; }
   }
-  .xp-mini-co{ font-size:.9375rem; font-weight:700; }
-  .xp-mini-role{ font-family:"DM Mono",monospace; font-size:.6875rem; color:var(--text-faint); text-transform:uppercase; letter-spacing:.03em; margin:2px 0 6px; }
-  .xp-mini-role span{ text-transform:none; letter-spacing:0; }
-  .xp-mini p{ font-size:.8125rem; color:var(--text-muted); line-height:1.5; margin:0; }
 
-  /* ---------- CTA ---------- */
-  .cta-box{ background:#131D2E; color:#fff; border-radius:var(--r-l); padding:44px 40px; display:flex; justify-content:space-between; align-items:center; gap:24px; flex-wrap:wrap; }
-  @media (max-width:640px){ .cta-box{ padding:30px 26px; } }
-  .cta-box h2{ font-size:1.375rem; margin:0 0 8px; }
-  .cta-box p{ color:#B7BFCE; margin:0; font-size:.9375rem; max-width:44ch; }
-  .cta-actions{ display:flex; gap:10px; flex-wrap:wrap; }
-  .cta-btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:var(--r); font-size:.875rem; font-weight:600; transition:background var(--dur), border-color var(--dur); }
-  .cta-btn.primary{ background:var(--signal); color:#0B2620; }
-  .cta-btn.primary:hover, .cta-btn.primary:focus-visible{ background:#7CE0C7; }
+  /* ============================================================
+     HISTÓRIA — TicketScript → FormPilot, guiada pelo scroll
+     ============================================================ */
+  .story{ padding-block:clamp(88px,12vw,152px) 0; border-bottom:1px solid var(--line); scroll-margin-top:40px; }
+  .story-hd{ max-width:820px; margin-bottom:clamp(40px,6vw,72px); }
+  .story-hd .ch-meta{ margin-bottom:22px; }
+  .story-grid{ display:grid; grid-template-columns:minmax(0,4.2fr) minmax(0,7.8fr); gap:clamp(32px,5vw,72px); }
+  .story-stage{ grid-column:2; grid-row:1; position:sticky; top:84px; align-self:start; }
+  .story-steps{ grid-column:1; grid-row:1; }
+  .sb{ min-height:82vh; display:flex; flex-direction:column; justify-content:center; padding-block:40px; opacity:.28; transition:opacity .6s var(--ease); scroll-margin-top:84px; }
+  .sb:first-child{ min-height:62vh; justify-content:flex-start; padding-top:8px; }
+  .sb:last-child{ min-height:70vh; }
+  .sb.is-active{ opacity:1; }
+  .sb .k{ display:block; margin-bottom:14px; }
+  .sb h4{ font-size:clamp(1.5rem,2.4vw,2rem); font-weight:600; letter-spacing:-.03em; line-height:1.1; margin:0 0 14px; text-wrap:balance; }
+  .sb p{ font-size:1rem; color:var(--ink-2); line-height:1.6; margin:0; max-width:44ch; }
+  .sb p + p{ margin-top:12px; }
+  .sb-br h4{ font-size:clamp(2rem,3.6vw,3rem); letter-spacing:-.04em; }
+  .sb .msg{ display:block; margin-top:18px; font-size:1.0625rem; color:var(--ink); font-weight:500; }
+  html:not(.js) .sb{ opacity:1; min-height:0; }
+  html:not(.js) .story-stage{ display:none; }
+  html:not(.js) .story-grid{ grid-template-columns:1fr; }
 
-  footer{ padding:32px 0 48px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; font-size:.8125rem; color:var(--text-faint); border-top:1px solid var(--border); margin-top:8px; }
-  footer a{ transition:color var(--dur); }
-  footer a:hover, footer a:focus-visible{ color:var(--accent); }
+  .sf-wrap{ position:relative; height:34px; margin-bottom:14px; }
+  .sf{ position:absolute; inset:0; display:flex; align-items:center; gap:0; list-style:none; margin:0; padding:0; transition:opacity .6s var(--ease), transform .6s var(--ease); }
+  .sf li{ display:flex; align-items:center; font-family:"Geist Mono",monospace; font-size:.6875rem; letter-spacing:.07em; text-transform:uppercase; color:var(--ink-4); transition:color .4s var(--ease); white-space:nowrap; }
+  .sf li + li::before{ content:""; width:clamp(14px,3vw,36px); height:1px; background:var(--line); margin:0 10px; transition:background-color .4s; }
+  .sf li.is-now{ color:var(--blue); }
+  .sf li.is-past{ color:var(--ink); }
+  .sf li.is-past + li::before, .sf li.is-past + li.is-past::before{ background:var(--ink); }
+  .sf li .d{ width:6px; height:6px; border-radius:50%; border:1.25px solid currentColor; margin-right:8px; flex-shrink:0; }
+  .sf li.is-past .d{ background:currentColor; }
+  .sf li.is-now .d{ background:currentColor; box-shadow:0 0 0 3px var(--blue-2); }
+  .sf-name{ font-weight:500; color:var(--ink) !important; margin-right:6px; }
+  .sf-name::after{ content:"·"; margin-left:10px; color:var(--ink-4); }
+  .sf-name + li::before{ display:none; }
+  .js .story:not(.g5) .sf-fp, .js .story.g5 .sf-ts{ opacity:0; transform:translateY(6px); pointer-events:none; }
+  @media (max-width:560px){ .sf li + li::before{ width:8px; margin:0 6px; } .sf li{ font-size:.5625rem; letter-spacing:.04em; } .sf li .d{ display:none; } }
+
+  .sc-box{ position:relative; border-radius:22px; background:var(--screen); border:1px solid var(--line); overflow:hidden; }
+  .sc{
+    --u-ink:#131D2E; --u-mut:#626C7D; --u-faint:#8B93A3; --u-line:#DADFE7; --u-line-2:#EEF0F4; --u-bg:#F5F6F8;
+    --u-blue:#2563EB; --u-blue-2:#DCE6FD; --u-green:#16A34A; --u-green-ink:#0F7A38; --u-green-2:#E1F5E7;
+    position:absolute; left:0; top:0; width:760px; height:470px; transform-origin:0 0; color:var(--u-ink); font-size:12px; line-height:1.45;
+  }
+  .sc.nar{ width:360px; height:450px; }
+  .a{ position:absolute; transition:left .9s var(--ease-io), top .9s var(--ease-io), width .9s var(--ease-io), height .9s var(--ease-io), opacity .6s var(--ease), transform .9s var(--ease-io); }
+  .win{ background:#fff; border:1px solid var(--u-line); border-radius:12px; overflow:hidden; box-shadow:0 1px 2px rgba(19,29,46,.05), 0 18px 40px -24px rgba(19,29,46,.28); }
+  .w-chrome{ display:flex; align-items:center; gap:5px; height:30px; padding:0 10px; background:#F7F8FA; border-bottom:1px solid var(--u-line-2); }
+  .w-chrome i{ width:7px; height:7px; border-radius:50%; background:#DADFE7; flex-shrink:0; }
+  .w-url{ font-family:"Geist Mono",monospace; font-size:9.5px; color:var(--u-faint); margin-left:8px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; flex:1; display:grid; }
+  .w-url > *{ grid-area:1/1; transition:opacity .4s; }
+  .w-ext{ font-size:11px; width:20px; height:20px; border-radius:5px; display:grid; place-items:center; transition:background-color .4s, box-shadow .4s; flex-shrink:0; }
+  .sc.g2:not(.g4) .w-ext{ background:var(--u-blue-2); box-shadow:0 0 0 1px #BFCBEA; }
+  .tk-in{ padding:14px 16px; display:grid; }
+  .tk-in > .tk-v{ grid-area:1/1; transition:opacity .45s var(--ease); }
+  .tk-id{ font-family:"Geist Mono",monospace; font-size:9.5px; color:var(--u-faint); }
+  .tk-sub{ font-size:14px; font-weight:600; margin:4px 0 8px; letter-spacing:-.01em; }
+  .tgs{ display:flex; gap:5px; flex-wrap:wrap; margin-bottom:10px; }
+  .tg{ font-size:9.5px; font-weight:500; padding:2px 8px; border-radius:99px; background:var(--u-bg); border:1px solid var(--u-line); color:var(--u-mut); }
+  .tk-msg{ font-size:11.5px; color:var(--u-mut); background:var(--u-bg); border-radius:8px; padding:9px 11px; line-height:1.5; }
+  .tk-msg b{ display:block; color:var(--u-ink); font-size:11px; margin-bottom:2px; }
+  .tk-rl{ font-size:10px; font-weight:600; color:var(--u-mut); margin:12px 0 6px; }
+  .tk-box{ border:1px solid var(--u-line); border-radius:8px; min-height:78px; padding:9px 11px; font-size:11px; color:var(--u-ink); line-height:1.55; display:grid; transition:border-color .5s; }
+  .tk-box > *{ grid-area:1/1; transition:opacity .45s var(--ease); }
+  .ph{ color:var(--u-faint); }
+  .sc .rb-man{ opacity:0; }
+  .sc[data-s="1"] .rb-man{ opacity:1; }
+  .sc[data-s="1"] .rb-ph, .sc.g3 .rb-ph{ opacity:0; }
+  .sc[data-s="2"] .btn.ghost{ background:var(--u-blue); color:#fff; }
+  .man{ display:flex; flex-direction:column; gap:6px; padding-top:3px; }
+  .man i{ display:block; height:7px; border-radius:4px; background:#F4D7A8; width:var(--w); }
+  .sc.g3 .tk-box{ border-color:#9ED3B1; }
+  .tk-ok{ font-size:10px; color:var(--u-green-ink); font-weight:600; margin-top:7px; }
+
+  /* planilha */
+  .sh{ background:#fff; border:1px solid var(--u-line); border-radius:12px; overflow:hidden; }
+  .sh-top{ display:flex; align-items:center; gap:7px; padding:8px 12px; border-bottom:1px solid var(--u-line-2); font-size:11px; }
+  .sh-top .ico{ width:11px; height:11px; border-radius:2px; background:#1E8E3E; }
+  .sh-top .mono{ margin-left:auto; font-size:9px; color:var(--u-faint); }
+  .sh-r{ display:grid; grid-template-columns:.9fr 1fr .85fr 1.6fr; font-size:9.5px; border-bottom:1px solid var(--u-line-2); }
+  .sh-r span{ padding:6px 7px; border-right:1px solid var(--u-line-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .sh-h{ background:var(--u-bg); font-family:"Geist Mono",monospace; font-size:8.5px; color:var(--u-faint); text-transform:uppercase; letter-spacing:.03em; }
+  .sh-r.hit{ background:#FFF6E5; box-shadow:inset 2px 0 0 #E8A33D; }
+  .sh-sk span::after{ content:""; display:block; height:6px; border-radius:3px; background:var(--u-line-2); }
+  .cp{ position:absolute; right:10px; bottom:8px; font-family:"Geist Mono",monospace; font-size:9px; background:var(--u-ink); color:#fff; padding:3px 8px; border-radius:4px; }
+
+  /* passos manuais */
+  .lp{ background:#fff; border:1px solid var(--u-line); border-radius:12px; padding:12px 14px; }
+  .lp ol{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:1fr 1fr; gap:6px 12px; }
+  .lp li{ font-size:11px; display:flex; gap:7px; align-items:center; color:var(--u-mut); }
+  .lp li .n{ font-family:"Geist Mono",monospace; font-size:9px; width:18px; height:18px; border-radius:50%; border:1px solid var(--u-line); display:grid; place-items:center; flex-shrink:0; color:var(--u-faint); }
+  .sc[data-s="1"] .lp li .n{ animation:lp-tick 4s steps(1) infinite; animation-delay:calc(var(--i) * .7s); }
+  @keyframes lp-tick{ 0%{ background:#FFF6E5; border-color:#E8A33D; color:#B45309; } 18%{ background:#fff; border-color:var(--u-line); color:var(--u-faint); } }
+  .lp-rep{ font-family:"Geist Mono",monospace; font-size:9.5px; color:#B45309; margin-top:10px; padding-top:8px; border-top:1px dashed var(--u-line); }
+
+  /* extensão TicketScript */
+  .ex{ background:#fff; border:1px solid var(--u-line); border-radius:12px; overflow:hidden; box-shadow:0 18px 40px -24px rgba(19,29,46,.35); }
+  .ex-hd{ display:flex; align-items:center; gap:7px; padding:10px 12px; background:var(--u-ink); color:#fff; font-size:12px; font-weight:600; }
+  .ex-bd{ padding:12px; }
+  .btn{ font-size:11px; font-weight:600; text-align:center; padding:8px; border-radius:7px; background:var(--u-blue); color:#fff; transition:background-color .4s, color .4s; }
+  .btn.ghost{ background:var(--u-bg); color:var(--u-faint); }
+  .sc.g3 .btn.ins{ background:var(--u-green); color:#fff; }
+  .ex-lbl{ font-family:"Geist Mono",monospace; font-size:8.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--u-faint); margin:12px 0 6px; }
+  .ex-f{ display:flex; justify-content:space-between; align-items:center; padding:6px 9px; border:1px solid var(--u-line-2); border-radius:6px; margin-bottom:5px; }
+  .ex-f small{ display:block; font-size:9px; color:var(--u-faint); }
+  .ex-f b{ font-size:11px; font-weight:600; }
+  .ex-f em{ font-style:normal; color:var(--u-green); font-weight:700; }
+  .sc .ex-f{ opacity:0; transform:translateY(4px); transition:opacity .45s var(--ease), transform .45s var(--ease); }
+  .sc.g2 .ex-f{ opacity:1; transform:none; }
+  .sc.g2 .ex-f{ transition-delay:calc(.35s + var(--i) * .35s); }
+  .ex-ft{ display:grid; margin-top:10px; }
+  .ex-ft > *{ grid-area:1/1; }
+  .csv{ display:flex; align-items:center; gap:10px; background:#fff; border:1px dashed #B8C0CE; border-radius:10px; padding:9px 12px; }
+  .csv .ico{ width:11px; height:11px; border-radius:2px; background:#1E8E3E; flex-shrink:0; }
+  .csv b{ font-size:11px; display:block; }
+  .csv small{ font-size:9.5px; color:var(--u-faint); display:block; line-height:1.35; }
+  .res{ display:flex; align-items:center; justify-content:center; gap:14px; background:var(--u-ink); color:#fff; border-radius:12px; padding:12px; }
+  .res s{ color:#8FA0BE; font-size:15px; text-decoration-thickness:1.5px; }
+  .res b{ font-size:20px; font-weight:600; letter-spacing:-.02em; }
+  .res .ar{ color:#5FD1B8; }
+
+  /* ponte: a complexidade se expande */
+  .gw{ font-family:"Geist Mono",monospace; font-size:13px; color:var(--u-ink); background:#fff; border:1px solid var(--u-line); border-radius:99px; padding:6px 14px; opacity:0; transform:translate(-50%,-50%) scale(.92); white-space:nowrap; }
+  .sc[data-s="4"] .gw{ opacity:1; transform:translate(-50%,-50%) scale(1); }
+  .sc[data-s="4"] .gw:nth-of-type(2){ transition-delay:.12s; } .sc[data-s="4"] .gw:nth-of-type(3){ transition-delay:.24s; } .sc[data-s="4"] .gw:nth-of-type(4){ transition-delay:.36s; }
+  .br-ln{ position:absolute; inset:0; width:100%; height:100%; opacity:0; transition:opacity .8s var(--ease) .3s; }
+  .sc[data-s="4"] .br-ln{ opacity:1; }
+  .br-ln path{ fill:none; stroke:#B8C0CE; stroke-width:1; stroke-dasharray:3 4; }
+
+  /* documento da operadora */
+  .dc{ background:#fff; border:1px solid var(--u-line); border-radius:10px; box-shadow:0 18px 40px -26px rgba(19,29,46,.3); padding:12px 14px; overflow:hidden; transition:left .9s var(--ease-io), top .9s var(--ease-io), width .9s var(--ease-io), height .9s var(--ease-io), opacity .6s var(--ease), transform .9s var(--ease-io), border-color .6s; }
+  .sc.g7 .dc{ border-color:#9ED3B1; }
+  .dc-hd{ display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid var(--u-ink); padding-bottom:7px; margin-bottom:6px; }
+  .dc-hd b{ font-size:11.5px; }
+  .dc-hd span{ font-family:"Geist Mono",monospace; font-size:9px; color:var(--u-faint); }
+  .dc-sec{ font-family:"Geist Mono",monospace; font-size:8.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--u-faint); margin:7px 0 2px; }
+  .dc-f{ position:relative; display:grid; grid-template-columns:minmax(0,1fr) 14px; grid-template-areas:"lb ok" "v ok"; column-gap:6px; padding:2px 0; }
+  .dc-f label{ grid-area:lb; font-size:9px; color:var(--u-mut); display:flex; justify-content:space-between; gap:6px; }
+  .rule{ font-family:"Geist Mono",monospace; font-size:8px; color:#1D4FBF; background:var(--u-blue-2); padding:0 5px; border-radius:3px; white-space:nowrap; transition:opacity .5s var(--ease); }
+  .sc.g6 .rule{ opacity:0; }
+  .dc-v{ grid-area:v; height:17px; border-bottom:1px solid var(--u-line); display:flex; align-items:center; font-size:10.5px; font-weight:500; position:relative; transition:border-color .5s; }
+  .sc[data-s="5"] .dc-v{ border:1px dashed #8EA7EE; border-radius:3px; background:rgba(37,99,235,.04); }
+  .dc-v > *{ opacity:0; transition:opacity .45s var(--ease); transition-delay:calc(var(--i) * .12s); }
+  .sc.g6 .dc-v > *{ opacity:1; }
+  .dc-v i{ display:block; height:6px; width:var(--w); border-radius:3px; background:#C9D2E2; }
+  .dc-f em{ grid-area:ok; align-self:end; font-style:normal; font-size:10px; font-weight:700; color:var(--u-green); padding-bottom:3px; opacity:0; transition:opacity .4s var(--ease); transition-delay:calc(var(--i) * .1s); }
+  .sc.g7 .dc-f em{ opacity:1; }
+  .dc-sign{ margin-top:12px; }
+  .dc-line{ height:24px; border-bottom:1px solid var(--u-ink); display:flex; align-items:flex-end; padding-bottom:3px; }
+  .dc-sig{ font-family:"Geist Mono",monospace; font-size:9px; color:#1D4FBF; background:var(--u-blue-2); padding:2px 6px; border-radius:3px; }
+  .dc-sign label{ font-size:9px; color:var(--u-mut); display:block; margin-top:3px; }
+
+  /* painel FormPilot (ZAF) */
+  .fp{ background:var(--u-ink); color:#fff; border-radius:12px; padding:14px; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 18px 40px -24px rgba(19,29,46,.4); }
+  .fp-hd{ display:flex; align-items:center; gap:7px; font-size:12px; font-weight:600; margin-bottom:12px; }
+  .fp-ico{ width:18px; height:18px; border-radius:50%; border:1.5px solid #fff; display:grid; place-items:center; font-size:9px; flex-shrink:0; }
+  .fp-tag{ margin-left:auto; font-family:"Geist Mono",monospace; font-size:8.5px; font-weight:400; color:#8FA0BE; border:1px solid #2B3850; padding:1px 6px; border-radius:99px; }
+  .fp-lbl{ font-family:"Geist Mono",monospace; font-size:8.5px; text-transform:uppercase; letter-spacing:.06em; color:#8B93A3; margin:0 0 6px; }
+  .fp-cfg{ font-size:10.5px; color:#C7CEDC; background:#1C2840; border-radius:7px; padding:8px 9px; margin-bottom:12px; }
+  .sc.g6 .fp-cfg small{ display:none; }
+  .sc.g6 .fp-cfg{ margin-bottom:10px; }
+  .fp-cfg b{ display:block; color:#fff; font-size:11px; font-family:"Geist Mono",monospace; font-weight:500; }
+  .fp-id{ margin-bottom:12px; }
+  .fp-f{ font-size:9.5px; color:#8B93A3; margin-bottom:6px; }
+  .fp-f b{ display:block; font-size:11px; color:#F1F5F9; font-weight:600; margin-top:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .fp-log{ list-style:none; margin:auto 0 0; padding:10px 0 0; border-top:1px solid #24314A; }
+  .fp-log li{ display:flex; gap:8px; align-items:flex-start; font-size:10px; color:#5A6786; padding:3px 0; line-height:1.35; transition:color .5s var(--ease); }
+  .fp-log li::before{ content:""; width:7px; height:7px; border-radius:50%; border:1.25px solid currentColor; margin-top:3px; flex-shrink:0; transition:background-color .5s; }
+  .fp-log li.is-now{ color:#fff; }
+  .fp-log li.is-now::before{ border-color:#8FB2FF; background:#8FB2FF; }
+  .fp-log li.is-past{ color:#C7CEDC; }
+  .fp-log li.is-past::before{ border-color:#5FD1B8; background:#5FD1B8; }
+  .sc[data-s="8"] .fp-log li.is-now{ color:#fff; }
+  .sc[data-s="8"] .fp-log li.is-now::before{ border-color:#5FD1B8; background:#5FD1B8; }
+  .fp-res{ margin-top:10px; padding-top:10px; border-top:1px solid #24314A; }
+  .fp-res s{ color:#8FA0BE; font-size:12px; }
+  .fp-res b{ font-size:16px; font-weight:600; color:#5FD1B8; letter-spacing:-.01em; }
+  .fp-res small{ display:block; font-size:9px; color:#8B93A3; margin-top:2px; }
+
+  /* ---- coreografia (largo, 760×470) ---- */
+  .sc .a-tk{ left:160px; top:40px; width:440px; height:360px; }
+  .sc:is([data-s="1"],[data-s="2"],[data-s="3"]) .a-tk{ left:20px; }
+  .sc[data-s="4"] .a-tk{ left:20px; opacity:.1; transform:scale(.98); }
+  .sc:is([data-s="5"],[data-s="6"],[data-s="7"],[data-s="8"]) .a-tk{ left:20px; top:40px; width:210px; height:412px; }
+  .sc .a-sh{ left:476px; top:40px; width:264px; height:206px; opacity:0; transform:translateY(10px); }
+  .sc[data-s="1"] .a-sh{ opacity:1; transform:none; }
+  .sc .a-lp{ left:476px; top:262px; width:264px; opacity:0; transform:translateY(10px); }
+  .sc[data-s="1"] .a-lp{ opacity:1; transform:none; }
+  .sc .a-ex{ left:476px; top:40px; width:264px; opacity:0; transform:translateY(-8px); }
+  .sc:is([data-s="2"],[data-s="3"]) .a-ex{ opacity:1; transform:none; }
+  .sc .a-csv{ left:476px; top:346px; width:264px; opacity:0; }
+  .sc[data-s="2"] .a-csv{ opacity:1; }
+  .sc .a-res{ left:476px; top:346px; width:264px; opacity:0; transform:translateY(8px); }
+  .sc[data-s="3"] .a-res{ opacity:1; transform:none; }
+  .sc .gw.g-a{ left:380px; top:235px; } .sc .gw.g-b{ left:380px; top:235px; } .sc .gw.g-c{ left:380px; top:235px; } .sc .gw.g-d{ left:380px; top:235px; }
+  .sc[data-s="4"] .gw.g-a{ left:190px; top:120px; } .sc[data-s="4"] .gw.g-b{ left:560px; top:110px; }
+  .sc[data-s="4"] .gw.g-c{ left:220px; top:350px; } .sc[data-s="4"] .gw.g-d{ left:570px; top:360px; }
+  .sc.g5 .gw.g-a{ left:390px; top:180px; } .sc.g5 .gw.g-b{ left:390px; top:300px; } .sc.g5 .gw.g-c{ left:390px; top:70px; } .sc.g5 .gw.g-d{ left:640px; top:380px; }
+  .sc .a-dc{ left:246px; top:40px; width:290px; height:412px; opacity:0; transform:translateY(14px); }
+  .sc.g5 .a-dc{ opacity:1; transform:none; }
+  .sc .a-fp{ left:552px; top:40px; width:188px; height:412px; opacity:0; transform:translateX(12px); }
+  .sc.g5 .a-fp{ opacity:1; transform:none; }
+
+  /* ---- coreografia (estreito, 360×450) ---- */
+  .sc.nar .a-tk{ left:10px; top:10px; width:340px; height:300px; }
+  .sc.nar:is([data-s="1"],[data-s="2"]) .a-tk{ left:10px; height:168px; }
+  .sc.nar[data-s="3"] .a-tk{ left:10px; height:300px; }
+  .sc.nar[data-s="4"] .a-tk{ left:10px; height:300px; }
+  .sc.nar:is([data-s="5"],[data-s="6"],[data-s="7"],[data-s="8"]) .a-tk{ left:10px; top:10px; width:340px; height:72px; }
+  .sc.nar .a-sh{ left:10px; top:188px; width:340px; height:124px; }
+  .sc.nar .a-lp{ left:10px; top:322px; width:340px; }
+  .sc.nar .a-ex{ left:10px; top:188px; width:340px; }
+  .sc.nar .a-csv{ left:10px; top:398px; width:340px; }
+  .sc.nar[data-s="3"] .a-ex, .sc.nar[data-s="3"] .a-csv{ opacity:0; }
+  .sc.nar .a-res{ left:10px; top:326px; width:340px; }
+  .sc.nar .gw.g-a, .sc.nar .gw.g-b, .sc.nar .gw.g-c, .sc.nar .gw.g-d{ left:180px; top:225px; }
+  .sc.nar[data-s="4"] .gw.g-a{ left:95px; top:110px; } .sc.nar[data-s="4"] .gw.g-b{ left:255px; top:170px; }
+  .sc.nar[data-s="4"] .gw.g-c{ left:105px; top:300px; } .sc.nar[data-s="4"] .gw.g-d{ left:260px; top:360px; }
+  .sc.nar.g5 .gw{ left:120px !important; top:250px !important; }
+  .sc.nar .a-dc{ left:10px; top:92px; width:212px; height:348px; }
+  .sc.nar .a-fp{ left:230px; top:92px; width:120px; height:348px; padding:10px; }
+  .sc.nar .fp-tag, .sc.nar .fp-cfg small{ display:none; }
+  .sc.nar .dc{ padding:10px 11px; }
+  .sc.nar .rule{ font-size:7px; }
+  .sc.nar .tk-fp .tk-msg, .sc.nar .tk-fp .tgs{ display:none; }
+  .sc.nar .tk-fp .tk-sub{ font-size:12px; margin:1px 0 0; }
+  .sc.nar .tk-in{ padding:10px 12px; }
+  .sc.nar .lp ol{ grid-template-columns:1fr 1fr; }
+  .sc.nar .res b{ font-size:22px; }
+  .sc.nar .br-ln{ display:none; }
+  .sc.nar .tk-msg{ font-size:10.5px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+  .sc.nar .ex-bd{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:5px; }
+  .sc.nar .ex-bd > .btn, .sc.nar .ex-lbl, .sc.nar .ex-ft{ grid-column:1/-1; }
+  .sc.nar .ex-lbl{ margin:6px 0 0; }
+  .sc.nar .ex-f{ margin:0; padding:5px 7px; }
+  .sc.nar .ex-f em{ display:none; }
+  .sc.nar .ex-ft{ margin-top:4px; }
+  .sc.nar .dc-f.opt, .sc.nar .dc-sec.opt{ display:none; }
+  .sc.nar .dc-f label{ flex-wrap:wrap; row-gap:2px; font-size:8.5px; }
+  .sc.nar .fp-log li{ font-size:9px; padding:3px 0; }
+  .sc.nar .fp-id .fp-lbl{ display:none; }
+  .sc.nar .fp-res b{ font-size:14px; }
+  .sc.nar.g6 .fp-cfg, .sc.nar.g6 .cfg-l, .sc.nar .fp-res small{ display:none; }
+  .sc.nar .fp-log{ padding-top:6px; }
+
+  .story-ft{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:clamp(32px,5vw,72px); padding-block:clamp(56px,8vw,96px); border-top:1px solid var(--line); margin-top:clamp(40px,6vw,80px); }
+  .story-ft h3{ font-size:1.5rem; font-weight:600; letter-spacing:-.025em; margin:0 0 6px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .story-ft .when{ font-family:"Geist Mono",monospace; font-size:.75rem; color:var(--ink-3); margin-bottom:20px; display:block; }
+  .story-ft .result{ margin-top:22px; }
+  .story-ft .open{ margin-top:22px; }
+  .sub-open{ display:block; margin-top:10px; font-size:.875rem; color:var(--ink-3); transition:color .2s; }
+  .sub-open:hover{ color:var(--ink); }
+  .reuse{ grid-column:1/-1; display:grid; grid-template-columns:96px minmax(0,1fr); gap:16px; padding-top:28px; border-top:1px solid var(--line-2); }
+  .reuse p{ margin:0; font-size:1rem; color:var(--ink-2); line-height:1.6; max-width:78ch; }
+  @media (max-width:900px){
+    .story-grid{ grid-template-columns:1fr; gap:0; }
+    .story-stage{ grid-column:1; grid-row:1; top:56px; z-index:5; background:var(--bg); padding:10px 0 12px; margin-inline:calc(var(--gut) * -1); padding-inline:var(--gut); border-bottom:1px solid var(--line); }
+    .story-steps{ grid-row:2; }
+    .sb{ min-height:56vh; justify-content:flex-start; padding-block:28px 40px; }
+    .sb:first-child{ min-height:46vh; padding-top:28px; }
+    .sb:last-child{ min-height:60vh; }
+    .story-ft, .reuse{ grid-template-columns:1fr; }
+    .sf-wrap{ height:26px; margin-bottom:8px; }
+  }
+
+  /* ============================================================
+     SOBRE
+     ============================================================ */
+  .about-grid{ display:grid; grid-template-columns:minmax(0,4fr) minmax(0,8fr); gap:clamp(40px,6vw,96px); }
+  .about-grid .sec-hd{ margin:0; position:sticky; top:96px; align-self:start; }
+  .xp{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .xp > li{ display:grid; grid-template-columns:150px minmax(0,1fr); gap:24px; padding:32px 0; border-bottom:1px solid var(--line); }
+  .xp-when{ font-family:"Geist Mono",monospace; font-size:.8125rem; color:var(--ink-2); line-height:1.5; }
+  .xp-when span{ display:block; color:var(--ink-4); font-size:.75rem; }
+  .xp-co{ font-size:1.375rem; font-weight:600; letter-spacing:-.02em; margin:0 0 2px; display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .xp-role{ font-size:.9375rem; color:var(--ink-3); margin-bottom:12px; }
+  .xp p{ margin:0 0 10px; font-size:.9375rem; color:var(--ink-2); line-height:1.6; max-width:62ch; }
+  .xp .stack{ font-family:"Geist Mono",monospace; font-size:.75rem; color:var(--ink-3); margin-top:12px; }
+  .xp-fact{ display:flex; gap:12px; font-size:.9375rem; color:var(--ink-2); margin-top:12px; }
+  .xp-fact .k{ padding-top:3px; flex-shrink:0; }
+  .side-k{ margin:56px 0 0; padding-bottom:16px; border-bottom:1px solid var(--line); }
+  .side{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:0; }
+  .side > div{ padding:24px 24px 0 0; }
+  .side > div + div{ padding-left:24px; border-left:1px solid var(--line-2); }
+  .side b{ display:block; font-size:1rem; font-weight:600; letter-spacing:-.01em; }
+  .side .r{ display:block; font-size:.8125rem; color:var(--ink-3); margin:2px 0 8px; }
+  .side p{ margin:0; font-size:.875rem; color:var(--ink-2); line-height:1.55; }
+  .skills-k{ margin:72px 0 0; padding-bottom:16px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .skills-k span:last-child{ text-transform:none; letter-spacing:0; font-family:"Geist",sans-serif; font-size:.8125rem; }
+  .skills{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); }
+  .skills li{ padding:22px 20px 22px 0; border-bottom:1px solid var(--line-2); }
+  .skills b{ display:block; font-size:1rem; font-weight:600; letter-spacing:-.01em; margin-bottom:4px; }
+  .skills span{ font-family:"Geist Mono",monospace; font-size:.75rem; color:var(--ink-3); }
+  @media (max-width:900px){
+    .about-grid{ grid-template-columns:1fr; }
+    .about-grid .sec-hd{ position:static; }
+    .xp > li{ grid-template-columns:1fr; gap:10px; }
+    .side{ grid-template-columns:1fr; }
+    .side > div, .side > div + div{ padding:20px 0; border-left:0; border-bottom:1px solid var(--line-2); }
+    .skills{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width:520px){ .skills{ grid-template-columns:1fr; } }
+
+  /* ---------- contato ---------- */
+  .end{ text-align:center; padding-block:clamp(112px,16vw,200px); border-top:1px solid var(--line); }
+  .end-mark{ display:flex; justify-content:center; align-items:center; gap:0; margin:0 auto 40px; width:max-content; }
+  .end-mark i{ width:9px; height:9px; border-radius:50%; border:1.5px solid var(--ink-3); }
+  .end-mark i:last-child{ border-color:var(--green); background:var(--green); box-shadow:0 0 0 5px var(--green-2); }
+  .end-mark span{ width:56px; height:1px; background:var(--line); }
+  .end h2{ margin-inline:auto; max-width:20ch; }
+  .end .lede{ margin:0 auto 40px; }
+  .mail{ display:inline-flex; align-items:center; gap:10px; background:var(--ink); color:var(--bg); padding:14px 26px; border-radius:99px; font-size:1rem; font-weight:500; transition:transform .3s var(--ease), opacity .3s; }
+  .mail:hover{ opacity:.88; }
+  .mail-addr{ display:block; margin-top:16px; font-family:"Geist Mono",monospace; font-size:.8125rem; color:var(--ink-3); }
+  footer{ display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-block:28px 40px; border-top:1px solid var(--line); font-size:.8125rem; color:var(--ink-3); }
+  footer a:hover{ color:var(--ink); }
+
+  /* movimento reduzido: estados mudam, nada desliza */
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *, *::before, *::after{ transition-duration:.01ms !important; animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-delay:0s !important; animation-delay:0s !important; }
+  }
 </style>
 </head>
 <body>
-<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
+<a class="skip" href="#conteudo">Pular para o conteúdo</a>
 
-<nav class="top" aria-label="Navegação principal">
+<nav class="nav" aria-label="Navegação principal">
   <div class="nav-in">
-    <span class="nav-brand">Otto Canabrava</span>
+    <a class="brand" href="#topo" aria-label="Otto Canabrava — início"><span class="brand-mark" aria-hidden="true"><i></i></span><span class="brand-name">Otto Canabrava</span></a>
     <div class="nav-links">
-      <a href="#metodo">Método</a>
-      <a href="#projetos">Projetos</a>
-      <a href="#skills">Competências</a>
-      <a href="#experiencia">Experiência</a>
-      <a href="#contato">Contato</a>
+      <a href="#projetos">Sistemas</a>
+      <a href="#sobre">Sobre</a>
+      <a class="nav-cta" href="#contato">Contato</a>
     </div>
   </div>
 </nav>
 
-<div class="wrap" id="conteudo">
+<main id="conteudo">
 
-  <!-- ============ HERO ============ -->
-  <header class="hero">
-    <span class="eyebrow">Operações · Automação · Dados</span>
-    <h1>Transformo problemas operacionais em soluções de automação e <span class="hl">sistemas</span>.</h1>
-    <p class="dek">Entendo o processo, mapeio as regras e construo ferramentas que reduzem trabalho manual, organizam decisões e conectam sistemas. Python, SQL, IA e automação entram como meios para resolver problemas reais.</p>
-    <div class="hero-stats">
-      <div class="hstat"><div class="v">6</div><div class="l">soluções construídas, com problema real por trás</div></div>
-      <div class="hstat"><div class="v mono">Python · IA generativa · RPA</div><div class="l">stack aplicado nos sistemas abaixo</div></div>
-    </div>
-  </header>
+<!-- ============ HERO ============ -->
+<header class="hero" id="topo" data-hero>
+  <div class="wrap">
+    <span class="k">Otto Canabrava · Operações · Automação · Dados</span>
+    <h1><span class="dim">Transformo fluxos complexos</span> em sistemas simples.</h1>
 
-  <!-- ============ MÉTODO ============ -->
-  <section id="metodo" aria-labelledby="metodo-h">
-    <div class="sec-head">
-      <span class="kicker">Como eu penso</span>
-      <h2 id="metodo-h">De processo manual a sistema auditável</h2>
-      <p>Essa é a lógica por trás dos projetos abaixo — com graus diferentes de automação em cada um, mas a mesma sequência de raciocínio.</p>
-    </div>
-    <div class="flow">
-      <div class="fnode" tabindex="0"><div class="pt">01</div><div class="ft">Problema</div><div class="fc">processo manual, repetitivo, sem padrão</div></div>
-      <div class="fnode" tabindex="0"><div class="pt">02</div><div class="ft">Entendimento</div><div class="fc">mapeamento do fluxo real, regra a regra</div></div>
-      <div class="fnode" tabindex="0"><div class="pt">03</div><div class="ft">Lógica</div><div class="fc">regras de negócio estruturadas em módulos</div></div>
-      <div class="fnode" tabindex="0"><div class="pt">04</div><div class="ft">Sistema</div><div class="fc">arquitetura de núcleo + módulos</div></div>
-      <div class="fnode" tabindex="0"><div class="pt">05</div><div class="ft">Automação</div><div class="fc">o sistema executa sozinho</div></div>
-      <div class="fnode" tabindex="0"><div class="pt">06</div><div class="ft">Resultado</div><div class="fc">tempo devolvido para o time</div></div>
-    </div>
-  </section>
-
-  <!-- ============ PROJETOS ============ -->
-  <section id="projetos" aria-labelledby="projetos-h">
-    <div class="sec-head">
-      <span class="kicker">Prova concreta</span>
-      <h2 id="projetos-h">Projetos</h2>
-      <p>O que eu efetivamente construí — problema, solução, stack e resultado, quando há métrica real.</p>
+    <div class="hc" role="img" aria-label="Seis tarefas manuais dispersas se reorganizam na sequência Problema, Entendimento, Lógica, Sistema, Automação e Resultado.">
+      <svg aria-hidden="true"><g class="hc-edges"></g><path class="hc-run" pathLength="1"/></svg>
+      <div class="hn" style="--i:0"><span class="hn-dot"></span><span class="hn-a">portal a portal</span><span class="hn-b"><span class="k">01</span><b>Problema</b><small>processo manual, repetitivo, sem padrão</small></span></div>
+      <div class="hn" style="--i:1"><span class="hn-dot"></span><span class="hn-a">planilha em outra aba</span><span class="hn-b"><span class="k">02</span><b>Entendimento</b><small>mapeamento do fluxo real, regra a regra</small></span></div>
+      <div class="hn" style="--i:2"><span class="hn-dot"></span><span class="hn-a">4 fontes, todo dia</span><span class="hn-b"><span class="k">03</span><b>Lógica</b><small>regras de negócio estruturadas em módulos</small></span></div>
+      <div class="hn" style="--i:3"><span class="hn-dot"></span><span class="hn-a">ticket por ticket</span><span class="hn-b"><span class="k">04</span><b>Sistema</b><small>arquitetura de núcleo + módulos</small></span></div>
+      <div class="hn" style="--i:4"><span class="hn-dot"></span><span class="hn-a">campo a campo</span><span class="hn-b"><span class="k">05</span><b>Automação</b><small>o sistema executa sozinho</small></span></div>
+      <div class="hn" style="--i:5"><span class="hn-dot"></span><span class="hn-a">assinatura em outro fluxo</span><span class="hn-b"><span class="k">06</span><b>Resultado</b><small>tempo devolvido para o time</small></span></div>
     </div>
 
-    <div class="projects">
-
-      <!-- EXTRATOR DE FATURA -->
-      <article class="pcard">
-        <div class="pcard-info">
-          <div class="pcard-top">
-            <span class="pcard-dot" style="background:#2563EB;"></span>
-            <h3 class="pcard-name">Extrator de Fatura</h3>
-            <span class="pcard-status" style="background:var(--ok-soft);color:var(--ok);">Adotado pela equipe</span>
-          </div>
-          <div class="pfield"><div class="k">Problema</div><div class="v">Boletos e demonstrativos baixados manualmente, portal a portal, sem padrão de regra, estrutura ou nomenclatura.</div></div>
-          <div class="pfield"><div class="k">Solução</div><div class="v">Mapeei o fluxo, estruturei as regras numa arquitetura de núcleo e módulos, e construí uma ferramenta desktop que navega, extrai, padroniza e organiza os arquivos sozinha.</div></div>
-          <div class="ptags"><span class="ptag">Python</span><span class="ptag">Playwright</span><span class="ptag">RPA</span></div>
-          <div class="presult"><span class="rv" style="color:#0F7A5F;">2–4h / mês</span><span class="rl">economizadas por cliente, por analista</span></div>
-          <a class="pcta" href="/extrator-de-fatura/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
-        </div>
-        <div class="ppreview" style="background:#E3E6ED;">
-          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="pp-body"><div class="mini-extrator" data-xtr role="img" aria-label="Tela de fila e execução do Extrator de Fatura: fila de acessos e log de execução com progresso de 66%">
-            <div class="me-card">
-              <div class="me-head">Fila de acessos <span class="me-count">3 itens</span></div>
-              <div class="me-item"><div class="me-row"><span class="me-name">Estúdio Prisma</span><span class="me-badge done">concluído</span></div></div>
-              <div class="me-item"><div class="me-row"><span class="me-name">Metron Engenharia</span><span class="me-badge active" data-xtr-badge>em execução</span></div></div>
-              <div class="me-item"><div class="me-row"><span class="me-name">Copaíba Alimentos</span><span class="me-badge queued">na fila</span></div></div>
-            </div>
-            <div class="me-card me-exec">
-              <div class="me-head">Execução — Metron<span class="me-count">2 de 3</span></div>
-              <div class="me-log">
-                <div data-xtr-step><span class="t">12:04:06</span><span class="ok">login validado</span></div>
-                <div data-xtr-step><span class="t">12:04:11</span><span class="m">boleto localizado</span></div>
-                <div data-xtr-step><span class="t">12:04:13</span><span class="ok">arquivo salvo</span></div>
-              </div>
-              <div class="me-progress"><span class="lbl">progresso</span><div class="me-track"><div class="me-fill" data-xtr-fill></div></div><span class="lbl" data-xtr-pct>66%</span></div>
-            </div>
-          </div></div>
-        </div>
-      </article>
-
-      <!-- DAILY OPS DASHBOARD -->
-      <article class="pcard">
-        <div class="pcard-info">
-          <div class="pcard-top">
-            <span class="pcard-dot" style="background:#2563EB;"></span>
-            <h3 class="pcard-name">Daily Ops Dashboard</h3>
-            <span class="pcard-status" style="background:var(--ok-soft);color:var(--ok);">Em uso</span>
-          </div>
-          <div class="pfield"><div class="k">Problema</div><div class="v">Todo dia a equipe agregava manualmente Zendesk, HubSpot, Drive e bases de SLA para decidir por onde começar — sem um critério único de criticidade.</div></div>
-          <div class="pfield"><div class="k">Solução</div><div class="v">Painel 360 que consolida as 4 fontes com 14 regras de criticidade e gera automaticamente, toda manhã, um guia de priorização por analista (ou por time, para liderança): tickets a priorizar, faturas e bases por multibenefício (Vida, Academia, Mental, Pet, Farmácia) e calendário de prazos com particularidades por cliente.</div></div>
-          <div class="ptags"><span class="ptag">SQL · Snowflake</span><span class="ptag">IA generativa</span><span class="ptag">Zendesk · HubSpot · Drive</span></div>
-          <div class="presult"><span class="rv" style="color:#0F7A5F;">~30 min / dia</span><span class="rl">de agregação manual substituídos</span></div>
-          <a class="pcta" href="/daily-ops-dashboard/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
-        </div>
-        <div class="ppreview" style="background:#E3E6ED;">
-          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="pp-body"><div class="mini-ops" data-ops role="img" aria-label="SLA da carteira em 81% contra meta de 88%, e fila de tickets HubSpot priorizados por criticidade">
-            <div class="mo-card mo-sla">
-              <div class="me-head">SLA da carteira<span class="me-count">meta 88%</span></div>
-              <div class="mo-gauge">
-                <svg width="46" height="46" viewBox="0 0 78 78" aria-hidden="true">
-                  <circle cx="39" cy="39" r="31" fill="none" stroke="#DDE1EA" stroke-width="7"/>
-                  <circle data-ops-arc cx="39" cy="39" r="31" fill="none" stroke="#DC2626" stroke-width="7" stroke-dasharray="194.8" stroke-dashoffset="37" stroke-linecap="round"/>
-                </svg>
-                <div class="mo-gauge-txt"><span class="mo-pct" data-ops-pct>81%</span><span class="mo-sub">atual</span></div>
-              </div>
-              <div class="mo-rows">
-                <div class="mo-row"><span class="mo-dot" style="background:#DC2626;"></span><span class="mo-name">Terraverde Agro</span><span class="mo-bar"><span style="width:52%;background:#DC2626;"></span></span></div>
-                <div class="mo-row"><span class="mo-dot" style="background:#D97706;"></span><span class="mo-name">Meridian Logística</span><span class="mo-bar"><span style="width:74%;background:#D97706;"></span></span></div>
-                <div class="mo-row"><span class="mo-dot" style="background:#16A34A;"></span><span class="mo-name">Bluewave Capital</span><span class="mo-bar"><span style="width:91%;background:#16A34A;"></span></span></div>
-              </div>
-            </div>
-            <div class="mo-card mo-tix">
-              <div class="me-head">Tickets HubSpot<span class="me-count">4</span></div>
-              <div class="mo-ticket mo-crit"><span class="mo-prio">Crítico</span><div><div class="mo-subj">Revisão de cadastro corporativo</div><div class="mo-meta">Terraverde Agro S.A. · 8 dias</div></div></div>
-              <div class="mo-ticket mo-alta"><span class="mo-prio">Alta</span><div><div class="mo-subj">Atualização de dependentes</div><div class="mo-meta">Meridian Logística · 3 dias</div></div></div>
-            </div>
-          </div></div>
-        </div>
-      </article>
-
-      <!-- MOTOR DE TRIAGEM -->
-      <article class="pcard">
-        <div class="pcard-info">
-          <div class="pcard-top">
-            <span class="pcard-dot" style="background:#2563EB;"></span>
-            <h3 class="pcard-name">Motor de Triagem de Divergências</h3>
-            <span class="pcard-status" style="background:var(--ok-soft);color:var(--ok);">Recomendada para o time</span>
-          </div>
-          <div class="pfield"><div class="k">Problema</div><div class="v">Divergências entre backoffice e fatura eram checadas manualmente, ticket por ticket, sem histórico de duplicidades nem validação cruzada de CPF e data.</div></div>
-          <div class="pfield"><div class="k">Solução</div><div class="v">Diagnóstico com IA generativa: consolida os casos num painel único, identifica duplicidades e histórico de tratamento anterior, valida CPF e data de nascimento via integração com a Receita Federal (n8n) e automatiza a comparação linha a linha.</div></div>
-          <div class="ptags"><span class="ptag">IA generativa</span><span class="ptag">n8n · Receita Federal</span><span class="ptag">Validação de CPF/data</span></div>
-          <div class="presult"><span class="rv" style="color:#0F7A5F;">30–60 min → verificação direta</span><span class="rl">por ticket — aplicado a um backlog de ~200 tickets entre 8 analistas</span></div>
-          <a class="pcta" href="/motor-triagem/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
-        </div>
-        <div class="ppreview" style="background:#E3E6ED;">
-          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="pp-body"><div class="mini-diag" data-mtr role="img" aria-label="Diagnóstico de divergências do ticket Metalmix Componentes, comparando dados do sistema com a fatura linha a linha">
-            <div class="md-ticket">
-              <span class="md-id">TICKET #1247</span>
-              <div class="md-co">Metalmix Componentes S.A.</div>
-              <span class="md-badge">Novo</span>
-            </div>
-            <div class="md-progress"><span class="lbl">progresso</span><div class="me-track" style="background:#EEF0F4;"><div class="me-fill" data-mtr-fill style="width:20%;background:#16A34A;"></div></div><span class="lbl" data-mtr-count style="color:#8B93A3;">1 / 5</span></div>
-            <table class="md-table">
-              <thead><tr><th>Beneficiário</th><th>No sistema</th><th>Na fatura</th><th>Class.</th></tr></thead>
-              <tbody>
-                <tr><td>Fernanda L.</td><td>248.591.XXX-01</td><td class="bad">248.591.XXX-10</td><td><span class="md-tag red" data-mtr-tag>Verificar</span></td></tr>
-                <tr><td>Roberto P.</td><td>15/03/1985</td><td class="bad">15/03/1958</td><td><span class="md-tag amber" data-mtr-tag>Atenção</span></td></tr>
-                <tr><td>João T.</td><td>375.824.XXX-0</td><td>375.824.XXX-0</td><td><span class="md-tag green" data-mtr-tag>Pronto</span></td></tr>
-              </tbody>
-            </table>
-          </div></div>
-        </div>
-      </article>
-
-    </div>
-  </section>
-
-  <!-- ============ EVOLUÇÃO: TICKETSCRIPT → FORMPILOT ============ -->
-  <section aria-labelledby="evo-h">
-    <div class="evo-wrap">
-      <span class="evo-label" id="evo-h">Evolução de produto</span>
-      <p class="evo-intro">Um mesmo trabalho em duas etapas: o TicketScript resolveu a resposta padronizada no ticket; o FormPilot levou a mesma base para o formulário de movimentação e a assinatura.</p>
-      <div class="evo-row">
-        <div class="evo-card">
-          <span class="evo-step">Etapa 1 · fev–mai 2025</span>
-          <div class="evo-name">TicketScript <span class="ptag" style="font-size:.625rem;">Descontinuado</span></div>
-          <div class="pfield"><div class="k">Problema</div><div class="v">Cada ticket pedia uma resposta padronizada, escolhida numa planilha de operadora × tipo de problema × resolução. A consulta era manual, com troca de aba em todo atendimento — e a linha errada virava o script errado enviado ao cliente.</div></div>
-          <div class="pfield"><div class="k">Solução</div><div class="v">Extensão de navegador (Chrome/Edge) que lê o texto do ticket aberto, cruza com a planilha publicada em CSV por correspondência de prefixo e insere o script no campo de resposta quando o analista aciona. A planilha segue como fonte editável pelo time; nada roda em servidor.</div></div>
-          <div class="evo-tags"><span class="ptag">JavaScript · MV3</span><span class="ptag">Google Sheets (CSV)</span><span class="ptag">Sem backend</span></div>
-          <div class="evo-impact">
-            <div class="ei-item before"><span class="ei-val">4 passos</span><span class="ei-lbl">manuais por ticket</span></div>
-            <span class="ei-arrow">→</span>
-            <div class="ei-item after"><span class="ei-val">1 clique</span><span class="ei-lbl">usado em produção até dar lugar ao FormPilot</span></div>
-          </div>
-          <a class="evo-link" href="/ticketscript/">Ver o case →</a>
-        </div>
-        <div class="evo-arrow" aria-hidden="true"><span class="ar">→</span><span class="lbl">evoluiu para</span></div>
-        <div class="evo-card">
-          <span class="evo-step">Etapa 2</span>
-          <div class="evo-name">FormPilot <span class="ptag" style="font-size:.625rem;">Em uso pelo time</span></div>
-          <div class="pfield"><div class="k">Problema</div><div class="v">O esforço maior estava nas movimentações: cada inclusão, exclusão ou alteração exigia localizar o formulário da operadora, preencher campo a campo e enviar para assinatura num fluxo separado. E a extensão precisava ser instalada no navegador de cada analista.</div></div>
-          <div class="pfield"><div class="k">Solução</div><div class="v">App nativo no Zendesk (ZAF), sem backend próprio. Lê os dados estruturados do ticket, usa a configuração da operadora (JSON) para estampar os campos no PDF via pdf-lib e envia para assinatura via Adobe Sign — com o segredo OAuth guardado num proxy n8n.</div></div>
-          <div class="evo-roles">
-            <div><span class="k">Configuração</span>uma vez por operadora, sem alterar código</div>
-            <div><span class="k">Automação</span>leitura do ticket, preenchimento e envio</div>
-            <div><span class="k">Revisão humana</span>antes de cada envio</div>
-          </div>
-          <div class="evo-tags"><span class="ptag">ZAF</span><span class="ptag">pdf-lib</span><span class="ptag">Adobe Sign API · n8n</span></div>
-          <div class="evo-impact">
-            <div class="ei-item before"><span class="ei-val">10–20 min</span><span class="ei-lbl">processo manual por movimentação</span></div>
-            <span class="ei-arrow">→</span>
-            <div class="ei-item after"><span class="ei-val">~2 min</span><span class="ei-lbl">revisão + geração por movimentação, já configurada</span></div>
-          </div>
-          <div class="evo-links">
-            <a class="evo-link" href="/formpilot/">Ver o case →</a>
-            <a class="evo-sublink" href="/formpilot/#mapeamento">↳ FormPilot Studio: demonstração conceitual da etapa de configuração, dentro do case</a>
-          </div>
-        </div>
+    <div class="hero-ctrl">
+      <div class="seg" role="group" aria-label="Estado do fluxo">
+        <button type="button" data-mode="0" aria-pressed="true">Manual</button>
+        <button type="button" data-mode="1" aria-pressed="false">Sistema</button>
       </div>
-      <div class="evo-preview" data-evp role="img" aria-label="Fila de chamados do Zendesk, o chamado de inclusão de titular aberto, e o painel do FormPilot identificando operadora, movimentação e beneficiário antes de gerar o formulário">
-        <div class="evp-col evp-queue">
-          <div class="evp-hd">fila de chamados</div>
-          <div class="evp-item on"><span class="evp-id">#4821 · hoje, 09:14</span><div class="evp-subj">Inclusão de titular — Vitalis Saúde</div><span class="evp-co">Nordeste Componentes Ltda</span></div>
-          <div class="evp-item"><span class="evp-id">#4835 · ontem, 16:47</span><div class="evp-subj">Exclusão de dependente — Amparo Seguros</div><span class="evp-co">Grão Fino Alimentos S.A.</span></div>
-        </div>
-        <div class="evp-col evp-ticket">
-          <div class="evp-chrome"><span></span><span></span><span></span><span class="evp-url">atendimento.verobeneficios.com.br/chamados/4821</span></div>
-          <div class="evp-tid">#4821 · MOV-2026-04821</div>
-          <div class="evp-tsub">Inclusão de titular — Vitalis Saúde</div>
-          <div class="evp-tbody">RH — Nordeste Componentes<br>"Precisamos incluir a colaboradora Marina Torres Almeida no plano titular da Vitalis Saúde."</div>
-        </div>
-        <div class="evp-col evp-panel">
-          <div class="evp-brand"><span class="evp-ico">F</span>FormPilot</div>
-          <div class="evp-lbl">Identificado</div>
-          <div class="evp-field" data-evp-field>Operadora<b>Vitalis Saúde <span data-evp-check>✓</span></b></div>
-          <div class="evp-field" data-evp-field>Movimentação<b>Inclusão de titular <span data-evp-check>✓</span></b></div>
-          <div class="evp-field" data-evp-field>Beneficiário<b>Marina T. Almeida <span data-evp-check>✓</span></b></div>
-          <div class="evp-btn" data-evp-btn>Gerar formulário</div>
-        </div>
-      </div>
-      <p class="evo-note"><b>O que foi reaproveitado:</b> a arquitetura sem backend, o matching por prefixo e as respostas rápidas configuráveis do TicketScript viraram a base técnica do FormPilot — não são dois projetos independentes, é um produto que passou por um segundo ciclo de aprendizado.</p>
+      <p class="hero-cap" data-cap0="<b>Antes:</b> o trabalho manual que os sistemas abaixo substituíram." data-cap1="<b>Depois:</b> a mesma sequência de raciocínio por trás de cada um deles."><b>Antes:</b> o trabalho manual que os sistemas abaixo substituíram.</p>
     </div>
-  </section>
 
-  <!-- ============ DOCUMENTOS VERIFICÁVEIS ============ -->
-  <section aria-label="Documentos Verificáveis">
-    <div class="projects">
-      <article class="pcard">
-        <div class="pcard-info">
-          <div class="pcard-top">
-            <span class="pcard-dot" style="background:#2563EB;"></span>
-            <h3 class="pcard-name">Documentos Verificáveis</h3>
-            <span class="pcard-status" style="background:var(--surface-2);color:var(--text-muted);">Implementação técnica</span>
-          </div>
-          <div class="pfield"><div class="k">Problema</div><div class="v">Certificados e declarações de uma escola de cursos livres precisavam ser conferidos por terceiros, como as empresas clientes que acompanham os documentos dos funcionários, sem expor CPF, RG ou endereço dos alunos.</div></div>
-          <div class="pfield"><div class="k">Solução</div><div class="v">Emissão dos PDFs a partir de uma planilha do Google, cada um com ID aleatório e QR code para uma página pública que mostra só os dados públicos e se o documento continua válido. Uma especificação, duas implementações: Python e n8n.</div></div>
-          <div class="ptags"><span class="ptag">Python · Flask · ReportLab</span><span class="ptag">n8n</span><span class="ptag">Google Sheets</span></div>
-          <div class="presult"><span class="rv">5 tipos de documento</span><span class="rl">com ID, QR code e validação pública · dados fictícios</span></div>
-          <a class="pcta" href="/documentos-verificaveis/" style="background:var(--accent-soft);color:var(--accent-ink);">Ver o case →</a>
-        </div>
-        <div class="ppreview" style="background:#E3E6ED;">
-          <div class="pp-chrome" aria-hidden="true"><span></span><span></span><span></span></div>
-          <div class="pp-body"><div class="mini-dv" data-dv role="img" aria-label="Certificado fictício de Maria Exemplo da Silva com QR code, ao lado da página de validação mostrando documento válido">
-            <div class="dv-cert">
-              <div class="dv-band"><div class="dv-t">CERTIFICADO DE CONCLUSÃO</div><div class="dv-n">Maria Exemplo da Silva</div><div class="dv-c">COMUNICAÇÃO NÃO VIOLENTA</div></div>
-              <div class="dv-foot"><span class="dv-id">ID de validação: k7Qm2xPz9aBc</span><img class="dv-qr" data-dv-qr src="/documentos-verificaveis/img/qr-k7Qm2xPz9aBc.svg" alt="" width="24" height="24"></div>
-            </div>
-            <div class="dv-val">
-              <div class="dv-vh">VALIDAÇÃO DE DOCUMENTOS</div>
-              <div class="dv-card" data-dv-res>
-                <div class="dv-ok">✓ Documento válido</div>
-                <div class="dv-row">Curso<b>Comunicação Não Violenta</b></div>
-                <div class="dv-row">Carga horária<b>20 horas</b></div>
-                <div class="dv-row">Emissão<b>15/03/2026</b></div>
-              </div>
-            </div>
-          </div></div>
-        </div>
-      </article>
-    </div>
-  </section>
+    <p class="lede">Entendo o processo, mapeio as regras e construo ferramentas que reduzem trabalho manual, organizam decisões e conectam sistemas. Python, SQL, IA e automação entram como meios para resolver problemas reais.</p>
 
-  <!-- ============ SKILLS ============ -->
-  <section id="skills" aria-labelledby="skills-h">
-    <div class="sec-head">
-      <span class="kicker">Ferramentas reais, não uma lista de buzzwords</span>
-      <h2 id="skills-h">Competências</h2>
-      <p>Só o que está de fato demonstrado nos projetos acima.</p>
+    <div class="facts">
+      <div><div class="v">6 sistemas</div><div class="l">construídos, cada um com um problema real por trás</div></div>
+      <div><div class="v mono" style="font-size:.9375rem;font-weight:500;">Python · IA generativa · RPA</div><div class="l">stack aplicado nos sistemas abaixo</div></div>
+      <a class="go" href="#projetos"><div class="v">Explorar os sistemas ↓</div><div class="l">entradas, etapas e resultado de cada um</div></a>
     </div>
-    <div class="skills-grid">
-      <div class="skill"><div class="sn">Automação de processos</div><div class="se">Python, Playwright, RPA</div></div>
-      <div class="skill"><div class="sn">IA aplicada a dados</div><div class="se">agente validador, integração n8n</div></div>
-      <div class="skill"><div class="sn">Sistemas operacionais</div><div class="se">priorização e cruzamento de sinais</div></div>
-      <div class="skill"><div class="sn">Estruturação de regras de negócio</div><div class="se">de processo manual a lógica de módulos</div></div>
-      <div class="skill"><div class="sn">Evolução de produto</div><div class="se">de extensão solo a painel integrado</div></div>
-      <div class="skill"><div class="sn">Resolução de problemas</div><div class="se">desenho de ferramentas para uso do próprio time</div></div>
-    </div>
-  </section>
+  </div>
+</header>
 
-  <!-- ============ EXPERIÊNCIA ============ -->
-  <section id="experiencia" aria-labelledby="exp-h">
-    <div class="sec-head">
-      <span class="kicker">Trajetória</span>
-      <h2 id="exp-h">Experiência</h2>
-      <p>Experiência prática construída entre operações, tecnologia, automação e sistemas.</p>
+<!-- ============ MAPA DOS SISTEMAS ============ -->
+<section class="sec" id="projetos" aria-labelledby="map-h" style="padding-top:clamp(72px,10vw,128px);">
+  <div class="wrap">
+    <div class="sec-hd">
+      <span class="k">Sistemas · 06</span>
+      <h2 class="t2" id="map-h">O que entra, o que foi construído, <span class="dim">o que sai.</span></h2>
+      <p class="lede">Cada sistema parte de fontes que a operação já usava. Passe por uma entrada ou por um sistema para ver como as partes se conectam.</p>
     </div>
-    <div class="xp">
-      <ol class="xp-line">
-        <li class="xp-item now">
-          <div class="xp-when">abr 2022 — atual<span>remoto</span></div>
-          <div class="xp-body">
-            <div class="xp-head"><h3 class="xp-co">Pipo Saúde</h3><span class="xp-now">Atual</span></div>
-            <div class="xp-role">Analista de Operações Pleno</div>
-            <p class="xp-ctx">Operações de benefícios corporativos B2B numa healthtech, na interface entre áreas de negócio, TI e operadoras de saúde.</p>
-            <div class="ptags"><span class="ptag">Mapeamento de processos · BPMN</span><span class="ptag">Requisitos e regras de negócio</span><span class="ptag">Automação e IA na operação</span></div>
-            <p class="xp-fact"><span class="k">Atuação</span><span>Construção e evolução de soluções de automação e sistemas internos. Promovido a Pleno por performance.</span></p>
-          </div>
-        </li>
-        <li class="xp-item">
-          <div class="xp-when">out 2017 — abr 2022<span>Maringá, PR</span></div>
-          <div class="xp-body">
-            <div class="xp-head"><h3 class="xp-co">VincIT · UNICIV</h3></div>
-            <div class="xp-role">Analista de Sistemas Acadêmicos e Administrativo</div>
-            <p class="xp-ctx">Centro de inovação de uma instituição de ensino — de estágio a analista, com a responsabilidade administrativa da área.</p>
-            <div class="ptags"><span class="ptag">Sistemas acadêmicos</span><span class="ptag">Implantação de AVA · Moodle</span><span class="ptag">Credenciamento MEC</span></div>
-            <p class="xp-fact"><span class="k">MEC</span><span>Conceito 5 na abertura dos cursos.</span></p>
-          </div>
-        </li>
+
+    <div class="map" data-map>
+      <svg class="map-lines" aria-hidden="true"></svg>
+      <div class="map-hd"><span class="k">Entradas</span><span class="k">Sistema · etapas → saída</span></div>
+      <ul class="src-l" aria-label="Entradas">
+        <li class="src" data-src="portais" tabindex="0">Portais <span class="port"></span></li>
+        <li class="src" data-src="hubspot" tabindex="0">HubSpot <span class="port"></span></li>
+        <li class="src" data-src="zendesk" tabindex="0">Zendesk <span class="port"></span></li>
+        <li class="src" data-src="drive" tabindex="0"><span>Drive <small>· bases de SLA</small></span> <span class="port"></span></li>
+        <li class="src" data-src="backoffice" tabindex="0"><span>Backoffice <small>× fatura</small></span> <span class="port"></span></li>
+        <li class="src" data-src="receita" tabindex="0"><span>Receita Federal <small>· n8n</small></span> <span class="port"></span></li>
+        <li class="src" data-src="sheets" tabindex="0">Google Sheets <span class="port"></span></li>
+        <li class="src" data-src="pdfs" tabindex="0">PDFs das operadoras <span class="port"></span></li>
+      </ul>
+      <ol class="sys-l">
+        <li class="sys" data-sys="extrator" data-in="portais"><a href="#extrator">
+          <span class="port"></span><span class="sys-n mono">01</span>
+          <span><span class="sys-name">Extrator de Fatura</span><span class="sys-flow mono">navegar → extrair → padronizar → organizar</span></span>
+          <span class="sys-out"><span class="k">saída</span>boletos e demonstrativos padronizados</span>
+          <span class="sys-in mono">← Portais</span>
+          <span class="sys-ar" aria-hidden="true">→</span></a></li>
+        <li class="sys" data-sys="dailyops" data-in="zendesk hubspot drive"><a href="#daily-ops">
+          <span class="port"></span><span class="sys-n mono">02</span>
+          <span><span class="sys-name">Daily Ops Dashboard</span><span class="sys-flow mono">4 fontes → 14 regras → 1 guia</span></span>
+          <span class="sys-out"><span class="k">saída</span>guia de priorização, toda manhã</span>
+          <span class="sys-in mono">← Zendesk · HubSpot · Drive · bases de SLA</span>
+          <span class="sys-ar" aria-hidden="true">→</span></a></li>
+        <li class="sys" data-sys="motor" data-in="backoffice receita"><a href="#motor">
+          <span class="port"></span><span class="sys-n mono">03</span>
+          <span><span class="sys-name">Motor de Triagem de Divergências</span><span class="sys-flow mono">consolidar → validar → comparar</span></span>
+          <span class="sys-out"><span class="k">saída</span>diagnóstico linha a linha, por ticket</span>
+          <span class="sys-in mono">← Backoffice × fatura · Receita Federal (n8n)</span>
+          <span class="sys-ar" aria-hidden="true">→</span></a></li>
+        <li class="sys" data-sys="ticketscript" data-in="zendesk sheets"><a href="#evolucao">
+          <span class="port"></span><span class="sys-n mono">04</span>
+          <span><span class="sys-name">TicketScript</span><span class="sys-flow mono">ler o ticket → cruzar → inserir</span></span>
+          <span class="sys-out"><span class="k">saída</span>resposta padronizada no ticket</span>
+          <span class="sys-in mono">← Zendesk · Google Sheets</span>
+          <span class="sys-ar" aria-hidden="true">→</span></a></li>
+        <li class="sys" data-sys="formpilot" data-in="zendesk pdfs"><a href="#formpilot">
+          <span class="port"></span><span class="sys-n mono">05</span>
+          <span><span class="sys-name">FormPilot <span class="sys-evo">evoluiu do 04</span></span><span class="sys-flow mono">mapear → preencher → validar → assinar</span></span>
+          <span class="sys-out"><span class="k">saída</span>formulário pronto para assinatura</span>
+          <span class="sys-in mono">← Zendesk · PDFs das operadoras</span>
+          <span class="sys-ar" aria-hidden="true">→</span></a></li>
+        <li class="sys" data-sys="docs" data-in="sheets"><a href="#documentos">
+          <span class="port"></span><span class="sys-n mono">06</span>
+          <span><span class="sys-name">Documentos Verificáveis</span><span class="sys-flow mono">planilha → PDF + ID → QR → validação</span></span>
+          <span class="sys-out"><span class="k">saída</span>documento que terceiros conferem sozinhos</span>
+          <span class="sys-in mono">← Google Sheets</span>
+          <span class="sys-ar" aria-hidden="true">→</span></a></li>
       </ol>
+    </div>
+  </div>
+</section>
 
-      <div class="xp-side">
-        <h3 class="xp-side-k">Em paralelo · atuação independente</h3>
-        <div class="xp-side-grid">
-          <div class="xp-mini">
-            <div class="xp-mini-co">UPCIV Idiomas</div>
-            <div class="xp-mini-role">Consultor de Tecnologia <span>· 2023 — 2025</span></div>
-            <p>Implantação de LMS com Moodle e do funil comercial em HubSpot para uma escola de idiomas.</p>
+<div class="chapters">
+<div class="wrap">
+
+<!-- ============ 01 EXTRATOR DE FATURA ============ -->
+<article class="ch stg" id="extrator" data-flow data-p="25,50,75,100" aria-labelledby="x-h">
+  <div class="ch-text">
+    <div class="ch-meta"><span class="k">01</span><span class="status">Adotado pela equipe</span></div>
+    <h3 id="x-h">Extrator de Fatura</h3>
+    <p class="ch-thesis">Boletos baixados portal a portal viram uma fila que navega, extrai, padroniza e organiza sozinha.</p>
+    <dl class="spec">
+      <div><dt>Problema</dt><dd>Boletos e demonstrativos baixados manualmente, portal a portal, sem padrão de regra, estrutura ou nomenclatura.</dd></div>
+      <div><dt>Sistema</dt><dd>Mapeei o fluxo, estruturei as regras numa arquitetura de núcleo e módulos, e construí uma ferramenta desktop que navega, extrai, padroniza e organiza os arquivos sozinha.</dd></div>
+      <div><dt>Stack</dt><dd class="stack">Python · Playwright · RPA</dd></div>
+    </dl>
+    <div class="result"><span class="v">2–4h / mês</span><span class="l">economizadas por cliente, por analista</span></div>
+    <a class="open" href="/extrator-de-fatura/">Abrir o case <span>→</span></a>
+  </div>
+  <div class="ch-run">
+    <ol class="flow" style="--n:4" aria-label="Etapas do Extrator de Fatura">
+      <li><button class="fs" type="button" data-k="0" data-cap="O módulo do portal faz login e navega até o documento."><span class="fs-dot"></span><span class="fs-k">Navegar</span></button></li>
+      <li><button class="fs" type="button" data-k="1" data-cap="Boleto localizado e baixado, sem intervenção."><span class="fs-dot"></span><span class="fs-k">Extrair</span></button></li>
+      <li><button class="fs" type="button" data-k="2" data-cap="O núcleo aplica a mesma nomenclatura a qualquer portal."><span class="fs-dot"></span><span class="fs-k">Padronizar</span></button></li>
+      <li><button class="fs" type="button" data-k="3" data-cap="Arquivo salvo na pasta certa, com relatório da execução."><span class="fs-dot"></span><span class="fs-k">Organizar</span></button></li>
+    </ol>
+    <div class="flow-cap"><p class="cap-t">O módulo do portal faz login e navega até o documento.</p><button class="replay" type="button">↺ Rever</button></div>
+    <div class="screen" aria-hidden="true">
+      <div class="ux-x">
+        <div class="card x-q">
+          <div class="card-hd">Fila de acessos <span class="mono">3 itens</span></div>
+          <div class="row">Estúdio Prisma <span class="badge b-done">concluído</span></div>
+          <div class="row is-cur">Metron Engenharia <span class="swap"><span class="badge b-run t3">em execução</span><span class="badge b-done f3">concluído</span></span></div>
+          <div class="row">Copaíba Alimentos <span class="badge b-q">na fila</span></div>
+        </div>
+        <div class="card x-run">
+          <div class="card-hd">Execução — Metron <span class="mono">2 de 3</span></div>
+          <ul class="x-log">
+            <li><span class="t">12:04:06</span><span class="ok">login validado</span></li>
+            <li class="f1"><span class="t">12:04:11</span><span class="m">boleto localizado</span></li>
+            <li class="f2"><span class="t">12:04:12</span><span class="m">nome padronizado</span></li>
+            <li class="f3"><span class="t">12:04:13</span><span class="ok">arquivo salvo</span></li>
+          </ul>
+          <div class="x-prog">progresso <div class="bar"><i></i></div><span data-pct>25%</span></div>
+        </div>
+        <div class="card x-tree f3">
+          <div>downloads/</div>
+          <div>Zelohub Fictício/</div>
+          <div>Metron Engenharia/saúde/2026-08/</div>
+          <div>boletos/ · relatorio.csv <span class="badge b-done">ok</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ch-text-b">
+      <dl class="spec" style="margin-top:40px;">
+        <div><dt>Problema</dt><dd>Boletos e demonstrativos baixados manualmente, portal a portal, sem padrão de regra, estrutura ou nomenclatura.</dd></div>
+        <div><dt>Sistema</dt><dd>Mapeei o fluxo, estruturei as regras numa arquitetura de núcleo e módulos, e construí uma ferramenta desktop que navega, extrai, padroniza e organiza os arquivos sozinha.</dd></div>
+        <div><dt>Stack</dt><dd class="stack">Python · Playwright · RPA</dd></div>
+      </dl>
+      <div class="result"><span class="v">2–4h / mês</span><span class="l">economizadas por cliente, por analista</span></div>
+      <a class="open" href="/extrator-de-fatura/">Abrir o case <span>→</span></a>
+    </div>
+  </div>
+</article>
+
+<!-- ============ 02 DAILY OPS DASHBOARD ============ -->
+<article class="ch stg" id="daily-ops" data-flow data-p="0,0,81,81" aria-labelledby="o-h">
+  <div class="ch-text">
+    <div class="ch-meta"><span class="k">02</span><span class="status">Em uso</span></div>
+    <h3 id="o-h">Daily Ops Dashboard</h3>
+    <p class="ch-thesis">Quatro fontes agregadas à mão, todo dia, convergem num único guia de onde começar.</p>
+    <dl class="spec">
+      <div><dt>Problema</dt><dd>Todo dia a equipe agregava manualmente Zendesk, HubSpot, Drive e bases de SLA para decidir por onde começar — sem um critério único de criticidade.</dd></div>
+      <div><dt>Sistema</dt><dd>Painel 360 que consolida as 4 fontes com 14 regras de criticidade e gera automaticamente, toda manhã, um guia de priorização por analista (ou por time, para liderança): tickets a priorizar, faturas e bases por multibenefício (Vida, Academia, Mental, Pet, Farmácia) e calendário de prazos com particularidades por cliente.</dd></div>
+      <div><dt>Stack</dt><dd class="stack">SQL · Snowflake · IA generativa · Zendesk · HubSpot · Drive</dd></div>
+    </dl>
+    <div class="result"><span class="v">~30 min / dia</span><span class="l">de agregação manual substituídos</span></div>
+    <a class="open" href="/daily-ops-dashboard/">Abrir o case <span>→</span></a>
+  </div>
+  <div class="ch-run">
+    <ol class="flow" style="--n:4" aria-label="Etapas do Daily Ops Dashboard">
+      <li><button class="fs" type="button" data-k="0" data-cap="Zendesk, HubSpot, Drive e bases de SLA, consolidados num só lugar."><span class="fs-dot"></span><span class="fs-k">Consolidar</span></button></li>
+      <li><button class="fs" type="button" data-k="1" data-cap="14 regras de criticidade aplicadas a cada caso."><span class="fs-dot"></span><span class="fs-k">Classificar</span></button></li>
+      <li><button class="fs" type="button" data-k="2" data-cap="Tickets, faturas e bases ordenados por analista — ou por time, para liderança."><span class="fs-dot"></span><span class="fs-k">Priorizar</span></button></li>
+      <li><button class="fs" type="button" data-k="3" data-cap="Toda manhã, o guia chega pronto, sem agregação manual."><span class="fs-dot"></span><span class="fs-k">Entregar</span></button></li>
+    </ol>
+    <div class="flow-cap"><p class="cap-t">Zendesk, HubSpot, Drive e bases de SLA, consolidados num só lugar.</p><button class="replay" type="button">↺ Rever</button></div>
+    <div class="screen" aria-hidden="true">
+      <div class="ux-o">
+        <div class="o-src">
+          <div><span>Zendesk</span></div>
+          <div><span>HubSpot</span></div>
+          <div><span>Drive</span></div>
+          <div><span>Bases de SLA</span></div>
+        </div>
+        <svg class="o-wire w1" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <path pathLength="1" d="M0 12.5 C55 12.5 45 50 100 50"/>
+          <path pathLength="1" d="M0 37.5 C55 37.5 45 50 100 50"/>
+          <path pathLength="1" d="M0 62.5 C55 62.5 45 50 100 50"/>
+          <path pathLength="1" d="M0 87.5 C55 87.5 45 50 100 50"/>
+        </svg>
+        <div class="o-mid"><div class="o-rule"><b>14</b><small>regras de criticidade</small></div></div>
+        <svg class="o-wire w2" viewBox="0 0 100 100" preserveAspectRatio="none"><path pathLength="1" d="M0 50 H100"/></svg>
+        <div class="card o-guide">
+          <div class="card-hd"><span class="swap"><span class="t3">Fila do dia</span><span class="f3">Guia do dia · por analista</span></span> <span class="mono f3">gerado automaticamente</span></div>
+          <div class="o-gauge f2">
+            <svg width="44" height="44" viewBox="0 0 78 78"><circle cx="39" cy="39" r="31" fill="none" stroke="#DDE1EA" stroke-width="7"/><circle class="arc" cx="39" cy="39" r="31" fill="none" stroke="#DC2626" stroke-width="7" stroke-dasharray="194.8" stroke-linecap="round" transform="rotate(-90 39 39)"/></svg>
+            <div><div class="o-pct"><span data-pct>0</span>%</div><div class="o-sub">SLA da carteira · meta 88%</div></div>
           </div>
-          <div class="xp-mini">
-            <div class="xp-mini-co">Turing</div>
-            <div class="xp-mini-role">Avaliador de Modelos de IA</div>
-            <p>Avaliação comparativa de prompts e outputs entre modelos de IA, com foco em qualidade e consistência.</p>
+          <div class="o-tk"><span class="prio p-crit">Crítico</span><div><div class="o-subj">Revisão de cadastro corporativo</div><div class="o-meta">Terraverde Agro S.A. · 8 dias</div></div></div>
+          <div class="o-tk"><span class="prio p-alta">Alta</span><div><div class="o-subj">Atualização de dependentes</div><div class="o-meta">Meridian Logística · 3 dias</div></div></div>
+          <div class="o-ben f2"><span>Vida</span><span>Academia</span><span>Mental</span><span>Pet</span><span>Farmácia</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ch-text-b">
+      <dl class="spec" style="margin-top:40px;">
+        <div><dt>Problema</dt><dd>Todo dia a equipe agregava manualmente Zendesk, HubSpot, Drive e bases de SLA para decidir por onde começar — sem um critério único de criticidade.</dd></div>
+        <div><dt>Sistema</dt><dd>Painel 360 que consolida as 4 fontes com 14 regras de criticidade e gera automaticamente, toda manhã, um guia de priorização por analista (ou por time, para liderança): tickets a priorizar, faturas e bases por multibenefício (Vida, Academia, Mental, Pet, Farmácia) e calendário de prazos com particularidades por cliente.</dd></div>
+        <div><dt>Stack</dt><dd class="stack">SQL · Snowflake · IA generativa · Zendesk · HubSpot · Drive</dd></div>
+      </dl>
+      <div class="result"><span class="v">~30 min / dia</span><span class="l">de agregação manual substituídos</span></div>
+      <a class="open" href="/daily-ops-dashboard/">Abrir o case <span>→</span></a>
+    </div>
+  </div>
+</article>
+
+<!-- ============ 03 MOTOR DE TRIAGEM ============ -->
+<article class="ch stg" id="motor" data-flow data-p="0,0,0,20" aria-labelledby="m-h">
+  <div class="ch-text">
+    <div class="ch-meta"><span class="k">03</span><span class="status">Recomendada para o time</span></div>
+    <h3 id="m-h">Motor de Triagem de Divergências</h3>
+    <p class="ch-thesis">A conferência ticket por ticket vira um diagnóstico em que cada linha já chega classificada.</p>
+    <dl class="spec">
+      <div><dt>Problema</dt><dd>Divergências entre backoffice e fatura eram checadas manualmente, ticket por ticket, sem histórico de duplicidades nem validação cruzada de CPF e data.</dd></div>
+      <div><dt>Sistema</dt><dd>Diagnóstico com IA generativa: consolida os casos num painel único, identifica duplicidades e histórico de tratamento anterior, valida CPF e data de nascimento via integração com a Receita Federal (n8n) e automatiza a comparação linha a linha.</dd></div>
+      <div><dt>Stack</dt><dd class="stack">IA generativa · n8n · Receita Federal · validação de CPF/data</dd></div>
+    </dl>
+    <div class="result"><span class="v">30–60 min → verificação direta</span><span class="l">por ticket — aplicado a um backlog de ~200 tickets entre 8 analistas</span></div>
+    <a class="open" href="/motor-triagem/">Abrir o case <span>→</span></a>
+  </div>
+  <div class="ch-run">
+    <ol class="flow" style="--n:4" aria-label="Etapas do Motor de Triagem">
+      <li><button class="fs" type="button" data-k="0" data-cap="Os casos de divergência reunidos num painel único."><span class="fs-dot"></span><span class="fs-k">Consolidar</span></button></li>
+      <li><button class="fs" type="button" data-k="1" data-cap="Duplicidades e tratamento anterior identificados antes de começar."><span class="fs-dot"></span><span class="fs-k">Histórico</span></button></li>
+      <li><button class="fs" type="button" data-k="2" data-cap="CPF e data de nascimento validados na Receita Federal, via n8n."><span class="fs-dot"></span><span class="fs-k">Validar</span></button></li>
+      <li><button class="fs" type="button" data-k="3" data-cap="Sistema × fatura, linha a linha: cada beneficiário sai classificado."><span class="fs-dot"></span><span class="fs-k">Comparar</span></button></li>
+    </ol>
+    <div class="flow-cap"><p class="cap-t">Os casos de divergência reunidos num painel único.</p><button class="replay" type="button">↺ Rever</button></div>
+    <div class="screen" aria-hidden="true">
+      <div class="m-hd"><span class="m-id">TICKET #1247</span><span class="m-co">Metalmix Componentes S.A.</span><span class="badge b-run">Novo</span></div>
+      <div class="m-checks">
+        <span class="chk c0">painel único</span>
+        <span class="chk c1">duplicidades · histórico</span>
+        <span class="chk c2">Receita Federal · n8n</span>
+        <span class="chk c3">sistema × fatura</span>
+      </div>
+      <table class="m-tb">
+        <thead><tr><th>Beneficiário</th><th>No sistema</th><th>Na fatura</th><th>Class.</th></tr></thead>
+        <tbody>
+          <tr><td>Fernanda L.</td><td class="v">248.591.XXX-01</td><td class="v bad">248.591.XXX-10</td><td><span class="swap"><span class="tag t3">aguardando</span><span class="tag tag-r f3">Verificar</span></span></td></tr>
+          <tr><td>Roberto P.</td><td class="v">15/03/1985</td><td class="v bad">15/03/1958</td><td><span class="swap"><span class="tag t3">aguardando</span><span class="tag tag-a f3">Atenção</span></span></td></tr>
+          <tr><td>João T.</td><td class="v">375.824.XXX-0</td><td class="v">375.824.XXX-0</td><td><span class="swap"><span class="tag t3">aguardando</span><span class="tag tag-g f3">Pronto</span></span></td></tr>
+        </tbody>
+      </table>
+      <div class="m-rv">tickets <div class="bar"><i></i></div><span><span class="swap"><span class="t3">0 / 5</span><span class="f3">1 / 5</span></span></span></div>
+    </div>
+    <div class="ch-text-b">
+      <dl class="spec" style="margin-top:40px;">
+        <div><dt>Problema</dt><dd>Divergências entre backoffice e fatura eram checadas manualmente, ticket por ticket, sem histórico de duplicidades nem validação cruzada de CPF e data.</dd></div>
+        <div><dt>Sistema</dt><dd>Diagnóstico com IA generativa: consolida os casos num painel único, identifica duplicidades e histórico de tratamento anterior, valida CPF e data de nascimento via integração com a Receita Federal (n8n) e automatiza a comparação linha a linha.</dd></div>
+        <div><dt>Stack</dt><dd class="stack">IA generativa · n8n · Receita Federal · validação de CPF/data</dd></div>
+      </dl>
+      <div class="result"><span class="v">30–60 min → verificação direta</span><span class="l">por ticket — aplicado a um backlog de ~200 tickets entre 8 analistas</span></div>
+      <a class="open" href="/motor-triagem/">Abrir o case <span>→</span></a>
+    </div>
+  </div>
+</article>
+
+</div>
+
+<!-- ============ 04 → 05 TICKETSCRIPT → FORMPILOT ============ -->
+<section class="story stg" id="evolucao" data-story aria-labelledby="ev-h">
+  <div class="wrap">
+    <div class="story-hd">
+      <div class="ch-meta"><span class="k">04 → 05</span><span class="k" style="color:var(--ink-2)">Evolução de produto</span></div>
+      <h2 class="t2" id="ev-h">Uma pequena automação. <span class="dim">Depois, o processo inteiro.</span></h2>
+      <p class="lede">Um mesmo trabalho em duas etapas: o TicketScript resolveu a resposta padronizada no ticket; o FormPilot levou a mesma base para o formulário de movimentação e a assinatura.</p>
+    </div>
+
+    <div class="story-grid">
+      <div class="story-stage" aria-hidden="true">
+        <div class="sf-wrap">
+          <ol class="sf sf-ts">
+            <li class="sf-name">TicketScript</li>
+            <li data-k="0"><span class="d"></span>Zendesk</li>
+            <li data-k="1"><span class="d"></span>Manual</li>
+            <li data-k="2"><span class="d"></span>TicketScript</li>
+            <li data-k="3"><span class="d"></span>Automação</li>
+          </ol>
+          <ol class="sf sf-fp">
+            <li class="sf-name">FormPilot</li>
+            <li data-k="5"><span class="d"></span>Mapear</li>
+            <li data-k="6"><span class="d"></span>Preencher</li>
+            <li data-k="7"><span class="d"></span>Validar</li>
+            <li data-k="8"><span class="d"></span>Assinar</li>
+          </ol>
+        </div>
+        <div class="sc-box">
+          <div class="sc" data-s="0">
+
+            <!-- chamado no Zendesk -->
+            <div class="a a-tk win">
+              <div class="w-chrome"><i></i><i></i><i></i>
+                <span class="w-url"><span class="t5">suporte.helixcommerce.com.br/agente/tickets</span><span class="f5">atendimento.verobeneficios.com.br/chamados/4821</span></span>
+                <span class="w-ext t5">⚡</span>
+              </div>
+              <div class="tk-in">
+                <div class="tk-v tk-ts t5">
+                  <div class="tk-id">TKT-4821 · Hoje, 09h14</div>
+                  <div class="tk-sub">Pacote não chegou — entrega FleetEx</div>
+                  <div class="tgs"><span class="tg">FleetEx</span><span class="tg">Pacote Perdido</span><span class="tg">Reenvio</span></div>
+                  <div class="tk-msg"><b>Marcos T.</b>Estou esperando há 8 dias e o rastreamento da FleetEx mostra “entregue” desde terça — mas nunca recebi nada.</div>
+                  <div class="tk-rl">Responder ao cliente</div>
+                  <div class="tk-box">
+                    <span class="ph rb-ph">Resposta ao cliente…</span>
+                    <span class="man rb-man"><i style="--w:96%"></i><i style="--w:88%"></i><i style="--w:62%"></i></span>
+                    <span class="rb-auto f3">Obrigado por entrar em contato. Investigamos junto à FleetEx e confirmamos que sua remessa não foi localizada no destino. Um pedido de reposição prioritário foi criado…</span>
+                  </div>
+                  <div class="tk-ok f3">✓ Script inserido pelo TicketScript</div>
+                </div>
+                <div class="tk-v tk-fp f5">
+                  <div class="tk-id">#4821 · MOV-2026-04821</div>
+                  <div class="tk-sub">Inclusão de titular — Vitalis Saúde</div>
+                  <div class="tgs"><span class="tg">inclusão</span><span class="tg">titular</span></div>
+                  <div class="tk-msg"><b>RH — Nordeste Componentes</b>Precisamos incluir a colaboradora Marina Torres Almeida no plano titular da Vitalis Saúde.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- planilha em outra aba -->
+            <div class="a a-sh sh">
+              <div class="sh-top"><span class="ico"></span><b>Scripts de resposta</b><span class="mono">planilha · outra aba</span></div>
+              <div class="sh-r sh-h"><span>Operadora</span><span>Problema</span><span>Resolução</span><span>Script</span></div>
+              <div class="sh-r hit"><span>FleetEx</span><span>Pacote Perdido</span><span>Reenvio</span><span>Obrigado por entrar em contato…</span></div>
+              <div class="sh-r"><span>NovaPak</span><span>Item Danificado</span><span>Troca</span><span>Lamentamos muito que…</span></div>
+              <div class="sh-r"><span>QuickSend</span><span>Atraso</span><span>Reembolso</span><span>Pedimos sinceras desculpas…</span></div>
+              <div class="sh-r sh-sk"><span></span><span></span><span></span><span></span></div>
+              <div class="sh-r sh-sk"><span></span><span></span><span></span><span></span></div>
+              <span class="cp">Ctrl+C · copiado</span>
+            </div>
+
+            <!-- os 4 passos manuais -->
+            <div class="a a-lp lp">
+              <ol>
+                <li style="--i:0"><span class="n">01</span>Abrir o ticket</li>
+                <li style="--i:1"><span class="n">02</span>Trocar de aba</li>
+                <li style="--i:2"><span class="n">03</span>Copiar o script</li>
+                <li style="--i:3"><span class="n">04</span>Voltar e colar</li>
+              </ol>
+              <div class="lp-rep">↻ dezenas de vezes por dia</div>
+            </div>
+
+            <!-- extensão TicketScript -->
+            <div class="a a-ex ex">
+              <div class="ex-hd"><span>⚡</span>TicketScript</div>
+              <div class="ex-bd">
+                <div class="btn ghost">Analisar ticket</div>
+                <div class="ex-lbl">Detectado</div>
+                <div class="ex-f" style="--i:0"><div><small>Operadora</small><b>FleetEx</b></div><em>✓</em></div>
+                <div class="ex-f" style="--i:1"><div><small>Tipo de problema</small><b>Pacote Perdido</b></div><em>✓</em></div>
+                <div class="ex-f" style="--i:2"><div><small>Resolução</small><b>Reenvio</b></div><em>✓</em></div>
+                <div class="ex-ft"><div class="btn ins t3">Inserir no ticket</div><div class="btn ins f3">✓ Inserido no campo de resposta</div></div>
+              </div>
+            </div>
+            <div class="a a-csv csv"><span class="ico"></span><div><b>Planilha → CSV</b><small>continua a fonte dos scripts — só não precisa ficar aberta</small></div></div>
+            <div class="a a-res res"><s>4 passos</s><span class="ar">→</span><b>1 clique</b></div>
+
+            <!-- ponte: a complexidade se expande -->
+            <svg class="br-ln" viewBox="0 0 760 470" preserveAspectRatio="none"><path d="M190 120 L380 235 L560 110 M220 350 L380 235 L570 360"/></svg>
+            <span class="a gw g-a">campos</span>
+            <span class="a gw g-b">regras</span>
+            <span class="a gw g-c">formulários</span>
+            <span class="a gw g-d">etapas</span>
+
+            <!-- formulário da operadora -->
+            <div class="a a-dc dc">
+              <div class="dc-hd"><b>Formulário de movimentação</b><span>Vitalis Saúde</span></div>
+              <div class="dc-sec">Dados do titular</div>
+              <div class="dc-f" style="--i:0"><label>Nome completo</label><span class="dc-v"><span>Marina Torres Almeida</span></span><em>✓</em></div>
+              <div class="dc-f" style="--i:1"><label>CPF</label><span class="dc-v"><i style="--w:58%"></i></span><em>✓</em></div>
+              <div class="dc-f" style="--i:2"><label>Data de nascimento</label><span class="dc-v"><i style="--w:40%"></i></span><em>✓</em></div>
+              <div class="dc-f" style="--i:3"><label>Nome para correspondência <span class="rule">copia outro campo</span></label><span class="dc-v"><span>Marina Torres Almeida</span></span><em>✓</em></div>
+              <div class="dc-sec">Produto complementar</div>
+              <div class="dc-f" style="--i:4"><label>Qual produto <span class="rule">condicional · só se “Sim”</span></label><span class="dc-v"><i style="--w:46%"></i></span><em>✓</em></div>
+              <div class="dc-sec opt">Dependentes</div>
+              <div class="dc-f opt" style="--i:5"><label>Nome · parentesco <span class="rule">repete por dependente</span></label><span class="dc-v"><i style="--w:72%"></i></span><em>✓</em></div>
+              <div class="dc-f opt" style="--i:6"><label>Observações <span class="rule">limite de caracteres</span></label><span class="dc-v"><i style="--w:64%"></i></span><em>✓</em></div>
+              <div class="dc-sign"><div class="dc-line"><span class="dc-sig f8">Aguardando assinatura · Adobe Sign</span></div><label>Assinatura do titular</label></div>
+            </div>
+
+            <!-- painel FormPilot, nativo no Zendesk -->
+            <div class="a a-fp fp">
+              <div class="fp-hd"><span class="fp-ico">F</span>FormPilot<span class="fp-tag">ZAF</span></div>
+              <div class="fp-lbl cfg-l">Configuração</div>
+              <div class="fp-cfg"><b>vitalis.json</b><small>uma vez por operadora, sem alterar código</small></div>
+              <div class="fp-id f6">
+                <div class="fp-lbl">Identificado</div>
+                <div class="fp-f">Operadora<b>Vitalis Saúde</b></div>
+                <div class="fp-f">Movimentação<b>Inclusão de titular</b></div>
+                <div class="fp-f">Beneficiário<b>Marina T. Almeida</b></div>
+              </div>
+              <ul class="fp-log">
+                <li data-k="5">Campos e regras mapeados</li>
+                <li data-k="6" class="f6">Campos estampados no PDF</li>
+                <li data-k="7" class="f7">Revisão humana</li>
+                <li data-k="8" class="f8">Enviado para assinatura</li>
+              </ul>
+              <div class="fp-res f8"><s>10–20 min</s> → <b>~2 min</b><small>por movimentação</small></div>
+            </div>
+
           </div>
-          <div class="xp-mini">
-            <div class="xp-mini-co">Consultoria independente</div>
-            <div class="xp-mini-role">Implantação de Sistemas</div>
-            <p>Site, agendamento online, assinatura digital e sistemas operacionais para um negócio de serviços.</p>
+        </div>
+      </div>
+
+      <div class="story-steps">
+        <div class="sb" data-scene="0">
+          <span class="k">TicketScript · 01 · Zendesk</span>
+          <h4>Cada ticket pedia uma resposta padronizada.</h4>
+          <p>Escolhida numa planilha de operadora × tipo de problema × resolução.</p>
+        </div>
+        <div class="sb" data-scene="1">
+          <span class="k">02 · Processo manual</span>
+          <h4>Quatro passos manuais, em todo ticket.</h4>
+          <p>Abrir o ticket, trocar de aba, copiar o script, voltar e colar — dezenas de vezes por dia. A linha errada virava o script errado enviado ao cliente.</p>
+        </div>
+        <div class="sb" data-scene="2">
+          <span class="k">03 · TicketScript</span>
+          <h4>Uma extensão que lê o ticket aberto.</h4>
+          <p>Extensão de navegador (Chrome/Edge) que cruza o texto do ticket com a planilha publicada em CSV, por correspondência de prefixo. A planilha segue como fonte editável pelo time; nada roda em servidor.</p>
+        </div>
+        <div class="sb" data-scene="3">
+          <span class="k">04 · Automação</span>
+          <h4>4 passos → 1 clique.</h4>
+          <p>O script entra no campo de resposta quando o analista aciona. Usado em produção até dar lugar ao FormPilot.</p>
+          <span class="msg">Uma pequena automação resolveu um problema recorrente.</span>
+        </div>
+        <div class="sb sb-br" data-scene="4">
+          <h4>Mas o problema não parava ali.</h4>
+          <p>O esforço maior estava nas movimentações: cada inclusão, exclusão ou alteração exigia localizar o formulário da operadora, preencher campo a campo e enviar para assinatura num fluxo separado. E a extensão precisava ser instalada no navegador de cada analista.</p>
+        </div>
+        <div class="sb" data-scene="5" id="formpilot">
+          <span class="k">FormPilot · 01 · Mapear</span>
+          <h4>Cada operadora é mapeada uma vez.</h4>
+          <p>Campos, posições e regras do formulário viram configuração (JSON). Uma operadora nova entra por arquivo, sem alterar código.</p>
+        </div>
+        <div class="sb" data-scene="6">
+          <span class="k">02 · Preencher</span>
+          <h4>O próprio chamado preenche o formulário.</h4>
+          <p>App nativo no Zendesk (ZAF), sem backend próprio. Lê os dados estruturados do ticket e estampa os campos no PDF via pdf-lib.</p>
+        </div>
+        <div class="sb" data-scene="7">
+          <span class="k">03 · Validar</span>
+          <h4>Uma pessoa revisa antes de cada envio.</h4>
+          <p>A automação cuida da leitura do ticket, do preenchimento e do envio. A revisão humana continua antes de cada envio.</p>
+        </div>
+        <div class="sb" data-scene="8">
+          <span class="k">04 · Assinar</span>
+          <h4>Do chamado à assinatura, sem trocar de aba.</h4>
+          <p>Envio via Adobe Sign, com o segredo OAuth guardado num proxy n8n.</p>
+          <p><b style="color:var(--ink);font-weight:600;">10–20 min → ~2 min</b> por movimentação: de processo manual a revisão + geração, com a operadora já configurada.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="story-ft">
+      <div>
+        <div class="ch-meta" style="margin-bottom:14px;"><span class="k">04</span><span class="status off">Descontinuado</span></div>
+        <h3>TicketScript</h3>
+        <span class="when">Etapa 1 · fev–mai 2025</span>
+        <dl class="spec">
+          <div><dt>Problema</dt><dd>Cada ticket pedia uma resposta padronizada, escolhida numa planilha de operadora × tipo de problema × resolução. A consulta era manual, com troca de aba em todo atendimento — e a linha errada virava o script errado enviado ao cliente.</dd></div>
+          <div><dt>Sistema</dt><dd>Extensão de navegador (Chrome/Edge) que lê o texto do ticket aberto, cruza com a planilha publicada em CSV por correspondência de prefixo e insere o script no campo de resposta quando o analista aciona. A planilha segue como fonte editável pelo time; nada roda em servidor.</dd></div>
+          <div><dt>Stack</dt><dd class="stack">JavaScript · MV3 · Google Sheets (CSV) · sem backend</dd></div>
+        </dl>
+        <div class="result"><span class="v"><s>4 passos</s> → 1 clique</span><span class="l">por ticket — usado em produção até dar lugar ao FormPilot</span></div>
+        <a class="open" href="/ticketscript/">Abrir o case <span>→</span></a>
+      </div>
+      <div>
+        <div class="ch-meta" style="margin-bottom:14px;"><span class="k">05</span><span class="status">Em uso pelo time</span></div>
+        <h3>FormPilot</h3>
+        <span class="when">Etapa 2</span>
+        <dl class="spec">
+          <div><dt>Problema</dt><dd>O esforço maior estava nas movimentações: cada inclusão, exclusão ou alteração exigia localizar o formulário da operadora, preencher campo a campo e enviar para assinatura num fluxo separado. E a extensão precisava ser instalada no navegador de cada analista.</dd></div>
+          <div><dt>Sistema</dt><dd>App nativo no Zendesk (ZAF), sem backend próprio. Lê os dados estruturados do ticket, usa a configuração da operadora (JSON) para estampar os campos no PDF via pdf-lib e envia para assinatura via Adobe Sign — com o segredo OAuth guardado num proxy n8n.</dd></div>
+          <div><dt>Papéis</dt><dd><b style="font-weight:600;color:var(--ink)">Configuração</b> uma vez por operadora, sem alterar código · <b style="font-weight:600;color:var(--ink)">Automação</b> leitura do ticket, preenchimento e envio · <b style="font-weight:600;color:var(--ink)">Revisão humana</b> antes de cada envio</dd></div>
+          <div><dt>Stack</dt><dd class="stack">ZAF · pdf-lib · Adobe Sign API · n8n</dd></div>
+        </dl>
+        <div class="result"><span class="v"><s>10–20 min</s> → ~2 min</span><span class="l">por movimentação: revisão + geração, já configurada</span></div>
+        <a class="open" href="/formpilot/">Abrir o case <span>→</span></a>
+        <a class="sub-open" href="/formpilot/#mapeamento">↳ FormPilot Studio: demonstração conceitual da etapa de configuração, dentro do case</a>
+      </div>
+      <div class="reuse">
+        <span class="k" style="padding-top:4px;">Reaproveitado</span>
+        <p>A arquitetura sem backend, o matching por prefixo e as respostas rápidas configuráveis do TicketScript viraram a base técnica do FormPilot — não são dois projetos independentes, é um produto que passou por um segundo ciclo de aprendizado.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+<!-- ============ 06 DOCUMENTOS VERIFICÁVEIS ============ -->
+<article class="ch stg" id="documentos" data-flow aria-labelledby="d-h" style="border-bottom:0;">
+  <div class="ch-text">
+    <div class="ch-meta"><span class="k">06</span><span class="status tech">Implementação técnica</span></div>
+    <h3 id="d-h">Documentos Verificáveis</h3>
+    <p class="ch-thesis">Uma linha de planilha vira um documento que qualquer pessoa confere pelo QR code — sem ver dados pessoais.</p>
+    <dl class="spec">
+      <div><dt>Problema</dt><dd>Certificados e declarações de uma escola de cursos livres precisavam ser conferidos por terceiros, como as empresas clientes que acompanham os documentos dos funcionários, sem expor CPF, RG ou endereço dos alunos.</dd></div>
+      <div><dt>Sistema</dt><dd>Emissão dos PDFs a partir de uma planilha do Google, cada um com ID aleatório e QR code para uma página pública que mostra só os dados públicos e se o documento continua válido. Uma especificação, duas implementações: Python e n8n.</dd></div>
+      <div><dt>Stack</dt><dd class="stack">Python · Flask · ReportLab · n8n · Google Sheets</dd></div>
+    </dl>
+    <div class="result"><span class="v">5 tipos de documento</span><span class="l">com ID, QR code e validação pública · dados fictícios</span></div>
+    <a class="open" href="/documentos-verificaveis/">Abrir o case <span>→</span></a>
+  </div>
+  <div class="ch-run">
+    <ol class="flow" style="--n:4" aria-label="Etapas do Documentos Verificáveis">
+      <li><button class="fs" type="button" data-k="0" data-cap="A emissão parte de uma linha da planilha do Google."><span class="fs-dot"></span><span class="fs-k">Planilha</span></button></li>
+      <li><button class="fs" type="button" data-k="1" data-cap="Cada PDF sai com um ID aleatório."><span class="fs-dot"></span><span class="fs-k">Emitir</span></button></li>
+      <li><button class="fs" type="button" data-k="2" data-cap="O QR code aponta para uma página pública de validação."><span class="fs-dot"></span><span class="fs-k">QR code</span></button></li>
+      <li><button class="fs" type="button" data-k="3" data-cap="Quem confere vê só os dados públicos e se o documento continua válido."><span class="fs-dot"></span><span class="fs-k">Validar</span></button></li>
+    </ol>
+    <div class="flow-cap"><p class="cap-t">A emissão parte de uma linha da planilha do Google.</p><button class="replay" type="button">↺ Rever</button></div>
+    <div class="screen" aria-hidden="true">
+      <div class="ux-d">
+        <div class="card d-sheet">
+          <div class="card-hd">Planilha · emissões <span class="mono">Google</span></div>
+          <div class="hl">
+            <div class="row"><span>aluno</span><b>Maria Exemplo da Silva</b></div>
+            <div class="row"><span>curso</span><b>Comunicação Não Violenta</b></div>
+            <div class="row"><span>carga</span><b>20 horas</b></div>
+            <div class="row"><span>emissão</span><b>15/03/2026</b></div>
+          </div>
+          <div class="row" style="margin-top:6px;"><i class="sk" style="width:40%"></i><i class="sk" style="width:30%"></i></div>
+          <div class="row"><i class="sk" style="width:34%"></i><i class="sk" style="width:38%"></i></div>
+        </div>
+        <span class="d-link l1"></span>
+        <div class="d-cert f1">
+          <div class="d-band"><div class="t">CERTIFICADO DE CONCLUSÃO</div><div class="n">Maria Exemplo da Silva</div><div class="c">COMUNICAÇÃO NÃO VIOLENTA</div></div>
+          <div class="d-foot"><span class="d-id">ID de validação<br>k7Qm2xPz9aBc</span><img class="d-qr f2" src="/documentos-verificaveis/img/qr-k7Qm2xPz9aBc.svg" alt="" width="34" height="34"></div>
+        </div>
+        <span class="d-link l2"></span>
+        <div class="d-val">
+          <div class="d-vh">VALIDAÇÃO DE DOCUMENTOS</div>
+          <div class="d-vc">
+            <div class="d-wait t3">aguardando leitura do QR</div>
+            <div class="f3">
+              <div class="d-ok">✓ Documento válido</div>
+              <div class="row">Curso<b>Comunicação Não Violenta</b></div>
+              <div class="row">Carga horária<b>20 horas</b></div>
+              <div class="row">Emissão<b>15/03/2026</b></div>
+              <div class="d-priv"><s>CPF · RG · endereço</s> não exibidos</div>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </section>
+    <div class="ch-text-b">
+      <dl class="spec" style="margin-top:40px;">
+        <div><dt>Problema</dt><dd>Certificados e declarações de uma escola de cursos livres precisavam ser conferidos por terceiros, como as empresas clientes que acompanham os documentos dos funcionários, sem expor CPF, RG ou endereço dos alunos.</dd></div>
+        <div><dt>Sistema</dt><dd>Emissão dos PDFs a partir de uma planilha do Google, cada um com ID aleatório e QR code para uma página pública que mostra só os dados públicos e se o documento continua válido. Uma especificação, duas implementações: Python e n8n.</dd></div>
+        <div><dt>Stack</dt><dd class="stack">Python · Flask · ReportLab · n8n · Google Sheets</dd></div>
+      </dl>
+      <div class="result"><span class="v">5 tipos de documento</span><span class="l">com ID, QR code e validação pública · dados fictícios</span></div>
+      <a class="open" href="/documentos-verificaveis/">Abrir o case <span>→</span></a>
+    </div>
+  </div>
+</article>
+</div>
+</div>
 
-  <!-- ============ CTA ============ -->
-  <section id="contato" aria-labelledby="cta-h">
-    <div class="cta-box">
-      <div>
-        <h2 id="cta-h">Quer ver o raciocínio completo por trás de algum desses sistemas?</h2>
-        <p>Cada case tem o problema, a lógica e a automação detalhados na própria página do projeto.</p>
+<!-- ============ SOBRE ============ -->
+<section class="sec" id="sobre" aria-labelledby="sobre-h" style="border-top:1px solid var(--line);">
+  <div class="wrap">
+    <div class="about-grid">
+      <div class="sec-hd">
+        <span class="k">Sobre · trajetória</span>
+        <h2 class="t2" id="sobre-h">Entre operações, tecnologia <span class="dim">e sistemas.</span></h2>
+        <p class="lede">Experiência prática construída entre operações, tecnologia, automação e sistemas.</p>
       </div>
-      <div class="cta-actions">
-        <a class="cta-btn primary" href="mailto:ottocanabrava+jobs@gmail.com">Enviar e-mail</a>
+      <div>
+        <ol class="xp">
+          <li>
+            <div class="xp-when">abr 2022 — atual<span>remoto</span></div>
+            <div>
+              <h3 class="xp-co">Pipo Saúde <span class="status">Atual</span></h3>
+              <div class="xp-role">Analista de Operações Pleno</div>
+              <p>Operações de benefícios corporativos B2B numa healthtech, na interface entre áreas de negócio, TI e operadoras de saúde.</p>
+              <div class="xp-fact"><span class="k">Atuação</span><span>Construção e evolução de soluções de automação e sistemas internos. Promovido a Pleno por performance.</span></div>
+              <div class="stack">Mapeamento de processos · BPMN · Requisitos e regras de negócio · Automação e IA na operação</div>
+            </div>
+          </li>
+          <li>
+            <div class="xp-when">out 2017 — abr 2022<span>Maringá, PR</span></div>
+            <div>
+              <h3 class="xp-co">VincIT · UNICIV</h3>
+              <div class="xp-role">Analista de Sistemas Acadêmicos e Administrativo</div>
+              <p>Centro de inovação de uma instituição de ensino — de estágio a analista, com a responsabilidade administrativa da área.</p>
+              <div class="xp-fact"><span class="k">MEC</span><span>Conceito 5 na abertura dos cursos.</span></div>
+              <div class="stack">Sistemas acadêmicos · Implantação de AVA · Moodle · Credenciamento MEC</div>
+            </div>
+          </li>
+        </ol>
+
+        <h3 class="k side-k">Em paralelo · atuação independente</h3>
+        <div class="side">
+          <div><b>UPCIV Idiomas</b><span class="r">Consultor de Tecnologia · 2023 — 2025</span><p>Implantação de LMS com Moodle e do funil comercial em HubSpot para uma escola de idiomas.</p></div>
+          <div><b>Turing</b><span class="r">Avaliador de Modelos de IA</span><p>Avaliação comparativa de prompts e outputs entre modelos de IA, com foco em qualidade e consistência.</p></div>
+          <div><b>Consultoria independente</b><span class="r">Implantação de Sistemas</span><p>Site, agendamento online, assinatura digital e sistemas operacionais para um negócio de serviços.</p></div>
+        </div>
+
+        <h3 class="k skills-k"><span>Competências</span><span>Só o que está de fato demonstrado nos sistemas acima.</span></h3>
+        <ul class="skills">
+          <li><b>Automação de processos</b><span>Python, Playwright, RPA</span></li>
+          <li><b>IA aplicada a dados</b><span>agente validador, integração n8n</span></li>
+          <li><b>Sistemas operacionais</b><span>priorização e cruzamento de sinais</span></li>
+          <li><b>Estruturação de regras de negócio</b><span>de processo manual a lógica de módulos</span></li>
+          <li><b>Evolução de produto</b><span>de extensão solo a painel integrado</span></li>
+          <li><b>Resolução de problemas</b><span>desenho de ferramentas para uso do próprio time</span></li>
+        </ul>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
+<!-- ============ CONTATO ============ -->
+<section class="end" id="contato" aria-labelledby="cta-h">
+  <div class="wrap">
+    <div class="end-mark" aria-hidden="true"><i></i><span></span><i></i></div>
+    <h2 class="t2" id="cta-h">Quer ver o raciocínio completo por trás de algum desses sistemas?</h2>
+    <p class="lede">Cada case tem o problema, a lógica e a automação detalhados na própria página do projeto.</p>
+    <a class="mail" href="mailto:ottocanabrava+jobs@gmail.com">Enviar e-mail <span aria-hidden="true">→</span></a>
+    <span class="mail-addr">ottocanabrava+jobs@gmail.com</span>
+  </div>
+</section>
+
+</main>
+
+<div class="wrap">
   <footer>
     <span>© 2026 Otto Canabrava</span>
-    <a href="#conteudo">↑ Voltar ao topo</a>
+    <a href="#topo">↑ Voltar ao topo</a>
   </footer>
 </div>
-<script>
-/* Microinterações dos previews da home (Extrator, Daily Ops, Motor de Triagem, FormPilot, Documentos Verificáveis).
-   Cada preview só anima quando está visível, a aba está ativa e o usuário não pediu movimento
-   reduzido; fora disso volta exatamente ao markup estático original. Nada muda de tamanho. */
-(function(){
-  if(!window.requestAnimationFrame || !window.matchMedia) return;
-  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var ease = function(k){ return 1 - Math.pow(1 - k, 3); };
 
-  function micro(root, length, run){
-    if(!root) return;
-    var snapshot = root.innerHTML, timers = [], frames = [], live = false, visible = false;
-    var api = {
-      q: function(sel){ return root.querySelector(sel); },
-      qa: function(sel){ return root.querySelectorAll(sel); },
-      at: function(ms, fn){ timers.push(setTimeout(fn, ms)); },
-      tween: function(from, to, dur, step){
-        var t0 = performance.now(), h = { id: 0 };
-        frames.push(h);
-        (function frame(now){
-          var k = Math.min(1, (now - t0) / dur);
-          step(from + (to - from) * ease(k));
-          if(k < 1) h.id = requestAnimationFrame(frame);
-        })(t0);
-      }
-    };
-    function clear(){
-      timers.forEach(clearTimeout); timers = [];
-      frames.forEach(function(h){ cancelAnimationFrame(h.id); }); frames = [];
+<script>
+/* Motor de estados da página.
+   Cada sistema é um fluxo: um índice de passo (data-s) e classes gN (passo ≥ N) no elemento .stg.
+   O CSS decide o que cada estado mostra; o JS só escolhe o passo. */
+(function(){
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var raf = window.requestAnimationFrame || function(f){ return setTimeout(f, 16); };
+
+  function applyStep(root, s, max){
+    root.setAttribute("data-s", s);
+    for(var k = 0; k <= max; k++) root.classList.toggle("g" + k, s >= k);
+    root.classList.toggle("done", s === max);
+    var ks = root.querySelectorAll("[data-k]");
+    for(var i = 0; i < ks.length; i++){
+      var kk = +ks[i].getAttribute("data-k");
+      ks[i].classList.toggle("is-now", kk === s);
+      ks[i].classList.toggle("is-past", kk < s);
     }
-    function loop(){
-      clear();
-      root.classList.remove("is-done", "is-resetting");
-      run(api, root);
-      api.at(length - 400, function(){ root.classList.add("is-resetting"); });
-      api.at(length, loop);
-    }
-    function start(){ if(live) return; live = true; root.classList.add("is-live"); loop(); }
-    function stop(){
-      if(!live) return; live = false; clear();
-      root.classList.remove("is-live", "is-done", "is-resetting");
-      root.innerHTML = snapshot;
-    }
-    function update(){ (visible && !reduce.matches && !document.hidden) ? start() : stop(); }
-    if("IntersectionObserver" in window){
-      new IntersectionObserver(function(entries){ visible = entries[0].isIntersecting; update(); }, { threshold: 0.4 }).observe(root);
-    } else { visible = true; }
-    document.addEventListener("visibilitychange", update);
-    if(reduce.addEventListener) reduce.addEventListener("change", update); else if(reduce.addListener) reduce.addListener(update);
-    update();
+  }
+  function tweenNum(el, to){
+    var from = parseFloat(el.textContent) || 0, suffix = el.textContent.replace(/[\d.\s]/g, "");
+    if(reduce || from === to){ el.textContent = to + suffix; return; }
+    var t0 = performance.now(), dur = 1100;
+    (function f(now){
+      var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      el.textContent = Math.round(from + (to - from) * e) + suffix;
+      if(k < 1) raf(f);
+    })(t0);
+  }
+  function inView(el, threshold, cb){
+    if(!("IntersectionObserver" in window)){ cb(true); return; }
+    new IntersectionObserver(function(en){ cb(en[0].isIntersecting); }, { threshold: threshold }).observe(el);
   }
 
-  /* Extrator de Fatura: login → boleto → arquivo salvo → 100% → concluído (verde) */
-  micro(document.querySelector("[data-xtr]"), 6800, function(a, root){
-    var steps = a.qa("[data-xtr-step]"), fill = a.q("[data-xtr-fill]"), pct = a.q("[data-xtr-pct]"), badge = a.q("[data-xtr-badge]");
-    function progress(v){ fill.style.width = v + "%"; pct.textContent = Math.round(v) + "%"; }
-    function state(i, s){ steps[i].setAttribute("data-state", s); }
-    function setBadge(done){ badge.className = "me-badge " + (done ? "done" : "active"); badge.textContent = done ? "concluído" : "em execução"; }
-    for(var i = 0; i < steps.length; i++) state(i, "pending");
-    setBadge(false); progress(0);
-    a.at(600,  function(){ state(0, "active"); a.tween(0, 33, 900, progress); });
-    a.at(1500, function(){ state(0, "done"); state(1, "active"); a.tween(33, 66, 1100, progress); });
-    a.at(2600, function(){ state(1, "done"); state(2, "active"); a.tween(66, 100, 1000, progress); });
-    a.at(3600, function(){ state(2, "done"); root.classList.add("is-done"); setBadge(true); });
-  });
+  /* ---------- nav ---------- */
+  var nav = document.querySelector(".nav");
+  function onNav(){ nav.classList.toggle("is-scrolled", window.scrollY > 12); }
+  addEventListener("scroll", onNav, { passive: true }); onNav();
 
-  /* Daily Ops: o arco do SLA se preenche até 81% junto com o número */
-  micro(document.querySelector("[data-ops]"), 6800, function(a){
-    var arc = a.q("[data-ops-arc]"), pct = a.q("[data-ops-pct]"), full = 194.8, target = 81;
-    function gauge(v){ arc.setAttribute("stroke-dashoffset", (full * (1 - v / 100)).toFixed(1)); pct.textContent = Math.round(v) + "%"; }
-    gauge(0);
-    a.at(500, function(){ a.tween(0, target, 1600, gauge); });
-  });
-
-  /* Motor de Triagem: cada linha sai de "verificando" para a classificação, e o progresso avança até 1 / 5 */
-  micro(document.querySelector("[data-mtr]"), 6800, function(a){
-    var tags = a.qa("[data-mtr-tag]"), fill = a.q("[data-mtr-fill]"), count = a.q("[data-mtr-count]");
-    var finals = [];
-    function bar(v){ fill.style.width = v + "%"; }
-    for(var i = 0; i < tags.length; i++){
-      finals.push({ cls: tags[i].className, txt: tags[i].textContent });
-      tags[i].className = "md-tag pending"; tags[i].textContent = "verificando";
+  /* ---------- hero: trabalho manual → sistema ---------- */
+  (function(){
+    var hero = document.querySelector("[data-hero]"), cv = hero.querySelector(".hc");
+    var nodes = cv.querySelectorAll(".hn"), edgesG = cv.querySelector(".hc-edges"), run = cv.querySelector(".hc-run");
+    var btns = hero.querySelectorAll(".seg button"), cap = hero.querySelector(".hero-cap");
+    var NS = "http://www.w3.org/2000/svg", edges = [];
+    for(var i = 0; i < nodes.length - 1; i++){
+      var p = document.createElementNS(NS, "path"); p.setAttribute("class", "hc-e"); edgesG.appendChild(p); edges.push(p);
     }
-    bar(0); count.textContent = "0 / 5";
-    [0, 1, 2].forEach(function(i){
-      a.at(700 + i * 900, function(){
-        tags[i].className = finals[i].cls; tags[i].textContent = finals[i].txt;
-        a.tween(i * 20 / 3, (i + 1) * 20 / 3, 700, bar);
+    var L = {
+      wide: { h: 320, chaos: [[14,62],[70,12],[36,24],[88,56],[54,74],[10,30]], order: function(i){ return [8.333 + 16.667 * i, 22]; } },
+      nar:  { h: 540, chaos: [[8,56],[36,8],[6,30],[46,80],[40,44],[10,92]],    order: function(i){ return [3, 4 + 18.4 * i]; } }
+    };
+    var lay, W, H, t = 0, target = 0, anim = null, runTimer = null;
+    function pos(i, tt){
+      var a = lay.chaos[i], b = lay.order(i), k = Math.max(0, Math.min(1, (tt * 1.25) - i * 0.05));
+      k = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      return [(a[0] + (b[0] - a[0]) * k) / 100 * W, (a[1] + (b[1] - a[1]) * k) / 100 * H];
+    }
+    function draw(){
+      var P = [];
+      for(var i = 0; i < nodes.length; i++){ P.push(pos(i, t)); nodes[i].style.transform = "translate(" + P[i][0].toFixed(1) + "px," + P[i][1].toFixed(1) + "px)"; }
+      var amp = (1 - t) * 70;
+      for(var j = 0; j < edges.length; j++){
+        var a = P[j], b = P[j + 1], dx = b[0] - a[0], dy = b[1] - a[1], len = Math.hypot(dx, dy) || 1;
+        var nx = -dy / len, ny = dx / len, s = j % 2 ? -1 : 1;
+        var c1 = [a[0] + dx * .3 + nx * amp * s, a[1] + dy * .3 + ny * amp * s], c2 = [a[0] + dx * .7 - nx * amp * s * .6, a[1] + dy * .7 - ny * amp * s * .6];
+        edges[j].setAttribute("d", "M" + a[0].toFixed(1) + " " + a[1].toFixed(1) + " C" + c1[0].toFixed(1) + " " + c1[1].toFixed(1) + " " + c2[0].toFixed(1) + " " + c2[1].toFixed(1) + " " + b[0].toFixed(1) + " " + b[1].toFixed(1));
+      }
+      if(t === 1){
+        var d = "M" + P[0][0].toFixed(1) + " " + P[0][1].toFixed(1);
+        for(var q = 1; q < P.length; q++) d += " L" + P[q][0].toFixed(1) + " " + P[q][1].toFixed(1);
+        run.setAttribute("d", d);
+      }
+    }
+    function measure(){
+      var narrow = cv.parentNode.clientWidth < 720;
+      lay = narrow ? L.nar : L.wide;
+      cv.classList.toggle("nar", narrow);
+      cv.style.height = lay.h + "px";
+      W = cv.clientWidth; H = lay.h;
+      draw();
+    }
+    function setMode(m, instant){
+      target = m;
+      for(var i = 0; i < btns.length; i++) btns[i].setAttribute("aria-pressed", String(+btns[i].getAttribute("data-mode") === m));
+      cap.innerHTML = cap.getAttribute("data-cap" + m);
+      cv.classList.toggle("is-system", m === 1); hero.classList.toggle("is-system", m === 1);
+      cv.classList.remove("is-run"); clearTimeout(runTimer);
+      if(anim) cancelAnimationFrame(anim);
+      if(instant || reduce){ t = m; draw(); if(m === 1) cv.classList.add("is-run"); return; }
+      var from = t, t0 = performance.now(), dur = 2200 * Math.abs(m - from) + 1;
+      (function f(now){
+        var k = Math.min(1, (now - t0) / dur);
+        t = from + (m - from) * k; draw();
+        if(k < 1){ anim = raf(f); }
+        else if(m === 1){ runTimer = setTimeout(function(){ cv.classList.add("is-run"); }, 250); }
+      })(t0);
+    }
+    for(var b = 0; b < btns.length; b++) btns[b].addEventListener("click", function(){ auto = false; setMode(+this.getAttribute("data-mode")); });
+    measure();
+    var auto = true;
+    if(reduce){ setMode(1, true); }
+    else {
+      var go = function(){ setTimeout(function(){ if(auto) setMode(1); }, 1400); };
+      (document.fonts && document.fonts.ready) ? document.fonts.ready.then(go) : go();
+    }
+    var rz; addEventListener("resize", function(){ clearTimeout(rz); rz = setTimeout(measure, 80); });
+  })();
+
+  /* ---------- mapa: entradas ↔ sistemas ---------- */
+  (function(){
+    var map = document.querySelector("[data-map]"); if(!map) return;
+    var svg = map.querySelector(".map-lines"), NS = "http://www.w3.org/2000/svg";
+    var sys = map.querySelectorAll(".sys"), src = map.querySelectorAll(".src"), lines = [];
+    function portOf(el){ var p = el.querySelector(".port").getBoundingClientRect(), m = map.getBoundingClientRect(); return [p.left + p.width / 2 - m.left, p.top + p.height / 2 - m.top]; }
+    function draw(){
+      svg.innerHTML = ""; lines = [];
+      if(getComputedStyle(svg).display === "none") return;
+      for(var i = 0; i < sys.length; i++){
+        var ins = sys[i].getAttribute("data-in").split(" "), b = portOf(sys[i]);
+        for(var j = 0; j < ins.length; j++){
+          var s = map.querySelector('.src[data-src="' + ins[j] + '"]'); if(!s) continue;
+          var a = portOf(s), mx = (a[0] + b[0]) / 2;
+          var p = document.createElementNS(NS, "path");
+          p.setAttribute("d", "M" + a[0] + " " + a[1] + " C" + mx + " " + a[1] + " " + mx + " " + b[1] + " " + b[0] + " " + b[1]);
+          svg.appendChild(p); lines.push({ el: p, src: ins[j], sys: sys[i].getAttribute("data-sys") });
+        }
+      }
+      /* TicketScript → FormPilot: a única relação entre sistemas, tracejada */
+      var t = map.querySelector('[data-sys="ticketscript"]'), f = map.querySelector('[data-sys="formpilot"]');
+      if(t && f){
+        var a1 = portOf(t), b1 = portOf(f), e = document.createElementNS(NS, "path");
+        e.setAttribute("d", "M" + a1[0] + " " + a1[1] + " C" + (a1[0] - 26) + " " + a1[1] + " " + (b1[0] - 26) + " " + b1[1] + " " + b1[0] + " " + b1[1]);
+        e.setAttribute("class", "evo"); svg.appendChild(e); lines.push({ el: e, src: "", sys: "ticketscript formpilot" });
+      }
+    }
+    function focus(kind, id){
+      map.classList.toggle("has-focus", !!id);
+      var hotSrc = {}, hotSys = {};
+      lines.forEach(function(l){
+        var hot = !!id && (kind === "sys" ? (" " + l.sys + " ").indexOf(" " + id + " ") > -1 : l.src === id);
+        l.el.classList.toggle("is-hot", hot);
+        if(hot){ if(l.src) hotSrc[l.src] = 1; l.sys.split(" ").forEach(function(s){ hotSys[s] = 1; }); }
       });
-    });
-    a.at(3300, function(){ count.textContent = "1 / 5"; });
-  });
+      if(kind === "sys" && id) hotSys[id] = 1;
+      if(kind === "src" && id) hotSrc[id] = 1;
+      for(var i = 0; i < sys.length; i++) sys[i].classList.toggle("is-hot", !!hotSys[sys[i].getAttribute("data-sys")]);
+      for(var j = 0; j < src.length; j++) src[j].classList.toggle("is-hot", !!hotSrc[src[j].getAttribute("data-src")]);
+    }
+    function bind(list, kind, attr){
+      for(var i = 0; i < list.length; i++){
+        (function(el){
+          var on = function(){ focus(kind, el.getAttribute(attr)); }, off = function(){ focus(null, null); };
+          el.addEventListener("mouseenter", on); el.addEventListener("mouseleave", off);
+          el.addEventListener("focusin", on); el.addEventListener("focusout", off);
+        })(list[i]);
+      }
+    }
+    bind(sys, "sys", "data-sys"); bind(src, "src", "data-src");
+    draw();
+    if(document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
+    var rz; addEventListener("resize", function(){ clearTimeout(rz); rz = setTimeout(draw, 80); });
+  })();
 
-  /* Documentos Verificáveis: o QR é destacado e, em seguida, a validação mostra o documento válido */
-  micro(document.querySelector("[data-dv]"), 6800, function(a){
-    var qr = a.q("[data-dv-qr]"), res = a.q("[data-dv-res]");
-    res.setAttribute("data-state", "pending");
-    a.at(600, function(){ qr.setAttribute("data-state", "active"); });
-    a.at(1600, function(){ qr.removeAttribute("data-state"); res.setAttribute("data-state", "done"); });
-  });
+  /* ---------- capítulos: o fluxo avança sozinho uma vez; depois, é do visitante ---------- */
+  (function(){
+    var chs = document.querySelectorAll("[data-flow]");
+    for(var c = 0; c < chs.length; c++) (function(ch){
+      var btns = ch.querySelectorAll(".fs"), n = btns.length, max = n - 1;
+      var flow = ch.querySelector(".flow"), cap = ch.querySelector(".cap-t"), replay = ch.querySelector(".replay");
+      var pList = (ch.getAttribute("data-p") || "").split(",").filter(Boolean).map(Number);
+      var pcts = ch.querySelectorAll("[data-pct]"), timer = null, played = false;
+      function set(i){
+        applyStep(ch, i, max);
+        flow.style.setProperty("--f", max ? i / max : 0);
+        for(var k = 0; k < btns.length; k++) btns[k].setAttribute("aria-pressed", String(k === i));
+        cap.textContent = btns[i].getAttribute("data-cap");
+        if(pList.length){
+          ch.style.setProperty("--p", pList[i]);
+          for(var q = 0; q < pcts.length; q++) tweenNum(pcts[q], pList[i]);
+        }
+      }
+      function stop(){ clearInterval(timer); timer = null; }
+      function play(){
+        stop(); var i = 0; set(0);
+        timer = setInterval(function(){ i++; if(i > max){ stop(); return; } set(i); }, 2600);
+      }
+      for(var b = 0; b < btns.length; b++) (function(k){
+        btns[k].addEventListener("click", function(){ stop(); played = true; set(k); });
+      })(b);
+      replay.addEventListener("click", function(){ played = true; play(); });
+      if(reduce){ set(max); return; }
+      applyStep(ch, -1, max); flow.style.setProperty("--f", 0); ch.style.setProperty("--p", 0);
+      inView(ch.querySelector(".screen"), .45, function(v){
+        if(v && !played){ played = true; setTimeout(play, 300); }
+        if(!v && timer){ stop(); set(max); }
+      });
+    })(chs[c]);
+  })();
 
-  /* FormPilot: operadora, movimentação e beneficiário recebem ✓ em sequência; depois o botão fica disponível */
-  micro(document.querySelector("[data-evp]"), 6800, function(a){
-    var fields = a.qa("[data-evp-field]"), btn = a.q("[data-evp-btn]");
-    for(var i = 0; i < fields.length; i++) fields[i].setAttribute("data-state", "pending");
-    btn.classList.add("is-pending"); btn.textContent = "Analisando…";
-    [0, 1, 2].forEach(function(i){ a.at(700 + i * 800, function(){ fields[i].setAttribute("data-state", "done"); }); });
-    a.at(3100, function(){ btn.classList.remove("is-pending"); btn.textContent = "Gerar formulário"; });
-  });
+  /* ---------- história: o scroll é a linha do tempo ---------- */
+  (function(){
+    var story = document.querySelector("[data-story]"); if(!story) return;
+    var stage = story.querySelector(".story-stage"), box = story.querySelector(".sc-box"), sc = story.querySelector(".sc");
+    var blocks = story.querySelectorAll("[data-scene]"), cur = -1, MAX = 8, narrow = false;
+    function fit(){
+      var w = box.clientWidth; narrow = w < 560;
+      sc.classList.toggle("nar", narrow);
+      var W = narrow ? 360 : 760, H = narrow ? 450 : 470;
+      var maxH = narrow ? innerHeight * .5 : innerHeight - 190;
+      var s = Math.min(w / W, maxH / H);
+      sc.style.transform = "scale(" + s + ")";
+      sc.style.left = ((w - W * s) / 2) + "px";
+      box.style.height = (H * s) + "px";
+    }
+    function pick(){
+      var line;
+      if(narrow){ var r = stage.getBoundingClientRect(); line = r.bottom + (innerHeight - r.bottom) * .45; }
+      else line = innerHeight * .55;
+      var s = 0;
+      for(var i = 0; i < blocks.length; i++){ if(blocks[i].getBoundingClientRect().top < line) s = +blocks[i].getAttribute("data-scene"); }
+      if(s !== cur){
+        cur = s;
+        sc.setAttribute("data-s", s);
+        applyStep(story, s, MAX);
+        applyStep(sc, s, MAX);
+        for(var j = 0; j < blocks.length; j++) blocks[j].classList.toggle("is-active", +blocks[j].getAttribute("data-scene") === s);
+      }
+    }
+    var ticking = false;
+    addEventListener("scroll", function(){ if(!ticking){ ticking = true; raf(function(){ ticking = false; pick(); }); } }, { passive: true });
+    var rz; addEventListener("resize", function(){ clearTimeout(rz); rz = setTimeout(function(){ fit(); cur = -1; pick(); }, 80); });
+    fit(); pick();
+  })();
 })();
 </script>
 </body>
