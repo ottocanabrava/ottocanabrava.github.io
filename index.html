@@ -380,6 +380,7 @@
 <main>
   <!-- 1 · o nó: as entradas reais, emaranhadas. O scroll as desfaz e elas viram o mapa. -->
   <section class="p1" id="mapa" aria-label="Transformo fluxos complexos em sistemas simples. Seis sistemas e as fontes que os alimentam.">
+    <span id="projetos" style="position:absolute;top:0" aria-hidden="true"></span>
     <svg aria-hidden="true"><g class="g-str"></g><path class="link" d=""/></svg>
     <div class="labels"></div>
     <div class="say" aria-hidden="true">
@@ -614,7 +615,7 @@
     <p>Cada case tem o problema, a lógica e a automação detalhados na própria página do projeto.</p>
     <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="mail" href="mailto:ottocanabrava+jobs@gmail.com">ottocanabrava+jobs@gmail.com</a></div>
   </section>
-  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#mapa">↑ Topo</a></footer>
+  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#">↑ Topo</a></footer>
 </main>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -641,7 +642,7 @@
      ========================================================= */
   /* Só relações comprovadas pelos cases. Na dúvida, fica de fora. */
   var INPUTS = [
-    ["portais", "Portais"], ["hubspot", "HubSpot"], ["drive", "Google Drive"], ["backoffice", "Backoffice × fatura"],
+    ["portais", "Portais"], ["hubspot", "HubSpot"], ["dw", "Data warehouse"], ["drive", "Google Drive"], ["backoffice", "Backoffice × fatura"],
     ["sheets", "Google Sheets"], ["zendesk", "Zendesk"], ["pdfs", "PDFs das operadoras"]
   ];
   var SYSTEMS = [
@@ -652,7 +653,7 @@
     ["formpilot", "FormPilot", "#evolucao"],
     ["docs", "Documentos Verificáveis", "#documentos"]
   ];
-  var REL = [["portais","extrator"],["hubspot","dailyops"],["drive","motor"],["backoffice","motor"],
+  var REL = [["portais","extrator"],["hubspot","dailyops"],["dw","dailyops"],["drive","motor"],["backoffice","motor"],
              ["sheets","ticketscript"],["sheets","docs"],["zendesk","formpilot"],["pdfs","formpilot"]];
 
   var p1 = document.querySelector(".p1"), g = p1.querySelector(".g-str"), link = p1.querySelector(".link"), labels = p1.querySelector(".labels");
@@ -1203,17 +1204,21 @@
   /* cenas fixadas, criadas na ordem em que aparecem na página */
   function pinScene(el, len, onP){
     var st = { p: 0 };
-    gsap.to(st, { p: 1, ease: "none", onUpdate: function(){ onP(st.p); },
-      scrollTrigger: { trigger: el, start: "top top", end: "+=" + len + "%", pin: true, scrub: .8 } });
+    return gsap.to(st, { p: 1, ease: "none", onUpdate: function(){ onP(st.p); },
+      scrollTrigger: { trigger: el, start: "top top", end: "+=" + len + "%", pin: true, scrub: .8 } }).scrollTrigger;
   }
   var byId = {}; CH.forEach(function(c){ byId[c.el.id] = c; });
-  pinScene(p1, 320, function(v){ P1 = v; render1(); });
+  var mapST = pinScene(p1, 320, function(v){ P1 = v; render1(); });
+  function goMap(e){ if(e) e.preventDefault(); scrollTo({ top: mapST.end, behavior: e ? "smooth" : "auto" }); if(e) history.replaceState(null, "", "#projetos"); }
+  Array.prototype.forEach.call(document.querySelectorAll('a[href="#mapa"]'), function(a){ a.addEventListener("click", goMap); });
   ["extrator", "daily-ops", "motor"].forEach(function(id){ var c = byId[id]; pinScene(c.el, c.len, function(v){ c.p = v; c.render(v); }); });
   pinScene(p2, 1200, function(v){ P2 = v; render2(); });
   pinScene(byId.documentos.el, byId.documentos.len, function(v){ byId.documentos.p = v; byId.documentos.render(v); });
   ScrollTrigger.create({ trigger: ".end", start: "top 70%", end: "center 55%", scrub: .6, onUpdate: function(t){ renderEnd(t.progress); } });
   ScrollTrigger.addEventListener("refresh", function(){ layout1(); layout2(); CH.forEach(function(c){ c.layout(); }); });
-  if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ ScrollTrigger.refresh(); });
+  var wantMap = location.hash === "#projetos" || location.hash === "#mapa";
+  if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ ScrollTrigger.refresh(); if(wantMap) goMap(); });
+  else if(wantMap) goMap();
 })();
 </script>
 </body>
