@@ -305,6 +305,14 @@
   .d-ft .d-id{ font-weight:400; color:var(--u-ink); }
   .sf.dv{ --dvh:min(470px, calc(100% - 72px - var(--band) - 4vh)); top:calc(72px + (100% - 72px - var(--band) - var(--dvh)) / 2); height:var(--dvh); }
   .th .tip{ fill:var(--u-ink); stroke:none; }
+  /* 05 em fluxo: a cena não fica fixada; a sequência roda sozinha ao entrar na tela */
+  #documentos.flow{ height:auto; overflow:visible; padding:clamp(96px,14vh,160px) 0 clamp(40px,7vh,88px); }
+  #documentos.flow .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none; padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
+  #documentos.flow .sf{ position:relative; left:auto; right:auto; top:auto; margin:0 clamp(12px,2.4vw,40px); height:470px; opacity:1; }
+  #documentos.flow .band{ position:relative; left:auto; right:auto; bottom:auto; height:84px; margin:0 clamp(12px,2.4vw,40px); }
+  #documentos.flow .band .nm{ display:none; }
+  #documentos.flow .band p{ top:22px; }
+  #documentos.flow .res{ position:relative; inset:auto; padding-top:32px; }
   .d-va{ position:absolute; inset:0; padding:clamp(18px,3.4vw,56px); display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; font-size:1.2em; }
   .d-va .vh{ font-size:.72em; color:var(--u-3); letter-spacing:.14em; margin-bottom:1.4em; }
   .d-va .vk{ width:min(620px,100%); border:1px solid var(--u-line); border-radius:14px; padding:1.4em 1.6em; }
@@ -354,6 +362,8 @@
     .m-tb td.nv{ font-size:.8em; }
     .d-sh .r{ grid-template-columns:1.5fr 1.5fr; }
     .d-sh .r span:nth-child(3), .d-sh .r span:nth-child(4){ display:none; }
+    #documentos.flow .sf{ height:600px; }
+    #documentos.flow .band{ height:96px; }
     .sf.dv{ --dvh:min(620px, calc(100% - 66px - var(--band) - 2vh)); top:calc(66px + (100% - 66px - var(--band) - var(--dvh)) / 2); }
     .end-row{ flex-wrap:wrap; gap:12px; }
     .mail{ order:3; flex-basis:100%; white-space:normal; word-break:break-all; margin-top:12px; }
@@ -1146,36 +1156,44 @@
   })();
 
   /* ---------- 05 · Documentos: linha → documento → QR → página pública ----------
-     Uma sequência causal: o fio sai da linha da planilha e, quando chega, o documento
-     existe; um segundo fio leva o ID ao QR; o QR em foco abre a página pública. */
+     A cena não depende de scroll fino nem de mouse: ao entrar na tela, a sequência roda
+     sozinha, uma vez por entrada, e para no estado final. Com movimento reduzido, um quadro
+     único mostra a relação inteira: planilha → documento → QR → validação. */
   (function(){
     var c = chapter("documentos", 340, { lines: [[.18, .34], [.34, .56], [.56, .86]] });
     var sh = c.el.querySelector(".d-sh"), row = c.el.querySelector("[data-row]"), ce = c.el.querySelector(".d-ce"), qr = ce.querySelector("img"), idv = ce.querySelector(".d-id");
-    var va = c.el.querySelector(".d-va"), dot = va.querySelector(".ok i");
+    var va = c.el.querySelector(".d-va"), vk = va.querySelector(".vk"), dot = va.querySelector(".ok i");
     function mk(tag, cls){ var e = document.createElementNS(NS, tag); if(cls) e.setAttribute("class", cls); c.g.appendChild(e); return e; }
-    var f1 = mk("path"), f2 = mk("path"), tip = mk("circle", "tip"); tip.setAttribute("r", "4");
+    var f1 = mk("path"), f2 = mk("path"), f3 = mk("path"), tip = mk("circle", "tip"); tip.setAttribute("r", "4");
+    c.flow = false; c.still = false;
     c.layout = function(){ measure(c, function(){
-      var W = c.W, H = c.H, n = c.nar, pad = n ? 16 : 40;
+      var W = c.W, n = c.nar, pad = n ? 16 : 40;
+      if(c.still){ va.style.position = "relative"; va.style.inset = "auto"; va.style.marginTop = (n ? 560 : 440) + "px"; }
+      var H = c.still ? (n ? 560 : 440) : c.H; c.HC = H;
+      if(c.still) c.svg.setAttribute("viewBox", "0 0 " + W + " " + c.sf.clientHeight);
       sh.style.transform = "none"; ce.style.transform = "none";
       /* 1 · a linha da planilha, sozinha, no centro */
       var w0 = (n ? .92 : .84) * W; sh.style.width = w0 + "px";
       var h0 = sh.offsetHeight, l0 = (W - w0) / 2, t0 = (H - h0) / 2;
-      sh.style.left = l0 + "px"; sh.style.top = t0 + "px"; c.S0 = { l: l0, t: t0 };
+      sh.style.left = l0 + "px"; sh.style.top = t0 + "px";
       /* 2 · a planilha cede espaço ao documento */
       var cw = n ? .84 * W : .37 * W; ce.style.width = cw + "px";
-      var ch = ce.offsetHeight, s1 = n ? 1 : .58, cl, ct, tx, ty;
-      if(n){ var gap = Math.max(36, (H - h0 - ch - 2 * pad) / 2); tx = l0; ty = Math.max(pad, (H - (h0 + gap + ch)) / 2); cl = (W - cw) / 2; ct = ty + h0 + gap; }
+      var ch = ce.offsetHeight, s1 = n ? 1 : .58, cl, ct, tx, ty, gap = 40;
+      if(n){ gap = Math.max(36, (H - h0 - ch - 2 * pad) / 2); tx = l0; ty = Math.max(pad, (H - (h0 + gap + ch)) / 2); cl = (W - cw) / 2; ct = ty + h0 + gap; }
       else { tx = .03 * W; ty = (H - h0 * s1) / 2; cl = .6 * W; ct = (H - ch) / 2; }
       ce.style.left = cl + "px"; ce.style.top = ct + "px";
       c.S1 = { x: tx - l0, y: ty - t0, s: s1 };
       var r = relTo(row, c.sf), cr = relTo(ce, c.sf), q = relTo(qr, c.sf), id = relTo(idv, c.sf), qe = relTo(qr, ce);
       var rx = tx + (r.l - l0) * s1, ry = ty + (r.t - t0) * s1, rw = r.w * s1, rh = r.h * s1;
-      /* fio 1: do dado ao documento (entra pela faixa do nome) */
+      /* fio 1: do dado ao documento */
       c.F1 = n ? bez([rx + rw * .5, ry + rh], [rx + rw * .5, ry + rh + gap * .6], [cl + cw * .5, ct - gap * .6], [cl + cw * .5, ct - 2], 64)
                : bez([rx + rw + 10, ry + rh / 2], [rx + rw + (cl - rx - rw) * .55, ry + rh / 2], [cl - (cl - rx - rw) * .45, ct + ch * .3], [cl - 4, ct + ch * .3], 64);
       /* fio 2: do ID ao QR, dentro do documento */
       var a2 = [id.l + id.w + 8, id.t + id.h / 2], b2 = [q.l - 8, q.t + q.h / 2];
       c.F2 = bez(a2, [a2[0] + (b2[0] - a2[0]) * .4, a2[1] - 18], [b2[0] - (b2[0] - a2[0]) * .4, b2[1] - 18], b2, 40);
+      /* fio 3 (só no quadro estático): do QR à página pública */
+      if(c.still){ var k = relTo(va.querySelector(".vh"), c.sf), a3 = [q.l + q.w / 2, q.t + q.h + 8], b3 = [k.l + k.w / 2, k.t - 10];
+        c.F3 = bez(a3, [a3[0], a3[1] + (b3[1] - a3[1]) * .5], [b3[0], b3[1] - (b3[1] - a3[1]) * .5], b3, 56); }
       ce.style.transformOrigin = (qe.l + qe.w / 2) + "px " + (qe.t + qe.h / 2) + "px";
       c.Z = H * .62 / q.h; c.QC = [q.l + q.w / 2, q.t + q.h / 2];
     }); c.render(c.p); };
@@ -1185,29 +1203,54 @@
       return 0;
     }
     c.render = function(p){
-      chrome(c, p);
+      if(c.still) return renderStill();
+      if(c.flow) c.o.lines.forEach(function(r, i){ c.lines[i].style.opacity = fade(p, r[0], r[0] + .012, r[1] - .012, r[1]); });
+      else chrome(c, p);
       if(!c.S1) return;
       var out = 1 - seg(p, .56, .6);
-      /* a linha certa acende antes de qualquer movimento */
       row.style.background = "rgba(255,241,232," + fade(p, .25, .28, .5, .56) + ")";
       var m = io(seg(p, .32, .39));
       sh.style.transform = "translate(" + (c.S1.x * m) + "px," + (c.S1.y * m) + "px) scale(" + (1 - (1 - c.S1.s) * m) + ")";
       sh.style.transformOrigin = "0 0"; sh.style.opacity = out;
-      /* o fio percorre o caminho; o documento só existe quando ele chega */
       var k1 = io(seg(p, .385, .44)), k2 = io(seg(p, .475, .51)), moving = 0;
       moving += draw(f1, c.F1, k1); f1.style.opacity = out;
       var ca = seg(p, .43, .465), z = io(seg(p, .58, .66));
       moving += draw(f2, c.F2, k2); f2.style.opacity = 1 - seg(p, .555, .575);
       tip.style.opacity = moving ? 1 : 0;
-      /* o QR recebe foco quando o segundo fio chega */
       var fq = fade(p, .505, .52, .555, .575);
       qr.style.boxShadow = "0 0 0 " + (2 + fq * 6) + "px rgba(17,19,24," + (fq * .07).toFixed(3) + "), 0 0 0 1.5px rgba(17,19,24," + fq.toFixed(3) + ")";
       ce.style.opacity = ca * (1 - seg(p, .635, .67));
       ce.style.boxShadow = "0 0 0 1px rgba(17,19,24,.06), 0 " + (30 * ca) + "px 70px -40px rgba(17,19,24," + (.4 * ca).toFixed(2) + ")";
-      ce.style.transform = "translate(" + ((c.W / 2 - c.QC[0]) * z) + "px," + ((1 - ca) * 10 + (c.H / 2 - c.QC[1]) * z) + "px) scale(" + ((.97 + .03 * ca) + (c.Z - 1) * z) + ")";
-      /* a página pública é a consequência do QR */
+      ce.style.transform = "translate(" + ((c.W / 2 - c.QC[0]) * z) + "px," + ((1 - ca) * 10 + (c.HC / 2 - c.QC[1]) * z) + "px) scale(" + ((.97 + .03 * ca) + (c.Z - 1) * z) + ")";
       var v = seg(p, .645, .69); va.style.opacity = v; va.style.transform = "translateY(" + ((1 - v) * 10) + "px)";
       dot.style.opacity = seg(p, .69, .7);
+      if(c.flow && c.res){ var ro = seg(p, .7, .73); if(ro > c.resO) c.resO = ro; c.res.style.opacity = c.resO; c.res.style.pointerEvents = c.resO > .5 ? "auto" : "none"; }
+    };
+    /* quadro estático: tudo junto, ligado pelos fios — nada se move */
+    function renderStill(){
+      if(!c.S1) return;
+      sh.style.transformOrigin = "0 0"; sh.style.opacity = 1;
+      sh.style.transform = "translate(" + c.S1.x + "px," + c.S1.y + "px) scale(" + c.S1.s + ")";
+      row.style.background = "rgba(255,241,232,1)";
+      ce.style.opacity = 1; ce.style.transform = "none";
+      qr.style.boxShadow = "0 0 0 8px rgba(17,19,24,.07), 0 0 0 1.5px rgba(17,19,24,1)";
+      draw(f1, c.F1, 1); draw(f2, c.F2, 1); if(c.F3) draw(f3, c.F3, 1);
+      tip.style.opacity = 0; va.style.opacity = 1; va.style.transform = "none"; dot.style.opacity = 1;
+    }
+    /* em movimento: um ciclo por entrada na tela; ao sair, volta ao começo */
+    c.autoplay = function(){
+      c.flow = true; c.el.classList.add("flow"); c.res.style.opacity = 0; c.resO = 0;
+      var START = .19, END = .735, tw = null;
+      c.p = START;
+      function reset(){ if(tw) tw.kill(); tw = null; c.p = START; c.render(c.p); }
+      function play(){ if(tw) return; var st = { p: START };
+        tw = gsap.to(st, { p: END, duration: 10, ease: "none", onUpdate: function(){ c.p = st.p; c.render(c.p); } }); }
+      new IntersectionObserver(function(en){
+        var e = en[0];
+        if(e.intersectionRatio >= .55) play();
+        else if(!e.isIntersecting) reset();
+      }, { threshold: [0, .55] }).observe(c.sf);
+      reset();
     };
   })();
 
@@ -1218,11 +1261,12 @@
   /* =========================================================
      motor
      ========================================================= */
+  function byId0(){ for(var i = 0; i < CH.length; i++) if(CH[i].el.id === "documentos") return CH[i]; }
   function staticMode(){
     P1 = 1; layout1();
     P2 = .945; layout2();
     p2.querySelector(".band").style.display = "none";
-    CH.forEach(function(c){ c.p = c.res ? (c.o.end || .86) - .005 : 1; c.layout(); });
+    CH.forEach(function(c){ if(c.el.id === "documentos") c.still = true; c.p = c.res ? (c.o.end || .86) - .005 : 1; c.layout(); });
     renderEnd(1);
   }
   if(STATIC){
@@ -1232,7 +1276,9 @@
   }
 
   /* o nó se desenha uma vez, ao abrir */
-  layout1(); layout2(); CH.forEach(function(c){ c.layout(); });
+  layout1(); layout2();
+  byId0().autoplay();
+  CH.forEach(function(c){ c.layout(); });
   strands.forEach(function(s, j){
     s.el.setAttribute("pathLength", "1"); s.el.style.strokeDasharray = "1"; s.el.style.strokeDashoffset = "1";
     gsap.to(s.el.style, { strokeDashoffset: 0, duration: 2.2, delay: .15 + j * .05, ease: "power2.inOut", onComplete: function(){ s.el.removeAttribute("pathLength"); s.el.style.strokeDasharray = ""; s.el.style.strokeDashoffset = ""; } });
@@ -1257,7 +1303,6 @@
   }
   render2Intro(0);
   pinScene(p2, 1280, render2Intro);
-  pinScene(byId.documentos.el, byId.documentos.len, function(v){ byId.documentos.p = v; byId.documentos.render(v); });
   ScrollTrigger.create({ trigger: ".end", start: "top 70%", end: "center 55%", scrub: .6, onUpdate: function(t){ renderEnd(t.progress); } });
   ScrollTrigger.addEventListener("refresh", function(){ layout1(); layout2(); CH.forEach(function(c){ c.layout(); }); });
   var wantMap = location.hash === "#projetos" || location.hash === "#mapa";
