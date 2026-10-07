@@ -305,7 +305,22 @@
   .d-ft .d-id{ font-weight:400; color:var(--u-ink); }
   .sf.dv{ --dvh:min(470px, calc(100% - 72px - var(--band) - 4vh)); top:calc(72px + (100% - 72px - var(--band) - var(--dvh)) / 2); height:var(--dvh); }
   .th .tip{ fill:var(--u-ink); stroke:none; }
-  /* 05 em fluxo: a cena não fica fixada; a sequência roda sozinha ao entrar na tela */
+  /* capítulos em fluxo: a cena não fica fixada; a sequência roda sozinha ao entrar na tela */
+  .scn.flow{ height:auto; overflow:visible; padding:clamp(96px,14vh,160px) 0 clamp(40px,7vh,88px); }
+  .scn.flow .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none; padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
+  .scn.flow .sf{ position:relative; left:auto; right:auto; top:auto; margin:0 clamp(12px,2.4vw,40px); height:min(640px, 72vh); opacity:1; }
+  .scn.flow .sf.sm{ width:min(900px, calc(100% - 24px)); margin:0 auto; height:min(460px, 60vh); }
+  .scn.flow .band{ position:relative; left:auto; right:auto; bottom:auto; height:84px; margin:0 clamp(12px,2.4vw,40px); }
+  .scn.flow .band .nm{ display:none; }
+  .scn.flow .band p{ top:22px; }
+  .scn.flow .band .go{ top:72px; }
+  .scn.flow .res{ position:relative; inset:auto; padding-top:32px; }
+  #daily-ops.flow .band{ height:120px; }
+  .p2.flow{ height:auto; overflow:visible; padding-top:clamp(96px,14vh,160px); }
+  .p2.flow .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none; padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
+  .stage2{ position:relative; height:min(86svh, 880px); overflow:hidden; }
+  .p2.flow .sf{ top:0; height:calc(100% - var(--band)); }
+  /* 05 em fluxo */
   #documentos.flow{ height:auto; overflow:visible; padding:clamp(96px,14vh,160px) 0 clamp(40px,7vh,88px); }
   #documentos.flow .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none; padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
   #documentos.flow .sf{ position:relative; left:auto; right:auto; top:auto; margin:0 clamp(12px,2.4vw,40px); height:470px; opacity:1; }
@@ -362,6 +377,11 @@
     .m-tb td.nv{ font-size:.8em; }
     .d-sh .r{ grid-template-columns:1.5fr 1.5fr; }
     .d-sh .r span:nth-child(3), .d-sh .r span:nth-child(4){ display:none; }
+    .scn.flow .sf{ height:600px; }
+    .scn.flow .sf.sm{ width:auto; margin:0 10px; height:520px; }
+    .scn.flow .band{ height:96px; }
+    #daily-ops.flow .band{ height:132px; }
+    .stage2{ height:88svh; }
     #documentos.flow .sf{ height:600px; }
     #documentos.flow .band{ height:96px; }
     .sf.dv{ --dvh:min(620px, calc(100% - 66px - var(--band) - 2vh)); top:calc(66px + (100% - 66px - var(--band) - var(--dvh)) / 2); }
@@ -1036,6 +1056,14 @@
   function curve(a, b, vertical){ var dx = b[0] - a[0], dy = b[1] - a[1]; return vertical ? bez(a, [a[0] + 22, a[1] + dy * .35], [b[0] + 22, b[1] - dy * .35], b, 56) : bez(a, [a[0] + dx * .5, a[1]], [b[0] - dx * .5, b[1]], b, 56); }
   function chrome(c, p){
     var o = c.o, end = o.end || .86, k = seg(p, .1, .15);
+    if(c.flow){
+      /* a última legenda permanece no estado final; resultado e link aparecem no fim e ficam */
+      var last = o.lines.length - 1;
+      o.lines.forEach(function(r, i){ c.lines[i].style.opacity = i === last ? seg(p, r[0], r[0] + .012) : fade(p, r[0], r[0] + .012, r[1] - .012, r[1]); });
+      if(c.res){ var rf = seg(p, end - .03, end); if(rf > c.doneO) c.doneO = rf; c.res.style.opacity = c.doneO; c.res.style.pointerEvents = c.doneO > .5 ? "auto" : "none"; }
+      if(c.bgo){ var gf = seg(p, o.goAt, o.goAt + .02); if(gf > c.doneO) c.doneO = gf; c.bgo.style.opacity = c.doneO; c.bgo.style.pointerEvents = c.doneO > .5 ? "auto" : "none"; }
+      return;
+    }
     c.ttl.style.opacity = 1 - k; c.ttl.style.transform = "translateY(calc(-50% - " + (k * 24) + "px))";
     var s = Math.min(seg(p, .13, .19), c.res ? 1 - seg(p, end, end + .035) : 1);
     c.sf.style.opacity = s; c.sf.style.transform = "scale(" + (.965 + .035 * s) + ")";
@@ -1254,6 +1282,28 @@
     };
   })();
 
+  /* ---------- gatilho por entrada na tela (o mesmo do 05) ----------
+     Entrou na tela → a animação própria da cena roda uma vez → para no estado final.
+     Só volta ao começo quando a cena sai inteira da tela, para não piscar durante o scroll. */
+  function onEnter(target, START, END, dur, render){
+    var tw = null, cur = START;
+    function reset(){ if(tw) tw.kill(); tw = null; cur = START; render(cur); }
+    function play(){ if(tw) return; var st = { p: cur };
+      tw = gsap.to(st, { p: END, duration: dur * (END - cur) / (END - START), ease: "none", onUpdate: function(){ cur = st.p; render(cur); } }); }
+    new IntersectionObserver(function(en){
+      var e = en[0];
+      if(e.intersectionRatio >= .55) play();
+      else if(!e.isIntersecting) reset();
+    }, { threshold: [0, .55] }).observe(target);
+    return { reset: reset, now: function(){ return cur; } };
+  }
+  function autoplayChapter(c, START, END, dur){
+    c.flow = true; c.el.classList.add("flow"); c.doneO = 0;
+    if(c.res) c.res.style.opacity = 0; if(c.bgo) c.bgo.style.opacity = 0;
+    c.p = START;
+    onEnter(c.sf, START, END, dur, function(v){ c.p = v; c.render(v); });
+  }
+
   /* ---------- contato: o fio chega ao ponto ---------- */
   var endLn = document.querySelector(".end-ln"), endPt = document.querySelector(".end-pt");
   function renderEnd(k){ endLn.style.transform = "scaleX(" + k + ")"; endPt.style.opacity = k >= .99 ? 1 : 0; }
@@ -1276,9 +1326,20 @@
   }
 
   /* o nó se desenha uma vez, ao abrir */
-  layout1(); layout2();
+  var byId = {}; CH.forEach(function(c){ byId[c.el.id] = c; });
+  /* capítulos: a animação própria de cada um começa sozinha ao entrar na tela */
+  autoplayChapter(byId.extrator, .17, .86, 11);
+  autoplayChapter(byId["daily-ops"], .17, .9, 10);
+  autoplayChapter(byId.motor, .17, .86, 8);
   byId0().autoplay();
+  /* 04: a cena inteira, do ticket ao fechamento, num palco abaixo do título */
+  p2.classList.add("flow"); Q2 = 1;
+  var stage2 = document.createElement("div"); stage2.className = "stage2";
+  [sf, p2.querySelector(".band"), bigOne, bigBut, p2.querySelector(".close")].forEach(function(el){ stage2.appendChild(el); });
+  p2.appendChild(stage2);
+  layout1(); layout2();
   CH.forEach(function(c){ c.layout(); });
+  onEnter(stage2, 0, 1, 36, function(v){ P2 = v; render2(); });
   strands.forEach(function(s, j){
     s.el.setAttribute("pathLength", "1"); s.el.style.strokeDasharray = "1"; s.el.style.strokeDashoffset = "1";
     gsap.to(s.el.style, { strokeDashoffset: 0, duration: 2.2, delay: .15 + j * .05, ease: "power2.inOut", onComplete: function(){ s.el.removeAttribute("pathLength"); s.el.style.strokeDasharray = ""; s.el.style.strokeDashoffset = ""; } });
@@ -1291,18 +1352,9 @@
     return gsap.to(st, { p: 1, ease: "none", onUpdate: function(){ onP(st.p); },
       scrollTrigger: { trigger: el, start: "top top", end: "+=" + len + "%", pin: true, scrub: .8 } }).scrollTrigger;
   }
-  var byId = {}; CH.forEach(function(c){ byId[c.el.id] = c; });
   var mapST = pinScene(p1, 320, function(v){ P1 = v; render1(); });
   function goMap(e){ if(e) e.preventDefault(); scrollTo({ top: mapST.end, behavior: e ? "smooth" : "auto" }); if(e) history.replaceState(null, "", "#projetos"); }
   Array.prototype.forEach.call(document.querySelectorAll('a[href="#mapa"]'), function(a){ a.addEventListener("click", goMap); });
-  ["extrator", "daily-ops", "motor"].forEach(function(id){ var c = byId[id]; pinScene(c.el, c.len, function(v){ c.p = v; c.render(v); }); });
-  /* prólogo: 04 · TicketScript → FormPilot; depois, a mesma animação de antes */
-  function render2Intro(v){
-    var k = seg(v, .03, .055); ttl2.style.opacity = 1 - k; ttl2.style.transform = "translateY(calc(-50% - " + (k * 24) + "px))";
-    Q2 = seg(v, .045, .075); P2 = clamp((v - .06) / .94); render2();
-  }
-  render2Intro(0);
-  pinScene(p2, 1280, render2Intro);
   ScrollTrigger.create({ trigger: ".end", start: "top 70%", end: "center 55%", scrub: .6, onUpdate: function(t){ renderEnd(t.progress); } });
   ScrollTrigger.addEventListener("refresh", function(){ layout1(); layout2(); CH.forEach(function(c){ c.layout(); }); });
   var wantMap = location.hash === "#projetos" || location.hash === "#mapa";
