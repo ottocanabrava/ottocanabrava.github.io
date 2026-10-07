@@ -124,7 +124,9 @@
   .pdf-h{ position:absolute; left:1.8em; right:1.8em; top:1.3em; display:flex; justify-content:space-between; align-items:baseline; padding-bottom:.7em; border-bottom:1.5px solid var(--u-ink); }
   .pdf-h b{ font-weight:600; font-size:.86em; }
   .op{ position:relative; display:inline-grid; font-size:.8em; color:var(--u-2); }
-  .op > span{ grid-area:1/1; padding:.05em .45em; border-radius:3px; text-align:right; }
+  .op{ font-weight:600; color:var(--u-ink); font-size:.86em; margin-left:-.45em; }
+  .op > span{ grid-area:1/1; padding:.05em .45em; border-radius:3px; text-align:left; white-space:nowrap; }
+  .pdf-h b{ font-weight:400; color:var(--u-3); font-size:.8em; }
   .op .vit{ box-shadow:inset 0 0 0 1px rgba(17,19,24,var(--m,0)); }
   .frow{ position:absolute; left:1.8em; right:1.8em; display:grid; grid-template-columns:minmax(0,1fr) 1.4em; align-content:end; column-gap:.5em; }
   .frow label{ grid-column:1/-1; font-size:.66em; color:var(--u-3); margin-bottom:.25em; }
@@ -271,7 +273,7 @@
           <div class="msg mv-msg"><b>RH — Nordeste Componentes</b>Precisamos incluir a colaboradora Marina Torres Almeida no plano titular da Vitalis Saúde.</div>
         </div>
         <div class="pdf">
-          <div class="pdf-h"><b>Formulário de movimentação</b><span class="op" data-b="op"><span class="amp">Amparo Seguros</span><span class="vit">Vitalis Saúde</span></span></div>
+          <div class="pdf-h"><span class="op" data-b="op"><span class="amp">Amparo Seguros</span><span class="vit">Vitalis Saúde</span></span><b>Formulário de movimentação</b></div>
           <div class="frow" data-f="mov"><label>Tipo de movimentação</label><span class="slot"><span class="val">Inclusão de titular</span></span><span class="ck">✓</span></div>
           <div class="frow" data-f="ben"><label>Nome completo</label><span class="slot"><span class="val">Marina Torres Almeida</span></span><span class="ck">✓</span></div>
           <div class="frow" data-f="cpf"><label>CPF</label><span class="slot"><span class="val"><i class="bar" style="width:5.5em"></i></span></span><span class="ck">✓</span></div>
@@ -350,21 +352,21 @@
      1 · O NÓ
      Cada fio é uma relação real: uma entrada que alimenta um sistema.
      ========================================================= */
-  /* Relações conferidas nos textos dos cases e da home. Na dúvida, fica de fora. */
+  /* Só relações comprovadas pelos cases. Na dúvida, fica de fora. */
   var INPUTS = [
-    ["portais", "Portais"], ["hubspot", "HubSpot"], ["zendesk", "Zendesk"], ["sheets", "Google Sheets"],
-    ["pdfs", "PDFs das operadoras"], ["drive", "Google Drive"], ["backoffice", "Backoffice × fatura"], ["receita", "Receita Federal"]
+    ["portais", "Portais"], ["hubspot", "HubSpot"], ["drive", "Google Drive"], ["backoffice", "Backoffice × fatura"],
+    ["sheets", "Google Sheets"], ["zendesk", "Zendesk"], ["pdfs", "PDFs das operadoras"]
   ];
   var SYSTEMS = [
     ["extrator", "Extrator de Fatura", "/extrator-de-fatura/"],
     ["dailyops", "Daily Ops Dashboard", "/daily-ops-dashboard/"],
+    ["motor", "Motor de Triagem", "/motor-triagem/"],
     ["ticketscript", "TicketScript", "#evolucao"],
     ["formpilot", "FormPilot", "#evolucao"],
-    ["docs", "Documentos Verificáveis", "/documentos-verificaveis/"],
-    ["motor", "Motor de Triagem", "/motor-triagem/"]
+    ["docs", "Documentos Verificáveis", "/documentos-verificaveis/"]
   ];
-  var REL = [["portais","extrator"],["hubspot","dailyops"],["zendesk","dailyops"],["drive","dailyops"],["zendesk","formpilot"],
-             ["pdfs","formpilot"],["sheets","ticketscript"],["sheets","docs"],["drive","motor"],["backoffice","motor"],["receita","motor"]];
+  var REL = [["portais","extrator"],["hubspot","dailyops"],["drive","motor"],["backoffice","motor"],
+             ["sheets","ticketscript"],["sheets","docs"],["zendesk","formpilot"],["pdfs","formpilot"]];
 
   var p1 = document.querySelector(".p1"), g = p1.querySelector(".g-str"), link = p1.querySelector(".link"), labels = p1.querySelector(".labels");
   var s1 = p1.querySelector(".s1"), s1b = p1.querySelector(".s1b"), s2 = p1.querySelector(".s2");
