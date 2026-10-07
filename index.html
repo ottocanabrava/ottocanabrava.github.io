@@ -219,6 +219,7 @@
   .res b{ font-size:clamp(3rem,10vw,10rem); font-weight:500; letter-spacing:-.06em; line-height:.92; }
   .res b.long{ font-size:clamp(2.5rem,6.6vw,6.5rem); max-width:12ch; }
   .res small{ display:block; margin-top:24px; font-size:clamp(1rem,1.5vw,1.375rem); color:var(--ink-3); max-width:36ch; line-height:1.4; letter-spacing:-.01em; }
+  .res .stk{ display:block; margin-top:14px; font-size:clamp(.875rem,1.1vw,1rem); color:var(--ink-3); max-width:52ch; line-height:1.45; }
   .go{ display:inline-flex; gap:12px; align-items:baseline; margin-top:40px; font-size:clamp(1rem,1.4vw,1.25rem); font-weight:500; color:var(--ink); }
   .go i{ font-style:normal; transition:transform .3s var(--ease); }
   .go:hover i{ transform:translateX(5px); }
@@ -366,6 +367,9 @@
   html.static .scn .band p, html.static .scn .band .nm{ display:none; }
   html.static .scn .band .go{ position:static; opacity:1 !important; pointer-events:auto !important; }
   html.static .scn .res{ position:relative; inset:auto; opacity:1 !important; pointer-events:auto !important; padding-top:48px; }
+  html.static .p2 .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none !important; opacity:1 !important; padding:96px clamp(20px,6vw,96px) 32px; }
+  html.static .p2{ height:auto; }
+  html.static .p2 .sf{ position:relative; left:auto; right:auto; top:auto; margin:0 clamp(12px,2.4vw,40px); height:70vh; opacity:1 !important; transform:none !important; }
   html.static .end-ln{ transform:none; }
   html.static .end-pt{ opacity:1; }
 </style>
@@ -393,7 +397,7 @@
 
   <!-- 01 · Extrator de Fatura: portal → extração → arquivo organizado -->
   <section class="scn" id="extrator" aria-labelledby="x-t">
-    <div class="ttl"><span class="ix">01</span><h2 id="x-t">Extrator de Fatura</h2></div>
+    <div class="ttl"><span class="ix">01</span> <h2 id="x-t">Extrator de Fatura</h2></div>
     <div class="sf" aria-hidden="true">
       <div class="pw" data-pw="0"><div class="pw-h">Portal Vivare <small>fictício</small></div><div class="pw-b"><span class="lb">Usuário</span><span class="in2"></span><span class="lb">Senha</span><span class="in2"></span><span class="bt">Entrar</span><div class="ls"><div><span>Boleto · 2026-08</span><span>baixar</span></div><div><span>Demonstrativo · 2026-08</span><span>baixar</span></div></div></div></div>
       <div class="pw" data-pw="1"><div class="pw-h">Portal Zelohub <small>fictício</small></div><div class="pw-b"><span class="lb">Usuário</span><span class="in2"></span><span class="lb">Senha</span><span class="in2"></span><span class="bt">Entrar</span><div class="ls"><div><span>Boleto · 2026-08</span><span>baixar</span></div><div><span>Demonstrativo · 2026-08</span><span>baixar</span></div></div></div></div>
@@ -419,12 +423,12 @@
       <p>Uma fila que navega, extrai e padroniza sozinha.</p>
       <p>Cada arquivo na pasta certa.</p>
     </div>
-    <div class="res"><b>2–4h / mês</b><small>de trabalho manual eliminadas, por cliente, na carteira de cada analista.</small><a class="go" href="/extrator-de-fatura/">Explore o sistema <i>→</i></a></div>
+    <div class="res"><b>2–4h / mês</b> <small>de trabalho manual eliminadas, por cliente, na carteira de cada analista.</small> <a class="go" href="/extrator-de-fatura/">Explore o sistema <i>→</i></a></div>
   </section>
 
   <!-- 02 · Daily Ops: sinais soltos → cada um encontra a sua empresa → prioridade -->
   <section class="scn" id="daily-ops" aria-labelledby="o-t">
-    <div class="ttl"><span class="ix">02</span><h2 id="o-t">Daily Ops Dashboard</h2></div>
+    <div class="ttl"><span class="ix">02</span> <h2 id="o-t">Daily Ops Dashboard</h2></div>
     <div class="sf" aria-hidden="true">
       <div class="d-top"><small>Painel diário · prioridades geradas automaticamente</small><h3>Por onde você começa hoje</h3></div>
       <div class="d-cards">
@@ -445,7 +449,7 @@
 
   <!-- 03 · Motor de Triagem: detalhe pequeno -->
   <section class="scn" id="motor" aria-labelledby="m-t">
-    <div class="ttl"><span class="ix">03</span><h2 id="m-t">Motor de Triagem</h2></div>
+    <div class="ttl"><span class="ix">03</span> <h2 id="m-t">Motor de Triagem</h2></div>
     <div class="sf sm" aria-hidden="true">
       <div class="m-in">
         <div class="m-hd"><span>TICKET #1247</span><b>Metalmix Componentes S.A.</b></div>
@@ -467,12 +471,13 @@
       <p>Backoffice × fatura, ticket por ticket.</p>
       <p>Linha a linha. Só a divergência fica.</p>
     </div>
-    <div class="res"><b class="long">30–60 min → verificação direta</b><small>por ticket — aplicado a um backlog de ~200 tickets por ciclo entre 8 analistas.</small><a class="go" href="/motor-triagem/">Explore o sistema <i>→</i></a></div>
+    <div class="res"><b class="long">30–60 min → verificação direta</b> <small>por ticket — aplicado a um backlog de ~200 tickets por ciclo entre 8 analistas.</small> <span class="stk">Agente validador com IA generativa. Checagem de CPF e data via integração n8n com fonte oficial de validação.</span> <a class="go" href="/motor-triagem/">Explore o sistema <i>→</i></a></div>
   </section>
 
 
   <!-- 2 · TicketScript → FormPilot: a própria interface conta a história -->
-  <section class="p2" id="evolucao" aria-label="TicketScript e FormPilot">
+  <section class="p2" id="evolucao" aria-labelledby="ev-t">
+    <div class="ttl"><span class="ix">04</span> <h2 id="ev-t">TicketScript → FormPilot</h2></div>
     <div class="sf" aria-hidden="true">
       <div class="v v-ts">
         <div class="tk">
@@ -548,17 +553,17 @@
     <div class="close" aria-hidden="true">
       <div class="steps"><span>Mapear</span><i></i><span>Preencher</span><i></i><span>Validar</span><i></i><span>Assinar</span></div>
       <div class="nums">
-        <div class="from"><b>10–20 min</b><small>manual, por movimentação</small></div>
+        <div class="from"><b>10–20 min</b> <small>manual, por movimentação</small></div>
         <span class="arrow"></span>
-        <div><b>~2 min</b><small>com o FormPilot: revisão + geração</small></div>
+        <div><b>~2 min</b> <small>com o FormPilot: revisão + geração</small></div>
       </div>
     </div>
   </section>
 
   <section class="after">
     <div class="after-static nums" style="position:static;opacity:1;flex-direction:row;flex-wrap:wrap;margin-bottom:24px;">
-      <div class="from"><b>10–20 min</b><small>manual, por movimentação</small></div>
-      <div><b>~2 min</b><small>com o FormPilot: revisão + geração</small></div>
+      <div class="from"><b>10–20 min</b> <small>manual, por movimentação</small></div>
+      <div><b>~2 min</b> <small>com o FormPilot: revisão + geração</small></div>
     </div>
     <a href="/ticketscript/">TicketScript <span>fev–mai 2025</span><i>→</i></a>
     <a href="/formpilot/">FormPilot <span>em uso pelo time</span><i>→</i></a>
@@ -566,7 +571,7 @@
 
   <!-- 06 · Documentos Verificáveis: linha → documento → QR → página pública -->
   <section class="scn" id="documentos" aria-labelledby="d-t">
-    <div class="ttl"><span class="ix">06</span><h2 id="d-t">Documentos Verificáveis</h2></div>
+    <div class="ttl"><span class="ix">05</span> <h2 id="d-t">Documentos Verificáveis</h2></div>
     <div class="sf" aria-hidden="true">
       <div class="d-sh">
         <div class="r h"><span>Aluno</span><span>Curso</span><span>Carga</span><span>Emissão</span></div>
@@ -596,7 +601,7 @@
       <p>Vira um documento com ID e QR code.</p>
       <p>Quem confere vê só o que é público.</p>
     </div>
-    <div class="res"><b>5 tipos de documento</b><small>todos com ID, QR e validação pública. Uma especificação, duas implementações: Python e n8n.</small><a class="go" href="/documentos-verificaveis/">Explore o sistema <i>→</i></a></div>
+    <div class="res"><b>5 tipos de documento</b> <small>todos com ID, QR e validação pública. Uma especificação, duas implementações: Python e n8n.</small> <a class="go" href="/documentos-verificaveis/">Explore o sistema <i>→</i></a></div>
   </section>
 
   <!-- Sobre: os mesmos fatos, contados como texto -->
@@ -823,7 +828,7 @@
   var PAIRS = [["op", "op"], ["mov", "mov"], ["ben", "ben"], ["cpf", "cpf"], ["nas", "nas"], ["ben", "cor"]];
   var dashP = PAIRS.map(function(){ return mkPath("dash"); }), solidP = PAIRS.map(function(){ return mkPath(); });
   var ORD_A = { cpf: 0, nas: 1, ben: 2, cor: 3, mov: 4 }, ORD_B = { mov: 0, ben: 1, cpf: 2, nas: 3, cor: 4 };
-  var A2 = {}, FPL = {}, P2 = 0, SW, SH, nar2, curTicket = null;
+  var A2 = {}, FPL = {}, P2 = 0, Q2 = 1, SW, SH, nar2, curTicket = null, ttl2 = p2.querySelector(".ttl");
 
   function rel(el){ var r = el.getBoundingClientRect(), s = sf.getBoundingClientRect(); return { l: r.left - s.left, t: r.top - s.top, w: r.width, h: r.height }; }
   function resample(pts, n){
@@ -910,7 +915,7 @@
     /* a superfície sai para as frases de tela inteira e volta transformada */
     var sfIn = 1 - seg(p, .37, .40), sfBack = seg(p, .62, .655), sfOut = 1 - seg(p, .944, .958);
     var base = p < .5 ? sfIn : sfBack;
-    sf.style.opacity = Math.min(base, sfOut); sf.style.transform = "scale(" + (.965 + .035 * base) + ")";
+    sf.style.opacity = Math.min(base, sfOut) * Q2; sf.style.transform = "scale(" + (.965 + .035 * base) + ")";
     vts.style.opacity = p < .5 ? 1 : 0; vfp.style.opacity = p < .5 ? 0 : 1;
     var fpOn = p >= .5;
 
@@ -988,11 +993,11 @@
     var LR = [[0, .06], [.06, .11], [.11, .3], [.3, .37], [.645, .745]];
     Array.prototype.forEach.call(lines, function(el, i){
       var a = LR[i][0], z = LR[i][1];
-      el.style.opacity = i === 0 ? 1 - seg(p, .05, .062) : fade(p, a, a + .008, z - .008, z);
+      el.style.opacity = i === 0 ? (1 - seg(p, .05, .062)) * Q2 : fade(p, a, a + .008, z - .008, z);
     });
     var WR = [[.745, .8], [.8, .875], [.875, .915], [.915, .944]];
     Array.prototype.forEach.call(words, function(el, i){ el.style.opacity = fade(p, WR[i][0], WR[i][0] + .006, WR[i][1] - .005, WR[i][1]); });
-    nmTs.style.opacity = 1 - seg(p, .36, .38);
+    nmTs.style.opacity = (1 - seg(p, .36, .38)) * Q2;
     nmFp.style.opacity = fade(p, .645, .66, .935, .945);
 
     /* fecho: as quatro palavras num fio reto; depois, os números */
@@ -1212,7 +1217,13 @@
   function goMap(e){ if(e) e.preventDefault(); scrollTo({ top: mapST.end, behavior: e ? "smooth" : "auto" }); if(e) history.replaceState(null, "", "#projetos"); }
   Array.prototype.forEach.call(document.querySelectorAll('a[href="#mapa"]'), function(a){ a.addEventListener("click", goMap); });
   ["extrator", "daily-ops", "motor"].forEach(function(id){ var c = byId[id]; pinScene(c.el, c.len, function(v){ c.p = v; c.render(v); }); });
-  pinScene(p2, 1200, function(v){ P2 = v; render2(); });
+  /* prólogo: 04 · TicketScript → FormPilot; depois, a mesma animação de antes */
+  function render2Intro(v){
+    var k = seg(v, .03, .055); ttl2.style.opacity = 1 - k; ttl2.style.transform = "translateY(calc(-50% - " + (k * 24) + "px))";
+    Q2 = seg(v, .045, .075); P2 = clamp((v - .06) / .94); render2();
+  }
+  render2Intro(0);
+  pinScene(p2, 1280, render2Intro);
   pinScene(byId.documentos.el, byId.documentos.len, function(v){ byId.documentos.p = v; byId.documentos.render(v); });
   ScrollTrigger.create({ trigger: ".end", start: "top 70%", end: "center 55%", scrub: .6, onUpdate: function(t){ renderEnd(t.progress); } });
   ScrollTrigger.addEventListener("refresh", function(){ layout1(); layout2(); CH.forEach(function(c){ c.layout(); }); });
