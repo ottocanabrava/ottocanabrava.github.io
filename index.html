@@ -1346,18 +1346,27 @@
   });
   gsap.from(".say .s1", { opacity: 0, y: 12, duration: 1.2, delay: .9, ease: "power2.out", clearProps: "transform" });
 
-  /* cenas fixadas, criadas na ordem em que aparecem na página */
-  function pinScene(el, len, onP){
-    var st = { p: 0 };
-    return gsap.to(st, { p: 1, ease: "none", onUpdate: function(){ onP(st.p); },
-      scrollTrigger: { trigger: el, start: "top top", end: "+=" + len + "%", pin: true, scrub: .8 } }).scrollTrigger;
+  /* abertura: o nó se desfaz sozinho, uma vez por visita, até o mapa formado.
+     Não repete ao voltar ao topo: o mapa fica pronto para navegar. */
+  var heroTw = null;
+  function heroFinish(){ if(heroTw) heroTw.kill(); heroTw = null; P1 = 1; render1(); }
+  function heroPlay(){
+    if(heroTw || P1 >= 1) return;
+    var st = { p: P1 };
+    heroTw = gsap.to(st, { p: 1, duration: 10 * (1 - P1), ease: "none", delay: P1 === 0 ? 1.6 : 0,
+      onUpdate: function(){ P1 = st.p; render1(); }, onComplete: function(){ heroTw = null; } });
   }
-  var mapST = pinScene(p1, 320, function(v){ P1 = v; render1(); });
-  function goMap(e){ if(e) e.preventDefault(); scrollTo({ top: mapST.end, behavior: e ? "smooth" : "auto" }); if(e) history.replaceState(null, "", "#projetos"); }
+  function goMap(e){
+    if(e) e.preventDefault();
+    heroFinish();
+    scrollTo({ top: p1.getBoundingClientRect().top + scrollY, behavior: e ? "smooth" : "auto" });
+    if(e) history.replaceState(null, "", "#projetos");
+  }
   Array.prototype.forEach.call(document.querySelectorAll('a[href="#mapa"]'), function(a){ a.addEventListener("click", goMap); });
   ScrollTrigger.create({ trigger: ".end", start: "top 70%", end: "center 55%", scrub: .6, onUpdate: function(t){ renderEnd(t.progress); } });
   ScrollTrigger.addEventListener("refresh", function(){ layout1(); layout2(); CH.forEach(function(c){ c.layout(); }); });
   var wantMap = location.hash === "#projetos" || location.hash === "#mapa";
+  if(wantMap) heroFinish(); else heroPlay();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ ScrollTrigger.refresh(); if(wantMap) goMap(); });
   else if(wantMap) goMap();
 })();
