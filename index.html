@@ -421,6 +421,11 @@
     .ab-t li.par::after{ left:-26px; right:auto; top:-36px; bottom:auto; height:36px; border-top:0; border-left:1.5px dashed var(--ink-4); transform-origin:top; }
     html.js:not(.static) .ab-t:not(.on) li.par::after{ transform:scaleY(0); }
     .ab-m li > span:last-child{ max-width:none; }
+    /* trajetória no celular: descrição em tamanho de leitura, ferramentas um degrau abaixo */
+    .ab-t b{ margin-bottom:10px; }
+    .ab-t p{ font-size:1rem; line-height:1.5; margin-bottom:12px; max-width:none; }
+    .ab-t small{ font-size:.8125rem; line-height:1.55; margin-top:12px; }
+    .ab-t li.par p:last-child{ margin-bottom:0; }
     .end-row{ flex-wrap:wrap; gap:12px; }
     .mail{ order:3; flex-basis:100%; white-space:normal; word-break:break-all; margin-top:12px; }
   }
