@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<!-- =====================================================================
+     Esqueleto de um case do portfólio. Copie este arquivo para <projeto>/index.html
+     e preencha só o que está marcado com ✎. Fonte de verdade dos componentes:
+     documentos-verificaveis/index.html + assets/case/. Documentação: .claude/template-de-cases.md
+     (Pastas com "_" não são publicadas pelo GitHub Pages: este arquivo não vai ao ar.)
+     ===================================================================== -->
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>✎ Nome do projeto · Otto Canabrava</title>
+<meta name="description" content="✎ Uma frase sobre o projeto.">
+<meta name="theme-color" content="#F7F7F5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<!-- Componentes compartilhados dos cases (topo, fechamento, base). Fonte e uso: .claude/template-de-cases.md -->
+<link rel="stylesheet" href="../assets/case/case.css">
+<style>
+  /* ✎ Específico deste case. Tokens, topo e fechamento vêm de ../assets/case/case.css: não redefina aqui. */
+</style>
+</head>
+<body>
+
+<!-- TOPO (compartilhado): não altere a marcação; os links são os mesmos em todos os cases -->
+<header class="nav">
+  <a href="/"><b>Otto Canabrava</b></a>
+  <nav><a href="/#projetos">Sistemas</a><a href="/#sobre">Sobre</a><a href="/#contato">Contato</a></nav>
+</header>
+
+<main>
+  <!-- ✎ CONTEÚDO DO CASE: abertura, demo e seções próprias do projeto.
+       A primeira seção leva o id usado no "↑ Topo" do rodapé (em Documentos Verificáveis, #demo). -->
+  <section id="✎inicio">
+  </section>
+
+  <!-- FECHAMENTO "Sobre o projeto" (compartilhado): mesma marcação e ordem; troque só os textos e links marcados -->
+  <section class="tx tx-end" id="autoria" aria-labelledby="au-t">
+    <h2 class="tx-k" id="au-t">✎ Sobre o projeto</h2>
+    <p class="tx-sub tx-au">✎ Contexto do projeto e autoria, em texto corrido.</p>
+    <p class="tx-src"><a href="✎ link de referência">✎ Texto do link ↗</a></p>
+    <!-- Saída: o texto pode variar (✎); o destino /#projetos é fixo em todos os cases, não altere -->
+    <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="end-a" href="/#projetos">✎ Todos os sistemas</a></div>
+  </section>
+  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#✎inicio">↑ Topo</a></footer>
+</main>
+
+<!-- NAVEGAÇÃO ENTRE PROJETOS: NÃO USAR.
+     Fora do template ativo até o Otto decidir a identidade visual dela. Não descomente este bloco
+     e não ligue ../assets/case/projetos.css. Fica aqui só como registro do componente existente
+     nos cases da identidade anterior (ver .claude/template-de-cases.md).
+<div class="cx" role="navigation" aria-labelledby="cx-h">
+  <div class="cx-in">
+  <div class="cx-hd"><h2 class="cx-k" id="cx-h">Continue explorando</h2><span class="cx-pos">Projeto ✎N de 6</span></div>
+  <div class="cx-grid">
+    <a class="cx-card cx-prev" href="✎/anterior/"><span class="cx-dir">← Anterior</span><span class="cx-name">✎ Nome</span><span class="cx-sum">✎ Resumo</span></a>
+    <a class="cx-card cx-all" href="/#projetos"><span class="cx-dir">Portfólio</span><span class="cx-name">Todos os projetos</span></a>
+    <a class="cx-card cx-next" href="✎/proximo/"><span class="cx-dir">Próximo →</span><span class="cx-name">✎ Nome</span><span class="cx-sum">✎ Resumo</span></a>
+  </div>
+  </div>
+</div>
+-->
+
+<!-- ✎ scripts próprios do case (antes do compartilhado) -->
+<script src="../assets/case/case.js"></script>
+</body>
+</html>
