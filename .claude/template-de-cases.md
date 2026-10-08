@@ -5,6 +5,19 @@ oficial dos cases. O topo, o fechamento e a base visual dele foram **extraídos*
 para arquivos compartilhados, sem alteração de valores. Os outros cases devem
 ligar esses arquivos, e não recriar os componentes.
 
+Documentos Verificáveis é a referência visual aprovada para o **topo** e o
+**fechamento**. O template compartilhado (`_template/case.html` e
+`assets/case/`) é a fonte de verdade para novos cases. A navegação entre
+projetos ainda **não** faz parte do padrão (ver abaixo).
+
+Todo trabalho em cases segue o fluxo obrigatório de
+[`CLAUDE.md`](CLAUDE.md#fluxo-obrigatório-de-trabalho):
+1. consultar este template;
+2. trabalhar numa branch própria;
+3. validar;
+4. abrir um PR contra a `main`;
+5. só fazer merge com confirmação explícita do Otto.
+
 Não há build nem framework. Cada case continua sendo um `index.html` com o
 próprio conteúdo, CSS e JS. Ele só **liga** os arquivos compartilhados por
 caminho relativo (`../assets/case/…`), que funciona no GitHub Pages, no
@@ -75,10 +88,19 @@ Comportamentos do componente:
 - **Celular:** até 720 px, os cartões ficam empilhados, com "Todos os projetos" por último.
 - **Hover e foco:** visíveis.
 
-Antes de aplicá-lo como padrão, falta decidir se Documentos Verificáveis passa
-a ter esse componente e em qual linguagem visual.
+**A navegação só entra no padrão depois que o Otto decidir a identidade
+visual dela.** Até lá:
+- ela não é ligada em nenhum case novo;
+- ela não é aplicada a Documentos Verificáveis;
+- nenhuma versão é redesenhada por conta própria.
+
+A decisão pendente tem duas partes: se Documentos Verificáveis passa a ter o
+componente e em qual linguagem visual.
 
 ## Como validar uma mudança no template
+
+A validação vem antes do PR, e o PR informa o que foi testado e o que não foi
+possível testar.
 
 Compare, em Documentos Verificáveis:
 - desktop (1440) e celular (390);
