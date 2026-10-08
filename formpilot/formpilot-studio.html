@@ -19,7 +19,9 @@
     --ui:#131D2E;          /* tinta do produto: ação, seleção, passo atual */
     --ui-700:#1A2740;
     --ui-100:#E3E7EF;
-    --brand:#5FD1B8;       /* teal da marca (sobre fundo escuro): assinatura, não ação */
+    --deep:#0F3D3E;        /* verde-petróleo da faixa do certificado */
+    --accent:#3DDBD9;      /* turquesa do certificado: filete, traço de destaque, ID */
+    --brand:#3DDBD9;       /* assinatura de marca sobre fundo escuro; não é cor de ação */
     --mark-line:#4B5567;
     --panel:#FFFFFF;
     --panel-alt:#F2F4F8;
@@ -72,7 +74,8 @@
   header.top{
     border-radius:var(--radius);
     overflow:hidden;
-    margin-bottom:22px;
+    margin-bottom:18px;
+    border-bottom:4px solid var(--accent);
   }
   .brand-row{
     background:var(--header);
@@ -232,23 +235,37 @@
 
   .map-grid{
     display:grid;
-    grid-template-columns:minmax(300px,1.05fr) minmax(360px,0.95fr);
+    grid-template-columns:minmax(300px,560px) minmax(360px,1fr);
     gap:18px;
     align-items:start;
   }
   @media (max-width:900px){
     .map-grid{grid-template-columns:1fr;}
   }
-  .workbench{display:flex;flex-direction:column;overflow:hidden;}
+  .workbench{display:flex;flex-direction:column;overflow:hidden;background:#FEFDFB;border-color:var(--line-strong);border-radius:4px;box-shadow:0 1px 2px rgba(19,29,46,0.06);}
   /* o motor no ponto de trabalho: a cabeça da cadeia usa a mesma faixa escura e mono da abertura */
   .workbench > .wb-zone:first-child > .panel-title{
-    background:var(--hero);color:#fff;border-bottom:0;
-    border-left:3px solid var(--brand);
+    background:var(--deep);color:#fff;border-bottom:4px solid var(--accent);
     font-size:12px;letter-spacing:-0.005em;
     justify-content:flex-start;flex-wrap:wrap;gap:2px 6px;
   }
   .workbench > .wb-zone:first-child > .panel-title span{color:#6B84AD;margin:0 3px;}
   .wb-divider{height:1px;background:var(--line);margin:0;}
+  /* ficha técnica do campo: rótulo em mono à esquerda, valor à direita, divisor entre linhas */
+  #configPanel{padding:2px 16px 8px;}
+  #configPanel .field-row{display:grid;grid-template-columns:112px minmax(0,1fr);align-items:center;gap:10px;margin:0;padding:8px 0;border-bottom:1px solid var(--line);}
+  #configPanel .field-row:last-child{border-bottom:0;}
+  #configPanel label.field-label{margin:0;font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-500);}
+  #configPanel input[type=text],#configPanel input[type=number],#configPanel select{
+    background:transparent;border:0;border-bottom:1.5px solid var(--mark-line);border-radius:0;
+    padding:5px 2px;font-weight:600;color:var(--ink-900);
+  }
+  #configPanel input:disabled{border-bottom-style:dotted;border-bottom-color:var(--line-strong);color:var(--ink-700);}
+  #configPanel input:focus,#configPanel select:focus{border-bottom-color:var(--ui);background:var(--ui-100);}
+  #configPanel .coord-row{display:flex;gap:18px;}
+  #configPanel .coord-row .field-row{flex:1;grid-template-columns:auto minmax(0,1fr);padding:0;border-bottom:0;}
+  #configPanel .field-row.hl select{border-bottom-color:var(--ui);box-shadow:none;background:var(--ui-100);}
+  .workbench .panel-title{background:transparent;}
 
   .doc-caption{
     font-family:var(--font-mono);
@@ -265,29 +282,32 @@
     width:100%;
     max-width:560px;
     min-height:420px;
-    box-shadow:0 1px 2px rgba(19,29,46,0.05), 0 6px 18px -10px rgba(19,29,46,0.18);
+    box-shadow:0 1px 2px rgba(19,29,46,0.06);
     overflow:hidden;
   }
-  .doc-header{
-    position:absolute;top:14px;left:14px;right:14px;
-    display:flex;align-items:center;gap:8px;
-    border-bottom:1px solid #e3e5ea;
-    padding-bottom:7px;
-  }
-  .doc-mono-mark{
-    width:18px;height:18px;flex:none;
-    background:var(--header);color:#fff;
-    border-radius:3px;
-    font-family:var(--font-mono);font-size:8px;font-weight:700;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .doc-header .doc-title{font-size:10.5px;font-weight:700;letter-spacing:0.02em;color:var(--ink-700);}
-  .doc-header .doc-sub{font-size:8.5px;color:var(--ink-500);margin-top:2px;font-family:var(--font-mono);}
+  /* gramática do certificado: faixa verde-petróleo com filete turquesa, título em caixa alta com traço,
+     seções em caixa alta com divisor, rodapé com filete e ID. Vale para o papel das 4 etapas. */
+  .doc-band{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;background:var(--deep);color:#fff;padding:16px 24px 14px;}
+  .doc-band-rule{height:4px;background:var(--accent);}
+  .doc-wordmark{font-weight:800;font-size:20px;letter-spacing:.01em;line-height:1;text-transform:uppercase;}
+  .doc-wordmark small{display:block;font-size:7.5px;font-weight:700;letter-spacing:.2em;margin-top:5px;}
+  .doc-band .iss{text-align:right;font-size:9.5px;line-height:1.6;}
+  .doc-band .iss b{display:block;font-weight:700;}
+  .doc-band .iss span{display:block;color:var(--accent);}
+  .doc-title-h{font-weight:800;font-size:15px;letter-spacing:.01em;text-transform:uppercase;color:var(--deep);}
+  .doc-title-h::after{content:"";display:block;width:44px;height:3px;background:var(--accent);margin-top:9px;}
+  .doc-foot{border-top:1px solid var(--accent);margin:0 24px;padding:11px 0 16px;font-size:9px;color:var(--ink-500);}
+  .doc-foot b{color:var(--deep);font-weight:700;font-size:10px;}
+  .doc-frame .doc-head{position:absolute;top:0;left:0;right:0;}
+  .doc-frame .doc-title-h{position:absolute;left:24px;}
+  .doc-frame .doc-foot{position:absolute;left:0;right:0;bottom:0;}
+  .doc-area-label::after{content:"";flex:1;height:1px;background:var(--line-strong);}
   .doc-area-label{
-    position:absolute;left:14px;
-    font-family:var(--font-mono);
-    font-size:9px;font-weight:500;letter-spacing:0.09em;
-    color:var(--ink-500);
+    position:absolute;left:14px;right:14px;
+    display:flex;align-items:center;gap:10px;
+    font-family:var(--font-sans);
+    font-size:9px;font-weight:700;letter-spacing:0.14em;
+    color:var(--deep);
     text-transform:uppercase;
   }
   /* marcadores do documento: anotações sobre o papel. São controles (teclado, aria-pressed),
@@ -392,7 +412,9 @@
     padding:8px 10px;
   }
   /* ---------- transformation narrative ---------- */
-  .map-context{margin-bottom:12px;}
+  .map-context{margin-bottom:10px;}
+  .map-context h1{font-size:24px;}
+  .map-context .rule-line{font-size:12.5px;}
   .map-context .eyebrow{font-family:var(--font-mono);font-size:10.5px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;color:var(--green-700);margin-bottom:8px;}
   .map-context h1{margin-bottom:8px;}
   .map-context .rule-line{font-size:13px;color:var(--ink-500);max-width:64ch;line-height:1.55;}
@@ -422,12 +444,10 @@
   .tl-result .caption-mono{color:var(--ink-500);}
 
   /* architectural convergence diagram */
-  .map-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 32px;align-items:end;}
-  .engine-proof{display:flex;flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:12px;max-width:100%;}
+  .map-motor{margin-top:34px;padding-top:6px;border-top:1px solid var(--line-strong);}
+  .engine-proof{display:flex;align-items:center;gap:6px 22px;flex-wrap:wrap;margin:6px 0 4px;max-width:100%;}
   @media (max-width:900px){
-    .map-top{grid-template-columns:1fr;}
-    .engine-proof{flex-direction:row;align-items:center;gap:14px;}
-    .ep-svg{max-width:170px;}
+    .ep-svg{max-width:200px;}
     .engine-proof .ep-caption{flex:1;min-width:120px;font-size:12px;}
   }
   .ep-svg{width:100%;max-width:300px;min-width:0;height:auto;display:block;flex:none;}
@@ -443,6 +463,7 @@
     margin-bottom:14px;
     border-bottom:1px solid var(--line);
   }
+  .map-progress{margin-top:18px;}
   .map-progress .mp-title{font-size:11.5px;font-weight:600;color:var(--ink-700);margin-bottom:2px;}
   .map-progress .mp-count{font-family:var(--font-mono);font-size:11px;color:var(--ink-500);margin-bottom:9px;}
   .mp-list{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:4px 14px;}
@@ -515,29 +536,17 @@
     position:relative;
     overflow:hidden;
   }
-  .dr-letterhead{display:flex;align-items:center;gap:14px;padding:26px 30px 18px;}
-  .dr-mark{
-    width:42px;height:42px;flex:none;
-    background:var(--header);color:#fff;
-    border-radius:6px;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:700;font-size:16px;letter-spacing:0.01em;
-  }
-  .dr-id{flex:1;min-width:0;}
-  .dr-company{font-size:17px;font-weight:700;letter-spacing:-0.01em;color:var(--header);}
-  .dr-doctitle{font-size:11.5px;color:var(--ink-500);margin-top:2px;}
-  .dr-ref{text-align:right;font-family:var(--font-mono);font-size:10px;color:var(--ink-500);line-height:1.6;flex:none;}
-  .dr-rule{margin:0 30px;border-top:2px solid var(--header);}
-  .dr-rule::after{content:"";display:block;height:1px;background:var(--line);margin-top:3px;}
-  .dr-body{padding:8px 30px 30px;position:relative;}
-  .dr-section{padding-top:20px;margin-top:20px;border-top:1px solid var(--line);}
-  .dr-section:first-child{margin-top:0;padding-top:20px;border-top:none;}
-  .dr-section-title{font-family:var(--font-mono);font-size:10px;letter-spacing:0.09em;text-transform:uppercase;color:var(--ink-500);margin-bottom:16px;}
+  .dr-body{padding:6px 30px 14px;position:relative;}
+  .doc-rich .doc-title-block{padding:24px 30px 0;}
+  .dr-section{padding-top:20px;margin-top:6px;}
+  .dr-section:first-child{margin-top:0;padding-top:20px;}
+  .dr-section-title{display:flex;align-items:center;gap:10px;font-weight:700;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--deep);margin-bottom:16px;}
+  .dr-section-title::after{content:"";flex:1;height:1px;background:var(--line-strong);}
   .dr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:18px 26px;}
   .dr-field{position:relative;}
   .dr-field.flag-warn{border-left:2px solid #C08A2E;padding-left:12px;margin-left:-14px;}
   .dr-field.flag-risk{border-left:2px solid var(--red-700);padding-left:12px;margin-left:-14px;}
-  .dr-k{font-family:var(--font-mono);font-size:9.5px;letter-spacing:0.04em;color:var(--ink-500);text-transform:uppercase;margin-bottom:5px;}
+  .dr-k{font-size:9.5px;font-weight:600;letter-spacing:0.08em;color:var(--ink-500);text-transform:uppercase;margin-bottom:5px;}
   .dr-v{font-size:14.5px;font-weight:600;color:var(--ink-900);letter-spacing:-0.005em;}
   .dr-origin{font-family:var(--font-mono);font-size:9.5px;color:var(--ink-300);margin-top:4px;}
   .dr-table{width:100%;border-collapse:collapse;margin-top:2px;}
@@ -548,7 +557,7 @@
   .dr-signature{display:flex;gap:40px;margin-top:6px;flex-wrap:wrap;}
   .dr-sign-block{flex:1;min-width:170px;}
   .dr-sign-line{border-bottom:1px solid var(--ink-500);height:36px;}
-  .dr-sign-label{font-family:var(--font-mono);font-size:9.5px;color:var(--ink-500);margin-top:7px;text-transform:uppercase;letter-spacing:0.05em;}
+  .dr-sign-label{font-size:9.5px;font-weight:600;color:var(--ink-500);margin-top:7px;text-transform:uppercase;letter-spacing:0.08em;}
   .dr-watermark{
     position:absolute;left:50%;top:50%;
     transform:translate(-50%,-50%) rotate(-16deg);
@@ -848,30 +857,11 @@
 
     <!-- ================= SCREEN 1: MAPEAMENTO ================= -->
     <section class="screen" id="screen-map">
-      <div class="map-top">
       <div class="screen-head map-context">
         <div class="eyebrow">Preparando um novo formulário</div>
         <h1>Mapeamento</h1>
         <div class="rule-line">Configurar uma vez → reutilizar muitas vezes. O documento é específico; o motor que lê a configuração é genérico.</div>
       </div>
-
-      <div class="engine-proof">
-        <svg viewBox="0 0 460 150" class="ep-svg" role="img" aria-label="Três documentos diferentes convergindo para um único motor genérico">
-          <text x="0" y="34" class="ep-doclabel">Documento A</text>
-          <text x="0" y="79" class="ep-doclabel">Documento B</text>
-          <text x="0" y="124" class="ep-doclabel">Documento C</text>
-          <path d="M108,29 L188,29 L214,64.5" class="ep-line"/>
-          <path d="M92,74 L214,74 L214,64.5" class="ep-line"/>
-          <path d="M108,119 L188,119 L214,64.5" class="ep-line"/>
-          <line x1="214" y1="64.5" x2="254" y2="64.5" class="ep-line"/>
-          <rect x="254" y="40" width="196" height="49" rx="6" class="ep-box"/>
-          <text x="352" y="69" class="ep-boxlabel" text-anchor="middle">MOTOR GENÉRICO</text>
-        </svg>
-        <div class="ep-caption">Mudam os documentos e as configurações. <b>O motor permanece.</b></div>
-      </div>
-      </div>
-
-      <div class="tl" id="transformStrip"></div>
 
       <div class="config-meta" id="configMeta"></div>
 
@@ -879,13 +869,14 @@
 
         <!-- LEFT: document structure -->
         <div>
-          <div class="map-progress" id="mapProgress"></div>
           <div class="doc-caption">Documento · estrutura</div>
           <div class="doc-frame" id="docFrameMap"></div>
           <div class="logical-row">
             <div class="logical-row-label">Campos lógicos — usados em regras, não aparecem no documento</div>
             <div id="logicalChips"></div>
           </div>
+
+          <div class="map-progress" id="mapProgress"></div>
         </div>
 
         <!-- RIGHT: merged workbench (chain + configuration) -->
@@ -904,6 +895,24 @@
           </div>
         </div>
 
+      </div>
+
+      <div class="map-motor">
+      <div class="tl" id="transformStrip"></div>
+      <div class="engine-proof">
+        <svg viewBox="0 0 460 150" class="ep-svg" role="img" aria-label="Três documentos diferentes convergindo para um único motor genérico">
+          <text x="0" y="34" class="ep-doclabel">Documento A</text>
+          <text x="0" y="79" class="ep-doclabel">Documento B</text>
+          <text x="0" y="124" class="ep-doclabel">Documento C</text>
+          <path d="M108,29 L188,29 L214,64.5" class="ep-line"/>
+          <path d="M92,74 L214,74 L214,64.5" class="ep-line"/>
+          <path d="M108,119 L188,119 L214,64.5" class="ep-line"/>
+          <line x1="214" y1="64.5" x2="254" y2="64.5" class="ep-line"/>
+          <rect x="254" y="40" width="196" height="49" rx="6" class="ep-box"/>
+          <text x="352" y="69" class="ep-boxlabel" text-anchor="middle">MOTOR GENÉRICO</text>
+        </svg>
+        <div class="ep-caption">Mudam os documentos e as configurações. <b>O motor permanece.</b></div>
+      </div>
       </div>
     </section>
 
@@ -1222,6 +1231,14 @@
   }
 
   // ---------- document renderer (shared by Mapear / Preencher / Validar) ----------
+  // Cabeçalho, título e rodapé do papel (mesma gramática do certificado/declaração do Documentos Verificáveis)
+  function docHeadHtml(){
+    return '<div class="doc-head"><div class="doc-band"><div class="doc-wordmark">Aurora<small>Benefícios</small></div>'+
+      '<div class="iss"><b>Operadora Zenith</b><span>Emitido em 23/09/2026</span></div></div><div class="doc-band-rule"></div></div>';
+  }
+  function docTitleHtml(){ return '<div class="doc-title-h">Formulário de movimentação</div>'; }
+  function docFootHtml(){ return '<div class="doc-foot">Aurora Benefícios · <b>Nº AB-2026-014</b></div>'; }
+
   // O documento do mapeamento segue o mesmo ritmo do documento das etapas 2 e 3: grade de colunas por área
   // (3 colunas no papel largo, 2 no estreito). A posição configurada (X/Topo) continua valendo como deslocamento.
   var docCols = 3;
@@ -1234,10 +1251,9 @@
     var PAD = 14, GAP = 10;
     var colW = (W - 2*PAD - (docCols-1)*GAP) / docCols;
 
-    var header = document.createElement("div");
-    header.className = "doc-header";
-    header.innerHTML = '<span class="doc-mono-mark">AB</span><div><div class="doc-title">Formulário de movimentação</div><div class="doc-sub">Operadora Zenith · Aurora Benefícios</div></div>';
-    container.appendChild(header);
+    container.insertAdjacentHTML("beforeend", docHeadHtml() + docTitleHtml() + docFootHtml());
+    var head = container.querySelector(".doc-head"), ttl = container.querySelector(".doc-title-h"), foot = container.querySelector(".doc-foot");
+    ttl.style.top = (head.offsetHeight + 22) + "px";
 
     function addAreaLabel(text, y){
       var lbl = document.createElement("div");
@@ -1265,7 +1281,7 @@
     }
 
     var order = ["Dados da empresa","Dados do titular","Produto e plano","Produto complementar","Dependentes","Observações"];
-    var y = 64;
+    var y = head.offsetHeight + 22 + ttl.offsetHeight + 26;
     order.forEach(function(area){
       addAreaLabel(area, y);
       y += 18;
@@ -1316,7 +1332,7 @@
     sign.style.height = "40px";
     sign.textContent = "Assinatura do titular";
     container.appendChild(sign);
-    container.style.height = (y + 40 + PAD) + "px";
+    container.style.height = Math.max(y + 40 + 28 + foot.offsetHeight, Math.round(W * 1.2)) + "px";
   }
 
   // papel largo ↔ estreito: refaz a grade só quando o número de colunas muda
@@ -1334,12 +1350,7 @@
     fields.forEach(function(f){ if(areas.indexOf(f.area) === -1 && f.area !== "Observações") areas.push(f.area); });
 
     var html = "";
-    html += '<div class="dr-letterhead">'+
-              '<div class="dr-mark">AB</div>'+
-              '<div class="dr-id"><div class="dr-company">Aurora Benefícios</div><div class="dr-doctitle">Formulário de movimentação · Operadora Zenith</div></div>'+
-              '<div class="dr-ref">Nº AB-2026-014<br>Emitido em 23/09/2026</div>'+
-            '</div>';
-    html += '<div class="dr-rule"></div>';
+    html += docHeadHtml() + '<div class="doc-title-block">' + docTitleHtml() + '</div>';
     html += '<div class="dr-body">';
 
     areas.forEach(function(area){
@@ -1372,6 +1383,7 @@
       '</div></div>';
 
     html += '</div>';
+    html += docFootHtml();
 
     if(mode==="fill"){
       html += '<div class="dr-watermark">PRÉVIA</div>';
