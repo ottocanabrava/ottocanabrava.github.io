@@ -783,6 +783,10 @@
   function layout1(){
     W = p1.clientWidth; H = p1.clientHeight; narrow = W < 760;
     G.cx = W * .5; G.cy = H * (narrow ? .4 : .42); G.R = Math.min(W * (narrow ? .46 : .5), H * (narrow ? .4 : .44));
+    /* o emaranhado não passa da primeira linha do título (que sobe com o bloco de apoio): R e cy se ajustam à folga */
+    var tr = document.createRange(); tr.selectNodeContents(s1.firstChild);
+    var room = tr.getBoundingClientRect().top - p1.getBoundingClientRect().top - 40 - 80;
+    if(room > 0 && G.cy + .82 * G.R > 80 + room){ G.R = Math.min(G.R, room / 1.6); G.cy = 80 + .78 * G.R; }
     G.xa = W * (narrow ? .38 : .22); G.xb = W * (narrow ? .95 : .92);
     G.xr = W * (narrow ? .6 : .6);
     G.t0 = H * (narrow ? .14 : .15); G.t1 = H * (narrow ? .66 : .7);
