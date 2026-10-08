@@ -1,16 +1,20 @@
 # Portfólio de Otto Canabrava (ottocanabrava.github.io)
 
-Site estático em pt-BR, publicado pelo GitHub Pages a partir de `main`. Cada
-página é um `index.html` autocontido (CSS e JS embutidos); não há build.
+Site estático em pt-BR, publicado pelo GitHub Pages a partir de `main`. Não
+há build. Cada página é um `index.html` com o próprio CSS e JS embutidos. A
+exceção são os cases que usam o template, como Documentos Verificáveis: eles
+também carregam os arquivos compartilhados de `assets/case/`.
 
 - `index.html`: a Home, referência da identidade visual. Antes de criar ou
   mudar qualquer página, leia [`identidade.md`](identidade.md).
 - `<projeto>/index.html`: case de cada sistema. Documentos Verificáveis é a
   referência oficial; os demais ainda estão na identidade anterior.
-- `assets/case/` e `_template/case.html`: componentes compartilhados dos cases
-  (topo, fechamento, navegação entre projetos), extraídos de Documentos
-  Verificáveis. Antes de criar ou mudar um case, leia
-  [`template-de-cases.md`](template-de-cases.md).
+- `assets/case/` e `_template/case.html`: componentes compartilhados dos cases,
+  o topo e o fechamento, extraídos de Documentos Verificáveis. Antes de criar
+  ou mudar um case, leia [`template-de-cases.md`](template-de-cases.md).
+  A navegação entre projetos (`assets/case/projetos.css`) está guardada, mas
+  não faz parte do template ativo. Ela não é usada até o Otto decidir a
+  identidade visual dela.
 - `.claude/`: documentação de trabalho; o Jekyll do Pages não publica pastas
   que começam com ponto.
 
@@ -27,9 +31,10 @@ página é um `index.html` autocontido (CSS e JS embutidos); não há build.
   usa uma "escola de cursos livres" fictícia, de propósito).
 - Os cases linkam para `/#projetos` (âncora do mapa na Home): não remover.
 - Sem abstração ou CSS compartilhado por antecipação; copiar o padrão da Home
-  até que uma segunda página precise dele de fato. Exceção já feita: topo,
-  fechamento e navegação dos cases ficam em `assets/case/` e são ligados, não
-  copiados nem recriados por página.
+  até que uma segunda página precise dele de fato. Exceção já feita: o topo e o
+  fechamento dos cases ficam em `assets/case/` e são ligados, não copiados nem
+  recriados por página. A navegação entre projetos não entra nessa exceção
+  até a decisão sobre a identidade visual dela.
 
 ## Fluxo obrigatório de trabalho
 

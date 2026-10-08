@@ -28,9 +28,31 @@ servidor local e nas pré-visualizações (raw.githack).
 | Arquivo | O que é | Fonte |
 |---|---|---|
 | `assets/case/case.css` | Base (tokens claro/escuro, página, foco, `.mono`, `.sr-only`), **topo** (`.nav`) e **fechamento** (`.tx`, `.tx-k`, `.tx-sub`, `.tx-end`, `.tx-au`, `.tx-src`, `.end-row`, `.end-ln`, `.end-pt`, `.end-a`, `.foot`), com as regras de celular | Extraído de Documentos Verificáveis |
-| `assets/case/case.js` | Revelação do fio do fechamento (`.end-row` ganha `.on` ao entrar na tela; com movimento reduzido ou sem `IntersectionObserver`, já aparece pronto) | Extraído do script "Seções de texto" de Documentos Verificáveis |
+| `assets/case/case.js` | Revelação do fio do fechamento (`.end-row` ganha `.on` ao entrar na tela; com movimento reduzido ou sem `IntersectionObserver`, já aparece pronto) | Extraído do script "Seções de texto" de Documentos Verificáveis, mais dois acréscimos (ver abaixo) |
 | `assets/case/projetos.css` | Navegação entre projetos ("Continue explorando": ← Anterior · Todos os projetos · Próximo →), prefixo `cx-` | Extraído dos cinco cases que a usam (CSS idêntico nos cinco) |
 | `_template/case.html` | Esqueleto de um case com a marcação exata dos componentes e as partes variáveis marcadas com ✎ | Marcação de Documentos Verificáveis |
+
+### O que em `case.js` é extraído e o que foi acrescentado
+
+**Extraído de Documentos Verificáveis** (script "Seções de texto"), com a mesma
+lógica e a mesma margem:
+- a revelação por `IntersectionObserver`, com `rootMargin "0px 0px -20% 0px"`;
+- a saída direta para o estado final quando há `html.static` ou quando o
+  navegador não tem `IntersectionObserver`.
+
+**Acrescentado** para o componente funcionar sozinho, num case sem os scripts
+de Documentos Verificáveis:
+1. **Ativação do movimento reduzido** (linha 11): com
+   `prefers-reduced-motion: reduce`, o próprio script adiciona `static` ao
+   `<html>`. Em Documentos Verificáveis, isso já era feito pelo script da demo.
+   Repetir é inofensivo.
+2. **Revelação no fim da rolagem** (linhas 19–21): ao chegar ao fim da página,
+   a linha é revelada. Isso cobre o caso em que o fechamento é o fim da página
+   e a margem de 20% nunca é cruzada.
+
+Nenhum dos dois muda Documentos Verificáveis. Lá, a linha aparece no mesmo
+ponto da rolagem antes e depois da extração, medido em 1440×900, 390×844 e
+1440×600.
 
 Se um componente compartilhado precisar mudar, a mudança é feita no arquivo de
 `assets/case/` e vale para todos os cases que o ligam. Ela não é feita dentro
@@ -52,10 +74,11 @@ de uma página.
 - Título, descrição e `id` da primeira seção, para onde aponta o "↑ Topo".
 - Todo o conteúdo de `<main>` antes do fechamento: abertura, demo e seções próprias.
 - No fechamento:
-  - o texto do rótulo (`.tx-k`);
+  - o texto do rótulo (`.tx-k`), que por padrão é "Sobre o projeto";
   - o parágrafo de contexto e autoria (`.tx-sub.tx-au`);
   - o link de referência (`.tx-src`), que pode ser omitido se não houver;
-  - o texto e o destino das saídas (`.end-a`). Mais de uma saída fica no mesmo `.end-row`.
+  - o texto da saída (`.end-a`), que por padrão é "Todos os sistemas". O destino `/#projetos` é **fixo** em todos os cases e não muda por projeto;
+  - outras saídas, se houver, ficam no mesmo `.end-row`, depois da saída para `/#projetos`.
 - O `<style>` e os `<script>` próprios do case, para o que é só dele.
 
 ## O que não deve ser duplicado nem recriado
