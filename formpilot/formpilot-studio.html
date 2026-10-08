@@ -684,8 +684,9 @@
 
   /* ---------- navegação de volta ao case (oculta quando embutido) ---------- */
   .case-crumb{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 12px;font-size:12.5px;}
-  .case-crumb a{color:var(--ink-700);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:6px;padding:4px 0;}
-  .case-crumb a:hover,.case-crumb a:focus-visible{color:var(--ui);}
+  .case-crumb a,.foot-back a{color:var(--ink-700);text-decoration:none;font-weight:600;display:inline-flex;align-items:center;gap:6px;padding:4px 0;}
+  .case-crumb a:hover,.case-crumb a:focus-visible,.foot-back a:hover,.foot-back a:focus-visible{color:var(--ui);text-decoration:underline;text-underline-offset:3px;}
+  .foot-back{margin-top:14px;font-size:12.5px;}
   .case-crumb .ctx{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-500);}
   .case-nav{margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px;}
   .case-nav a{display:flex;flex-direction:column;gap:3px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);text-decoration:none;color:var(--ink-900);transition:border-color .15s;}
@@ -698,7 +699,7 @@
     .case-nav{grid-template-columns:1fr;}
     .case-nav .next{text-align:left;align-items:flex-start;}
   }
-  .is-embedded .case-crumb,.is-embedded .case-nav{display:none;}
+  .is-embedded .case-crumb,.is-embedded .case-nav,.is-embedded .foot-back{display:none;}
 
   /* ---------- demo guiada: ação → processamento (azul) → concluído (verde) → continuar ----------
      Só cor/opacidade mudam; nenhum bloco muda de tamanho. prefers-reduced-motion zera as transições
@@ -785,7 +786,7 @@
   /* toque: campos, opções e ações com altura confortável */
   @media (pointer:coarse), (max-width:600px){
     input[type=text],input[type=email],input[type=number],select{min-height:44px;}
-    .btn,.stepper button,.dep-toggle,.logical-chip{min-height:44px;}
+    .btn,.stepper button,.dep-toggle,.logical-chip,.foot-back a{min-height:44px;}
     .radio-opt,.logical-check,.role-toggle{min-height:44px;}
     .radio-group{gap:8px;}
   }
@@ -1028,6 +1029,8 @@
     <a href="/formpilot/" target="_top"><span class="dir">← Voltar ao case</span><span class="nm">FormPilot</span><span class="sm">O Studio demonstra a etapa de configuração deste case</span></a>
     <a class="next" href="/#projetos" target="_top"><span class="dir">Portfólio</span><span class="nm">Ver outros projetos →</span><span class="sm">Extrator, Daily Ops, Motor de Triagem, TicketScript</span></a>
   </nav>
+
+  <nav class="foot-back" aria-label="Voltar ao portfólio"><a href="/" target="_top">← Portfólio</a></nav>
 
 </div>
 

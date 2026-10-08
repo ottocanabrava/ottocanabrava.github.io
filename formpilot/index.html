@@ -263,23 +263,28 @@ a.chip:hover { background: var(--ink); color: #fff; }
 /* Footer: o fecho do case, na mesma tinta do Studio */
 footer { background: var(--dark); padding: 52px 24px 36px; }
 .ft-in { max-width: 1100px; margin: 0 auto; }
-.ft-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 28px 48px; flex-wrap: wrap; padding-bottom: 28px; margin-bottom: 24px; border-bottom: 1px solid var(--dark3); }
+.ft-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 28px 48px; flex-wrap: wrap; padding-bottom: 28px; margin-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,.14); }
 .ft-brand { display: flex; align-items: center; gap: 12px; }
-.ft-seal { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #F3F5FA; color: #F3F5FA; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: .6875rem; font-weight: 500; }
-.ft-name { font-family: 'DM Sans', sans-serif; font-size: 1.25rem; font-weight: 500; letter-spacing: -.01em; color: #F3F5FA; line-height: 1.2; }
-.ft-tag  { font-size: .875rem; color: #A3ACBD; }
+.ft-seal { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,.92); color: rgba(255,255,255,.92); display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: .6875rem; font-weight: 500; }
+.ft-name { font-family: 'DM Sans', sans-serif; font-size: 1.25rem; font-weight: 500; letter-spacing: -.01em; color: rgba(255,255,255,.94); line-height: 1.2; }
+.ft-tag  { font-size: .875rem; color: rgba(255,255,255,.62); }
 .ft-meta { max-width: 46ch; }
-.ft-mi { font-family: 'DM Mono', monospace; font-size: .6875rem; color: #A3ACBD; line-height: 1.6; margin-bottom: 4px; }
-.ft-mi a { color: #F3F5FA; text-decoration: underline; text-decoration-color: #64748B; text-underline-offset: 3px; }
-.ft-mi a:hover { text-decoration-color: #F3F5FA; }
-.ft-notice { font-size: .8125rem; color: #A3ACBD; line-height: 1.65; max-width: 72ch; }
-.ft-notice strong { color: #E6EAF2; font-weight: 500; }
+.ft-mi { font-family: 'DM Mono', monospace; font-size: .6875rem; color: rgba(255,255,255,.62); line-height: 1.6; margin-bottom: 4px; }
+.ft-mi a { color: rgba(255,255,255,.94); text-decoration: underline; text-decoration-color: rgba(255,255,255,.4); text-underline-offset: 3px; }
+.ft-mi a:hover { text-decoration-color: rgba(255,255,255,.94); }
+.ft-notice { font-size: .8125rem; color: rgba(255,255,255,.62); line-height: 1.65; max-width: 72ch; }
+.ft-notice strong { color: rgba(255,255,255,.9); font-weight: 500; }
+/* saída para o portfólio: a mesma navegação em texto do topo (← Portfólio), em claro sobre a tinta */
+.ft-back { margin-top: 22px; }
+.ft-back a { display: inline-flex; align-items: center; gap: 6px; padding: 6px 0; font-size: .8125rem; font-weight: 500; color: rgba(255,255,255,.88); text-decoration: none; }
+.ft-back a:hover { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Toque: alvos de ação com altura confortável */
 @media (pointer: coarse) {
   .ep-abtn, .ep-ibtn { min-height: 44px; }
   .nav-cta { display: inline-flex; align-items: center; min-height: 40px; }
   .ancora-open a { min-height: 44px; }
+  .ft-back a { min-height: 44px; }
 }
 
 /* Texto só para leitores de tela */
@@ -611,6 +616,7 @@ footer { background: var(--dark); padding: 52px 24px 36px; }
     <div class="ft-notice">
       <strong>Sobre esta demo:</strong> Vero Benefícios, as operadoras, os chamados e todas as pessoas mencionadas são fictícios, criados para demonstrar o tipo de solução — não reproduzem nenhum sistema, dado ou processo real de qualquer empresa.
     </div>
+    <div class="ft-back"><a href="/">← Portfólio</a></div>
   </div>
 </footer>
 
