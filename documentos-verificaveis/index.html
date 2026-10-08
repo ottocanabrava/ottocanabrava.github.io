@@ -106,21 +106,20 @@
   .meta{ color:var(--u-2); margin-top:.25em; }
   .state{ margin-top:.5em; font-size:13px; color:var(--u-2); }
   .acts{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
-  .bt{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border-radius:99px; border:1px solid #CDD0D5; background:#fff; color:var(--u-ink); cursor:pointer; white-space:nowrap; transition:border-color .2s, background-color .25s, color .25s, transform .12s; }
-  .bt:hover{ border-color:var(--u-ink); }
+  .bt{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border-radius:99px; border:1px solid var(--u-ink); background:#fff; color:var(--u-ink); cursor:pointer; white-space:nowrap; transition:border-color .2s, background-color .25s, color .25s, transform .12s; }
+  .bt:hover{ background:var(--u-soft); }
   .bt:active:not(:disabled){ transform:translateY(1px); }
   .bt.pri{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
   .bt.pri:hover{ background:#2C2F36; }
   .bt{ min-height:34px; }
   .bt.big{ font-size:14px; padding:.62em 1.2em; min-height:40px; }
-  .bt.rvk{ border-color:var(--u-ink); }
-  .bt[aria-pressed="true"]{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
+  .bt[aria-pressed="true"]{ background:var(--u-soft); box-shadow:inset 0 0 0 1px var(--u-ink); }
   .bt[aria-busy="true"]{ opacity:1 !important; cursor:progress; }
   .bt.done::before{ content:"✓ "; }
   .share.flash{ animation:flash 1.4s var(--ease); }
   @keyframes flash{ 0%, 35%{ background:var(--hit); } 100%{ background:var(--u-soft); } }
   .bt:disabled{ opacity:.45; cursor:default; }
-  .bt.off{ color:var(--u-3); border-color:var(--u-line); cursor:default; }
+  .bt.off, .bt.off:hover{ color:var(--u-3); border-color:var(--u-line); background:#fff; cursor:default; }
   .pnl{ margin-top:14px; padding-top:12px; border-top:1px solid var(--u-line); }
   .pnl.in{ animation:rise .3s var(--ease); }
   .pnl h3{ margin:0 0 .6em; font-size:13px; font-weight:500; }
@@ -207,8 +206,8 @@
   /* o que a validação fez */
   .tr{ min-width:0; }
   .tests{ font-size:12px; color:var(--u-3); margin-bottom:12px; }
-  .tests button{ font:inherit; font-size:12px; color:var(--u-ink); background:#fff; border:1px solid #CDD0D5; border-radius:99px; padding:.2em .7em; margin:2px 0; cursor:pointer; transition:border-color .2s; }
-  .tests button:hover{ border-color:var(--u-ink); }
+  .tests button{ font:inherit; font-size:12px; color:var(--u-ink); background:#fff; border:1px solid var(--u-ink); border-radius:99px; padding:.2em .7em; margin:2px 0; cursor:pointer; transition:border-color .2s; }
+  .tests button:hover{ background:var(--u-soft); }
   .steps{ list-style:none; margin:0; padding:0; }
   .steps li{ position:relative; padding:0 0 .7em 20px; font-size:12.5px; color:var(--u-2); line-height:1.4; }
   .steps li::before{ content:""; position:absolute; left:2px; top:.42em; width:7px; height:7px; border-radius:50%; background:var(--u-ink); }
