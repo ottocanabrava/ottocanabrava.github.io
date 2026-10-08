@@ -338,12 +338,40 @@
   .d-va .priv{ margin-top:.8em; padding-top:.8em; border-top:1px dashed var(--u-line); font-size:.74em; color:var(--u-3); }
   .d-va .priv s{ text-decoration-thickness:1px; }
 
-  /* sobre: editorial, sem grade de competências */
-  .about{ padding:clamp(120px,18vh,200px) clamp(20px,6vw,96px); max-width:1240px; }
-  .about .k{ display:block; font-size:.875rem; color:var(--ink-3); margin-bottom:40px; }
-  .about p{ margin:0 0 1.1em; font-size:clamp(1.5rem,2.7vw,2.6rem); font-weight:500; letter-spacing:-.035em; line-height:1.18; max-width:30ch; }
-  .about p .q{ color:var(--ink-3); }
-  .about p.sm{ font-size:clamp(1.0625rem,1.5vw,1.375rem); letter-spacing:-.015em; line-height:1.5; max-width:48ch; color:var(--ink-2); font-weight:400; margin-top:2.4em; }
+  /* sobre: três camadas — quem (frase), como (o fio do método), de onde (o fio do tempo) */
+  .about{ padding:clamp(120px,18vh,200px) clamp(20px,6vw,96px); }
+  .ab-k{ font-size:.875rem; font-weight:400; color:var(--ink-3); margin:0 0 40px; }
+  .ab-lead{ margin:0; font-size:clamp(2.25rem,5.6vw,5.5rem); font-weight:500; letter-spacing:-.05em; line-height:1; max-width:14ch; }
+  .ab-sub{ margin:32px 0 0; font-size:clamp(1.0625rem,1.6vw,1.5rem); letter-spacing:-.015em; line-height:1.45; color:var(--ink-2); max-width:46ch; }
+  .ab-h{ margin:clamp(88px,12vh,140px) 0 0; font-size:.875rem; font-weight:400; color:var(--ink-3); }
+  .ab-m, .ab-t{ list-style:none; margin:0; padding:0; display:grid; position:relative; }
+  .ab-m{ grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(20px,3vw,48px); padding-top:44px; }
+  .ab-t{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(24px,4vw,64px); padding-top:44px; }
+  /* o fio passa pelos pontos */
+  .ab-m::before, .ab-t::before{ content:""; position:absolute; left:0; top:21px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.8s var(--ease); }
+  .ab-m::before{ right:0; }
+  .ab-t::before{ right:calc((100% - 2 * clamp(24px,4vw,64px)) / 3 + clamp(24px,4vw,64px)); }
+  .ab-m li, .ab-t li{ position:relative; transition:opacity .7s var(--ease), transform .7s var(--ease); }
+  .ab-m li::before, .ab-t li::before{ content:""; position:absolute; left:0; top:-27px; width:9px; height:9px; border-radius:50%; background:var(--ink); transition:background-color .5s var(--ease), transform .5s var(--ease); }
+  .ab-m li:last-child::before{ background:var(--fire); }
+  .ab-n, .ab-y{ display:block; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); margin-bottom:14px; font-variant-numeric:tabular-nums; }
+  .ab-m b{ display:block; font-size:clamp(1.375rem,2.3vw,2.125rem); font-weight:500; letter-spacing:-.035em; line-height:1.05; margin-bottom:10px; }
+  .ab-m li > span:last-child{ display:block; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.5; max-width:26ch; }
+  .ab-t b{ display:block; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; margin-bottom:12px; }
+  .ab-t p{ margin:0 0 10px; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.55; max-width:40ch; }
+  .ab-t em{ font-style:normal; color:var(--ink); }
+  .ab-t small{ display:block; margin-top:14px; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
+  /* em paralelo: não é sequência, então o fio é tracejado e o ponto, vazado */
+  .ab-t li.par::after{ content:""; position:absolute; left:0; right:0; top:-23px; border-top:1.5px dashed var(--ink-4); transform-origin:left; transition:transform 1.2s var(--ease) .9s; }
+  .ab-t li.par::before{ background:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink-3); z-index:1; }
+  /* entrada: o fio se estica, os pontos chegam em ordem, o último acende */
+  html.js:not(.static) .ab-m:not(.on)::before, html.js:not(.static) .ab-t:not(.on)::before, html.js:not(.static) .ab-t:not(.on) li.par::after{ transform:scaleX(0); }
+  html.js:not(.static) .ab-m:not(.on) li, html.js:not(.static) .ab-t:not(.on) li{ opacity:0; transform:translateY(10px); }
+  html.js:not(.static) .ab-m:not(.on) li:last-child::before{ background:var(--ink); transform:scale(.8); }
+  .ab-m li:nth-child(2), .ab-t li:nth-child(2){ transition-delay:.35s; }
+  .ab-m li:nth-child(3), .ab-t li:nth-child(3){ transition-delay:.7s; }
+  .ab-m li:nth-child(4){ transition-delay:1.05s; }
+  .ab-m li:last-child::before{ transition-delay:1.7s; }
 
   /* contato: o fio que começou num nó termina num ponto */
   .end{ position:relative; min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:0 clamp(20px,6vw,96px); }
@@ -385,6 +413,14 @@
     #documentos.flow .sf{ height:600px; }
     #documentos.flow .band{ height:96px; }
     .sf.dv{ --dvh:min(620px, calc(100% - 66px - var(--band) - 2vh)); top:calc(66px + (100% - 66px - var(--band) - var(--dvh)) / 2); }
+    .ab-m, .ab-t{ grid-template-columns:1fr; gap:36px; padding:0 0 0 30px; margin-top:36px; }
+    .ab-m::before, .ab-t::before{ left:4px; right:auto !important; top:7px; bottom:7px; width:1.5px; height:auto; transform-origin:top; }
+    html.js:not(.static) .ab-m:not(.on)::before, html.js:not(.static) .ab-t:not(.on)::before{ transform:scaleY(0); }
+    .ab-t::before{ bottom:auto; height:calc(var(--tl, 70%)); }
+    .ab-m li::before, .ab-t li::before{ left:-30px; top:3px; }
+    .ab-t li.par::after{ left:-26px; right:auto; top:-36px; bottom:auto; height:36px; border-top:0; border-left:1.5px dashed var(--ink-4); transform-origin:top; }
+    html.js:not(.static) .ab-t:not(.on) li.par::after{ transform:scaleY(0); }
+    .ab-m li > span:last-child{ max-width:none; }
     .end-row{ flex-wrap:wrap; gap:12px; }
     .mail{ order:3; flex-basis:100%; white-space:normal; word-break:break-all; margin-top:12px; }
   }
@@ -637,16 +673,29 @@
     <div class="res"><b>5 tipos de documento</b> <small>todos com ID, QR e validação pública. Uma especificação, duas implementações: Python e n8n.</small> <a class="go" href="/documentos-verificaveis/">Explore o sistema <i>→</i></a></div>
   </section>
 
-  <!-- Sobre: os mesmos fatos, contados como texto -->
+  <!-- Sobre: quem, que problema, como, com que experiência.
+       O fio do método é uma transformação real (processo → ferramenta em uso);
+       o da trajetória é o tempo. O ponto vermelho só no fim do método. -->
   <section class="about" id="sobre" aria-labelledby="ab-t">
-    <h2 class="k" id="ab-t" style="font-weight:400;margin:0 0 40px;">Sobre</h2>
-    <p>Sou analista de operações pleno na Pipo Saúde, <span class="q">uma healthtech de benefícios corporativos B2B, desde abril de 2022 — entre negócio, TI e operadoras de saúde.</span></p>
-    <p>Ali construo e evoluo soluções de automação e sistemas internos. <span class="q">Fui promovido a Pleno por performance.</span></p>
-    <p>Antes, de 2017 a 2022, no VincIT · UNICIV, em Maringá: <span class="q">de estágio a analista de sistemas acadêmicos, com a responsabilidade administrativa da área — e conceito 5 do MEC na abertura dos cursos.</span></p>
-    <p class="sm">Em paralelo, implantei LMS com Moodle e o funil comercial em HubSpot para a UPCIV Idiomas (2023–2025), avaliei prompts e outputs entre modelos de IA na Turing, e implantei site, agendamento online, assinatura digital e sistemas operacionais para um negócio de serviços.</p>
-    <p class="sm">O que os sistemas acima demonstram: automação de processos com Python, Playwright e RPA; IA aplicada a dados, com agente validador e integração n8n; priorização e cruzamento de sinais; regras de negócio estruturadas em módulos; evolução de produto, de extensão solo a painel integrado; e ferramentas desenhadas para o próprio time usar.</p>
-  </section>
+    <h2 class="ab-k" id="ab-t">Sobre</h2>
+    <p class="ab-lead">Trabalho com automação, sistemas e processos.</p>
+    <p class="ab-sub">Pego o que numa operação é manual, repetitivo e sem padrão e transformo em ferramenta: entendo o processo, mapeio as regras e construo o que organiza decisões e conecta sistemas. Python, IA e automação entram como meios para resolver problemas reais.</p>
 
+    <h3 class="ab-h">Como trabalho</h3>
+    <ol class="ab-m">
+      <li><span class="ab-n">01</span><b>Entender</b><span>o fluxo real, regra a regra. Mapeamento de processos, BPMN, requisitos.</span></li>
+      <li><span class="ab-n">02</span><b>Estruturar</b><span>as regras de negócio em lógica de módulos.</span></li>
+      <li><span class="ab-n">03</span><b>Construir</b><span>a ferramenta. Python, Playwright, RPA, IA generativa, n8n.</span></li>
+      <li><span class="ab-n">04</span><b>Pôr em uso</b><span>pelo próprio time, e seguir evoluindo.</span></li>
+    </ol>
+
+    <h3 class="ab-h">Trajetória</h3>
+    <ol class="ab-t">
+      <li><span class="ab-y">2017 — 2022 · Maringá</span><b>VincIT · UNICIV</b><p>Centro de inovação de uma instituição de ensino. De estágio a analista de sistemas acadêmicos, com a responsabilidade administrativa da área. Conceito 5 do MEC na abertura dos cursos.</p><small>Sistemas acadêmicos · Implantação de AVA · Moodle</small></li>
+      <li><span class="ab-y">2022 —</span><b>Pipo Saúde</b><p>Operações de benefícios corporativos B2B numa healthtech, entre negócio, TI e operadoras de saúde. Construção e evolução de automação e sistemas internos. Promovido por performance.</p><small>Mapeamento de processos · Regras de negócio · Automação e IA na operação</small></li>
+      <li class="par"><span class="ab-y">Em paralelo</span><b>Projetos independentes</b><p><em>UPCIV Idiomas, 2023 — 2025:</em> LMS com Moodle e funil comercial em HubSpot.</p><p><em>Turing:</em> avaliação de prompts e outputs entre modelos de IA.</p><p><em>Negócio de serviços:</em> site, agendamento online, assinatura digital e sistemas operacionais.</p></li>
+    </ol>
+  </section>
   <!-- Contato: o fio termina num ponto -->
   <section class="end" id="contato" aria-labelledby="c-t">
     <h2 id="c-t">Quer ver o raciocínio completo por trás de algum desses sistemas?</h2>
@@ -1369,6 +1418,20 @@
   if(wantMap) heroFinish(); else heroPlay();
   if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ ScrollTrigger.refresh(); if(wantMap) goMap(); });
   else if(wantMap) goMap();
+})();
+</script>
+<script>
+/* sobre: cada fio se estica quando entra na tela, uma vez */
+(function(){
+  var ab = document.getElementById("sobre"), lists = ab.querySelectorAll(".ab-m, .ab-t"), tl = ab.querySelector(".ab-t");
+  // no celular o fio do tempo vai do primeiro ponto ao fim de "Pipo Saúde"; dali segue tracejado
+  function fit(){ var li = tl.querySelectorAll("li"); tl.style.setProperty("--tl", Math.max(0, li[2].offsetTop - li[0].offsetTop - 43) + "px"); }
+  fit(); addEventListener("resize", fit);
+  if(!("IntersectionObserver" in window)){ Array.prototype.forEach.call(lists, function(l){ l.classList.add("on"); }); return; }
+  Array.prototype.forEach.call(lists, function(l){
+    var o = new IntersectionObserver(function(en){ if(en[0].isIntersecting){ l.classList.add("on"); o.disconnect(); } }, { rootMargin: "0px 0px -20% 0px" });
+    o.observe(l);
+  });
 })();
 </script>
 </body>
