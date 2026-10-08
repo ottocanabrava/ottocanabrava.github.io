@@ -5,7 +5,12 @@ página é um `index.html` autocontido (CSS e JS embutidos); não há build.
 
 - `index.html`: a Home, referência da identidade visual. Antes de criar ou
   mudar qualquer página, leia [`identidade.md`](identidade.md).
-- `<projeto>/index.html`: case de cada sistema (ainda na identidade anterior).
+- `<projeto>/index.html`: case de cada sistema. Documentos Verificáveis é a
+  referência oficial; os demais ainda estão na identidade anterior.
+- `assets/case/` e `_template/case.html`: componentes compartilhados dos cases
+  (topo, fechamento, navegação entre projetos), extraídos de Documentos
+  Verificáveis. Antes de criar ou mudar um case, leia
+  [`template-de-cases.md`](template-de-cases.md).
 - `.claude/`: documentação de trabalho; o Jekyll do Pages não publica pastas
   que começam com ponto.
 
@@ -22,5 +27,7 @@ página é um `index.html` autocontido (CSS e JS embutidos); não há build.
   usa uma "escola de cursos livres" fictícia, de propósito).
 - Os cases linkam para `/#projetos` (âncora do mapa na Home): não remover.
 - Sem abstração ou CSS compartilhado por antecipação; copiar o padrão da Home
-  até que uma segunda página precise dele de fato.
+  até que uma segunda página precise dele de fato. Exceção já feita: topo,
+  fechamento e navegação dos cases ficam em `assets/case/` e são ligados, não
+  copiados nem recriados por página.
 - Testar desktop e celular (e `prefers-reduced-motion`) antes de abrir PR.
