@@ -59,9 +59,16 @@
   .sys.is-hot em{ opacity:1; transform:none; }
   .sys.is-rel{ opacity:1 !important; }
 
-  .say{ position:absolute; left:clamp(20px,6vw,96px); bottom:clamp(28px,7vh,72px); right:clamp(20px,6vw,96px); pointer-events:none; }
+  .say{ position:absolute; left:clamp(20px,6vw,96px); bottom:clamp(28px,7vh,72px); right:clamp(20px,6vw,96px); pointer-events:none; display:grid; }
   .say p{ margin:0; font-size:clamp(1.75rem,3.4vw,3.25rem); font-weight:500; letter-spacing:-.04em; line-height:1.04; max-width:24ch; }
-  .say .s2{ position:absolute; left:0; bottom:0; max-width:22ch; }
+  .say .s1, .say .s2{ grid-area:1 / 1; align-self:end; }
+  .say .s2{ max-width:22ch; }
+  @media (min-width:761px){ .say .s2{ max-width:none; } }
+  @media (max-width:760px) and (max-height:700px){ .say .pos p{ font-size:.9375rem; } .say .pos ul{ margin-top:8px; } }
+  .say .pos{ grid-row:2; margin-top:clamp(12px,1.8vh,20px); }
+  .say .pos p{ font-size:clamp(1rem,1.5vw,1.375rem); font-weight:400; letter-spacing:0; line-height:1.4; color:var(--ink-2); max-width:64ch; text-wrap:balance; }
+  .say .pos ul{ list-style:none; margin:10px 0 0; padding:0; display:flex; flex-wrap:wrap; font-size:.9375rem; font-weight:500; letter-spacing:-.01em; color:var(--ink); }
+  .say .pos li + li::before{ content:"·"/""; margin:0 .6em; color:var(--ink-3); }
   .say .b{ color:var(--ink); }
   .say .dot{ color:var(--fire); }
 
@@ -465,9 +472,13 @@
     <span id="projetos" style="position:absolute;top:0" aria-hidden="true"></span>
     <svg aria-hidden="true"><g class="g-str"></g><path class="link" d=""/></svg>
     <div class="labels"></div>
-    <div class="say" aria-hidden="true">
-      <p class="s1">Transformo fluxos complexos <span class="b s1b">em sistemas simples<span class="dot">.</span></span></p>
-      <p class="s2">Seis sistemas. Uma mesma forma de trabalhar.</p>
+    <div class="say">
+      <p class="s1" aria-hidden="true">Transformo fluxos complexos <span class="b s1b">em sistemas simples<span class="dot">.</span></span></p>
+      <p class="s2" aria-hidden="true">Seis sistemas. Uma mesma forma de trabalhar.</p>
+      <div class="pos">
+        <p>Projetos, processos, dados e automação para transformar problemas operacionais em soluções.</p>
+        <ul><li>Projetos</li><li>Processos</li><li>Dados</li><li>Automação</li></ul>
+      </div>
     </div>
   </section>
 
@@ -683,7 +694,7 @@
        o da trajetória é o tempo. O ponto vermelho só no fim do método. -->
   <section class="about" id="sobre" aria-labelledby="ab-t">
     <h2 class="ab-k" id="ab-t">Sobre</h2>
-    <p class="ab-lead">Trabalho com automação, sistemas e processos.</p>
+    <p class="ab-lead">Trabalho com projetos, processos, automação e sistemas.</p>
     <p class="ab-sub">Pego o que numa operação é manual, repetitivo e sem padrão e transformo em ferramenta: entendo o processo, mapeio as regras e construo o que organiza decisões e conecta sistemas. Python, IA e automação entram como meios para resolver problemas reais.</p>
 
     <h3 class="ab-h">Como trabalho</h3>
@@ -1398,7 +1409,7 @@
     s.el.setAttribute("pathLength", "1"); s.el.style.strokeDasharray = "1"; s.el.style.strokeDashoffset = "1";
     gsap.to(s.el.style, { strokeDashoffset: 0, duration: 2.2, delay: .15 + j * .05, ease: "power2.inOut", onComplete: function(){ s.el.removeAttribute("pathLength"); s.el.style.strokeDasharray = ""; s.el.style.strokeDashoffset = ""; } });
   });
-  var s1In = gsap.from(".say .s1", { opacity: 0, y: 12, duration: 1.2, delay: .9, ease: "power2.out", clearProps: "transform" });
+  var s1In = gsap.from(".say .s1, .say .pos", { opacity: 0, y: 12, duration: 1.2, delay: .9, ease: "power2.out", clearProps: "transform" });
 
   /* abertura: o nó se desfaz sozinho, uma vez por visita, até o mapa formado.
      Não repete ao voltar ao topo: o mapa fica pronto para navegar. */
