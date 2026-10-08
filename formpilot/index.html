@@ -260,16 +260,20 @@ a.chip:hover { background: var(--ink); color: #fff; }
 .pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
 .pill-ac .pill-dot { background: var(--ink); }
 
-/* Footer */
-footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid var(--dark3); }
+/* Footer: o fecho do case, na mesma tinta do Studio */
+footer { background: var(--dark); padding: 52px 24px 36px; }
 .ft-in { max-width: 1100px; margin: 0 auto; }
-.ft-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap; margin-bottom: 30px; }
-.ft-name { font-family: 'DM Sans', sans-serif; font-size: 1.25rem; font-weight: 600; color: var(--dt1); margin-bottom: 4px; }
-.ft-tag  { font-size: .875rem; color: var(--dt3); }
-.ft-meta { text-align: right; }
-.ft-mi { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--dt3); margin-bottom: 4px; }
-.ft-notice { border-top: 1px solid var(--dark3); padding-top: 20px; font-size: .8125rem; color: var(--dt3); line-height: 1.65; text-align: center; }
-.ft-notice strong { color: var(--dt2); }
+.ft-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 28px 48px; flex-wrap: wrap; padding-bottom: 28px; margin-bottom: 24px; border-bottom: 1px solid var(--dark3); }
+.ft-brand { display: flex; align-items: center; gap: 12px; }
+.ft-seal { flex: none; width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #F3F5FA; color: #F3F5FA; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: .6875rem; font-weight: 500; }
+.ft-name { font-family: 'DM Sans', sans-serif; font-size: 1.25rem; font-weight: 500; letter-spacing: -.01em; color: #F3F5FA; line-height: 1.2; }
+.ft-tag  { font-size: .875rem; color: #A3ACBD; }
+.ft-meta { max-width: 46ch; }
+.ft-mi { font-family: 'DM Mono', monospace; font-size: .6875rem; color: #A3ACBD; line-height: 1.6; margin-bottom: 4px; }
+.ft-mi a { color: #F3F5FA; text-decoration: underline; text-decoration-color: #64748B; text-underline-offset: 3px; }
+.ft-mi a:hover { text-decoration-color: #F3F5FA; }
+.ft-notice { font-size: .8125rem; color: #A3ACBD; line-height: 1.65; max-width: 72ch; }
+.ft-notice strong { color: #E6EAF2; font-weight: 500; }
 
 /* Toque: alvos de ação com altura confortável */
 @media (pointer: coarse) {
@@ -592,13 +596,16 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
 <footer>
   <div class="ft-in">
     <div class="ft-top">
-      <div>
-        <div class="ft-name">FormPilot</div>
-        <div class="ft-tag">estudo de caso de portfólio</div>
+      <div class="ft-brand">
+        <span class="ft-seal" aria-hidden="true">F</span>
+        <div>
+          <div class="ft-name">FormPilot</div>
+          <div class="ft-tag">estudo de caso de portfólio</div>
+        </div>
       </div>
       <div class="ft-meta">
-        <div class="ft-mi">reconstrução conceitual e independente</div>
-        <div class="ft-mi">nenhum dado real utilizado</div>
+        <div class="ft-mi"><a href="#mapeamento">FormPilot Studio</a>: reconstrução conceitual e anonimizada de uma etapa do projeto</div>
+        <div class="ft-mi">dados da demonstração fictícios · nenhum dado real utilizado</div>
       </div>
     </div>
     <div class="ft-notice">
