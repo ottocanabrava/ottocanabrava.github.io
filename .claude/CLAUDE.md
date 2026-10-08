@@ -17,7 +17,9 @@ página é um `index.html` autocontido (CSS e JS embutidos); não há build.
   é sinalizado ao usuário.
 - Não alterar números, relações do mapa nem narrativa da Home sem pedido.
 - Não mexer no modo escuro sem pedido explícito.
-- Dados de exemplo: sempre fictícios e declarados como tal.
+- Dados de exemplo: sempre fictícios e declarados como tal. Nenhum exemplo
+  deve lembrar a instituição real de um projeto (ex.: Documentos Verificáveis
+  usa uma "escola de cursos livres" fictícia, de propósito).
 - Os cases linkam para `/#projetos` (âncora do mapa na Home): não remover.
 - Sem abstração ou CSS compartilhado por antecipação; copiar o padrão da Home
   até que uma segunda página precise dele de fato.

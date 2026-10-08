@@ -40,15 +40,24 @@ verdade: o repositório (`README.md`, `docs/especificacao.md`,
 | Tela da emissão n8n com "Baixar PDF" na linha revogada (`img/n8n-emissao-lista.webp`) | Linha revogada sem "Baixar PDF"; ativos com Compartilhar e Revogar | imagem da implementação |
 | Certificado de semestre não mencionado | Página de conteúdo **a pedido** (`semestre_conteudo`) | tipos de documento |
 
-## Conflito a decidir
+## Decisões tomadas
 
-- **Tipo de escola.** A página diz "escola de cursos livres" e usa cursos como
-  Oratória, Comunicação Não Violenta e Escrita Profissional. O README do
-  projeto diz "escola de idiomas" e os exemplos usam Inglês e Espanhol. Pela
-  regra (repositório vale), a página deveria dizer "escola de idiomas", sem
-  identificar a escola. Os PDFs, QRs e a tela n8n da demo foram gerados com os
-  cursos atuais; trocar os cursos exige gerar as imagens de novo com o código
-  do projeto.
+- **Tipo de escola: fica "escola de cursos livres"**, com os cursos atuais
+  (Oratória, Comunicação Não Violenta, Escrita Profissional). Escolha
+  intencional do autor: a demo é uma escola fictícia que mostra o
+  funcionamento do sistema e não deve lembrar a instituição real (o README do
+  projeto fala em "escola de idiomas"; não levar isso para a página nem trocar
+  os exemplos por cursos de idiomas).
+- **Tipos de documento na demo: ficam os 3 atuais.** Eles já cobrem cada
+  capacidade diferente do sistema:
+  - certificado de trimestre: o certificado simples (e o caso revogado);
+  - certificado de curso: a segunda página de conteúdo, lida de outra planilha,
+    e o botão do LinkedIn;
+  - declaração de matrícula: dados pessoais no PDF que nunca chegam à validação.
+
+  Os outros dois são variações dos mesmos casos (semestre = curso com a página
+  de conteúdo a pedido; término de semestre = declaração) e só aumentariam a
+  interface. A página continua dizendo "5 tipos de documento", em texto.
 
 ## Remover
 
@@ -64,7 +73,8 @@ verdade: o repositório (`README.md`, `docs/especificacao.md`,
 - Revogado na validação: tipo + nome parcial.
 - Compartilhar: o texto da especificação, com o ID e o link, para o documento ativo.
 - Revogar com motivo e confirmação (n8n), como alternativa à planilha.
-- Certificado de semestre com conteúdo a pedido, se for mostrar os 5 tipos.
+- Em texto, não na demo: o certificado de semestre ganha a página de conteúdo
+  a pedido (`semestre_conteudo`).
 
 ## Reaproveitar
 
