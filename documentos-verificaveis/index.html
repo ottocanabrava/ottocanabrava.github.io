@@ -76,12 +76,15 @@
   .r > *:last-child{ border-right:0; }
   .r.h > *{ font-family:"Geist Mono",ui-monospace,monospace; font-size:11px; color:var(--u-3); padding-block:.6em; background:var(--u-soft); }
   .r.d{ cursor:pointer; }
-  .r.d:hover{ background:#FAFAFB; }
+  .r.d:hover{ background:var(--u-soft); }
+  .r.d:hover::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:#B9BCC3; }
   .r.d[aria-selected="true"]{ background:var(--u-soft); }
   .r.d[aria-selected="true"]::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--u-ink); }
   .r .c-id, .r .c-tipo, .r .c-cpf{ font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; }
   .r .c-nome{ color:var(--u-ink); }
-  .pick{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-align:left; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .pick{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-align:left; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration:underline; text-decoration-color:#B9BCC3; text-decoration-thickness:1px; text-underline-offset:3px; transition:text-decoration-color .2s; }
+  .r.d:hover .pick, .pick:focus-visible, .r.d[aria-selected="true"] .pick{ text-decoration-color:var(--u-ink); }
+  .r.d:hover .st::after{ color:var(--u-ink); }
   .r .hit{ background:var(--hit); color:var(--u-ink); transition:background-color .6s var(--ease); }
   .r.d.reading > *{ animation:read 1.15s var(--ease) both; }
   @keyframes read{ 0%{ background:transparent; } 18%, 82%{ background:var(--hit); } 100%{ background:transparent; } }
@@ -97,6 +100,8 @@
   .em{ grid-area:em; display:flex; flex-direction:column; min-width:0; }
   .ctl{ flex:1; }
   .empty{ color:var(--u-3); }
+  .who.in, .who.in ~ .meta, .who.in ~ .state, .who.in ~ .acts{ animation:rise .35s var(--ease) both; }
+  .who.in ~ .acts{ animation-delay:.08s; }
   .who{ font-size:18px; font-weight:500; letter-spacing:-.02em; line-height:1.2; }
   .meta{ color:var(--u-2); margin-top:.25em; }
   .state{ margin-top:.5em; font-size:13px; color:var(--u-2); }
@@ -106,7 +111,8 @@
   .bt:active:not(:disabled){ transform:translateY(1px); }
   .bt.pri{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
   .bt.pri:hover{ background:#2C2F36; }
-  .bt.big{ font-size:14px; padding:.62em 1.2em; }
+  .bt{ min-height:34px; }
+  .bt.big{ font-size:14px; padding:.62em 1.2em; min-height:40px; }
   .bt.rvk{ border-color:var(--u-ink); }
   .bt[aria-pressed="true"]{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
   .bt[aria-busy="true"]{ opacity:1 !important; cursor:progress; }
@@ -145,22 +151,28 @@
   .frame.pre{ clip-path:inset(0 0 100% 0); }
   .frame.wipe{ animation:wipe .6s var(--ease) both; }
   @keyframes wipe{ from{ clip-path:inset(0 0 100% 0); } to{ clip-path:inset(0 0 0 0); } }
-  .qr.next{ box-shadow:0 0 0 2px var(--u-ink); transition:box-shadow .3s var(--ease) .5s; }
+  .qr.next{ animation:aim .5s var(--ease) .55s both; }
+  @keyframes aim{ from{ outline-offset:14px; outline-color:rgba(17,19,24,0); } to{ outline-offset:3px; outline-color:var(--u-ink); } }
   .late{ animation:rise .35s var(--ease) 1s both; }
   .frame img{ display:block; max-width:100%; height:auto; max-height:420px; width:auto; border-radius:4px; }
-  .qr{ position:absolute; background:none; border:0; padding:0; cursor:pointer; border-radius:3px; }
-  .qr:hover{ box-shadow:0 0 0 2px var(--u-ink); }
+  .qr{ position:absolute; background:none; border:0; padding:0; cursor:pointer; border-radius:4px; outline:1.5px solid var(--u-ink); outline-offset:3px; transition:transform .2s var(--ease), outline-width .2s; }
+  .qr::after{ content:""; position:absolute; inset:-12px; }
+  .qr:hover{ transform:scale(1.06); outline-width:2px; }
+  .qr:focus-visible{ outline:2px solid var(--fire); outline-offset:4px; }
   .void{ width:100%; aspect-ratio:1521/1075; max-height:420px; border:1px dashed var(--u-line); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--u-3); font-size:13px; }
   .cap{ margin-top:12px; display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12px; color:var(--u-3); line-height:1.5; }
   .cap b{ font-weight:500; color:var(--u-2); }
   .pg{ display:inline-flex; gap:4px; }
-  .pg button{ font:inherit; font-size:12px; color:var(--u-3); background:none; border:0; padding:0 .25em; cursor:pointer; }
-  .pg button[aria-current="true"]{ color:var(--u-ink); text-decoration:underline; text-underline-offset:3px; }
+  .pg button{ font:inherit; font-size:12px; color:var(--u-2); background:none; border:0; padding:.2em .3em; cursor:pointer; text-decoration:underline; text-decoration-color:#B9BCC3; text-underline-offset:3px; }
+  .pg button:hover{ color:var(--u-ink); text-decoration-color:currentColor; }
+  .pg button[aria-current="true"]{ color:var(--u-ink); text-decoration:none; font-weight:500; cursor:default; }
 
   /* validação: a página pública, num celular discreto */
   .va{ grid-area:va; min-width:0; display:grid; grid-template-columns:264px 196px; column-gap:24px; align-content:start; }
   .va > .lb{ grid-column:1/-1; }
   .phone{ border:1px solid var(--u-line); border-radius:26px; padding:8px; background:#fff; }
+  .phone.arrive{ animation:arrive 1.6s var(--ease) .5s both; }
+  @keyframes arrive{ 0%{ border-color:var(--u-line); } 15%, 60%{ border-color:var(--u-ink); } 100%{ border-color:var(--u-line); } }
   .scr{ border-radius:19px; background:var(--u-soft); overflow:hidden; }
   .ph-top{ background:var(--u-ink); color:#fff; text-align:center; padding:16px 12px 14px; }
   .ph-top b{ display:block; font-size:12px; font-weight:500; letter-spacing:.12em; }
@@ -168,9 +180,14 @@
   .ph-url{ font-size:10.5px; color:var(--u-3); padding:8px 12px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .ph-url b{ font-weight:400; color:var(--u-ink); }
   .ph-f{ display:flex; gap:6px; padding:8px 12px 0; }
-  .ph-f input{ flex:1; min-width:0; font:inherit; font-size:14px; font-family:"Geist Mono",ui-monospace,monospace; padding:.5em .65em; border:1px solid #D5D8DD; border-radius:8px; background:#fff; color:var(--u-ink); }
-  .ph-f button{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border:0; border-radius:8px; background:var(--u-ink); color:#fff; cursor:pointer; }
-  .ph-res{ padding:10px 12px 14px; min-height:150px; }
+  .ph-f input{ flex:1; min-width:0; font:inherit; font-size:14px; font-family:"Geist Mono",ui-monospace,monospace; padding:.5em .65em; border:1px solid #B9BCC3; border-radius:8px; background:#fff; color:var(--u-ink); transition:border-color .2s; }
+  .ph-f input:hover, .ph-f input:focus{ border-color:var(--u-ink); }
+  .ph-f button{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border:0; border-radius:8px; background:var(--u-ink); color:#fff; cursor:pointer; transition:background-color .2s, transform .12s; }
+  .ph-f button:hover{ background:#2C2F36; }
+  .ph-f button:active{ transform:translateY(1px); }
+  .ph-res{ position:relative; padding:10px 12px 14px; min-height:150px; }
+  .ph-wait{ position:absolute; left:14px; top:14px; margin:0; font-size:12.5px; color:var(--u-3); animation:wait 1.25s linear both; }
+  @keyframes wait{ 0%, 44%{ opacity:0; } 50%, 92%{ opacity:1; } 100%{ opacity:0; } }
   .card{ background:#fff; border-radius:12px; padding:14px; box-shadow:0 0 0 1px var(--u-line); }
   .card.in{ animation:rise .35s var(--ease) both; }
   .card.in.vq{ animation-delay:1.2s; }
@@ -190,8 +207,8 @@
   /* o que a validação fez */
   .tr{ min-width:0; }
   .tests{ font-size:12px; color:var(--u-3); margin-bottom:12px; }
-  .tests button{ font:inherit; font-size:12px; color:var(--u-2); background:none; border:0; padding:0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--u-line); text-underline-offset:3px; }
-  .tests button:hover{ color:var(--u-ink); text-decoration-color:currentColor; }
+  .tests button{ font:inherit; font-size:12px; color:var(--u-ink); background:#fff; border:1px solid #CDD0D5; border-radius:99px; padding:.2em .7em; margin:2px 0; cursor:pointer; transition:border-color .2s; }
+  .tests button:hover{ border-color:var(--u-ink); }
   .steps{ list-style:none; margin:0; padding:0; }
   .steps li{ position:relative; padding:0 0 .7em 20px; font-size:12.5px; color:var(--u-2); line-height:1.4; }
   .steps li::before{ content:""; position:absolute; left:2px; top:.42em; width:7px; height:7px; border-radius:50%; background:var(--u-ink); }
@@ -344,6 +361,7 @@
   html.static .dm *, html.static .dm *::before{ animation:none !important; transition:none !important; }
   html.static .cks li{ opacity:1; }
   html.static .card.stale{ opacity:.38; }
+  html.static .ph-wait{ display:none; }
 
   @media (max-width:1320px){
     .sheet{ --cols:8.4em minmax(9.5em,1.2fr) minmax(8em,1fr) 7.6em 7.4em 6.8em 8.8em 9.4em minmax(8em,1fr) minmax(8em,1.1fr); }
@@ -380,6 +398,8 @@
     .bar .lb, .bar .py, .rs, .lb{ font-size:13px; }
     .ph-url{ font-size:12.5px; }
     .ph-top b, .ph-top span, .li-n, .pg button, .cks .m{ font-size:13px; }
+    .bt{ min-height:40px; }
+    .tests button{ padding:.35em .85em; }
     .void{ aspect-ratio:auto; height:180px; }
   }
 </style>
@@ -1210,7 +1230,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
 
   function ctlHTML(){
     if(S.sel === null) return '<p class="empty">Escolha uma linha da planilha.</p>';
-    var r = S.rows[S.sel], h = '<div class="who">' + esc(r.nome) + '</div><div class="meta">' + esc(tipoNome(r)) + " · " + esc(r.curso) + " · " + esc(r.data_emissao) + "</div>";
+    var r = S.rows[S.sel], h = '<div class="who' + (S.picked ? " in" : "") + '">' + esc(r.nome) + '</div><div class="meta">' + esc(tipoNome(r)) + " · " + esc(r.curso) + " · " + esc(r.data_emissao) + "</div>";
     if(!ativo(r)){
       var rev = r.motivo_revogacao ? "Revogado" + (r.revogado_em ? " em " + esc(r.revogado_em) : "") + (r.revogado_por ? " por " + esc(r.revogado_por) : "") + ": " + esc(r.motivo_revogacao) + "." : "Revogado pela planilha (status mudado na célula).";
       h += '<div class="state">✗ revogado</div><div class="pnl' + (S.open ? " in" : "") + '" data-k="revnote"><p>' + rev + "</p><p>Documento revogado não gera PDF: o papel circularia sem nada que mostrasse a revogação.</p>";
@@ -1253,19 +1273,20 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     var x = S.res;
     if(!x) return '<p class="ph-hint">Toque no QR de um documento, ou digite um ID.</p>';
     var k = ' data-k="res' + x.at + '"', cl = "card" + (x.fresh ? " in" : "") + (x.viaQr ? " vq" : "") + (S.stale && x.r && x.r.id === S.stale ? " stale" : "");
-    if(x.kind === "nao") return '<div class="' + cl + '"' + k + '><p class="s">Documento não encontrado.</p><p class="t">Confira o ID e tente de novo.</p></div>';
+    var wait = x.fresh && x.viaQr ? '<p class="ph-wait" aria-hidden="true">Consultando…</p>' : "";
+    if(x.kind === "nao") return wait + '<div class="' + cl + '"' + k + '><p class="s">Documento não encontrado.</p><p class="t">Confira o ID e tente de novo.</p></div>';
     var r = x.r;
-    if(x.kind === "invalido") return '<div class="' + cl + '"' + k + '><p class="s">✗ Este documento não é mais válido.</p><dl>' +
+    if(x.kind === "invalido") return wait + '<div class="' + cl + '"' + k + '><p class="s">✗ Este documento não é mais válido.</p><dl>' +
       (tipoNome(r) ? "<dt>Documento</dt><dd>" + esc(tipoNome(r)) + "</dd>" : "") + "<dt>Nome</dt><dd>" + esc(parcial(r.nome)) + "</dd></dl></div>";
     var cert = r.tipo_documento.indexOf("certificado_") === 0;
-    return '<div class="' + cl + '"' + k + '><p class="s">✓ Documento válido</p><dl>' +
+    return wait + '<div class="' + cl + '"' + k + '><p class="s">✓ Documento válido</p><dl>' +
       "<dt>Documento</dt><dd>" + esc(tipoNome(r)) + "</dd><dt>Nome</dt><dd>" + esc(r.nome) + "</dd><dt>Curso</dt><dd>" + esc(r.curso) + "</dd>" +
       (r.carga_horaria ? "<dt>Carga horária</dt><dd>" + esc(r.carga_horaria) + " horas</dd>" : "") + "<dt>Emissão</dt><dd>" + dataExtenso(r.data_emissao) + "</dd></dl>" +
       (cert ? '<span class="li" role="link" aria-disabled="true">Adicionar ao LinkedIn</span><p class="li-n">Desativado na demo. No sistema, abre o formulário de certificação do LinkedIn já preenchido.</p>' : "") + "</div>";
   }
 
   function trHTML(){
-    var tests = '<div class="tests">Testar outro ID: <button type="button" data-act="try" data-q="Pq8sT3vW6yZa" data-k="t1">inexistente</button> · <button type="button" data-act="try" data-q="k7Qm-2xPz9aB" data-k="t2">malformado</button></div>';
+    var tests = '<div class="tests">Testar outro ID: <button type="button" data-act="try" data-q="Pq8sT3vW6yZa" data-k="t1">inexistente</button> <button type="button" data-act="try" data-q="k7Qm-2xPz9aB" data-k="t2">malformado</button></div>';
     var x = S.res;
     if(!x) return tests;
     var h = '<span class="lb">o que a validação fez</span>';
@@ -1375,6 +1396,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     S.res = x; S.evt = "val"; S.hit = {}; S.late = false; S.stale = null; S.qrNext = null;
     S.threads = from === "qr" ? S.threads.filter(function(k){ return k === "pdf"; }).concat("qr") : [];
     render(from === "qr" ? "qr" : null);
+    var ph = sf.querySelector(".phone"); ph.classList.remove("arrive"); if(from === "qr" && !reduce){ void ph.offsetWidth; ph.classList.add("arrive"); }
     say(!x ? "" : x.kind === "valido" ? "Documento válido." : x.kind === "invalido" ? "Este documento não é mais válido. " + parcial(x.r.nome) + "." : "Documento não encontrado.");
   }
   function label(k){ return k === "valido" ? "✓ válido" : "✗ não é mais válido"; }
@@ -1382,8 +1404,8 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
   function pick(i){
     if(S.busy) return;
     if(S.sel !== i){ S.sel = i; S.panel = null; S.copied = false; S.rv = { m: "", d: "", ok: false, err: "" }; S.threads = []; S.hit = {};
-      if(S.doc && S.doc.id !== S.rows[i].id) S.doc = null; S.page = 0; S.evt = null; S.late = false; }
-    render(); say(S.rows[i].nome + ", " + S.rows[i].status + ".");
+      if(S.doc && S.doc.id !== S.rows[i].id) S.doc = null; S.page = 0; S.evt = null; S.late = false; S.picked = true; }
+    render(); S.picked = false; say(S.rows[i].nome + ", " + S.rows[i].status + ".");
   }
   function makePdf(){
     var r = S.rows[S.sel]; if(!ativo(r)) return;   /* pdf_for(): revogado não gera PDF */
