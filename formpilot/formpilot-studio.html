@@ -267,22 +267,27 @@
   .doc-header .doc-sub{font-size:8.5px;color:var(--ink-500);margin-top:2px;font-family:var(--font-mono);}
   .doc-area-label{
     position:absolute;left:14px;
-    font-size:8px;font-weight:700;letter-spacing:0.06em;
-    color:var(--ink-300);
+    font-size:8.5px;font-weight:700;letter-spacing:0.06em;
+    color:var(--ink-500);
     text-transform:uppercase;
   }
+  /* marcadores do documento: controles de seleção que continuam sendo parte do documento
+     (contorno sólido discreto, texto legível); a área de toque extrapola a caixa visível */
   .doc-mark,.doc-group{
     position:absolute;
-    border:1px dashed var(--line);
-    background:transparent;
+    border:1px solid var(--line-strong);
+    background:var(--panel);
     border-radius:4px;
     padding:3px 6px;
-    font-size:8.5px;
-    color:var(--ink-300);
+    font-size:10px;
+    color:var(--ink-700);
     cursor:pointer;
     line-height:1.25;
-    transition:border-color .15s, background .15s, color .15s;
+    white-space:nowrap;
+    width:max-content;
+    transition:border-color .15s, background .15s, color .15s, box-shadow .15s;
   }
+  .doc-mark::after,.doc-group::after{content:"";position:absolute;inset:-3px -2px;}
   .doc-mark:hover,.doc-group:hover{border-color:var(--blue);color:var(--blue-700);background:rgba(37,99,235,0.04);}
   .doc-mark.selected,.doc-group.selected{
     border:1.5px solid var(--blue);
@@ -290,11 +295,21 @@
     background:var(--blue-100);
     color:var(--blue-700);
     font-weight:600;
+    box-shadow:0 0 0 3px rgba(37,99,235,.16);
+  }
+  /* pendente = atenção (mesmo âmbar de "Estimado" e "precisam de revisão") */
+  .doc-mark.pending:not(.selected){border:1.5px solid #C08A2E;background:var(--warn-100);color:var(--warn-700);font-weight:600;}
+  .doc-mark.pending .idx{color:var(--warn-700);}
+  .doc-mark .pend-pill{
+    display:inline-block;margin-left:4px;vertical-align:middle;
+    font-size:7.5px;font-family:var(--font-mono);font-weight:500;
+    padding:1px 4px;border-radius:var(--radius-sm);
+    background:#fff;color:var(--warn-700);border:1px solid var(--warn-border);
   }
   .doc-mark .idx{
     font-family:var(--font-mono);
-    font-size:7.5px;
-    color:var(--ink-300);
+    font-size:8px;
+    color:var(--ink-500);
     margin-right:3px;
   }
   .doc-mark.selected .idx{color:var(--blue-700);}
@@ -308,10 +323,10 @@
     vertical-align:middle;
   }
 
-  .doc-group .dg-title{font-weight:700;color:var(--ink-700);font-size:8.5px;margin-bottom:3px;}
+  .doc-group .dg-title{font-weight:700;color:var(--ink-700);font-size:9.5px;margin-bottom:3px;}
   .doc-group table{width:100%;border-collapse:collapse;}
-  .doc-group th{font-size:7px;text-align:left;color:var(--ink-500);font-weight:600;padding:1px 3px;border-bottom:1px solid var(--line);}
-  .doc-group td{font-size:7.5px;color:var(--ink-700);padding:2px 3px;border-bottom:1px solid var(--panel-alt);}
+  .doc-group th{font-size:7.5px;text-align:left;color:var(--ink-500);font-weight:600;padding:1px 3px;border-bottom:1px solid var(--line);}
+  .doc-group td{font-size:8px;color:var(--ink-700);padding:2px 3px;border-bottom:1px solid var(--panel-alt);}
   .doc-group.selected th,.doc-group.selected td{color:var(--blue-700);}
 
   .doc-sign-area{
@@ -329,13 +344,14 @@
   .logical-row-label{font-size:10.5px;color:var(--ink-500);margin-bottom:6px;}
   .logical-chip{
     display:inline-flex;align-items:center;
-    border:1px dashed var(--line-strong);
+    border:1px solid var(--line-strong);
     border-radius:4px;
     padding:5px 9px;
+    min-height:28px;
     font-size:11.5px;
     color:var(--ink-700);
     cursor:pointer;
-    background:var(--panel-alt);
+    background:var(--panel);
   }
   .logical-chip:hover{border-color:var(--blue);}
   .logical-chip.selected{border:1.5px solid var(--blue);border-style:solid;background:var(--blue-100);color:var(--blue-700);font-weight:600;}
@@ -430,6 +446,7 @@
     background:none;border:none;color:var(--blue);
     font-size:11.5px;font-family:var(--font-mono);cursor:pointer;
     padding:0;margin-top:5px;text-decoration:underline;
+    min-height:24px;display:inline-flex;align-items:center;
   }
   .dep-detail{margin-top:8px;}
   .dep-detail.hidden{display:none;}
@@ -447,12 +464,18 @@
   .doc-mark.flag-warn{border-left:3px solid #C08A2E;}
   .doc-mark.flag-risk{border-left:3px solid var(--red-700);}
 
-  .flow-trail{
-    display:flex;align-items:center;gap:7px;flex-wrap:wrap;
-    font-size:12px;color:var(--ink-500);margin-bottom:18px;
+  /* trilhas: só informam onde o fluxo está (feito ✓ · atual ● · adiante ○); não são controles */
+  .flow-trail,.breadcrumb{
+    display:flex;align-items:center;gap:6px 10px;flex-wrap:wrap;
+    font-size:12px;color:var(--ink-500);
   }
-  .flow-trail .ft-step{padding:3px 9px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);}
-  .flow-trail .ft-step.current{color:#fff;background:var(--blue);border-color:var(--blue);font-weight:600;}
+  .flow-trail{margin-bottom:18px;}
+  .flow-trail .ft-step,.breadcrumb .step{display:inline-flex;align-items:center;gap:6px;}
+  .flow-trail .ft-step::before,.breadcrumb .step::before{content:"○";font-size:10px;color:var(--ink-300);}
+  .flow-trail .ft-step[data-state="done"],.breadcrumb .step[data-state="done"]{color:var(--ink-700);}
+  .flow-trail .ft-step[data-state="done"]::before,.breadcrumb .step[data-state="done"]::before{content:"✓";color:var(--green-700);font-weight:700;}
+  .flow-trail .ft-step[aria-current="step"],.breadcrumb .step[aria-current="step"]{color:var(--ink-900);font-weight:700;}
+  .flow-trail .ft-step[aria-current="step"]::before,.breadcrumb .step[aria-current="step"]::before{content:"●";color:var(--blue);}
   .flow-trail .ft-arrow{color:var(--ink-300);}
 
   /* ---------- rich document (Preencher / Validar protagonist) ---------- */
@@ -559,27 +582,29 @@
 
   .preview-layout{display:grid;grid-template-columns:1.3fr 0.9fr;gap:22px;align-items:start;}
   @media (max-width:800px){.preview-layout{grid-template-columns:1fr;}}
-  .breadcrumb{
-    display:flex;align-items:center;gap:7px;
-    font-size:12px;color:var(--ink-500);
-    margin-bottom:14px;
-  }
-  .breadcrumb .step{padding:3px 9px;border-radius:var(--radius-sm);border:1px solid var(--line-strong);}
-  .breadcrumb .step.current{color:#fff;background:var(--blue);border-color:var(--blue);font-weight:600;}
+  .breadcrumb{margin-bottom:14px;}
   .breadcrumb .arrow{color:var(--ink-300);}
   .check-list{list-style:none;margin:0;padding:0;}
+  /* confirmados ficam em segundo plano; o que ainda precisa de atenção ganha cor, borda e peso */
   .check-list li{
     display:flex;align-items:flex-start;gap:8px;
-    padding:8px 10px;
-    border-left:3px solid var(--green-700);
-    background:var(--panel-alt);
+    padding:5px 10px;
+    border-left:2px solid var(--green-border);
+    background:transparent;
     border-radius:4px;
-    margin-bottom:6px;
-    font-size:12.5px;
+    margin-bottom:4px;
+    font-size:12px;
   }
+  .check-list li .txt b{font-weight:500;color:var(--ink-700);}
   .check-list li:last-child{margin-bottom:0;}
-  .check-list li.warn{border-left-color:#C08A2E;}
-  .check-list li.risk{border-left-color:var(--red-700);}
+  .check-list li.warn,.check-list li.risk,.check-list li.reviewed{padding:9px 12px;margin-bottom:6px;font-size:13px;border-left-width:4px;}
+  .check-list li.warn{border-left-color:#C08A2E;background:var(--warn-100);}
+  .check-list li.risk{border-left-color:var(--red-700);background:var(--red-100);}
+  .check-list li.reviewed{border-left-color:var(--green-700);background:var(--green-100);}
+  .check-list li.warn .txt b,.check-list li.risk .txt b,.check-list li.reviewed .txt b{font-weight:700;color:var(--ink-900);}
+  .check-list li.warn .txt span{color:var(--warn-700);font-weight:600;}
+  .check-list li.risk .txt span{color:var(--red-700);font-weight:600;}
+  .check-list li.reviewed .txt span{color:var(--green-700);font-weight:600;}
   .check-list .dot{
     width:15px;height:15px;border-radius:var(--radius-sm);flex:none;margin-top:1px;
     display:flex;align-items:center;justify-content:center;
@@ -588,6 +613,7 @@
   .check-list .dot.warn{background:#C08A2E;}
   .check-list .dot.risk{background:var(--red-700);}
   .check-list .dot svg{width:9px;height:9px;}
+  .check-list li.warn .dot,.check-list li.risk .dot,.check-list li.reviewed .dot{width:17px;height:17px;}
   .check-list .txt b{display:block;}
   .check-list .txt span{color:var(--ink-500);font-size:11.5px;}
 
@@ -634,7 +660,7 @@
     cursor:pointer;
   }
   .btn:hover{background:var(--blue-700);border-color:var(--blue-700);}
-  .btn:disabled{opacity:0.5;cursor:default;background:var(--ink-500);border-color:var(--ink-500);}
+  .btn:disabled,.btn[aria-disabled="true"]{opacity:0.5;cursor:default;background:var(--ink-500);border-color:var(--ink-500);}
 
   .actions-row{display:flex;justify-content:flex-end;gap:9px;margin-top:18px;}
 
@@ -659,7 +685,7 @@
   /* ---------- demo guiada: ação → processamento (azul) → concluído (verde) → continuar ----------
      Só cor/opacidade mudam; nenhum bloco muda de tamanho. prefers-reduced-motion zera as transições
      (regra global acima) e o JS aplica os estados sem espera — a interação continua igual. */
-  .stepper button:disabled{cursor:not-allowed;opacity:.45;}
+  .stepper button:disabled,.stepper button[aria-disabled="true"]{cursor:not-allowed;opacity:.45;}
 
   .demo-bar{
     position:sticky;bottom:12px;z-index:30;
@@ -682,7 +708,7 @@
   .demo-bar.is-running .db-status{color:var(--blue-700);}
   .demo-bar.is-done .db-status{color:var(--green-700);}
   .demo-bar .btn{flex:none;min-height:42px;padding:10px 18px;font-size:13px;justify-content:center;}
-  .demo-bar .btn:disabled{opacity:.55;}
+  .demo-bar .btn:disabled,.demo-bar .btn[aria-disabled="true"]{opacity:.55;}
   @media (max-width:600px){
     .demo-bar{flex-direction:column;align-items:stretch;gap:10px;bottom:8px;padding:12px;}
     .demo-bar .db-status{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;height:2.8em;}
@@ -734,6 +760,14 @@
     opacity:0;transition:opacity .35s ease;pointer-events:none;
   }
   .doc-rich.is-validated .dr-stamp{opacity:1;}
+
+  /* toque: campos, opções e ações com altura confortável */
+  @media (pointer:coarse), (max-width:600px){
+    input[type=text],input[type=email],input[type=number],select{min-height:44px;}
+    .btn,.stepper button,.dep-toggle,.logical-chip{min-height:44px;}
+    .radio-opt,.logical-check,.role-toggle{min-height:44px;}
+    .radio-group{gap:8px;}
+  }
 
   .foot-tag{
     margin-top:30px;
@@ -869,12 +903,12 @@
 
       <div class="stat-row" id="statRow"></div>
 
-      <div class="breadcrumb">
-        <span class="step">Mapeamento</span>
-        <span class="arrow">→</span>
-        <span class="step current">Preview</span>
-        <span class="arrow">→</span>
-        <span class="step">Documento aprovado</span>
+      <div class="breadcrumb" id="trailPreview" role="group" aria-label="Progresso do documento">
+        <span class="step" data-state="done">Mapeamento</span>
+        <span class="arrow" aria-hidden="true">→</span>
+        <span class="step" data-state="current" aria-current="step">Preview</span>
+        <span class="arrow" aria-hidden="true">→</span>
+        <span class="step" data-state="upcoming">Documento aprovado</span>
       </div>
 
       <div class="preview-layout">
@@ -900,12 +934,12 @@
         <p>O documento aprovado é encaminhado para quem precisa assinar, aprovar antes ou apenas receber uma cópia.</p>
       </div>
 
-      <div class="flow-trail">
-        <span class="ft-step">Dados</span><span class="ft-arrow">→</span>
-        <span class="ft-step">Mapeamento</span><span class="ft-arrow">→</span>
-        <span class="ft-step">Preenchimento</span><span class="ft-arrow">→</span>
-        <span class="ft-step">Validação</span><span class="ft-arrow">→</span>
-        <span class="ft-step current">Assinatura</span>
+      <div class="flow-trail" id="trailSign" role="group" aria-label="Progresso do fluxo">
+        <span class="ft-step" data-state="done">Dados</span><span class="ft-arrow" aria-hidden="true">→</span>
+        <span class="ft-step" data-state="done">Mapeamento</span><span class="ft-arrow" aria-hidden="true">→</span>
+        <span class="ft-step" data-state="done">Preenchimento</span><span class="ft-arrow" aria-hidden="true">→</span>
+        <span class="ft-step" data-state="done">Validação</span><span class="ft-arrow" aria-hidden="true">→</span>
+        <span class="ft-step" data-state="current" aria-current="step">Assinatura</span>
       </div>
 
       <div class="panel" style="max-width:640px;">
@@ -914,7 +948,7 @@
 
           <div class="role-row">
             <span class="role-name">Assinante</span>
-            <input type="email" id="roleSigner" value="ana.souza@exemplo.com">
+            <input type="email" id="roleSigner" aria-label="E-mail do assinante" value="ana.souza@exemplo.com">
             <span class="caption-mono">obrigatório</span>
           </div>
 
@@ -928,13 +962,13 @@
           </div>
           <div class="role-row" id="approverInputRow" style="display:none;">
             <span class="role-name">&nbsp;</span>
-            <input type="email" id="roleApprover" value="coordenacao@exemplo.com">
+            <input type="email" id="roleApprover" aria-label="E-mail do aprovador" value="coordenacao@exemplo.com">
             <span class="caption-mono">antes do assinante</span>
           </div>
 
           <div class="role-row">
             <span class="role-name">Cópia</span>
-            <input type="email" id="roleCc" value="financeiro@exemplo.com">
+            <input type="email" id="roleCc" aria-label="E-mail para cópia" value="financeiro@exemplo.com">
             <span class="caption-mono">sem tarefa</span>
           </div>
 
@@ -942,10 +976,6 @@
             <div class="status-step" data-status="validado">Documento validado</div>
             <div class="status-step" data-status="aguardando">Aguardando assinatura</div>
             <div class="status-step" data-status="assinado">Assinado</div>
-          </div>
-
-          <div class="actions-row" style="justify-content:flex-start;">
-            <button class="btn" id="sendBtn">Simular envio</button>
           </div>
 
         </div>
@@ -1108,12 +1138,13 @@
       if(i === idx){ num.classList.add("glyph-active"); num.textContent = done ? "✓" : "●"; btn.classList.add("active"); btn.setAttribute("aria-current","step"); }
       else if(done){ num.classList.add("glyph-done"); num.textContent = "✓"; btn.classList.add("done"); }
       else { num.classList.add("glyph-upcoming"); num.textContent = "○"; }
-      btn.disabled = demo.running || i > unlocked;
+      btn.disabled = i > unlocked;
+      btn.setAttribute("aria-disabled", (demo.running || i > unlocked) ? "true" : "false");
     });
   }
 
   document.querySelectorAll("#stepper button").forEach(function(btn){
-    btn.addEventListener("click", function(){ goTo(btn.getAttribute("data-screen")); });
+    btn.addEventListener("click", function(){ if(demo.running) return; goTo(btn.getAttribute("data-screen")); });
   });
 
   // ---------- status dot svg ----------
@@ -1130,6 +1161,23 @@
     if(!f.condField) return true;
     var trigger = itemById(f.condField);
     return trigger && trigger.value === f.condValue;
+  }
+
+  // Seleção de item no mapeamento: re-renderiza e devolve o foco ao controle escolhido
+  function selectItem(id){
+    state.selectedId = id;
+    renderMap();
+    var el = document.querySelector('#docFrameMap [data-fid="'+id+'"], #logicalChips [data-id="'+id+'"]');
+    if(el) el.focus({preventScroll:true});
+  }
+  // div com papel de botão: Enter e Espaço ativam, como um botão nativo
+  function asButton(el, onActivate){
+    el.setAttribute("role","button");
+    el.setAttribute("tabindex","0");
+    el.addEventListener("click", onActivate);
+    el.addEventListener("keydown", function(e){
+      if(e.key === "Enter" || e.key === " "){ e.preventDefault(); onActivate(); }
+    });
   }
 
   // ---------- document renderer (shared by Mapear / Preencher / Validar) ----------
@@ -1163,14 +1211,18 @@
       mark.className = "doc-mark";
       mark.style.left = f.x + "px";
       mark.style.top = f.top + "px";
-      mark.style.width = f.w + "px";
+      mark.style.minWidth = f.w + "px";
 
       mark.setAttribute("data-fid", f.id);
       if(f.id === state.selectedId) mark.classList.add("selected");
       if(demo.done.map && f.id === DEMO_FIELD) mark.classList.add("mapped");
       var pill = f.condField ? '<span class="cond-pill">se '+f.condValue+'</span>' : "";
-      mark.innerHTML = '<span class="idx">'+(i+1)+'</span>'+f.docLabel+pill;
-      mark.addEventListener("click", function(){ state.selectedId = f.id; renderMap(); });
+      var pending = f.status === "pendente";
+      if(pending) mark.classList.add("pending");
+      mark.innerHTML = '<span class="idx">'+(i+1)+'</span>'+f.docLabel+pill+(pending ? '<span class="pend-pill">pendente</span>' : "");
+      mark.setAttribute("aria-label", f.docLabel + (f.condField ? ", se "+f.condValue : "") + (pending ? ", pendente" : ""));
+      mark.setAttribute("aria-pressed", f.id === state.selectedId ? "true" : "false");
+      asButton(mark, function(){ selectItem(f.id); });
       container.appendChild(mark);
     });
 
@@ -1185,8 +1237,11 @@
     }).join("");
     gmark.innerHTML = '<div class="dg-title">['+(fields.length+1)+'] '+group.docLabel+'</div>'+
       '<table><thead><tr><th>Nome</th><th>Vínc.</th><th>Nasc.</th><th>Prod.</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>';
+    gmark.setAttribute("data-fid", group.id);
+    gmark.setAttribute("aria-label", group.docLabel + ", grupo repetido");
+    gmark.setAttribute("aria-pressed", state.selectedId === group.id ? "true" : "false");
     if(state.selectedId === group.id) gmark.classList.add("selected");
-    gmark.addEventListener("click", function(){ state.selectedId = group.id; renderMap(); });
+    asButton(gmark, function(){ selectItem(group.id); });
     container.appendChild(gmark);
 
     // signature area (decorative, not a configurable field)
@@ -1285,11 +1340,11 @@
   function renderLogicalChips(){
     var html = logicalFields.map(function(f){
       var cls = "logical-chip" + (f.id===state.selectedId ? " selected" : "");
-      return '<div class="'+cls+'" data-id="'+f.id+'">'+f.label+'</div>';
+      return '<button type="button" class="'+cls+'" data-id="'+f.id+'" aria-pressed="'+(f.id===state.selectedId ? "true" : "false")+'">'+f.label+'</button>';
     }).join("");
     document.getElementById("logicalChips").innerHTML = html;
     document.querySelectorAll(".logical-chip").forEach(function(chip){
-      chip.addEventListener("click", function(){ state.selectedId = chip.getAttribute("data-id"); renderMap(); });
+      chip.addEventListener("click", function(){ selectItem(chip.getAttribute("data-id")); });
     });
   }
 
@@ -1403,13 +1458,17 @@
     document.getElementById("cfgX").addEventListener("input", function(e){ it.x = parseInt(e.target.value,10)||0; renderDoc(document.getElementById("docFrameMap"),"map"); });
     document.getElementById("cfgTop").addEventListener("input", function(e){ it.top = parseInt(e.target.value,10)||0; renderDoc(document.getElementById("docFrameMap"),"map"); });
     document.getElementById("cfgType").addEventListener("change", function(e){ it.type = e.target.value; renderChain(); });
-    document.getElementById("cfgRule").addEventListener("change", function(e){ it.rule = e.target.value; renderConfigPanel(); renderChain(); renderConfigMeta(); });
+    document.getElementById("cfgRule").addEventListener("change", function(e){
+      it.rule = e.target.value; renderConfigPanel(); renderChain(); renderConfigMeta();
+      var again = document.getElementById("cfgRule"); if(again) again.focus({preventScroll:true});
+    });
     var maxEl = document.getElementById("cfgMax");
     if(maxEl) maxEl.addEventListener("input", function(e){ it.maxChars = parseInt(e.target.value,10)||0; renderChain(); });
     document.getElementById("cfgStatus").addEventListener("change", function(e){
       it.status = e.target.value;
       var b = document.getElementById("cfgStatusBadge"); b.className = "badge "+it.status; b.textContent = statusLabels[it.status];
       renderMapProgress(); renderTransformStrip();
+      renderDoc(document.getElementById("docFrameMap"), "map");
     });
   }
 
@@ -1486,7 +1545,12 @@
         var it = itemById(DEMO_FIELD); it.status = "ancorado";
         var sel = document.getElementById("cfgStatus"); if(sel) sel.value = "ancorado";
         var b = document.getElementById("cfgStatusBadge"); if(b){ b.className = "badge ancorado"; b.textContent = statusLabels.ancorado; }
-        var mark = document.querySelector('#docFrameMap [data-fid="'+DEMO_FIELD+'"]'); if(mark) mark.classList.add("mapped");
+        var mark = document.querySelector('#docFrameMap [data-fid="'+DEMO_FIELD+'"]');
+        if(mark){
+          mark.classList.remove("pending"); mark.classList.add("mapped");
+          var pp = mark.querySelector(".pend-pill"); if(pp) pp.remove();
+          mark.setAttribute("aria-label", itemById(DEMO_FIELD).docLabel);
+        }
         renderMapProgress();
       }],
       [350, function(){ demo.running = false; demo.done.map = true; refreshStepper(); updateBar(); }]
@@ -1582,6 +1646,7 @@
         fieldById("possui_complementar").value = e.target.value;
         renderFill();
         renderDocRich(document.getElementById("docFrameFill"), "fill");
+        var again = document.querySelector('input[name="possuiComplementar"]:checked'); if(again) again.focus({preventScroll:true});
       });
     });
 
@@ -1674,6 +1739,7 @@
     if(li){
       li.classList.remove("warn","risk");
       var dot = li.querySelector(".dot"); dot.classList.remove("warn","risk"); dot.innerHTML = statusDotSvg("ancorado");
+      li.classList.add("reviewed");
       var b = li.querySelector(".badge"); b.className = "badge ancorado"; b.textContent = "Revisado";
       var note = li.querySelector(".txt > span"); if(note) note.textContent = "Conferido na revisão humana";
     }
@@ -1705,16 +1771,9 @@
   });
 
   function renderSign(){
-    var btn = document.getElementById("sendBtn");
-    if(demo.done.sign){
-      signStatus = "assinado"; updateStatusFlow();
-      btn.textContent = "Assinado"; btn.disabled = true;
-      return;
-    }
+    if(demo.done.sign){ signStatus = "assinado"; updateStatusFlow(); return; }
     signStatus = "validado";
     updateStatusFlow();
-    btn.textContent = "Simular envio";
-    btn.disabled = false;
   }
 
   function updateStatusFlow(){
@@ -1728,22 +1787,19 @@
     });
   }
 
-  document.getElementById("sendBtn").addEventListener("click", function(){
-    var btn = this;
+  // a ação de assinatura é única e fica na barra fixa; o painel só mostra o estado
+  function advanceSign(){
     if(signStatus === "validado"){
       signStatus = "aguardando";
       updateStatusFlow();
-      btn.textContent = "Simular assinatura";
     } else if(signStatus === "aguardando"){
       signStatus = "assinado";
       updateStatusFlow();
-      btn.textContent = "Assinado";
-      btn.disabled = true;
       demo.done.sign = true;
       refreshStepper();
     }
     updateBar();
-  });
+  }
 
   // ---------- barra da demo ----------
   function barCopy(){
@@ -1772,7 +1828,22 @@
     document.getElementById("demoStatus").textContent = c.text;
     bar.classList.remove("is-idle","is-running","is-done"); bar.classList.add("is-" + c.phase);
     btn.textContent = c.btn;
-    btn.disabled = demo.running;
+    btn.setAttribute("aria-disabled", demo.running ? "true" : "false");
+    refreshTrails();
+  }
+  // trilhas informativas: feito ✓ · atual ● · adiante ○
+  function setTrail(el, states){
+    if(!el) return;
+    el.querySelectorAll("[data-state]").forEach(function(step, i){
+      var st = states[i];
+      step.setAttribute("data-state", st);
+      if(st === "current") step.setAttribute("aria-current","step"); else step.removeAttribute("aria-current");
+    });
+  }
+  function refreshTrails(){
+    var signed = demo.done.sign, approved = demo.done.preview;
+    setTrail(document.getElementById("trailPreview"), approved ? ["done","done","current"] : ["done","current","upcoming"]);
+    setTrail(document.getElementById("trailSign"), signed ? ["done","done","done","done","done"] : ["done","done","done","done","current"]);
   }
   function goNext(){
     var next = ORDER[ORDER.indexOf(state.screen) + 1];
@@ -1799,7 +1870,7 @@
     if(sc === "sign"){
       if(demo.done.sign){ restartDemo(); return; }
       bringIntoView(document.getElementById("statusFlow"));
-      document.getElementById("sendBtn").click();
+      advanceSign();
       return;
     }
     if(demo.done[sc]){ goNext(); return; }
