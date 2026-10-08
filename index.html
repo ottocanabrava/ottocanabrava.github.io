@@ -707,8 +707,8 @@
 
     <h3 class="ab-h">Trajetória</h3>
     <ol class="ab-t">
-      <li><span class="ab-y">2017 — 2022 · Maringá</span><b>VincIT · UNICIV</b><p>Centro de inovação de uma instituição de ensino. De estágio a analista de sistemas acadêmicos, com a responsabilidade administrativa da área. Conceito 5 do MEC na abertura dos cursos.</p><small>Sistemas acadêmicos · Implantação de AVA · Moodle</small></li>
       <li><span class="ab-y">2022 —</span><b>Pipo Saúde</b><p>Operações de benefícios corporativos B2B numa healthtech, entre negócio, TI e operadoras de saúde. Construção e evolução de automação e sistemas internos. Promovido por performance.</p><small>Mapeamento de processos · Regras de negócio · Automação e IA na operação</small></li>
+      <li><span class="ab-y">2017 — 2022 · Maringá</span><b>VincIT · UNICIV</b><p>Centro de inovação de uma instituição de ensino. De estágio a analista de sistemas acadêmicos, com a responsabilidade administrativa da área. Conceito 5 do MEC na abertura dos cursos.</p><small>Sistemas acadêmicos · Implantação de AVA · Moodle</small></li>
       <li class="par"><span class="ab-y">Em paralelo</span><b>Projetos independentes</b><p><em>UPCIV Idiomas, 2023 — 2025:</em> LMS com Moodle e funil comercial em HubSpot.</p><p><em>Turing:</em> avaliação de prompts e outputs entre modelos de IA.</p><p><em>Negócio de serviços:</em> site, agendamento online, assinatura digital e sistemas operacionais.</p></li>
     </ol>
   </section>
@@ -783,9 +783,15 @@
   function layout1(){
     W = p1.clientWidth; H = p1.clientHeight; narrow = W < 760;
     G.cx = W * .5; G.cy = H * (narrow ? .4 : .42); G.R = Math.min(W * (narrow ? .46 : .5), H * (narrow ? .4 : .44));
+    /* o emaranhado não passa da primeira linha do título (que sobe com o bloco de apoio): R e cy se ajustam à folga */
+    var tr = document.createRange(); tr.selectNodeContents(s1.firstChild);
+    var room = tr.getBoundingClientRect().top - p1.getBoundingClientRect().top - 40 - 80;
+    if(room > 0 && G.cy + .82 * G.R > 80 + room){ G.R = Math.min(G.R, room / 1.6); G.cy = 80 + .78 * G.R; }
     G.xa = W * (narrow ? .38 : .22); G.xb = W * (narrow ? .95 : .92);
     G.xr = W * (narrow ? .6 : .6);
     G.t0 = H * (narrow ? .14 : .15); G.t1 = H * (narrow ? .66 : .7);
+    /* o mapa (entradas e sistemas) também termina acima do título; em tela baixa as linhas se aproximam */
+    if(room > 0){ G.t1 = Math.min(G.t1, 80 + room); if(G.t1 - G.t0 < 190) G.t0 = Math.max(76, G.t1 - 190); }
     G.inY = function(i){ return G.t0 + i * (G.t1 - G.t0) / (INPUTS.length - 1); };
     G.sysY = function(i){ return G.t0 + H * .02 + i * (G.t1 - G.t0 - H * .04) / (SYSTEMS.length - 1); };
     strands.forEach(function(s){
