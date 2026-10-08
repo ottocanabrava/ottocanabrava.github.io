@@ -82,6 +82,7 @@
   }
   .brand .mark{font-weight:500;font-size:16px;letter-spacing:-0.01em;color:var(--ink-900);}
   .brand .tagline{font-family:var(--font-mono);font-size:11px;color:var(--ink-500);}
+  .brand .brand-note{flex-basis:100%;padding-left:32px;font-size:12px;color:var(--ink-500);}
   .stepper-bar{padding:0;border-top:1px solid var(--line-strong);}
   nav.stepper{display:flex;align-items:center;gap:0;flex-wrap:wrap;max-width:100%;}
   .stepper button{
@@ -451,14 +452,16 @@
 
   .stepper button .num.glyph-upcoming{background:transparent;border-color:var(--ink-300);color:var(--ink-500);}
 
+  /* progresso do preenchimento: linha de estados (○ pendente · ● em andamento · ✓ concluído), sem faixa colorida */
   .fill-banner{
     display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-    background:var(--green-100);border-left:3px solid var(--green-700);
-    border-radius:4px;padding:9px 12px;margin-bottom:16px;
+    padding:2px 0 12px;margin-bottom:16px;border-bottom:1px solid var(--line);
     font-family:var(--font-mono);font-size:11.5px;color:var(--green-700);
-    transition:background-color .35s ease,border-color .35s ease;
   }
   .fill-banner .fb-sep{color:var(--ink-300);font-family:var(--font-sans);}
+  .fill-banner .fb-seg::before{content:"✓ ";}
+  .fill-banner .fb-seg[data-state="pending"]::before{content:"○ ";}
+  .fill-banner .fb-seg[data-state="active"]::before{content:"● ";}
 
   .context-head{margin-bottom:16px;}
   .context-head .badge-line{margin-top:10px;}
@@ -538,34 +541,42 @@
   /* ---------- Preenchimento ---------- */
   .fill-layout{display:grid;grid-template-columns:1.4fr 1fr;gap:22px;align-items:start;}
   @media (max-width:900px){.fill-layout{grid-template-columns:1fr;}}
-  .fill-wrap{
-    background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:var(--radius);
-    padding-bottom:6px;
+  @media (max-width:600px){.fill-row{grid-template-columns:96px minmax(0,1fr);}}
+  /* "Ajustar preenchimento": a mesma ficha da etapa 1 (objeto com bloco de tinta no topo, linhas rótulo/valor) */
+  .fill-wrap{background:#fff;border:1px solid var(--line);border-radius:26px;padding:8px;}
+  .fill-wrap > .panel-title{
+    background:var(--ui);color:#fff;border-bottom:0;border-radius:19px 19px 0 0;
+    justify-content:center;text-align:center;
+    font-size:11px;letter-spacing:.1em;text-transform:uppercase;padding:16px 12px 14px;
   }
-  #fillFields{padding:14px 16px 4px;}
+  #fillFields{background:var(--soft);border-radius:0 0 19px 19px;padding:6px 16px 8px;}
   .fill-area-label{
+    display:flex;align-items:center;gap:10px;
     font-family:var(--font-mono);
-    font-size:10px;font-weight:500;letter-spacing:0.06em;
+    font-size:10px;font-weight:500;letter-spacing:0.08em;
     color:var(--ink-500);text-transform:uppercase;
-    margin:18px 0 8px;
+    margin:18px 0 4px;
   }
-  .fill-area-label:first-child{margin-top:0;}
+  .fill-area-label::after{content:"";flex:1;height:1px;background:var(--line-strong);}
+  .fill-area-label:first-child{margin-top:8px;}
   .fill-row{
-    padding:9px 0;
+    display:grid;grid-template-columns:112px minmax(0,1fr);column-gap:10px;align-items:center;
+    padding:8px 0;
     border-bottom:1px solid var(--line);
   }
   .fill-row:last-of-type{margin-bottom:0;border-bottom:none;}
-  .fill-row .flabel{font-size:12px;color:var(--ink-500);margin-bottom:5px;}
+  .fill-row > *{grid-column:2;}
+  .fill-row > .flabel,.fill-row > .logical-check{grid-column:1;}
+  .fill-row > .logical-check{grid-column:1 / -1;}
+  .fill-row .flabel{grid-row:1;margin:0;font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-500);}
   .fill-row input[type=text]{max-width:100%;}
-  .fill-row textarea{
-    width:100%;
-    padding:7px 9px;border:1px solid var(--line-strong);border-radius:6px;
-    background:var(--panel);color:var(--ink-900);font-size:13px;font-family:inherit;
-    resize:vertical;min-height:54px;
+  .fill-row input[type=text],.fill-row textarea{
+    background:transparent;border:0;border-bottom:1.5px solid var(--mark-line);border-radius:0;
+    padding:5px 2px;font-weight:600;color:var(--ink-900);
   }
-  .fill-row textarea:focus{border-color:var(--ui);}
+  .fill-row textarea{width:100%;font-size:13px;font-family:inherit;resize:vertical;min-height:54px;}
+  .fill-row input[type=text]:hover,.fill-row textarea:hover{border-bottom-color:var(--ui);}
+  .fill-row input[type=text]:focus,.fill-row textarea:focus{border-bottom-color:var(--ui);background:var(--ui-100);}
   .char-counter{font-family:var(--font-mono);font-size:10.5px;color:var(--ink-500);margin-top:4px;}
   .char-counter.over{color:var(--red-700);font-weight:600;}
   .fill-row .fsource{
@@ -739,8 +750,6 @@
   .doc-mark.mapped .idx{color:var(--green-700);border-right-color:var(--green-border);}
 
   /* etapa 2 · preencher */
-  .fill-banner.is-idle{background:var(--panel-alt);border-left-color:var(--line-strong);}
-  .fill-banner.is-running{background:#EEF0F4;border-left-color:var(--ui);}
   .fill-banner .fb-seg{transition:color .35s ease;}
   .fill-banner .fb-seg[data-state="pending"]{color:var(--ink-500);}
   .fill-banner .fb-seg[data-state="active"]{color:var(--ui);}
@@ -749,9 +758,11 @@
   .doc-rich.is-pending .dr-section:not(.is-filled) .dr-table td,
   .doc-rich.is-pending .dr-section:not(.is-filled) .dr-obs{color:transparent;background:var(--panel-alt);border-radius:3px;}
   .fill-wrap input[type=text],.fill-wrap textarea{transition:color .35s ease,background-color .35s ease;}
-  .fill-wrap.is-pending input[type=text],.fill-wrap.is-pending textarea{color:transparent;background:var(--panel-alt);}
+  .fill-wrap.is-pending input[type=text],.fill-wrap.is-pending textarea{color:transparent;background:rgba(19,29,46,.05);}
   .fill-wrap.is-pending .radio-group,.fill-wrap.is-pending .logical-check,.fill-wrap.is-pending .char-counter{opacity:.4;}
-  #fillCompletionBadge{transition:opacity .35s ease;}
+  /* estado, não botão: texto verde com ✓ */
+  #fillCompletionBadge{transition:opacity .35s ease;background:none;border:0;padding:0;font-size:11.5px;color:var(--green-700);}
+  #fillCompletionBadge::before{content:"✓ ";}
   #fillCompletionBadge.is-hidden{opacity:0;}
 
   /* etapa 3 · validar */
@@ -805,6 +816,7 @@
         <span class="seal" aria-hidden="true">F</span>
         <span class="mark">FormPilot Studio</span>
         <span class="tagline">workbench de mapeamento e configuração</span>
+        <span class="brand-note">Demonstração conceitual da etapa de configuração do FormPilot</span>
       </div>
     </div>
     <div class="stepper-bar">
