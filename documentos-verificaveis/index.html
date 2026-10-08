@@ -2,12 +2,514 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Documentos Verificáveis — Demo de Portfólio</title>
-<meta name="description" content="Estudo de caso: emissão de certificados e declarações a partir de uma planilha, com validação pública por QR code. Implementação técnica de um projeto real, com dados fictícios.">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Documentos Verificáveis · Otto Canabrava</title>
+<meta name="description" content="Documentos Verificáveis: certificados e declarações emitidos a partir de uma planilha, com validação pública por QR code. Demonstração com escola e dados fictícios.">
+<meta name="theme-color" content="#F7F7F5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<style>
+  /* Mesmos tokens da Home. O vermelhão só aparece no instante em que algo acontece. */
+  :root{
+    --bg:#F7F7F5; --ink:#0E0F12; --ink-2:#4A4D55; --ink-3:#8A8D95; --ink-4:#C4C6CB; --line:#E2E3E0;
+    --fire:#E5482A;
+    --ease:cubic-bezier(.22,.61,.36,1);
+    color-scheme:light dark;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{ --bg:#0C0D0F; --ink:#EDEDEA; --ink-2:#B4B6BB; --ink-3:#7C7F87; --ink-4:#3A3C42; --line:#1E2024; --fire:#F2583A; }
+  }
+  *{ box-sizing:border-box; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--fire); outline-offset:4px; border-radius:2px; }
+  .mono{ font-family:"Geist Mono",ui-monospace,monospace; }
+  .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+
+  .nav{ position:fixed; inset:0 0 auto 0; z-index:40; height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 clamp(20px,4vw,56px); font-size:.875rem; pointer-events:none; }
+  .nav > *{ pointer-events:auto; }
+  .nav b{ font-weight:500; letter-spacing:-.01em; }
+  .nav nav{ display:flex; gap:28px; color:var(--ink-2); }
+  .nav nav a:hover{ color:var(--ink); }
+
+  .dm-sec{ padding:calc(64px + clamp(40px,8vh,96px)) 0 0; }
+  .dm-hd{ padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
+  .dm-hd .ix{ font-size:.875rem; color:var(--ink-3); }
+  .dm-hd h1{ margin:.5em 0 0; font-size:clamp(1.75rem,3.4vw,3.25rem); font-weight:500; letter-spacing:-.04em; line-height:1.04; max-width:22ch; }
+  .dm-hd p{ margin:1em 0 0; font-size:clamp(1rem,1.5vw,1.375rem); line-height:1.45; color:var(--ink-2); max-width:44ch; }
+  .dm-hd .fic{ font-size:.875rem; color:var(--ink-3); max-width:72ch; line-height:1.5; }
+
+  /* ============ superfície de trabalho: planilha → emissão / documento → validação ============ */
+  .sf{
+    --u-ink:#111318; --u-2:#4B4F58; --u-3:#8C9099; --u-line:#E6E7EA; --u-soft:#F4F5F6; --hit:#FFF1E8;
+    position:relative; margin:0 clamp(12px,2.4vw,40px);
+    background:#fff; color:var(--u-ink); border-radius:20px;
+    box-shadow:0 0 0 1px rgba(14,15,18,.06), 0 40px 100px -50px rgba(14,15,18,.3);
+    font-size:14px; line-height:1.45;
+  }
+  .dm{ display:grid; grid-template-columns:280px minmax(0,1fr) auto; grid-template-areas:"bar bar bar" "sheet sheet sheet" "em dc va"; column-gap:clamp(24px,2.6vw,40px); padding:clamp(18px,2vw,28px); }
+  .th{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:3; }
+  .th path{ fill:none; stroke:var(--u-ink); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+  .th path.draw{ stroke-dasharray:1; stroke-dashoffset:1; animation:draw .7s var(--ease) forwards; }
+  .th circle{ fill:var(--u-ink); }
+  .th circle.end{ fill:var(--u-ink); }
+  .th circle.end.now{ fill:var(--fire); }
+  .th circle.draw{ opacity:0; animation:show .2s .6s forwards; }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes show{ to{ opacity:1; } }
+  @keyframes rise{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+
+  .lb{ display:block; font-size:12px; color:var(--u-3); margin-bottom:10px; }
+  .bar{ grid-area:bar; display:flex; align-items:baseline; gap:12px 24px; flex-wrap:wrap; margin-bottom:10px; }
+  .bar .lb{ margin:0; }
+  .bar .py{ font-size:12px; color:var(--u-2); }
+  .rs{ margin-left:auto; font:inherit; font-size:12px; color:var(--u-2); background:none; border:0; padding:4px 0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--u-line); text-underline-offset:3px; }
+  .rs:hover{ color:var(--u-ink); text-decoration-color:currentColor; }
+
+  /* planilha */
+  .sheet{ grid-area:sheet; border:1px solid var(--u-line); border-radius:12px; overflow:hidden; margin-bottom:clamp(24px,3vw,36px); }
+  .r{ position:relative; display:grid; grid-template-columns:var(--cols); border-bottom:1px solid var(--u-line); }
+  .r:last-child{ border-bottom:0; }
+  .sheet{ --cols:8.4em minmax(6em,.8fr) minmax(9.5em,1.2fr) minmax(8em,1fr) 7.6em 7.4em 6.8em 8.8em 9.4em minmax(8em,1fr) minmax(8em,1.1fr); }
+  .r > *{ padding:.62em .65em; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-right:1px solid var(--u-line); color:var(--u-2); font-size:13px; }
+  .r > *:last-child{ border-right:0; }
+  .r.h > *{ font-family:"Geist Mono",ui-monospace,monospace; font-size:11px; color:var(--u-3); padding-block:.6em; background:var(--u-soft); }
+  .r.d{ cursor:pointer; }
+  .r.d:hover{ background:#FAFAFB; }
+  .r.d[aria-selected="true"]{ background:var(--u-soft); }
+  .r.d[aria-selected="true"]::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--u-ink); }
+  .r .c-id, .r .c-tipo, .r .c-cpf{ font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; }
+  .r .c-nome{ color:var(--u-ink); }
+  .pick{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-align:left; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .r .hit{ background:var(--hit); color:var(--u-ink); transition:background-color .6s var(--ease); }
+  .st{ position:relative; display:block; }
+  .st select{ appearance:none; -webkit-appearance:none; font:inherit; color:var(--u-ink); background:none; border:0; padding:0 1.2em 0 0; margin:0; width:100%; cursor:pointer; border-radius:2px; }
+  .st::after{ content:"▾"; position:absolute; right:0; top:50%; transform:translateY(-50%); font-size:10px; color:var(--u-3); pointer-events:none; }
+
+  /* emissão */
+  .em{ grid-area:em; display:flex; flex-direction:column; min-width:0; }
+  .ctl{ flex:1; }
+  .empty{ color:var(--u-3); }
+  .who{ font-size:18px; font-weight:500; letter-spacing:-.02em; line-height:1.2; }
+  .meta{ color:var(--u-2); margin-top:.25em; }
+  .state{ margin-top:.5em; font-size:13px; color:var(--u-2); }
+  .acts{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .bt{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border-radius:99px; border:1px solid var(--u-line); background:#fff; color:var(--u-ink); cursor:pointer; white-space:nowrap; transition:border-color .2s, background-color .2s; }
+  .bt:hover{ border-color:#C9CCD2; }
+  .bt.pri{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
+  .bt[aria-pressed="true"]{ border-color:var(--u-ink); }
+  .bt:disabled{ opacity:.45; cursor:default; }
+  .bt.off{ color:var(--u-3); cursor:default; }
+  .pnl{ margin-top:14px; padding-top:12px; border-top:1px solid var(--u-line); }
+  .pnl.in{ animation:rise .3s var(--ease); }
+  .pnl h3{ margin:0 0 .6em; font-size:13px; font-weight:500; }
+  .pnl p{ margin:.5em 0 0; color:var(--u-2); font-size:13px; }
+  .small{ font-size:12px !important; color:var(--u-3) !important; }
+  .cks{ list-style:none; margin:0; padding:0; }
+  .cks li{ display:flex; gap:.6em; padding:.3em 0; font-size:13px; color:var(--u-2); opacity:0; animation:show .2s forwards; }
+  .cks.done li{ opacity:1; animation:none; }
+  .cks li b{ font-weight:500; color:var(--u-ink); }
+  .cks .m{ flex-shrink:0; width:1em; text-align:center; color:var(--u-ink); }
+  .cks .m i{ display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--fire); }
+  .share{ width:100%; font:inherit; font-size:12.5px; line-height:1.5; color:var(--u-ink); border:1px solid var(--u-line); border-radius:10px; padding:.7em .8em; resize:none; background:var(--u-soft); }
+  .rv fieldset{ border:0; margin:0; padding:0; }
+  .rv legend{ font-size:12px; color:var(--u-3); padding:0; margin-bottom:.3em; }
+  .rv label{ display:flex; align-items:center; gap:.55em; padding:.1em 0; font-size:13px; cursor:pointer; }
+  .rv input[type=radio], .rv input[type=checkbox]{ accent-color:var(--u-ink); margin:0; }
+  .rv textarea{ width:100%; margin-top:.5em; font:inherit; font-size:13px; border:1px solid var(--u-line); border-radius:10px; padding:.55em .7em; resize:vertical; min-height:3.6em; }
+  .rv .cf{ margin-top:.5em; }
+  .err{ margin-top:.6em; font-size:12.5px; color:var(--u-ink); }
+  .err::before{ content:"✗ "; }
+  .note{ grid-column:1/-1; margin:24px 0 0; padding-top:12px; border-top:1px solid var(--u-line); font-size:12px; color:var(--u-3); line-height:1.5; }
+
+  /* documento */
+  .dc{ grid-area:dc; min-width:0; display:flex; flex-direction:column; }
+  .doc{ flex:1; display:flex; flex-direction:column; align-items:flex-start; }
+  .doc > div{ align-self:stretch; }
+  .frame{ position:relative; display:inline-block; max-width:100%; border-radius:4px; box-shadow:0 0 0 1px var(--u-line), 0 30px 70px -40px rgba(17,19,24,.4); line-height:0; }
+  .frame.in{ animation:rise .4s var(--ease); }
+  .frame img{ display:block; max-width:100%; height:auto; max-height:420px; width:auto; border-radius:4px; }
+  .qr{ position:absolute; background:none; border:0; padding:0; cursor:pointer; border-radius:3px; }
+  .qr:hover{ box-shadow:0 0 0 2px var(--u-ink); }
+  .void{ width:100%; aspect-ratio:1521/1075; max-height:420px; border:1px dashed var(--u-line); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--u-3); font-size:13px; }
+  .cap{ margin-top:12px; display:flex; flex-wrap:wrap; gap:6px 16px; font-size:12px; color:var(--u-3); line-height:1.5; }
+  .cap b{ font-weight:500; color:var(--u-2); }
+  .pg{ display:inline-flex; gap:4px; }
+  .pg button{ font:inherit; font-size:12px; color:var(--u-3); background:none; border:0; padding:0 .25em; cursor:pointer; }
+  .pg button[aria-current="true"]{ color:var(--u-ink); text-decoration:underline; text-underline-offset:3px; }
+
+  /* validação: a página pública, num celular discreto */
+  .va{ grid-area:va; min-width:0; display:grid; grid-template-columns:264px 196px; column-gap:24px; align-content:start; }
+  .va > .lb{ grid-column:1/-1; }
+  .phone{ border:1px solid var(--u-line); border-radius:26px; padding:8px; background:#fff; }
+  .scr{ border-radius:19px; background:var(--u-soft); overflow:hidden; }
+  .ph-top{ background:var(--u-ink); color:#fff; text-align:center; padding:16px 12px 14px; }
+  .ph-top b{ display:block; font-size:12px; font-weight:500; letter-spacing:.12em; }
+  .ph-top span{ display:block; font-size:11px; color:#C9CCD2; margin-top:3px; }
+  .ph-url{ font-size:10.5px; color:var(--u-3); padding:8px 12px 0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .ph-url b{ font-weight:400; color:var(--u-ink); }
+  .ph-f{ display:flex; gap:6px; padding:8px 12px 0; }
+  .ph-f input{ flex:1; min-width:0; font:inherit; font-size:14px; font-family:"Geist Mono",ui-monospace,monospace; padding:.5em .65em; border:1px solid #D5D8DD; border-radius:8px; background:#fff; color:var(--u-ink); }
+  .ph-f button{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border:0; border-radius:8px; background:var(--u-ink); color:#fff; cursor:pointer; }
+  .ph-res{ padding:10px 12px 14px; min-height:150px; }
+  .card{ background:#fff; border-radius:12px; padding:14px; box-shadow:0 0 0 1px var(--u-line); }
+  .card.in{ animation:rise .35s var(--ease); }
+  .card .s{ margin:0 0 .55em; font-weight:500; font-size:15px; letter-spacing:-.01em; display:flex; align-items:center; gap:.45em; }
+  .card .s i{ width:7px; height:7px; border-radius:50%; background:var(--fire); flex-shrink:0; }
+  .card dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:.3em .9em; font-size:12.5px; }
+  .card dt{ color:var(--u-3); }
+  .card dd{ margin:0; font-weight:500; min-width:0; overflow-wrap:anywhere; }
+  .card .t{ font-size:12.5px; color:var(--u-2); }
+  .li{ display:block; margin-top:12px; text-align:center; font-size:12.5px; font-weight:500; padding:.55em; border-radius:8px; border:1px solid var(--u-line); color:var(--u-3); cursor:not-allowed; }
+  .li-n{ margin:.45em 0 0; font-size:11px; color:var(--u-3); line-height:1.4; }
+  .ph-hint{ font-size:12.5px; color:var(--u-3); padding:4px 2px; }
+
+  /* o que a validação fez */
+  .tr{ min-width:0; }
+  .tests{ font-size:12px; color:var(--u-3); margin-bottom:12px; }
+  .tests button{ font:inherit; font-size:12px; color:var(--u-2); background:none; border:0; padding:0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--u-line); text-underline-offset:3px; }
+  .tests button:hover{ color:var(--u-ink); text-decoration-color:currentColor; }
+  .steps{ list-style:none; margin:0; padding:0; }
+  .steps li{ position:relative; padding:0 0 .7em 20px; font-size:12.5px; color:var(--u-2); line-height:1.4; }
+  .steps li::before{ content:""; position:absolute; left:2px; top:.42em; width:7px; height:7px; border-radius:50%; background:var(--u-ink); }
+  .steps li::after{ content:""; position:absolute; left:5px; top:1.15em; bottom:-.1em; border-left:1px solid var(--u-line); }
+  .steps li:last-child::after{ display:none; }
+  .steps li b{ display:block; font-weight:500; color:var(--u-ink); }
+  .steps li.stop::before{ content:"✗"; background:none; width:auto; height:auto; left:1px; top:0; font-size:11px; color:var(--u-ink); }
+  .steps li.end::before{ background:var(--fire); }
+  .steps li.skip{ color:var(--u-3); }
+  .steps li.skip b{ color:var(--u-3); font-weight:400; }
+  .steps li.skip::before{ background:var(--u-line); }
+  .steps s{ text-decoration-thickness:1px; color:var(--u-3); }
+  .steps.in li{ animation:rise .3s var(--ease) both; }
+  .steps.in li:nth-child(2){ animation-delay:.08s; } .steps.in li:nth-child(3){ animation-delay:.16s; } .steps.in li:nth-child(4){ animation-delay:.24s; }
+  .cmp{ font-size:12.5px; color:var(--u-ink); padding:.55em .7em; margin-bottom:12px; border-radius:8px; background:var(--hit); }
+  .src{ font-size:12px; color:var(--u-2); margin-bottom:12px; line-height:1.45; }
+  .src b{ font-weight:500; color:var(--u-ink); }
+
+  /* ============ seções de texto: o mesmo ritmo do Sobre da Home ============ */
+  code{ font-family:"Geist Mono",ui-monospace,monospace; font-size:.86em; }
+  .tx{ padding:clamp(96px,14vh,160px) clamp(20px,6vw,96px) 0; }
+  .tx-k{ font-size:.875rem; font-weight:400; color:var(--ink-3); margin:0 0 40px; }
+  .tx-lead{ margin:0; font-size:clamp(2.25rem,5.6vw,5.5rem); font-weight:500; letter-spacing:-.05em; line-height:1; max-width:14ch; }
+  .tx-sub{ margin:32px 0 0; font-size:clamp(1.0625rem,1.6vw,1.5rem); letter-spacing:-.015em; line-height:1.45; color:var(--ink-2); max-width:46ch; }
+  .tx-note{ margin:clamp(56px,8vh,88px) 0 0; font-size:clamp(1rem,1.2vw,1.125rem); line-height:1.55; color:var(--ink-3); max-width:60ch; }
+
+  /* o fio com pontos em linha (o "Como trabalho" da Home): etapas pretas, conclusão vermelha */
+  .ln{ list-style:none; margin:clamp(64px,9vh,104px) 0 0; padding:44px 0 0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(20px,2.6vw,40px); position:relative; }
+  .ln::before{ content:""; position:absolute; left:0; right:0; top:21px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.8s var(--ease); }
+  .ln li{ position:relative; transition:opacity .7s var(--ease), transform .7s var(--ease); }
+  .ln li::before{ content:""; position:absolute; left:0; top:-27px; width:9px; height:9px; border-radius:50%; background:var(--ink); transition:background-color .5s var(--ease), transform .5s var(--ease); }
+  .ln li:last-child::before{ background:var(--fire); transition-delay:1.7s; }
+  .ln-n{ display:block; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); margin-bottom:14px; }
+  .ln b{ display:block; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; margin-bottom:10px; }
+  .ln li > span:last-child{ display:block; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.5; }
+  .ln li:nth-child(2){ transition-delay:.3s; } .ln li:nth-child(3){ transition-delay:.6s; } .ln li:nth-child(4){ transition-delay:.9s; } .ln li:nth-child(5){ transition-delay:1.2s; }
+  /* contrato → implementações: o fio contínuo chega à referência; a alternativa vem tracejada, com ponto vazado */
+  .ln-alt{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(24px,4vw,64px); }
+  .ln-alt::before{ right:calc((100% - 2 * clamp(24px,4vw,64px)) / 3 + clamp(24px,4vw,64px)); }
+  .ln-alt li:last-child::before{ background:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink-3); z-index:1; transition-delay:0s; }
+  .ln-alt li.par::after{ content:""; position:absolute; left:0; right:0; top:-23px; border-top:1.5px dashed var(--ink-4); transform-origin:left; transition:transform 1.2s var(--ease) .9s; }
+  .ln-alt li:nth-child(2)::before{ background:var(--ink); }
+  .ln-alt p{ margin:0 0 10px; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.55; max-width:40ch; }
+  .ln-alt small{ display:block; margin-top:14px; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
+  html.js:not(.static) .ln:not(.on)::before{ transform:scaleX(0); }
+  html.js:not(.static) .ln-alt:not(.on) li.par::after{ transform:scaleX(0); }
+  html.js:not(.static) .ln:not(.on) li{ opacity:0; transform:translateY(10px); }
+  html.js:not(.static) .ln:not(.ln-alt):not(.on) li:last-child::before{ background:var(--ink); transform:scale(.8); }
+
+  /* público × fora da resposta: nomes de coluna em mono, o que fica fora riscado */
+  .cols{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,6vw,96px); margin-top:clamp(64px,9vh,104px); max-width:1100px; }
+  .col-h{ margin:0 0 18px; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
+  .kv{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .kv li{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:12px 0; border-bottom:1px solid var(--line); font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); }
+  .kv code{ color:var(--ink); font-size:.82em; }
+  .kv span{ text-align:right; }
+  .kv.off code{ color:var(--ink-3); text-decoration:line-through; text-decoration-thickness:1px; }
+  .kv.off span{ color:var(--ink-3); white-space:nowrap; }
+  .col-n{ margin:18px 0 0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:44ch; }
+
+  /* revogação: a cópia que circulou → o fio → a resposta de agora */
+  .rvx{ margin:clamp(64px,9vh,104px) 0 0; display:flex; align-items:center; gap:20px; max-width:1100px; }
+  .rvx img{ width:clamp(180px,24vw,300px); height:auto; border-radius:3px; box-shadow:0 0 0 1px var(--line), 0 30px 70px -40px rgba(14,15,18,.4); flex-shrink:0; }
+  .rvx-ln{ flex:1; min-width:40px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.2s var(--ease); }
+  .rvx-pt{ width:10px; height:10px; border-radius:50%; background:var(--fire); flex-shrink:0; transition:opacity .3s var(--ease) 1.1s; }
+  .rvx figcaption{ flex-shrink:0; display:flex; flex-direction:column; gap:4px; max-width:30ch; }
+  .rvx figcaption b{ font-size:clamp(1.125rem,1.6vw,1.5rem); font-weight:500; letter-spacing:-.025em; line-height:1.2; }
+  .rvx figcaption span{ color:var(--ink-2); font-size:clamp(.9375rem,1.1vw,1.0625rem); }
+  .rvx figcaption .mono{ font-size:.75rem; color:var(--ink-3); }
+  html.js:not(.static) .rvx:not(.on) .rvx-ln{ transform:scaleX(0); }
+  html.js:not(.static) .rvx:not(.on) .rvx-pt{ opacity:0; }
+  .pts{ list-style:none; margin:clamp(56px,8vh,88px) 0 0; padding:0; max-width:64ch; }
+  .pts li{ position:relative; padding:0 0 18px 26px; font-size:clamp(1rem,1.25vw,1.1875rem); line-height:1.55; color:var(--ink-2); }
+  .pts li::before{ content:""; position:absolute; left:2px; top:.62em; width:7px; height:7px; border-radius:50%; background:var(--ink); }
+
+  /* detalhes técnicos: linhas, não cartões */
+  .dt{ margin:0; max-width:1100px; border-top:1px solid var(--line); }
+  .dt div{ display:grid; grid-template-columns:minmax(0,15em) minmax(0,1fr); gap:24px; padding:20px 0; border-bottom:1px solid var(--line); }
+  .dt dt{ font-weight:500; font-size:clamp(1rem,1.25vw,1.1875rem); letter-spacing:-.015em; }
+  .dt dd{ margin:0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:64ch; }
+  .stk{ margin:32px 0 0; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
+
+  /* autoria e saída: o fio termina num ponto, como no Contato da Home */
+  .tx-end{ padding-bottom:clamp(96px,14vh,160px); }
+  .tx-au{ max-width:52ch; margin-top:0; }
+  .tx-src{ margin:28px 0 clamp(64px,9vh,104px); font-size:clamp(1rem,1.25vw,1.1875rem); }
+  .tx-src a{ color:var(--ink); text-decoration:underline; text-decoration-color:var(--ink-4); text-underline-offset:5px; }
+  .tx-src a:hover{ text-decoration-color:currentColor; }
+  .end-row{ display:flex; align-items:center; gap:20px; }
+  .end-ln{ flex:1; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.4s var(--ease); }
+  .end-pt{ width:10px; height:10px; border-radius:50%; background:var(--fire); flex-shrink:0; transition:opacity .3s var(--ease) 1.3s; }
+  html.js:not(.static) .end-row:not(.on) .end-ln{ transform:scaleX(0); }
+  html.js:not(.static) .end-row:not(.on) .end-pt{ opacity:0; }
+  .end-a{ font-size:clamp(1.125rem,2vw,1.75rem); font-weight:500; letter-spacing:-.025em; white-space:nowrap; }
+  .end-a:hover{ text-decoration:underline; text-decoration-thickness:1.5px; text-underline-offset:6px; }
+  .foot{ display:flex; justify-content:space-between; padding:28px clamp(20px,4vw,56px) 36px; font-size:.8125rem; color:var(--ink-3); }
+
+  /* abaixo de 900px as etapas não cabem em linha: o fio fica vertical, como no celular da Home */
+  @media (max-width:900px){
+    .ln, .ln-alt{ grid-template-columns:1fr; gap:36px; padding:0 0 0 30px; margin-top:56px; }
+    .ln::before{ left:4px; right:auto !important; top:7px; bottom:7px; width:1.5px; height:auto; transform-origin:top; }
+    .ln-alt::before{ bottom:auto; height:var(--tl, 60%); }
+    html.js:not(.static) .ln:not(.on)::before{ transform:scaleY(0); }
+    .ln li::before{ left:-30px; top:3px; }
+    .ln-alt li.par::after{ left:-26px; right:auto; top:-36px; bottom:auto; height:36px; border-top:0; border-left:1.5px dashed var(--ink-4); transform-origin:top; }
+    html.js:not(.static) .ln-alt:not(.on) li.par::after{ transform:scaleY(0); }
+    .ln li > span:last-child, .ln-alt p{ font-size:1rem; max-width:52ch; }
+    .ln-alt small{ font-size:.8125rem; }
+  }
+  @media (max-width:760px){
+    .cols{ grid-template-columns:1fr; gap:56px; }
+    .kv li, .col-n, .pts li, .dt dd{ font-size:1rem; }
+    .kv li{ flex-wrap:wrap; }
+    .kv span{ text-align:left; }
+    .rvx{ flex-direction:column; align-items:flex-start; gap:0; }
+    .rvx img{ width:min(100%, 320px); }
+    .rvx-ln{ flex:none; width:1.5px; height:56px; min-width:0; margin-left:24px; transform-origin:top; }
+    html.js:not(.static) .rvx:not(.on) .rvx-ln{ transform:scaleY(0); }
+    .rvx-pt{ margin:0 0 16px 20px; }
+    .dt div{ grid-template-columns:1fr; gap:6px; }
+    .stk{ font-size:.8125rem; }
+    .end-row{ flex-wrap:wrap; gap:12px; }
+  }
+
+  /* sem JS: a composição final, parada (planilha → PDF → QR → validação) */
+  html:not(.js) .rs, html:not(.js) .tests, html:not(.js) .acts, html:not(.js) .ph-f button{ display:none; }
+
+  /* movimento reduzido: tudo aparece direto, os fios já desenhados */
+  html.static .dm *, html.static .dm *::before{ animation:none !important; transition:none !important; }
+  html.static .cks li{ opacity:1; }
+  html.static .th path.draw{ stroke-dashoffset:0; }
+  html.static .th circle.draw{ opacity:1; }
+
+  @media (max-width:1320px){
+    .sheet{ --cols:8.4em minmax(9.5em,1.2fr) minmax(8em,1fr) 7.6em 7.4em 6.8em 8.8em 9.4em minmax(8em,1fr) minmax(8em,1.1fr); }
+    .sheet .c-tipo{ display:none; }
+  }
+  @media (max-width:1180px){
+    .sheet{ --cols:7.6em minmax(9em,1.3fr) minmax(8em,1fr) 6.6em 6.9em 8.6em minmax(9em,1.2fr); }
+    .sheet .c-tipo, .sheet .c-ch, .sheet .c-rpor, .sheet .c-rem{ display:none; }
+  }
+  @media (max-width:1279px){
+    .dm{ grid-template-columns:280px minmax(0,1fr); grid-template-areas:"bar bar" "sheet sheet" "em dc" "va va"; }
+    .va{ margin-top:36px; grid-template-columns:264px minmax(0,1fr); max-width:640px; }
+  }
+  /* coluna única: planilha → emissão → documento → validação, com os fios na vertical */
+  @media (max-width:1023px){
+    .dm{ grid-template-columns:minmax(0,1fr); grid-template-areas:"bar" "sheet" "em" "dc" "va"; }
+    .em{ margin-bottom:32px; }
+    .dc{ margin-bottom:0; }
+    .va{ max-width:400px; grid-template-columns:minmax(0,1fr); }
+    .tr{ margin-top:20px; }
+    .frame img{ max-height:none; }
+  }
+  @media (max-width:760px){
+    .nav nav{ gap:20px; }
+    .sf{ border-radius:16px; margin:0 10px; font-size:15px; }
+    .dm{ padding:16px 16px 20px; }
+    .sheet{ --cols:minmax(0,1fr) 7.2em; }
+    .sheet .c-id, .sheet .c-curso, .sheet .c-data, .sheet .c-cpf, .sheet .c-mot{ display:none; }
+    .r > *{ font-size:14px; padding:.8em .8em; }
+    .r.h > *{ font-size:12.5px; }
+    .bt, .pnl p, .pnl h3, .cks li, .rv label, .rv textarea, .steps li, .card dl, .card .t, .cap, .note, .tests, .tests button, .src, .cmp{ font-size:14px; }
+    .small{ font-size:13px !important; }
+    .share{ font-size:14px; }
+    .bar .lb, .bar .py, .rs, .lb{ font-size:13px; }
+    .ph-url{ font-size:12.5px; }
+    .ph-top b, .ph-top span, .li-n, .pg button, .cks .m{ font-size:13px; }
+    .void{ aspect-ratio:auto; height:180px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a href="/"><b>Otto Canabrava</b></a>
+  <nav><a href="/#projetos">Sistemas</a><a href="/#sobre">Sobre</a><a href="/#contato">Contato</a></nav>
+</header>
+
+<main>
+  <section class="dm-sec" id="demo" aria-labelledby="dm-t">
+    <div class="dm-hd">
+      <span class="ix">05 · Documentos Verificáveis</span>
+      <h1 id="dm-t">Uma linha da planilha vira documento. O QR diz se ele ainda vale.</h1>
+      <p>Certificados e declarações emitidos a partir de um registro, com uma página pública de validação. Abaixo, o sistema funcionando: escolha uma linha, gere o PDF, revogue e confira.</p>
+      <p class="fic">Escola Exemplo de Cursos Livres, alunos, cursos e IDs são fictícios. Os PDFs e os QR codes foram gerados pelo código do projeto; a planilha, a emissão e a validação são reproduções, sem servidor.</p>
+    </div>
+
+    <div class="sf dm" id="dm">
+      <div class="bar">
+        <span class="lb">planilha de documentos</span>
+        <span class="py">Na implementação Python, a planilha é a fonte de verdade.</span>
+        <button type="button" class="rs" data-act="reset">Recomeçar</button>
+      </div>
+      <div class="sheet" id="sheet" role="grid" aria-label="Planilha de documentos (fictícia). Escolha uma linha; o status pode ser mudado na célula.">
+        <div class="r h" role="row"><span role="columnheader" class="c-id">id</span><span role="columnheader" class="c-tipo">tipo_documento</span><span role="columnheader" class="c-nome">nome</span><span role="columnheader" class="c-curso">curso</span><span role="columnheader" class="c-ch">carga_horaria</span><span role="columnheader" class="c-data">data_emissao</span><span role="columnheader" class="c-st">status</span><span role="columnheader" class="c-cpf">cpf</span><span role="columnheader" class="c-rem">revogado_em</span><span role="columnheader" class="c-rpor">revogado_por</span><span role="columnheader" class="c-mot">motivo_revogacao</span></div><div class="r d" role="row" data-row="0" aria-selected="false"><span role="gridcell" class="c-id" title="Hx3pV9sKd7Qe">Hx3pV9sKd7Qe</span><span role="gridcell" class="c-tipo" title="certificado_trimestre">certificado_trimestre</span><span role="gridcell" class="c-nome"><button type="button" class="pick" data-act="pick" data-i="0">Carlos Exemplo Pereira</button></span><span role="gridcell" class="c-curso" title="Oratória">Oratória</span><span role="gridcell" class="c-ch" title="80">80</span><span role="gridcell" class="c-data" title="10/02/2026">10/02/2026</span><span role="gridcell" class="c-st" data-st="0"><label class="st"><span class="sr-only">status de Carlos Exemplo Pereira</span><select data-act="status" data-i="0"><option>ativo</option><option selected="">revogado</option></select></label></span><span role="gridcell" class="c-cpf" title=""></span><span role="gridcell" class="c-rem" title="12/02/2026 09:40">12/02/2026 09:40</span><span role="gridcell" class="c-rpor" title="secretaria@escola-exemplo.com">secretaria@escola-exemplo.com</span><span role="gridcell" class="c-mot" title="Dados incorretos (será reemitido)">Dados incorretos (será reemitido)</span></div><div class="r d" role="row" data-row="1" aria-selected="true"><span role="gridcell" class="c-id" title="k7Qm2xPz9aBc">k7Qm2xPz9aBc</span><span role="gridcell" class="c-tipo" title="certificado_curso">certificado_curso</span><span role="gridcell" class="c-nome"><button type="button" class="pick" data-act="pick" data-i="1">Maria Exemplo da Silva</button></span><span role="gridcell" class="c-curso" title="Comunicação Não Violenta">Comunicação Não Violenta</span><span role="gridcell" class="c-ch" title="20">20</span><span role="gridcell" class="c-data" title="15/03/2026">15/03/2026</span><span role="gridcell" class="c-st" data-st="1"><label class="st"><span class="sr-only">status de Maria Exemplo da Silva</span><select data-act="status" data-i="1"><option selected="">ativo</option><option>revogado</option></select></label></span><span role="gridcell" class="c-cpf" title=""></span><span role="gridcell" class="c-rem" title=""></span><span role="gridcell" class="c-rpor" title=""></span><span role="gridcell" class="c-mot" title=""></span></div><div class="r d" role="row" data-row="2" aria-selected="false"><span role="gridcell" class="c-id" title="Zr4tW8nLq2Ys">Zr4tW8nLq2Ys</span><span role="gridcell" class="c-tipo" title="declaracao_matricula">declaracao_matricula</span><span role="gridcell" class="c-nome"><button type="button" class="pick" data-act="pick" data-i="2">João Exemplo Souza</button></span><span role="gridcell" class="c-curso" title="Escrita Profissional">Escrita Profissional</span><span role="gridcell" class="c-ch" title=""></span><span role="gridcell" class="c-data" title="14/09/2026">14/09/2026</span><span role="gridcell" class="c-st" data-st="2"><label class="st"><span class="sr-only">status de João Exemplo Souza</span><select data-act="status" data-i="2"><option selected="">ativo</option><option>revogado</option></select></label></span><span role="gridcell" class="c-cpf" title="000.000.000-00">000.000.000-00</span><span role="gridcell" class="c-rem" title=""></span><span role="gridcell" class="c-rpor" title=""></span><span role="gridcell" class="c-mot" title=""></span></div>
+      </div>
+
+      <div class="em">
+        <span class="lb">emissão</span>
+        <div class="ctl" id="ctl"><div class="who">Maria Exemplo da Silva</div><div class="meta">Certificado de conclusão de curso · Comunicação Não Violenta · 15/03/2026</div><div class="state">ativo</div><div class="acts"><button type="button" class="bt pri" data-act="pdf">Baixar PDF</button><button type="button" class="bt" data-act="share" aria-pressed="false">Compartilhar</button><button type="button" class="bt" data-act="revoke" aria-pressed="false">Revogar</button></div><div class="pnl"><ul class="cks done"><li><span class="m">✓</span><span>ID <b>k7Qm2xPz9aBc</b>: 12 letras ou dígitos, numa linha só</span></li><li><span class="m">✓</span><span><b>status</b>: ativo</span></li><li><span class="m">✓</span><span><b>URL de validação</b>: configurada, vai no QR</span></li><li><span class="m">✓</span><span><b>campos obrigatórios</b>: nome, curso, carga_horaria e o conteúdo do curso</span></li><li><span class="m">●</span><span><b>PDF gerado</b>: agora, a partir da linha; nada fica guardado</span></li></ul></div></div>
+      </div>
+
+      <div class="dc">
+        <span class="lb">documento</span>
+        <div class="doc"><div id="docf"><div class="frame"><img src="img/doc-k7Qm2xPz9aBc-p1.webp" width="1521" height="1075" alt="Certificado de conclusão de curso de Maria Exemplo da Silva, curso de Comunicação Não Violenta, com o ID de validação k7Qm2xPz9aBc e o QR code"><button type="button" class="qr" data-act="qr" style="left:89.2%;top:84.3%;width:7.6%;height:10.4%" aria-label="Ler o QR code: abre a validação do ID k7Qm2xPz9aBc"></button></div></div><div id="docc"><div class="cap"><span><b>PDF gerado agora, a partir da linha</b> · ID k7Qm2xPz9aBc</span><span class="pg"><button type="button" data-act="page" data-p="0" aria-current="true">página 1</button><button type="button" data-act="page" data-p="1" aria-current="false">2 · conteúdo</button></span><span>Toque no QR code para conferir.</span></div></div></div>
+      </div>
+
+      <div class="va" id="va">
+        <span class="lb">validação</span>
+        <div class="phone">
+          <div class="scr">
+            <div class="ph-top"><b>VALIDAÇÃO DE DOCUMENTOS</b><span>Escola Exemplo de Cursos Livres</span></div>
+            <div class="ph-url mono" id="ph-url">/documentos-verificaveis/?id=<b>k7Qm2xPz9aBc</b></div>
+            <form class="ph-f" id="ph-f" action="./" method="get">
+              <input id="ph-q" name="id" maxlength="64" placeholder="ID de validação" aria-label="ID de validação" autocomplete="off" spellcheck="false" value="k7Qm2xPz9aBc">
+              <button type="submit">Validar</button>
+            </form>
+            <div class="ph-res" id="ph-res" aria-live="polite"><div class="card"><p class="s">✓ Documento válido</p><dl><dt>Documento</dt><dd>Certificado de conclusão de curso</dd><dt>Nome</dt><dd>Maria Exemplo da Silva</dd><dt>Curso</dt><dd>Comunicação Não Violenta</dd><dt>Carga horária</dt><dd>20 horas</dd><dt>Emissão</dt><dd>15 de março de 2026</dd></dl><span class="li" role="link" aria-disabled="true">Adicionar ao LinkedIn</span><p class="li-n">Desativado na demo. No sistema, abre o formulário de certificação do LinkedIn já preenchido.</p></div></div>
+          </div>
+        </div>
+        <div class="tr" id="tr"><div class="tests">Testar outro ID: <button type="button" data-act="try" data-q="Pq8sT3vW6yZa">inexistente</button> · <button type="button" data-act="try" data-q="k7Qm-2xPz9aB">malformado</button></div><span class="lb">o que a validação fez</span><ol class="steps"><li class=""><b>Formato do ID</b>12 letras ou dígitos</li><li class=""><b>Linha na planilha</b>uma linha com este ID</li><li class=""><b>Status</b>ativo</li><li class="end"><b>Resposta</b>tipo, nome, curso, carga horária, data</li></ol></div>
+      </div>
+
+      <p class="note">A emissão reproduz a versão n8n, onde revogar é um botão. No Python, revoga-se pela planilha; a validação pode levar até 30 s para refletir a alteração por causa do cache.</p>
+      <svg class="th" id="th" aria-hidden="true"></svg>
+      <p class="sr-only" id="live" aria-live="polite"></p>
+    </div>
+
+  </section>
+
+  <!-- Por dentro: o que acontece por trás da demo, na ordem em que acontece -->
+  <section class="tx" id="por-dentro" aria-labelledby="pd-t">
+    <h2 class="tx-k" id="pd-t">Por dentro</h2>
+    <p class="tx-lead">Uma linha, um ID, uma consulta.</p>
+    <p class="tx-sub">Não há banco próprio. A planilha é o registro: quem emite mantém as linhas, a emissão e a validação leem a mesma linha.</p>
+    <ol class="ln">
+      <li><span class="ln-n">01</span><b>Registro</b><span>Uma linha por documento: tipo, nome, curso, carga horária, data e <code>status</code>. Nas declarações, também CPF, RG e endereço.</span></li>
+      <li><span class="ln-n">02</span><b>Documento</b><span>A emissão, restrita a quem emite, gera o PDF da linha na hora, só se o documento estiver ativo. Nenhum PDF é guardado.</span></li>
+      <li><span class="ln-n">03</span><b>ID e QR</b><span>Um ID aleatório de 12 letras ou dígitos. O QR leva à consulta pública desse ID, num endereço que vem da configuração.</span></li>
+      <li><span class="ln-n">04</span><b>Consulta</b><span>Confere o formato do ID antes de ler a planilha, exige uma linha só com ele e lê o <code>status</code>. Só <code>ativo</code> vale.</span></li>
+      <li><span class="ln-n">05</span><b>Resposta</b><span>Tipo, nome, curso, carga horária e data. Nada além disso.</span></li>
+    </ol>
+  </section>
+
+  <!-- A decisão: um contrato, duas implementações (alternativas, não etapas) -->
+  <section class="tx" id="contrato" aria-labelledby="ct-t">
+    <h2 class="tx-k" id="ct-t">Uma especificação, duas implementações</h2>
+    <p class="tx-lead">Primeiro o contrato. Depois, onde ele roda.</p>
+    <p class="tx-sub">Uma especificação define as colunas, os tipos de documento, o formato do ID, os campos públicos, a revogação e o link do LinkedIn. Python e n8n são duas implementações desse contrato, não dois produtos. O custo também é explícito: toda regra nova entra na especificação e nas duas.</p>
+    <ol class="ln ln-alt">
+      <li><span class="ln-n">docs/especificacao.md</span><b>Especificação</b><p>Dados, regras, estados e o que a validação pode mostrar. A fonte comum das duas versões.</p></li>
+      <li><span class="ln-n">python/</span><b>Python, a referência</b><p>Onde dá para hospedar um contêiner. Serviço Flask com o PDF desenhado em código.</p><small>Flask · ReportLab · gspread · Docker · 156 testes automatizados</small></li>
+      <li class="par"><span class="ln-n">n8n/</span><b>n8n, as mesmas regras</b><p>Onde não dá para hospedar Python, onde a política do Google Workspace bloqueia chaves de conta de serviço, ou onde a equipe já opera n8n. Ajustável no editor visual.</p><small>n8n · Google Sheets · Google Slides · validação manual dos fluxos</small></li>
+    </ol>
+  </section>
+
+  <!-- O que é público: as colunas que entram na resposta e as que nunca saem da planilha -->
+  <section class="tx" id="publico" aria-labelledby="pb-t">
+    <h2 class="tx-k" id="pb-t">O que é público</h2>
+    <p class="tx-lead">Quem confere vê só o que precisa ver.</p>
+    <div class="cols">
+      <div>
+        <h3 class="col-h">Na resposta pública</h3>
+        <ul class="kv">
+          <li><code>tipo_documento</code><span>Documento</span></li>
+          <li><code>nome</code><span>Nome</span></li>
+          <li><code>curso</code><span>Curso</span></li>
+          <li><code>carga_horaria</code><span>Carga horária</span></li>
+          <li><code>data_emissao</code><span>Emissão</span></li>
+          <li><code>status</code><span>✓ válido ou ✗ não é mais válido</span></li>
+        </ul>
+        <p class="col-n">De um documento revogado, só o tipo e o nome abreviado: “Maria S.”.</p>
+      </div>
+      <div>
+        <h3 class="col-h">Fora da resposta</h3>
+        <ul class="kv off">
+          <li><code>cpf</code><span>só na emissão</span></li>
+          <li><code>rg</code><span>só na emissão</span></li>
+          <li><code>endereco</code><span>só na emissão</span></li>
+          <li><code>dia_aula</code><span>só na emissão</span></li>
+          <li><code>revogado_em</code><span>só na emissão</span></li>
+          <li><code>revogado_por</code><span>só na emissão</span></li>
+          <li><code>motivo_revogacao</code><span>só na emissão</span></li>
+        </ul>
+        <p class="col-n">O PDF das declarações, que leva CPF, RG e endereço, nunca é servido pela página pública. Na demo, a declaração de João mostra isso: os dados estão na planilha e no PDF, e a validação responde sem eles.</p>
+      </div>
+    </div>
+    <p class="tx-note">A consulta confirma que o emissor tem um documento com aquele ID, esses dados e esse status. Ela não prova que o PDF em mãos não foi alterado: não há assinatura digital nem hash, quem confere compara a página com o documento, e a confiança depende de a página aberta ser do domínio do emissor.</p>
+  </section>
+
+  <!-- Revogação: o documento muda de estado, não desaparece -->
+  <section class="tx" id="revogacao" aria-labelledby="rv-t">
+    <h2 class="tx-k" id="rv-t">Revogação</h2>
+    <p class="tx-lead">Revogar não apaga.</p>
+    <figure class="rvx">
+      <img src="img/doc-Hx3pV9sKd7Qe.webp" width="1521" height="1075" loading="lazy" alt="Certificado de conclusão de trimestre de Carlos Exemplo Pereira, curso de Oratória, com o ID Hx3pV9sKd7Qe e o QR code: a cópia entregue antes da revogação">
+      <span class="rvx-ln" aria-hidden="true"></span><span class="rvx-pt" aria-hidden="true"></span>
+      <figcaption><b>✗ Este documento não é mais válido.</b><span>Certificado de conclusão de trimestre</span><span>Carlos P.</span><span class="mono">Hx3pV9sKd7Qe · revogado em 12/02/2026 09:40</span></figcaption>
+    </figure>
+    <ul class="pts">
+      <li>O ID continua na planilha. Muda só o <code>status</code>.</li>
+      <li>A consulta passa a responder “Este documento não é mais válido”, com o tipo e o nome abreviado, para quem confere saber que digitou o código certo.</li>
+      <li>No n8n, o botão Revogar pede o motivo e uma confirmação e grava <code>revogado_em</code>, <code>revogado_por</code> e <code>motivo_revogacao</code>, que nunca aparecem na consulta. No Python, revoga-se mudando o <code>status</code> na planilha; a consulta reflete em até 30 s, pelo cache. Desfazer, só pela planilha.</li>
+      <li>Documento revogado não gera PDF de novo. A cópia que já circulou continua existindo; é a consulta que diz que ela não vale mais.</li>
+    </ul>
+  </section>
+
+  <!-- Detalhes técnicos: só o que o repositório comprova -->
+  <section class="tx" id="detalhes" aria-labelledby="dt-t">
+    <h2 class="tx-k" id="dt-t">Detalhes técnicos</h2>
+    <dl class="dt">
+      <div><dt>Tipos de documento</dt><dd>5 tipos de documento, todos com ID, QR e validação: certificado de conclusão de curso (com a página de conteúdo programático), de semestre (com essa página a pedido) e de trimestre; declaração de matrícula e de término de semestre. A demo usa três.</dd></div>
+      <div><dt>ID</dt><dd>12 letras ou dígitos, aleatório (~71 bits), sem <code>-</code> ou <code>_</code>, porque na planilha um valor começando com <code>-</code> vira fórmula. ID repetido não valida nenhuma linha. É um identificador difícil de adivinhar, não uma prova de autenticidade.</dd></div>
+      <div><dt>PDF e QR</dt><dd>Python: desenhado em código com ReportLab, fonte reduzida para nomes longos, QR pelo gerador do próprio ReportLab. n8n: modelo no Google Slides preenchido pelo fluxo, QR desenhado no próprio fluxo. Nenhum serviço externo vê os IDs.</dd></div>
+      <div><dt>URL de validação</dt><dd>Vem da configuração, nunca da requisição. Sem ela configurada, a emissão falha em vez de gerar documento sem QR.</dd></div>
+      <div><dt>Planilha e cache</dt><dd>Google Sheets, colunas em texto simples. Cada leitura custa chamadas à API do Google, com cota baixa: a rota pública da versão Python guarda a planilha em cache por 30 s. O n8n lê a cada consulta.</dd></div>
+      <div><dt>Limite de consultas</dt><dd>Python: 10 por minuto por IP, em memória de um processo. n8n: contador aproximado nos dados do fluxo.</dd></div>
+      <div><dt>Acesso</dt><dd>Emissão com senha e bloqueio temporário (Python) ou login com a conta Google, só para e-mails ou domínios autorizados (n8n). Acesso ao Google sem chave persistente: a política do Workspace foi mantida, não desativada.</dd></div>
+      <div><dt>LinkedIn</dt><dd>Certificados válidos ganham um botão que abre o formulário de certificação do LinkedIn já preenchido. Declarações e revogados, não.</dd></div>
+      <div><dt>Testes</dt><dd>156 testes automatizados na versão Python (pytest), incluindo o fluxo registro → PDF → QR → página. Na versão n8n, validação manual dos fluxos, de ponta a ponta num navegador.</dd></div>
+      <div><dt>Fora do escopo</dt><dd>Assinatura digital ou hash do PDF, guarda dos documentos emitidos, histórico próprio de emissão e limite de consultas entre várias instâncias.</dd></div>
+    </dl>
+    <p class="stk mono">Python · Flask · ReportLab · gspread · pytest · Docker · n8n · Google Sheets · Google Slides · Google OAuth</p>
+  </section>
+
+  <!-- Autoria e saída -->
+  <section class="tx tx-end" id="autoria" aria-labelledby="au-t">
+    <h2 class="tx-k" id="au-t">Sobre o projeto</h2>
+    <p class="tx-sub tx-au">Implementação técnica de um projeto real, feito para uma escola que não é identificada. Conduzi o projeto de ponta a ponta: levantei os requisitos, especifiquei e projetei a solução, defini os fluxos e as regras de negócio, conduzi as duas implementações, testei e validei o resultado. Claude e outras ferramentas de IA foram usadas como apoio no desenvolvimento. Não é um produto nem um serviço oferecido.</p>
+    <p class="tx-src"><a href="https://github.com/ottocanabrava/verifiable-documents">Código e especificação no GitHub ↗</a></p>
+    <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="end-a" href="/#projetos">Todos os sistemas</a></div>
+  </section>
+  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#demo">↑ Topo</a></footer>
+</main>
+
+<template id="pagina-anterior">
+<!-- Seções da página anterior (identidade antiga), guardadas sem renderizar até a nova página ser validada. -->
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -342,25 +844,6 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
   .nav-back { display: none; }
 }
 </style>
-</head>
-<body>
-<a class="skip-link" href="#conteudo">Pular para o conteúdo</a>
-
-<nav class="top" aria-label="Navegação do case">
-  <div class="nav-in">
-    <a class="nav-logo" href="#"><span class="nav-seal" aria-hidden="true">✓</span>Documentos Verificáveis</a>
-    <div class="nav-links">
-      <a class="nav-a nav-back" href="/">← Portfólio</a>
-      <a class="nav-a" href="#problema">Problema</a>
-      <a class="nav-a" href="#demo">Demo</a>
-      <a class="nav-a" href="#implementacao">Implementação</a>
-      <a class="nav-a" href="#validacao">Validação</a>
-      <a class="nav-cta" href="#demo">Ver demo</a>
-    </div>
-  </div>
-</nav>
-
-<main id="conteudo">
 <header class="hero">
   <div class="hero-in">
     <div class="hero-chips">
@@ -420,21 +903,6 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
       </div>
     </div>
     <p class="ctx-note"><strong>Contexto:</strong> implementação técnica de um projeto real, feito para uma escola de cursos livres. A escola não é identificada, e escola, alunos, cursos e documentos desta página são fictícios. Não é um produto nem um serviço oferecido.</p>
-  </div>
-</section>
-
-<section class="sec demo-bg" id="demo" aria-labelledby="demo-h">
-  <div class="wrap">
-    <div class="sh">
-      <span class="stag">demonstração interativa</span>
-      <h2 id="demo-h">Siga um documento do registro até a validação.</h2>
-      <p>Escolha uma linha da planilha e avance pelas etapas. Os PDFs e os QR codes foram gerados pelo código do projeto, com dados fictícios; a planilha e as telas são reproduções, sem servidor por trás.</p>
-    </div>
-    <div class="demo">
-      <ol class="stepper" id="stepper" aria-label="Etapas da demonstração"></ol>
-      <div class="stage" id="stage"></div>
-      <p class="sr-only" id="live" aria-live="polite"></p>
-    </div>
   </div>
 </section>
 
@@ -575,8 +1043,6 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     </div>
   </div>
 </section>
-</main>
-
 <footer>
   <div class="ft-in">
     <div class="ft-top">
@@ -594,326 +1060,359 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     </div>
   </div>
 </footer>
+</template>
 
 <script>
-/* Demo: reprodução controlada do fluxo real, sem servidor. As regras abaixo são as da
-   especificação do projeto (formato do ID, busca por linha única, status "ativo",
-   campos públicos, LinkedIn só em certificado válido). Tudo avança por ação do visitante. */
-(function () {
-  const BASE = 'https://ottocanabrava.github.io/documentos-verificaveis/';
-  const EMISSOR = 'Escola Exemplo de Cursos Livres';
-  const TIPOS = {
-    certificado_curso: { nome: 'Certificado de conclusão de curso', req: ['nome', 'curso', 'carga_horaria'], extra: 'e o conteúdo do curso, lido da planilha de conteúdos' },
-    certificado_trimestre: { nome: 'Certificado de conclusão de trimestre', req: ['nome', 'curso', 'carga_horaria'] },
-    declaracao_matricula: { nome: 'Declaração de matrícula', req: ['nome', 'curso', 'cpf', 'rg', 'endereco'] }
+/* Demonstração: reprodução do sistema, sem servidor. As regras são as do projeto
+   (ottocanabrava/verifiable-documents): find() e public_view() de src/validation.py,
+   pdf_for() de app.py, share_text(), o cache de 30 s da rota pública (Python) e a
+   revogação pela emissão n8n (motivos, justificativa, colunas gravadas). */
+(function(){
+  var BASE = "https://ottocanabrava.github.io/documentos-verificaveis/";
+  var POR = "secretaria@escola-exemplo.com";       /* e-mail fictício, o mesmo da tela de referência do projeto */
+  var CACHE = 30000;                                 /* CACHE_TTL da versão Python */
+  var TIPOS = {
+    certificado_curso: { nome: "Certificado de conclusão de curso", req: ["nome", "curso", "carga_horaria"], extra: "o conteúdo do curso" },
+    certificado_trimestre: { nome: "Certificado de conclusão de trimestre", req: ["nome", "curso", "carga_horaria"] },
+    declaracao_matricula: { nome: "Declaração de matrícula", req: ["nome", "curso", "cpf", "rg", "endereco"] }
   };
-  const MESES = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
-  /* planilha, na ordem das linhas (mais antigas primeiro) */
-  const REG = [
-    { id: 'Hx3pV9sKd7Qe', tipo_documento: 'certificado_trimestre', nome: 'Carlos Exemplo Pereira', curso: 'Oratória', carga_horaria: '80', data_emissao: '10/02/2026', status: 'revogado', cpf: '', rg: '', endereco: '', pages: ['img/doc-Hx3pV9sKd7Qe.webp'] },
-    { id: 'k7Qm2xPz9aBc', tipo_documento: 'certificado_curso', nome: 'Maria Exemplo da Silva', curso: 'Comunicação Não Violenta', carga_horaria: '20', data_emissao: '15/03/2026', status: 'ativo', cpf: '', rg: '', endereco: '', pages: ['img/doc-k7Qm2xPz9aBc-p1.webp', 'img/doc-k7Qm2xPz9aBc-p2.webp'] },
-    { id: 'Zr4tW8nLq2Ys', tipo_documento: 'declaracao_matricula', nome: 'João Exemplo Souza', curso: 'Escrita Profissional', carga_horaria: '', data_emissao: '14/09/2026', status: 'ativo', cpf: '000.000.000-00', rg: '00000000', endereco: 'Rua Fictícia, nº 1, Bairro: Jardim…', pages: ['img/doc-Zr4tW8nLq2Ys.webp'], portrait: true }
+  var MOTIVOS = ["Teste", "Emissão indevida", "Dados incorretos (será reemitido)", "Pedido do aluno", "Outro"];
+  var MESES = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+  /* planilha, na ordem das linhas (mais antigas primeiro); dados fictícios */
+  var REG = [
+    { id: "Hx3pV9sKd7Qe", tipo_documento: "certificado_trimestre", nome: "Carlos Exemplo Pereira", curso: "Oratória", carga_horaria: "80", data_emissao: "10/02/2026", status: "revogado", cpf: "", rg: "", endereco: "", revogado_em: "12/02/2026 09:40", revogado_por: POR, motivo_revogacao: "Dados incorretos (será reemitido)" },
+    { id: "k7Qm2xPz9aBc", tipo_documento: "certificado_curso", nome: "Maria Exemplo da Silva", curso: "Comunicação Não Violenta", carga_horaria: "20", data_emissao: "15/03/2026", status: "ativo", cpf: "", rg: "", endereco: "", revogado_em: "", revogado_por: "", motivo_revogacao: "" },
+    { id: "Zr4tW8nLq2Ys", tipo_documento: "declaracao_matricula", nome: "João Exemplo Souza", curso: "Escrita Profissional", carga_horaria: "", data_emissao: "14/09/2026", status: "ativo", cpf: "000.000.000-00", rg: "00000000", endereco: "Rua Fictícia, nº 1, Bairro: Jardim, Município: Cidade/UF", revogado_em: "", revogado_por: "", motivo_revogacao: "" }
   ];
-  const STEPS = ['Registro', 'Emissão', 'PDF', 'QR code', 'Validação'];
+  /* PDFs gerados pelo código do projeto e posição do QR em cada um (% da página) */
+  var PDF = {
+    Hx3pV9sKd7Qe: { pages: ["img/doc-Hx3pV9sKd7Qe.webp"], w: 1521, h: 1075, qr: [89.2, 84.3, 7.6, 10.4] },
+    k7Qm2xPz9aBc: { pages: ["img/doc-k7Qm2xPz9aBc-p1.webp", "img/doc-k7Qm2xPz9aBc-p2.webp"], w: 1521, h: 1075, qr: [89.2, 84.3, 7.6, 10.4] },
+    Zr4tW8nLq2Ys: { pages: ["img/doc-Zr4tW8nLq2Ys.webp"], w: 1075, h: 1521, qr: [79.2, 88.2, 11.8, 8.4] }
+  };
+  var COLS = [["id", "c-id"], ["tipo_documento", "c-tipo"], ["nome", "c-nome"], ["curso", "c-curso"], ["carga_horaria", "c-ch"], ["data_emissao", "c-data"], ["status", "c-st"], ["cpf", "c-cpf"], ["revogado_em", "c-rem"], ["revogado_por", "c-rpor"], ["motivo_revogacao", "c-mot"]];
 
-  const S = { step: 0, reached: 0, sel: null, emitted: false, page: 0, query: '', res: null, dirty: false };
-  const $ = id => document.getElementById(id);
-  const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
-  const rec = () => REG[S.sel];
-  const dataExtenso = d => { const [dd, mm, aa] = d.split('/'); return `${+dd} de ${MESES[mm - 1]} de ${aa}`; };
-  const url = id => `${BASE}?id=${id}`;
-  const ck = (kind, t) => `<span class="ck ${kind || ''}" aria-hidden="true">${t || '✓'}</span>`;
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce) document.documentElement.classList.add("static");
+  var $ = function(id){ return document.getElementById(id); };
+  var sf = $("dm"), svg = $("th"), NS = "http://www.w3.org/2000/svg";
+  var narrow = window.matchMedia("(max-width:1023px)");
+  var S, tick = null, last = {};
 
-  /* mesmas regras de src/validation.py e da rota /validar */
-  function validar(raw) {
-    const q = raw.trim();
-    if (!q) return null;
-    if (!/^[A-Za-z0-9]{12}$/.test(q)) return { kind: 'nao_encontrado', formato: false };
-    const m = REG.filter(r => r.id === q);
-    if (m.length !== 1) return { kind: 'nao_encontrado', formato: true, achou: false };
-    const r = m[0];
-    return { kind: r.status === 'ativo' ? 'valido' : 'invalido', formato: true, achou: true, r };
+  function fresh(){
+    return { rows: REG.map(function(r){ var o = {}; for(var k in r) o[k] = r[k]; return o; }),
+      sel: null, panel: null, busy: false, checks: null, doc: null, page: 0, copied: false,
+      rv: { m: "", d: "", ok: false, err: "" }, q: "", res: null, prev: {}, lastRead: 0, pending: {}, edited: {},
+      threads: [], hit: {}, evt: null, open: false };
   }
 
-  function stepper() {
-    $('stepper').innerHTML = STEPS.map((s, i) => `<li><button type="button" data-go="${i}" ${i > S.reached ? 'disabled' : ''}
-      class="${i < S.reached && i !== S.step ? 'done' : ''}" ${i === S.step ? 'aria-current="step"' : ''}>
-      <span class="n">${i < S.reached && i !== S.step ? '✓' : i + 1}</span>${s}</button></li>`).join('');
+  var esc = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var tipoNome = function(r){ return (TIPOS[r.tipo_documento] || {}).nome || ""; };
+  var ativo = function(r){ return String(r.status).trim().toLowerCase() === "ativo"; };
+  var dataExtenso = function(d){ var p = d.split("/"); return +p[0] + " de " + MESES[p[1] - 1] + " de " + p[2]; };
+  /* public_view().nome_parcial: primeiro nome e inicial do último sobrenome */
+  var parcial = function(n){ var p = String(n).split(/\s+/).filter(Boolean); return p.length > 1 ? p[0] + " " + p[p.length - 1][0] + "." : p.join(" "); };
+  var agoraBrasilia = function(){ var a = new Date(Date.now() - 3 * 3600000), d = function(n){ return ("0" + n).slice(-2); };
+    return d(a.getUTCDate()) + "/" + d(a.getUTCMonth() + 1) + "/" + a.getUTCFullYear() + " " + d(a.getUTCHours()) + ":" + d(a.getUTCMinutes()); };
+  var rowOf = function(id){ var m = S.rows.filter(function(r){ return r.id === id; }); return m.length === 1 ? m[0] : null; };
+  var say = function(t){ $("live").textContent = t; };
+
+  /* share_text(): só o que a validação pública já mostra */
+  function shareText(r){
+    var t = tipoNome(r), dela = t.indexOf("Declaração") === 0, nome = String(r.nome).split(/\s+/)[0];
+    return "Olá, " + nome + "! " + (dela ? "Sua " : "Seu ") + t.toLowerCase() + " (" + r.curso + ") foi " + (dela ? "emitida" : "emitido") + ".\n" +
+      "Código de validação: " + r.id + "\nPara conferir, acesse: " + BASE + "?id=" + encodeURIComponent(r.id) + "\nOu abra " + BASE + " e digite o código.";
   }
 
-  function head(t, p) { return `<div class="st-head"><h3 id="st-title" tabindex="-1">${t}</h3><p>${p}</p></div>`; }
-  function actions(back, next) {
-    return `<div class="st-actions">${back ? `<button type="button" class="btn btn-sec" data-go="${S.step - 1}">← Voltar</button>` : '<span></span>'}${next || ''}</div>`;
+  /* /validar: formato → linha única → status → campos públicos (com o cache da rota pública) */
+  function validar(raw){
+    var q = String(raw || "").trim(), now = Date.now();
+    if(!q) return null;
+    var res = { q: q, at: now };
+    if(!/^[A-Za-z0-9]{12}$/.test(q)){ res.kind = "nao"; res.stop = 1; return res; }
+    var m = S.rows.filter(function(r){ return r.id === q; });
+    if(m.length !== 1){ res.kind = "nao"; res.stop = 2; res.n = m.length; return res; }
+    var r = m[0], status = r.status, cacheOk = S.lastRead && now - S.lastRead < CACHE;
+    if(cacheOk && S.pending[q]){ status = S.pending[q]; res.cache = true; }
+    else if(!cacheOk){ S.lastRead = now; S.pending = {}; res.read = !!S.edited[q]; S.edited = {}; }
+    res.r = r; res.status = status;
+    res.kind = String(status).trim().toLowerCase() === "ativo" && TIPOS[r.tipo_documento] ? "valido" : "invalido";
+    return res;
   }
 
-  /* 1. Registro */
-  function s1() {
-    const cols = ['id', 'tipo_documento', 'nome', 'curso', 'carga_horaria', 'data_emissao', 'status', 'cpf', 'rg', 'endereco'];
-    return head('Selecione um registro', 'Cada documento é uma linha da planilha do Google, que é o registro do sistema: não há banco de dados. Escolha uma linha para emitir.') +
-      `<div class="st-grid"><div class="sheet">
-        <div class="sheet-bar"><span class="sheet-ico" aria-hidden="true"></span>Documentos emitidos · planilha de exemplo</div>
-        <div class="sheet-scroll"><table>
-          <caption class="sr-only">Planilha de documentos. Selecione uma linha.</caption>
-          <thead><tr><th class="rn" scope="col"><span class="sr-only">Selecionar</span></th>${cols.map(c => `<th scope="col">${c}</th>`).join('')}</tr></thead>
-          <tbody>${REG.map((r, i) => `<tr class="${S.sel === i ? 'sel' : ''}" data-row="${i}">
-            <td class="rn"><input type="radio" name="reg" id="reg-${i}" value="${i}" ${S.sel === i ? 'checked' : ''} aria-label="${esc(r.nome)}, ${TIPOS[r.tipo_documento].nome}, ${r.status}"></td>
-            ${cols.map(c => `<td class="${c === 'status' ? (r.status === 'ativo' ? 'st-ativo' : 'st-rev') : ''}${r[c] ? '' : ' empty'}">${esc(r[c] || '')}</td>`).join('')}</tr>`).join('')}</tbody>
-        </table></div>
-        <div class="sheet-more">+ colunas dia_aula e semestre_conteudo · colunas em texto simples, para preservar datas e zeros à esquerda</div>
-      </div>
-      <div class="side">
-        <div class="note"><span class="note-k">o que está na linha</span>Os dados do documento, o <code>status</code> e, nas declarações, CPF, RG e endereço. Só <code>ativo</code> vale na validação; revogar é mudar essa célula.</div>
-        <div class="note"><span class="note-k">o ID</span>12 letras ou dígitos aleatórios. Na versão Python, a emissão sugere IDs novos para colar na planilha; na n8n, o ID é gerado no cadastro.</div>
-      </div></div>` +
-      actions(false, `<button type="button" class="btn btn-pri" data-go="1" ${S.sel === null ? 'disabled' : ''}>Emitir este documento →</button>`);
+  /* ---------- telas ---------- */
+  function sheetHTML(){
+    var h = '<div class="r h" role="row">' + COLS.map(function(c){ return '<span role="columnheader" class="' + c[1] + '">' + c[0] + "</span>"; }).join("") + "</div>";
+    return h + S.rows.map(function(r, i){
+      return '<div class="r d" role="row" data-row="' + i + '" aria-selected="' + (S.sel === i) + '">' + COLS.map(function(c){
+        var k = c[0], v = r[k] || "", hit = S.hit[i + ":" + k] ? " hit" : "";
+        if(k === "nome") return '<span role="gridcell" class="' + c[1] + hit + '"><button type="button" class="pick" data-act="pick" data-i="' + i + '" data-k="pick' + i + '">' + esc(v) + "</button></span>";
+        if(k === "status") return '<span role="gridcell" class="' + c[1] + hit + '" data-st="' + i + '"><label class="st"><span class="sr-only">status de ' + esc(r.nome) + '</span><select data-act="status" data-i="' + i + '" data-k="st' + i + '">' +
+          ["ativo", "revogado"].map(function(o){ return "<option" + (o === r.status ? " selected" : "") + ">" + o + "</option>"; }).join("") + "</select></label></span>";
+        return '<span role="gridcell" class="' + c[1] + hit + '" title="' + esc(v) + '">' + esc(v) + "</span>";
+      }).join("") + "</div>";
+    }).join("");
   }
 
-  /* 2. Emissão */
-  function s2() {
-    const r = rec(), t = TIPOS[r.tipo_documento];
-    const checks = S.emitted ? `<ul class="checks" aria-label="Conferências feitas antes de gerar o PDF">
-        <li>${ck()}<span><b>Tipo reconhecido:</b> <code>${r.tipo_documento}</code> (${t.nome})</span></li>
-        <li>${ck()}<span><b>Campos obrigatórios preenchidos:</b> ${t.req.join(', ')}, além de id e data_emissao${t.extra ? ', ' + t.extra : ''}</span></li>
-        <li>${ck()}<span><b>ID no formato</b> e sem repetição na planilha: um ID repetido não gera nem valida nenhuma linha</span></li>
-        <li>${ck()}<span><b>URL de validação configurada:</b> sem ela, o PDF não é gerado, para não sair documento sem QR</span></li>
-        <li class="out">${ck('', '→')}<span><b>PDF gerado na hora</b>, a partir da linha, e entregue só a quem emitiu. Nada é armazenado.</span></li>
-      </ul>` : '';
-    return head('Emita o documento', 'A emissão fica numa área restrita a quem emite (senha na versão Python; login com a conta Google na n8n). O PDF é gerado sob demanda, a partir da linha.') +
-      `<div class="st-grid"><div>
-        <div class="adm" role="group" aria-label="Reprodução da área de emissão">
-          <div class="adm-h">EMISSÃO DE DOCUMENTOS · ${EMISSOR}</div>
-          <div class="adm-b"><div class="adm-card">
-            <h4>Documentos da planilha</h4>
-            <p class="adm-muted">Linha selecionada (as demais foram omitidas nesta reprodução).</p>
-            <div class="adm-scroll"><table>
-              <thead><tr><th scope="col">Nome</th><th scope="col">Documento</th><th scope="col">Curso</th><th scope="col">Emissão</th><th scope="col">Status</th><th scope="col"><span class="sr-only">Ação</span></th></tr></thead>
-              <tbody><tr><td>${esc(r.nome)}</td><td>${r.tipo_documento}</td><td>${esc(r.curso)}</td><td>${r.data_emissao}</td><td>${r.status}</td>
-                <td><button type="button" class="adm-btn" id="emit">Baixar PDF</button></td></tr></tbody>
-            </table></div>
-          </div></div>
-        </div>
-        ${checks}
-      </div>
-      <div class="side">
-        <div class="note"><span class="note-k">a tela</span>Reprodução da tela <code>/emitir</code> da versão Python, com o mesmo layout e as mesmas cores.</div>
-        ${S.emitted ? '' : '<div class="note"><span class="note-k">sua vez</span>Clique em <strong>Baixar PDF</strong> para ver o que a emissão confere antes de gerar o documento.</div>'}
-      </div></div>` +
-      actions(true, `<button type="button" class="btn btn-pri" data-go="2" ${S.emitted ? '' : 'disabled'}>Ver o PDF →</button>`);
+  function checksHTML(r, done){
+    var t = TIPOS[r.tipo_documento], req = t.req.join(", ") + (t.extra ? " e " + t.extra : "");
+    var it = [
+      ["ID <b>" + r.id + "</b>", "12 letras ou dígitos, numa linha só"],
+      ["<b>status</b>", "ativo"],
+      ["<b>URL de validação</b>", "configurada, vai no QR"],
+      ["<b>campos obrigatórios</b>", req],
+      ["<b>PDF gerado</b>", "agora, a partir da linha; nada fica guardado"]
+    ];
+    return '<ul class="cks' + (done ? " done" : "") + '">' + it.map(function(x, i){
+      return '<li' + (done ? "" : ' style="animation-delay:' + (i * .22) + 's"') + '><span class="m">' + (i === it.length - 1 ? (done ? "●" : "<i></i>") : "✓") + "</span><span>" + x[0] + ": " + x[1] + "</span></li>";
+    }).join("") + "</ul>";
   }
 
-  /* 3. PDF */
-  function s3() {
-    const r = rec(), t = TIPOS[r.tipo_documento], two = r.pages.length > 1;
-    const alt = S.page === 1
-      ? `Segunda página do certificado: conteúdo programático do curso de ${r.curso}, em módulos, com o nome e o ID de validação no rodapé`
-      : r.portrait
-        ? `${t.nome} de ${r.nome}, curso de ${r.curso}, com CPF, RG e endereço no texto, assinatura e QR code com o ID de validação no rodapé`
-        : `${t.nome} de ${r.nome}, curso de ${r.curso}, ${r.carga_horaria} horas, com assinatura, ID de validação e QR code no canto inferior direito`;
-    const pages = two ? `<div class="pdf-pages" role="group" aria-label="Páginas">${r.pages.map((_, i) =>
-      `<button type="button" data-page="${i}" aria-pressed="${S.page === i}">${i === 0 ? 'Página 1' : 'Página 2 · conteúdo'}</button>`).join('')}</div>` : '';
-    const nota = r.portrait
-      ? `<div class="note alert"><span class="note-k">dados pessoais</span>Esta declaração traz <strong>CPF, RG e endereço</strong>. Por isso o PDF é entregue só a quem emitiu e <strong>nunca é servido pela página pública</strong>.</div>`
-      : r.status !== 'ativo'
-        ? `<div class="note alert"><span class="note-k">linha revogada</span>A emissão continua gerando o PDF desta linha. Quem responde que ele não vale mais é a validação, pelo <code>status</code> na planilha.</div>`
-        : `<div class="note"><span class="note-k">no certificado de curso</span>A segunda página lista o conteúdo programático, lido de outra planilha (curso · semestre · item). Sem conteúdo cadastrado, o certificado não é gerado.</div>`;
-    return head('Veja o PDF gerado', 'Documento gerado pelo código real do projeto (versão Python), com os dados fictícios desta linha. O ID vai no rodapé e o QR code no canto.') +
-      `<div class="st-grid"><div class="pdf">
-        <div class="pdf-bar"><span class="pdf-name">${esc(t.nome)} - ${esc(r.nome)}.pdf</span>${pages}</div>
-        <div class="pdf-view${r.portrait ? ' portrait' : ''}"><img src="${r.pages[S.page]}" width="${r.portrait ? 1075 : 1521}" height="${r.portrait ? 1521 : 1075}" alt="${esc(alt)}"></div>
-      </div>
-      <div class="side">${nota}
-        <div class="note"><span class="note-k">layout</span>Um módulo de layout por tipo de documento. No Python o PDF é desenhado em código; no n8n, sai de um modelo no Google Slides.</div>
-      </div></div>` +
-      actions(true, `<button type="button" class="btn btn-pri" data-go="3">Ler o QR code →</button>`);
-  }
-
-  /* 4. QR */
-  function s4() {
-    const r = rec();
-    return head('Leia o QR code', 'O QR não carrega os dados do documento: carrega só o endereço da página de validação com o ID.') +
-      `<div class="qr-wrap">
-        <div class="qr-card"><img src="img/qr-${r.id}.svg" width="41" height="41" alt="QR code do documento de ${esc(r.nome)}, que abre a validação do ID ${r.id}"><span>QR impresso no documento</span></div>
-        <div>
-          <span class="note-k">o que o QR contém</span>
-          <div class="url-box">${BASE}?id=<mark>${r.id}</mark></div>
-          <ul class="id-facts">
-            <li>No sistema, o QR aponta para <code>URL_DE_VALIDACAO?id=&lt;id&gt;</code>, com a URL vinda da configuração. Aqui, aponta para esta página: escaneado com o celular, abre esta demo já na validação deste documento.</li>
-            <li>O ID tem 12 letras ou dígitos aleatórios (~71 bits): não dá para descobrir outros documentos por tentativa.</li>
-            <li>Na versão Python, o QR também é um link clicável dentro do PDF.</li>
-          </ul>
-        </div>
-      </div>` +
-      actions(true, `<button type="button" class="btn btn-pri" data-go="4" data-scan="1">Abrir a validação →</button>`);
-  }
-
-  /* 5. Validação */
-  function resultado() {
-    const x = S.res;
-    if (!x) return '';
-    if (x.kind === 'nao_encontrado') return `<div class="card" id="vp-res" tabindex="-1"><p class="status bad">Documento não encontrado.</p>Confira o ID e tente de novo.</div>`;
-    if (x.kind === 'invalido') return `<div class="card" id="vp-res" tabindex="-1"><p class="status bad">✗ Este documento não é mais válido.</p></div>`;
-    const r = x.r, cert = r.tipo_documento.startsWith('certificado_');
-    return `<div class="card" id="vp-res" tabindex="-1"><p class="status ok">✓ Documento válido</p><dl>
-      <dt>Documento</dt><dd>${TIPOS[r.tipo_documento].nome}</dd>
-      <dt>Nome</dt><dd>${esc(r.nome)}</dd>
-      <dt>Curso</dt><dd>${esc(r.curso)}</dd>
-      ${r.carga_horaria ? `<dt>Carga horária</dt><dd>${r.carga_horaria} horas</dd>` : ''}
-      <dt>Emissão</dt><dd>${dataExtenso(r.data_emissao)}</dd></dl>
-      ${cert ? `<span class="linkedin" role="link" aria-disabled="true">Adicionar ao LinkedIn</span><span class="demo-tag">Desativado na demo. No sistema, abre o formulário de certificação do LinkedIn já preenchido.</span>` : ''}</div>`;
-  }
-
-  function trace() {
-    const x = S.res;
-    if (!x) return `<p class="note">Digite um ID e toque em <strong>Validar</strong>.</p>`;
-    const f = x.formato, a = x.achou;
-    const st = x.r ? x.r.status : null;
-    return `<ol class="trace">
-      <li>${f ? ck() : ck('no', '✗')}<span><b>Formato do ID</b>${f ? '12 letras ou dígitos.' : 'Fora do formato: recusado antes de qualquer consulta à planilha.'}</span></li>
-      <li>${!f ? ck('skip', '–') : a ? ck() : ck('no', '✗')}<span><b>Consulta ao registro</b>${!f ? 'Não feita.' : a ? 'Uma única linha com esse ID.' : 'Nenhuma linha única com esse ID. A resposta é a mesma de um ID malformado, sem erro técnico.'}</span></li>
-      <li>${!a ? ck('skip', '–') : st === 'ativo' ? ck() : ck('no', '✗')}<span><b>Status</b>${!a ? 'Não se aplica.' : st === 'ativo' ? '<code>ativo</code>: documento válido.' : `<code>${st}</code>: qualquer valor diferente de ativo invalida o documento.`}</span></li>
-      <li>${x.kind === 'valido' ? ck() : ck('skip', '–')}<span><b>Resposta</b>${x.kind === 'valido' ? 'Só tipo, nome, curso, carga horária e data. CPF, RG e endereço nunca aparecem.' : 'Nenhum dado do documento é mostrado.'}</span></li>
-    </ol>`;
-  }
-
-  function s5() {
-    const r = rec();
-    const toggle = r ? `<div class="note"><span class="note-k">na planilha</span>A linha de <strong>${esc(r.nome)}</strong> está com status <span class="pill-st ${r.status}" id="st-pill">${r.status}</span>
-        <div class="sheet-toggle"><button type="button" class="btn btn-sec btn-sm" id="toggle">${r.status === 'ativo' ? 'Revogar na planilha' : 'Reativar na planilha'}</button></div>
-        <p id="toggle-msg" style="margin-top:8px;">${S.dirty ? 'Planilha alterada. Toque em <strong>Validar</strong> de novo para consultar.' : 'Na versão Python, uma mudança aparece em até 30 s (cache); na n8n, na consulta seguinte.'}</p></div>` : '';
-    return head('Valide o documento', 'A página pública de validação, reproduzida com o layout e as regras da versão Python. Experimente também outros IDs.') +
-      `<div class="st-grid"><div>
-        <div class="phone"><div class="phone-url" id="phone-url">${esc(BASE)}${S.query ? '?id=' + esc(S.query) : ''}</div><div class="vp">
-          <header><h4>VALIDAÇÃO DE DOCUMENTOS</h4><p>${EMISSOR}</p></header>
-          <div class="vp-main">
-            <form id="vp-form" role="search" aria-label="Validar documento"><input id="vp-id" name="id" value="${esc(S.query)}" placeholder="ID de validação" aria-label="ID de validação" maxlength="64" autocomplete="off" spellcheck="false"><button type="submit">Validar</button></form>
-            <div id="vp-out">${resultado()}</div>
-          </div>
-        </div></div>
-      </div>
-      <div class="side">
-        <div class="note"><span class="note-k">o que a validação fez</span><div id="vp-trace">${trace()}</div></div>
-        ${toggle}
-        <div class="note"><span class="note-k">tente também</span>Outros IDs, que também podem ser digitados no campo:
-          <div class="try"><button type="button" class="btn btn-sec btn-sm" data-try="aB3dE5gH7jK9">ID inexistente</button><button type="button" class="btn btn-sec btn-sm" data-try="123-abc">ID malformado</button>${REG.filter(x => x !== r).map(x => `<button type="button" class="btn btn-sec btn-sm" data-try="${x.id}">${esc(x.nome.split(' ')[0])}</button>`).join('')}</div></div>
-      </div></div>` +
-      actions(!!r, `<button type="button" class="btn btn-pri" data-restart="1">${r ? 'Recomeçar com outro registro' : 'Começar pelo registro'}</button>`);
-  }
-
-  function renderResult(announce) {
-    $('vp-out').innerHTML = resultado();
-    $('vp-trace').innerHTML = trace();
-    $('phone-url').textContent = BASE + (S.query ? '?id=' + S.query : '');
-    if (announce) {
-      const x = S.res;
-      $('live').textContent = !x ? '' : x.kind === 'valido' ? 'Documento válido.' : x.kind === 'invalido' ? 'Este documento não é mais válido.' : 'Documento não encontrado.';
+  function ctlHTML(){
+    if(S.sel === null) return '<p class="empty">Escolha uma linha da planilha.</p>';
+    var r = S.rows[S.sel], h = '<div class="who">' + esc(r.nome) + '</div><div class="meta">' + esc(tipoNome(r)) + " · " + esc(r.curso) + " · " + esc(r.data_emissao) + "</div>";
+    if(!ativo(r)){
+      var rev = r.motivo_revogacao ? "Revogado" + (r.revogado_em ? " em " + esc(r.revogado_em) : "") + (r.revogado_por ? " por " + esc(r.revogado_por) : "") + ": " + esc(r.motivo_revogacao) + "." : "Revogado pela planilha (status mudado na célula).";
+      h += '<div class="state">✗ revogado</div><div class="pnl' + (S.open ? " in" : "") + '" data-k="revnote"><p>' + rev + "</p><p>Documento revogado não gera PDF: o papel circularia sem nada que mostrasse a revogação.</p>";
+      if(!(S.doc && S.doc.id === r.id)) h += '<p><button type="button" class="bt" data-act="old" data-k="old">Ver a cópia que circulou</button></p><p class="small">O sistema não guarda PDFs. A cópia é a que o aluno recebeu antes da revogação.</p>';
+      return h + "</div>";
     }
+    h += '<div class="state">ativo</div><div class="acts">' +
+      '<button type="button" class="bt pri" data-act="pdf" data-k="pdf"' + (S.busy ? " disabled" : "") + ">Baixar PDF</button>" +
+      '<button type="button" class="bt" data-act="share" data-k="share" aria-pressed="' + (S.panel === "share") + '"' + (S.busy ? " disabled" : "") + ">Compartilhar</button>" +
+      '<button type="button" class="bt" data-act="revoke" data-k="revoke" aria-pressed="' + (S.panel === "revoke") + '"' + (S.busy ? " disabled" : "") + ">Revogar</button></div>";
+    if(S.panel === "pdf") h += '<div class="pnl" data-k="cks">' + checksHTML(r, !S.busy) + "</div>";
+    if(S.panel === "share") h += '<div class="pnl' + (S.open ? " in" : "") + '"><textarea class="share" id="share" rows="6" readonly aria-label="Texto para o aluno">' + esc(shareText(r)) + '</textarea>' +
+      '<div class="acts"><button type="button" class="bt pri" data-act="copy" data-k="copy">' + (S.copied ? "Copiado" : "Copiar texto") + '</button>' +
+      '<span class="bt off" aria-disabled="true" title="Na emissão, abre o WhatsApp com o texto">WhatsApp</span><span class="bt off" aria-disabled="true" title="Na emissão, abre o e-mail com o texto">E-mail</span></div>' +
+      '<p class="small">WhatsApp e E-mail ficam só como representação: aqui não abrem nada.</p></div>';
+    if(S.panel === "revoke") h += '<form class="pnl rv' + (S.open ? " in" : "") + '" id="rv" novalidate><h3>Revogar este documento?</h3>' +
+      '<p class="small">A validação passa a mostrar "Este documento não é mais válido". Para desfazer, só pela planilha.</p>' +
+      '<fieldset><legend>Motivo</legend>' + MOTIVOS.map(function(m, i){ return '<label><input type="radio" name="m" value="' + esc(m) + '"' + (S.rv.m === m ? " checked" : "") + ' data-k="m' + i + '"> ' + esc(m) + "</label>"; }).join("") + "</fieldset>" +
+      '<textarea name="d" rows="2" maxlength="300" placeholder="Justificativa (obrigatória em Outro)" aria-label="Justificativa" data-k="d">' + esc(S.rv.d) + "</textarea>" +
+      '<label class="cf"><input type="checkbox" name="ok"' + (S.rv.ok ? " checked" : "") + ' data-k="ok"> Confirmo a revogação</label>' +
+      (S.rv.err ? '<p class="err" role="alert">' + esc(S.rv.err) + "</p>" : "") +
+      '<div class="acts"><button type="submit" class="bt pri" data-k="rvgo">Revogar documento</button></div></form>';
+    return h;
   }
 
-  function render(focus) {
-    stepper();
-    $('stage').innerHTML = [s1, s2, s3, s4, s5][S.step]();
-    if (focus === 'title') $('st-title').focus({ preventScroll: true });
-    else if (focus) { const el = document.getElementById(focus) || document.querySelector(focus); if (el) el.focus(); }
+  function docHTML(){
+    if(!S.doc) return ['<div class="void">nenhum PDF aberto</div>', ""];
+    var r = rowOf(S.doc.id) || S.rows.filter(function(x){ return x.id === S.doc.id; })[0], p = PDF[S.doc.id], pg = S.page, q = p.qr;
+    var h = '<div class="frame in" data-k="frame' + S.doc.id + pg + '"><img src="' + p.pages[pg] + '" width="' + p.w + '" height="' + p.h + '" alt="' + esc(tipoNome(r) + " de " + r.nome + ", curso de " + r.curso + ", com o ID de validação " + r.id + (pg ? ": página do conteúdo programático" : " e o QR code")) + '">';
+    if(pg === 0) h += '<button type="button" class="qr" data-act="qr" data-k="qr" style="left:' + q[0] + "%;top:" + q[1] + "%;width:" + q[2] + "%;height:" + q[3] + '%" aria-label="Ler o QR code: abre a validação do ID ' + r.id + '"></button>';
+    h += "</div>";
+    var c, kind = S.doc.kind === "copia" ? "Cópia que circulou antes da revogação" : ativo(r) ? "PDF gerado agora, a partir da linha" : "Cópia baixada antes da revogação";
+    c = '<div class="cap"><span><b>' + kind + "</b> · ID " + r.id + "</span>";
+    if(p.pages.length > 1) c += '<span class="pg">' + p.pages.map(function(_, i){ return '<button type="button" data-act="page" data-p="' + i + '" data-k="pg' + i + '" aria-current="' + (i === pg) + '">' + (i ? "2 · conteúdo" : "página 1") + "</button>"; }).join("") + "</span>";
+    if(pg === 0) c += "<span>Toque no QR code para conferir.</span>";
+    return [h, c + "</div>"];
   }
 
-  function go(i, opts) {
-    if (i < 0 || i > 4) return;
-    if (i > S.reached + 1 || (i >= 1 && S.sel === null) || (i >= 2 && !S.emitted && S.reached < 2)) return;
-    S.step = i; S.reached = Math.max(S.reached, i);
-    if (i === 4 && opts && opts.scan) { S.query = rec().id; S.res = validar(S.query); S.dirty = false; }
-    render('title');
-    $('live').textContent = `Etapa ${i + 1} de 5: ${STEPS[i]}.`;
-    const box = document.querySelector('#demo .demo');
-    if (box.getBoundingClientRect().top < 54) box.scrollIntoView({ block: 'start' });
+  function resHTML(){
+    var x = S.res;
+    if(!x) return '<p class="ph-hint">Toque no QR de um documento, ou digite um ID.</p>';
+    var k = ' data-k="res' + x.at + '"';
+    if(x.kind === "nao") return '<div class="card in"' + k + '><p class="s">Documento não encontrado.</p><p class="t">Confira o ID e tente de novo.</p></div>';
+    var r = x.r;
+    if(x.kind === "invalido") return '<div class="card in"' + k + '><p class="s">✗ Este documento não é mais válido.</p><dl>' +
+      (tipoNome(r) ? "<dt>Documento</dt><dd>" + esc(tipoNome(r)) + "</dd>" : "") + "<dt>Nome</dt><dd>" + esc(parcial(r.nome)) + "</dd></dl></div>";
+    var cert = r.tipo_documento.indexOf("certificado_") === 0;
+    return '<div class="card in"' + k + '><p class="s">✓ Documento válido</p><dl>' +
+      "<dt>Documento</dt><dd>" + esc(tipoNome(r)) + "</dd><dt>Nome</dt><dd>" + esc(r.nome) + "</dd><dt>Curso</dt><dd>" + esc(r.curso) + "</dd>" +
+      (r.carga_horaria ? "<dt>Carga horária</dt><dd>" + esc(r.carga_horaria) + " horas</dd>" : "") + "<dt>Emissão</dt><dd>" + dataExtenso(r.data_emissao) + "</dd></dl>" +
+      (cert ? '<span class="li" role="link" aria-disabled="true">Adicionar ao LinkedIn</span><p class="li-n">Desativado na demo. No sistema, abre o formulário de certificação do LinkedIn já preenchido.</p>' : "") + "</div>";
   }
 
-  function select(i) {
-    if (S.sel !== i) { S.sel = i; S.emitted = false; S.page = 0; S.reached = 0; S.res = null; S.query = ''; S.dirty = false; }
-    render('reg-' + i);
-  }
-
-  const stageEl = $('stage');
-  document.getElementById('demo').addEventListener('click', e => {
-    const b = e.target.closest('[data-go]');
-    if (b && !b.disabled) return go(+b.dataset.go, { scan: !!b.dataset.scan });
-    const row = e.target.closest('[data-row]');
-    if (row) return select(+row.dataset.row);
-    if (e.target.closest('#emit')) { S.emitted = true; S.reached = Math.max(S.reached, 1); render('.checks li.out'); $('live').textContent = 'PDF gerado.'; return; }
-    const pg = e.target.closest('[data-page]');
-    if (pg) { S.page = +pg.dataset.page; render(`[data-page="${S.page}"]`); return; }
-    const tr = e.target.closest('[data-try]');
-    if (tr) { $('vp-id').value = tr.dataset.try; S.query = tr.dataset.try; S.res = validar(S.query); renderResult(true); return; }
-    if (e.target.closest('#toggle')) {
-      const r = rec(); r.status = r.status === 'ativo' ? 'revogado' : 'ativo'; S.dirty = true;
-      render('#toggle'); $('live').textContent = `Status alterado para ${r.status} na planilha.`; return;
+  function trHTML(){
+    var tests = '<div class="tests">Testar outro ID: <button type="button" data-act="try" data-q="Pq8sT3vW6yZa" data-k="t1">inexistente</button> · <button type="button" data-act="try" data-q="k7Qm-2xPz9aB" data-k="t2">malformado</button></div>';
+    var x = S.res;
+    if(!x) return tests;
+    var h = '<span class="lb">o que a validação fez</span>';
+    if(x.cmp && S.evt === "val") h += '<div class="cmp">Mesmo ID, consulta anterior: ' + x.cmp[0] + ". Agora: " + x.cmp[1] + ".</div>";
+    if(x.cache){ var age = Math.floor((Date.now() - S.lastRead) / 1000), left = Math.max(0, Math.ceil((S.lastRead + CACHE - Date.now()) / 1000));
+      h += '<div class="src"><b>Resposta do cache (Python).</b> A planilha foi lida há ' + age + " s; " + (left ? "a mudança no status aparece em até " + left + " s." : "o cache expirou: valide de novo.") + "</div>"; }
+    else if(x.read) h += '<div class="src"><b>Planilha lida agora.</b> A mudança feita na célula já vale.</div>';
+    var st = [], r = x.r, dec = r && r.tipo_documento.indexOf("declaracao") === 0;
+    st.push(x.stop === 1 ? ["stop end", "Formato do ID", "fora de 12 letras ou dígitos: parou aqui, sem ler a planilha"] : ["", "Formato do ID", "12 letras ou dígitos"]);
+    if(x.stop === 1) st.push(["skip", "Linha na planilha", "não consultada"]);
+    else st.push(x.stop === 2 ? ["stop end", "Linha na planilha", x.n ? "ID em mais de uma linha: nenhuma é escolhida" : "nenhuma linha com este ID"] : ["", "Linha na planilha", "uma linha com este ID"]);
+    if(x.stop){ st.push(["skip", "Status", "não lido"]); st.push(["skip", "Resposta", "Documento não encontrado"]); }
+    else {
+      st.push(["", "Status", x.kind === "valido" ? "ativo" : "✗ " + esc(x.status)]);
+      st.push(["end", "Resposta", x.kind === "valido" ? "tipo, nome, curso, " + (r.carga_horaria ? "carga horária, " : "") + "data" + (dec ? '<br><s>CPF</s> · <s>RG</s> · <s>endereço</s>: não lidos para a resposta' : "")
+        : "só o tipo e o nome abreviado (" + esc(parcial(r.nome)) + ")"]);
     }
-    if (e.target.closest('[data-restart]')) {
-      S.step = 0; S.reached = 0; S.sel = null; S.emitted = false; S.page = 0; S.res = null; S.query = ''; S.dirty = false;
-      render('title'); $('live').textContent = 'Etapa 1 de 5: Registro.';
+    return tests + h + '<ol class="steps' + (x.fresh ? " in" : "") + '">' + st.map(function(s){ return '<li class="' + (S.evt === "val" ? s[0] : s[0].replace("end", "")) + '"><b>' + s[1] + "</b>" + s[2] + "</li>"; }).join("") + "</ol>";
+  }
+
+  /* ---------- fios: só como consequência de uma ação ---------- */
+  function rel(el){ var a = el.getBoundingClientRect(), b = sf.getBoundingClientRect(); return { l: a.left - b.left, t: a.top - b.top, w: a.width, h: a.height, r: a.right - b.left, b: a.bottom - b.top }; }
+  function cubic(a, c1, c2, b){ return "M" + a[0].toFixed(1) + " " + a[1].toFixed(1) + "C" + c1[0].toFixed(1) + " " + c1[1].toFixed(1) + " " + c2[0].toFixed(1) + " " + c2[1].toFixed(1) + " " + b[0].toFixed(1) + " " + b[1].toFixed(1); }
+  function route(p, rad){
+    var d = "M" + p[0][0].toFixed(1) + " " + p[0][1].toFixed(1);
+    for(var i = 1; i < p.length - 1; i++){
+      var a = p[i - 1], c = p[i], b = p[i + 1], l1 = Math.hypot(c[0] - a[0], c[1] - a[1]), l2 = Math.hypot(b[0] - c[0], b[1] - c[1]), r = Math.min(rad, l1 / 2, l2 / 2);
+      var u = [c[0] - (c[0] - a[0]) / (l1 || 1) * r, c[1] - (c[1] - a[1]) / (l1 || 1) * r], v = [c[0] + (b[0] - c[0]) / (l2 || 1) * r, c[1] + (b[1] - c[1]) / (l2 || 1) * r];
+      d += "L" + u[0].toFixed(1) + " " + u[1].toFixed(1) + "Q" + c[0].toFixed(1) + " " + c[1].toFixed(1) + " " + v[0].toFixed(1) + " " + v[1].toFixed(1);
     }
+    var e = p[p.length - 1]; return d + "L" + e[0].toFixed(1) + " " + e[1].toFixed(1);
+  }
+  function ends(k){
+    var n = narrow.matches, gx = n ? 7 : 0, a, b, pts;
+    if(k === "pdf"){
+      var row = sf.querySelector('[data-row="' + S.sel + '"]'), fr = sf.querySelector(".frame"); if(!row || !fr) return null;
+      var R = rel(row), F = rel(fr);
+      if(n){ a = [R.l + 1, R.t + R.h / 2]; b = [F.l - 4, F.t + 18]; pts = { r: [a, [gx, a[1]], [gx, b[1]], b] }; }
+      else { var x = Math.min(Math.max(F.l + F.w / 2, R.l + 40), R.r - 40); a = [x, R.b]; b = [F.l + F.w / 2, F.t - 6]; pts = [a, [a[0], a[1] + (b[1] - a[1]) * .55], [b[0], b[1] - (b[1] - a[1]) * .45], b]; }
+    } else if(k === "qr"){
+      var qr = sf.querySelector(".qr"), ph = sf.querySelector(".ph-url"); if(!qr || !ph) return null;
+      var Q = rel(qr), P = rel(ph);
+      if(n){ var PH = rel(sf.querySelector(".phone")); a = [Q.l + Q.w / 2, Q.b + 4]; b = [Math.min(a[0], PH.r - 24), PH.t - 6]; pts = [a, [a[0], a[1] + (b[1] - a[1]) * .5], [b[0], b[1] - (b[1] - a[1]) * .5], b]; }
+      else { a = [Q.r + 4, Q.t + Q.h / 2]; b = [P.l - 12, P.t + P.h / 2]; pts = [a, [a[0] + (b[0] - a[0]) * .5, a[1]], [b[0] - (b[0] - a[0]) * .5, b[1]], b]; }
+    } else if(k === "rev"){
+      var nt = sf.querySelector('[data-k="revnote"]'), cell = sf.querySelector('[data-st="' + S.sel + '"]'); if(!nt || !cell) return null;
+      var N = rel(nt), C = rel(cell);
+      var row2 = rel(cell.parentNode), sh = rel($("sheet")), dc = rel(sf.querySelector(".dc"));
+      if(n){ a = [N.l - 2, N.t + 12]; pts = { r: [a, [gx, a[1]], [gx, row2.t + row2.h / 2], [row2.l + 1, row2.t + row2.h / 2]] }; }
+      else { a = [N.r + 4, N.t + 14]; var x = N.r + (dc.l - N.r) / 2, y = sh.b + (N.t - sh.b) * .18; b = [C.l + C.w / 2, C.b + 3];
+        pts = { r: [a, [x, a[1]], [x, y], [b[0], y], b] }; }
+    }
+    return pts;
+  }
+  function drawThreads(anim){
+    svg.setAttribute("viewBox", "0 0 " + sf.clientWidth + " " + sf.clientHeight);
+    svg.innerHTML = "";
+    S.threads.forEach(function(k, i){
+      var p = ends(k); if(!p) return;
+      var now = i === S.threads.length - 1 && k === S.evt, d = anim === k && !reduce ? " draw" : "", dd = p.r ? route(p.r, 14) : cubic(p[0], p[1], p[2], p[3]);
+      if(p.r) p = [p.r[0], 0, 0, p.r[p.r.length - 1]];
+      var path = document.createElementNS(NS, "path"); path.setAttribute("d", dd); path.setAttribute("pathLength", "1"); path.setAttribute("class", d.trim());
+      var c0 = document.createElementNS(NS, "circle"); c0.setAttribute("cx", p[0][0]); c0.setAttribute("cy", p[0][1]); c0.setAttribute("r", "3");
+      var c1 = document.createElementNS(NS, "circle"); c1.setAttribute("cx", p[3][0]); c1.setAttribute("cy", p[3][1]); c1.setAttribute("r", "4"); c1.setAttribute("class", "end" + (now ? " now" : "") + d);
+      svg.appendChild(path); svg.appendChild(c0); svg.appendChild(c1);
+    });
+  }
+
+  /* ---------- render: cada região só é trocada quando o conteúdo muda ---------- */
+  function put(id, html){ if(last[id] === html) return false; last[id] = html; $(id).innerHTML = html; return true; }
+  function render(anim){
+    var f = document.activeElement && document.activeElement.getAttribute("data-k");
+    put("sheet", sheetHTML()); put("ctl", ctlHTML()); var d = docHTML(); put("docf", d[0]); put("docc", d[1]);
+    put("ph-url", "/documentos-verificaveis/" + (S.q ? "?id=<b>" + esc(S.q) + "</b>" : ""));
+    put("ph-res", resHTML()); put("tr", trHTML());
+    if(f){ var e = sf.querySelector('[data-k="' + f + '"]'); if(e && e !== document.activeElement) e.focus({ preventScroll: true }); }
+    var img = sf.querySelector(".frame img");
+    if(img && !img.complete) img.addEventListener("load", function(){ drawThreads(); }, { once: true });
+    var ta = $("share"); if(ta){ ta.style.height = "auto"; ta.style.height = ta.scrollHeight + 2 + "px"; }
+    drawThreads(anim);
+    if(S.res && S.res.fresh) S.res.fresh = false;
+    S.open = false;
+    clearInterval(tick); tick = null;
+    if(S.res && S.res.cache) tick = setInterval(function(){ put("tr", trHTML()); if(S.lastRead + CACHE < Date.now()){ clearInterval(tick); tick = null; } }, 1000);
+  }
+  function show(el){ if(narrow.matches && el){ var b = el.getBoundingClientRect(); if(b.top < 72 || b.bottom > innerHeight) el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); } }
+
+  /* ---------- ações ---------- */
+  function check(q, from){
+    var x = validar(q); S.q = q.trim(); $("ph-q").value = S.q;
+    if(x && x.kind !== "nao"){ var p = S.prev[x.q]; if(p && p !== x.kind) x.cmp = [label(p), label(x.kind)]; S.prev[x.q] = x.kind; }
+    if(x) x.fresh = true;
+    S.res = x; S.evt = "val"; S.hit = {};
+    S.threads = from === "qr" ? S.threads.filter(function(k){ return k === "pdf"; }).concat("qr") : [];
+    render(from === "qr" ? "qr" : null);
+    say(!x ? "" : x.kind === "valido" ? "Documento válido." : x.kind === "invalido" ? "Este documento não é mais válido. " + parcial(x.r.nome) + "." : "Documento não encontrado.");
+  }
+  function label(k){ return k === "valido" ? "✓ válido" : "✗ não é mais válido"; }
+
+  function pick(i){
+    if(S.busy) return;
+    if(S.sel !== i){ S.sel = i; S.panel = null; S.copied = false; S.rv = { m: "", d: "", ok: false, err: "" }; S.threads = []; S.hit = {};
+      if(S.doc && S.doc.id !== S.rows[i].id) S.doc = null; S.page = 0; S.evt = null; }
+    render(); say(S.rows[i].nome + ", " + S.rows[i].status + ".");
+  }
+  function makePdf(){
+    var r = S.rows[S.sel]; if(!ativo(r)) return;   /* pdf_for(): revogado não gera PDF */
+    S.panel = "pdf"; S.busy = true; S.doc = null; S.threads = []; S.hit = {}; render();
+    setTimeout(function(){ S.busy = false; S.doc = { id: r.id, kind: "gerado" }; S.page = 0; S.threads = ["pdf"]; S.evt = "pdf"; render("pdf"); show(sf.querySelector(".frame")); say("PDF gerado a partir da linha de " + r.nome + "."); }, reduce ? 0 : 5 * 220 + 150);
+  }
+  function revoke(form){
+    var r = S.rows[S.sel], fd = new FormData(form);
+    S.rv.m = fd.get("m") || ""; S.rv.d = String(fd.get("d") || "").replace(/\s+/g, " ").trim().slice(0, 300); S.rv.ok = !!fd.get("ok");
+    S.rv.err = !S.rv.m ? "Escolha o motivo." : S.rv.m === "Outro" && S.rv.d.length < 3 ? 'Em "Outro", escreva a justificativa.' : !S.rv.ok ? "Marque a confirmação." : "";
+    if(S.rv.err){ render(); return; }
+    r.status = "revogado"; r.revogado_em = agoraBrasilia(); r.revogado_por = POR; r.motivo_revogacao = S.rv.m + (S.rv.d ? ": " + S.rv.d : "");
+    delete S.pending[r.id];                          /* n8n lê a planilha a cada consulta */
+    S.hit = {}; ["status", "revogado_em", "revogado_por", "motivo_revogacao"].forEach(function(k){ S.hit[S.sel + ":" + k] = 1; });
+    S.panel = "revoked"; S.open = true; S.rv = { m: "", d: "", ok: false, err: "" }; S.threads = ["rev"]; S.evt = "rev";
+    render("rev"); show(sf.querySelector('[data-st="' + S.sel + '"]'));
+    say(r.nome + ": documento revogado. Status gravado na planilha.");
+  }
+  function editStatus(i, v){
+    var r = S.rows[i], old = r.status; if(old === v) return;
+    if(S.lastRead && Date.now() - S.lastRead < CACHE){ if(!(r.id in S.pending)) S.pending[r.id] = old; else if(S.pending[r.id] === v) delete S.pending[r.id]; }
+    r.status = v; S.edited[r.id] = 1;
+    S.hit = {}; S.hit[i + ":status"] = 1; S.threads = []; S.evt = "edit";
+    if(S.sel === i){ S.panel = null; }
+    render(); say("Status de " + r.nome + " mudado para " + v + " na planilha.");
+  }
+
+  sf.addEventListener("click", function(e){
+    var t = e.target.closest("[data-act]");
+    if(!t){ var row = e.target.closest(".r.d"); if(row && !e.target.closest("select")) pick(+row.getAttribute("data-row")); return; }
+    var a = t.getAttribute("data-act");
+    if(a === "pick") pick(+t.getAttribute("data-i"));
+    else if(a === "pdf") makePdf();
+    else if(a === "share"){ S.panel = S.panel === "share" ? null : "share"; S.open = !!S.panel; S.copied = false; S.threads = S.threads.filter(function(k){ return k !== "rev"; }); render(); }
+    else if(a === "revoke"){ S.panel = S.panel === "revoke" ? null : "revoke"; S.open = !!S.panel; render(); if(S.panel) show($("rv")); }
+    else if(a === "copy"){
+      var tx = $("share"), done = function(){ S.copied = true; render(); say("Texto copiado."); setTimeout(function(){ if(S.copied){ S.copied = false; render(); } }, 2200); };
+      if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(tx.value).then(done, function(){ tx.select(); if(document.execCommand("copy")) done(); });
+      else { tx.select(); if(document.execCommand("copy")) done(); }
+    }
+    else if(a === "old"){ var r = S.rows[S.sel]; S.doc = { id: r.id, kind: "copia" }; S.page = 0; S.threads = []; S.evt = null; render(); show(sf.querySelector(".frame")); }
+    else if(a === "page"){ S.page = +t.getAttribute("data-p"); S.threads = S.threads.filter(function(k){ return k === "pdf"; }); render(); }
+    else if(a === "qr"){ check(S.doc.id, "qr"); show($("va")); }
+    else if(a === "try") check(t.getAttribute("data-q"));
+    else if(a === "reset") reset();
   });
-  stageEl.addEventListener('change', e => { if (e.target.name === 'reg') select(+e.target.value); });
-  stageEl.addEventListener('submit', e => {
-    if (!e.target.matches('#vp-form')) return; /* form.id seria o campo name="id" */
+  sf.addEventListener("change", function(e){
+    var t = e.target;
+    if(t.matches('select[data-act="status"]')) editStatus(+t.getAttribute("data-i"), t.value);
+    else if(t.form && t.form.getAttribute("id") === "rv"){ if(t.name === "m") S.rv.m = t.value; if(t.name === "ok") S.rv.ok = t.checked; }
+  });
+  sf.addEventListener("input", function(e){ if(e.target.name === "d") S.rv.d = e.target.value; });
+  sf.addEventListener("submit", function(e){
     e.preventDefault();
-    S.query = $('vp-id').value.trim(); S.res = validar(S.query); S.dirty = false;
-    const msg = $('toggle-msg'); if (msg) msg.textContent = 'Na versão Python, uma mudança aparece em até 30 s (cache); na n8n, na consulta seguinte.';
-    renderResult(true);
+    var id = e.target.getAttribute("id");             /* form.id seria o campo "id" do formulário */
+    if(id === "rv") revoke(e.target);
+    else if(id === "ph-f") check($("ph-q").value);
   });
 
-  /* Chegada pelo QR (?id=): abre direto na validação, como o QR real faz. */
-  const qid = new URLSearchParams(location.search).get('id');
-  if (qid !== null) {
-    const i = REG.findIndex(r => r.id === qid.trim());
-    if (i >= 0) { S.sel = i; S.emitted = true; }
-    S.step = 4; S.reached = i >= 0 ? 4 : 0; S.query = qid.trim().slice(0, 64); S.res = validar(S.query);
-    render();
-    requestAnimationFrame(() => document.querySelector('#demo .demo').scrollIntoView({ block: 'start' }));
-  } else {
-    render();
-  }
+  function reset(){ clearInterval(tick); S = fresh(); last = {}; $("ph-q").value = ""; render(); say("Demonstração no estado inicial."); }
+  if(window.ResizeObserver) new ResizeObserver(function(){ drawThreads(); }).observe(sf);
+  else addEventListener("resize", function(){ drawThreads(); });
+
+  S = fresh(); last = {}; $("ph-q").value = ""; render();   /* troca a composição estática (sem JS) pelo estado inicial */
+  /* chegada pelo QR (?id=): abre na validação desse ID, como o QR impresso faz */
+  var qid = new URLSearchParams(location.search).get("id");
+  if(qid){ check(qid.slice(0, 64)); setTimeout(function(){ $("va").scrollIntoView({ block: "center" }); }, 0); }
 })();
 </script>
-
-<!-- CONTINUE EXPLORANDO: sequência Extrator → Daily Ops → Motor → TicketScript → FormPilot → Documentos Verificáveis (mesma ordem da home) -->
-<style>
-  /* Continue explorando — navegação entre cases (estilos isolados, prefixo cx-) */
-  .cx{ background:#131D2E; color:#B7BFCE; padding:40px 24px 44px; font-family:'DM Sans',-apple-system,'Segoe UI',sans-serif; line-height:1.45; border-top:1px solid #2B3B57; }
-  .cx *{ box-sizing:border-box; }
-  .cx-in{ max-width:1120px; margin:0 auto; }
-  .cx-hd{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin:0 0 16px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
-  .cx-k{ display:inline-flex; align-items:center; gap:8px; color:#5FD1B8; font-weight:500; margin:0; font-size:inherit; letter-spacing:inherit; }
-  .cx-k::before{ content:""; width:7px; height:7px; border-radius:50%; background:#5FD1B8; }
-  .cx-pos{ color:#6B7A96; }
-  .cx-grid{ display:grid; grid-template-columns:1fr minmax(180px,.7fr) 1fr; gap:12px; }
-  .cx-card{ display:flex; flex-direction:column; gap:4px; min-width:0; padding:16px 18px; border:1px solid rgba(255,255,255,.1); border-radius:10px; background:rgba(255,255,255,.03); color:inherit; text-decoration:none; transition:border-color .15s, background .15s; }
-  a.cx-card:hover, a.cx-card:focus-visible{ border-color:rgba(255,255,255,.34); background:rgba(255,255,255,.06); }
-  a.cx-card:focus-visible{ outline:2px solid #5FD1B8; outline-offset:2px; }
-  .cx-dir{ font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#8FA0BE; }
-  .cx-name{ font-size:16px; font-weight:600; color:#fff; }
-  .cx-sum{ font-size:13px; color:#8FA0BE; }
-  .cx-next{ text-align:right; align-items:flex-end; }
-  .cx-all{ justify-content:center; align-items:center; text-align:center; }
-  .cx-edge{ justify-content:center; border-style:dashed; background:none; }
-  .cx-edge .cx-name{ font-size:14px; font-weight:500; color:#6B7A96; }
-  @media (max-width:720px){
-    .cx{ padding:32px 18px 36px; }
-    .cx-grid{ grid-template-columns:1fr; }
-    .cx-next{ text-align:left; align-items:flex-start; }
-    .cx-all{ order:3; align-items:flex-start; text-align:left; }
-    .cx-edge{ display:none; }
-  }
-</style>
-<div class="cx" role="navigation" aria-labelledby="cx-h">
-  <div class="cx-in">
-  <div class="cx-hd"><h2 class="cx-k" id="cx-h">Continue explorando</h2><span class="cx-pos">Projeto 6 de 6</span></div>
-  <div class="cx-grid">
-    <a class="cx-card cx-prev" href="/formpilot/"><span class="cx-dir">← Anterior</span><span class="cx-name">FormPilot</span><span class="cx-sum">Formulário de movimentação até a assinatura · etapa 2</span></a>
-    <a class="cx-card cx-all" href="/#projetos"><span class="cx-dir">Portfólio</span><span class="cx-name">Todos os projetos</span></a>
-    <div class="cx-card cx-next cx-edge" aria-hidden="true"><span class="cx-dir">Próximo →</span><span class="cx-name">Este é o último projeto</span></div>
-  </div>
-  </div>
-</div>
-
+<script>
+/* Seções de texto: cada fio se desenha uma vez, quando entra na tela (o padrão do Sobre da Home).
+   Com movimento reduzido ou sem IntersectionObserver, tudo aparece no estado final. */
+(function(){
+  var els = document.querySelectorAll(".ln, .rvx, .end-row"), alt = document.querySelector(".ln-alt");
+  /* no celular o fio contínuo vai do contrato até a implementação de referência; dali segue tracejado */
+  function fit(){ var li = alt.querySelectorAll("li"); alt.style.setProperty("--tl", Math.max(0, li[2].offsetTop - li[0].offsetTop - 43) + "px"); }
+  fit(); addEventListener("resize", fit);
+  if(!("IntersectionObserver" in window) || document.documentElement.classList.contains("static")){ Array.prototype.forEach.call(els, function(l){ l.classList.add("on"); }); return; }
+  Array.prototype.forEach.call(els, function(l){
+    var o = new IntersectionObserver(function(en){ if(en[0].isIntersecting){ l.classList.add("on"); o.disconnect(); } }, { rootMargin: "0px 0px -20% 0px" });
+    o.observe(l);
+  });
+})();
+</script>
 </body>
 </html>

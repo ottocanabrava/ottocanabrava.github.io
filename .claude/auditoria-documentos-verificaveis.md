@@ -96,3 +96,22 @@ verdade: o repositório (`README.md`, `docs/especificacao.md`,
   etapa produz a próxima.
 - A ilustração `img/arquitetura.png` (PNG 3200×1800 rolando de lado no
   celular), que a própria demo pode substituir.
+
+## Dados da demo (conferidos em 08/10/2026, projeto em `517c8eb`)
+
+- **QR dos PDFs:** decodificados das imagens em `documentos-verificaveis/img/`.
+  `doc-Hx3pV9sKd7Qe`, `doc-k7Qm2xPz9aBc-p1` e `doc-Zr4tW8nLq2Ys` apontam para
+  `https://ottocanabrava.github.io/documentos-verificaveis/?id=<id>`, cada um
+  com o próprio ID. A página 2 do certificado de curso (conteúdo) não tem QR.
+- **Revogação de Carlos:** `revogado_em = 12/02/2026 09:40`,
+  `revogado_por = secretaria@escola-exemplo.com`,
+  `motivo_revogacao = Dados incorretos (será reemitido)`, iguais à tela de
+  referência do projeto (`docs/imagens/emissao-lista.png`). O mesmo e-mail
+  fictício assina as revogações feitas na demo.
+- **Diferença deliberada:** na referência, Carlos tem um certificado de
+  semestre de Inglês; na demo, de trimestre de Oratória, porque é o PDF que o
+  código do projeto gerou para o portfólio e porque a demo é a escola de
+  cursos livres (decisão acima).
+- **Escola real:** a página diz só "uma escola que não é identificada". Não
+  diz o tipo (o README fala em idiomas; a demo é de cursos livres, de
+  propósito).
