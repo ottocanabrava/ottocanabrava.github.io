@@ -115,3 +115,10 @@ verdade: o repositório (`README.md`, `docs/especificacao.md`,
 - **Escola real:** a página diz só "uma escola que não é identificada". Não
   diz o tipo (o README fala em idiomas; a demo é de cursos livres, de
   propósito).
+
+## Versão anterior arquivada
+
+A página antiga (identidade anterior, demo em 5 abas) e os assets que só ela
+usava (`img/arquitetura.png`, `img/n8n-emissao-lista.webp`,
+`img/qr-Hx3pV9sKd7Qe.svg`, `img/qr-Zr4tW8nLq2Ys.svg`) saíram de `main`. Ficam
+no branch `arquivo/documentos-verificaveis-anterior` (commit `99c626a`).
