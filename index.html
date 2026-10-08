@@ -1398,12 +1398,13 @@
     s.el.setAttribute("pathLength", "1"); s.el.style.strokeDasharray = "1"; s.el.style.strokeDashoffset = "1";
     gsap.to(s.el.style, { strokeDashoffset: 0, duration: 2.2, delay: .15 + j * .05, ease: "power2.inOut", onComplete: function(){ s.el.removeAttribute("pathLength"); s.el.style.strokeDasharray = ""; s.el.style.strokeDashoffset = ""; } });
   });
-  gsap.from(".say .s1", { opacity: 0, y: 12, duration: 1.2, delay: .9, ease: "power2.out", clearProps: "transform" });
+  var s1In = gsap.from(".say .s1", { opacity: 0, y: 12, duration: 1.2, delay: .9, ease: "power2.out", clearProps: "transform" });
 
   /* abertura: o nó se desfaz sozinho, uma vez por visita, até o mapa formado.
      Não repete ao voltar ao topo: o mapa fica pronto para navegar. */
   var heroTw = null;
-  function heroFinish(){ if(heroTw) heroTw.kill(); heroTw = null; P1 = 1; render1(); }
+  /* pular para o mapa encerra também a entrada da primeira frase; senão ela volta por cima da segunda */
+  function heroFinish(){ if(heroTw) heroTw.kill(); heroTw = null; if(s1In){ s1In.progress(1).kill(); s1In = null; } P1 = 1; render1(); }
   function heroPlay(){
     if(heroTw || P1 >= 1) return;
     var st = { p: P1 };
