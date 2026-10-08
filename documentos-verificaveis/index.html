@@ -53,11 +53,9 @@
   .dm{ display:grid; grid-template-columns:280px minmax(0,1fr) auto; grid-template-areas:"bar bar bar" "sheet sheet sheet" "em dc va"; column-gap:clamp(24px,2.6vw,40px); padding:clamp(18px,2vw,28px); }
   .th{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:3; }
   .th path{ fill:none; stroke:var(--u-ink); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
-  .th path.draw{ stroke-dasharray:1; stroke-dashoffset:1; animation:draw .7s var(--ease) forwards; }
   .th circle{ fill:var(--u-ink); }
-  .th circle.end{ fill:var(--u-ink); }
   .th circle.end.now{ fill:var(--fire); }
-  .th circle.draw{ opacity:0; animation:show .2s .6s forwards; }
+  .th circle.pend{ opacity:0; }
   @keyframes draw{ to{ stroke-dashoffset:0; } }
   @keyframes show{ to{ opacity:1; } }
   @keyframes rise{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
@@ -85,6 +83,12 @@
   .r .c-nome{ color:var(--u-ink); }
   .pick{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-align:left; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .r .hit{ background:var(--hit); color:var(--u-ink); transition:background-color .6s var(--ease); }
+  .r.d.reading > *{ animation:read 1.15s var(--ease) both; }
+  @keyframes read{ 0%{ background:transparent; } 18%, 82%{ background:var(--hit); } 100%{ background:transparent; } }
+  .r .hit.late, .r .hit.late select{ animation:cell .45s var(--ease) .62s both; }
+  @keyframes cell{ from{ background:transparent; color:transparent; } to{ background:var(--hit); color:var(--u-ink); } }
+  .r .hit.late select{ background:none; animation-name:ink; }
+  @keyframes ink{ from{ color:transparent; } to{ color:var(--u-ink); } }
   .st{ position:relative; display:block; }
   .st select{ appearance:none; -webkit-appearance:none; font:inherit; color:var(--u-ink); background:none; border:0; padding:0 1.2em 0 0; margin:0; width:100%; cursor:pointer; border-radius:2px; }
   .st::after{ content:"▾"; position:absolute; right:0; top:50%; transform:translateY(-50%); font-size:10px; color:var(--u-3); pointer-events:none; }
@@ -97,12 +101,20 @@
   .meta{ color:var(--u-2); margin-top:.25em; }
   .state{ margin-top:.5em; font-size:13px; color:var(--u-2); }
   .acts{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
-  .bt{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border-radius:99px; border:1px solid var(--u-line); background:#fff; color:var(--u-ink); cursor:pointer; white-space:nowrap; transition:border-color .2s, background-color .2s; }
-  .bt:hover{ border-color:#C9CCD2; }
+  .bt{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border-radius:99px; border:1px solid #CDD0D5; background:#fff; color:var(--u-ink); cursor:pointer; white-space:nowrap; transition:border-color .2s, background-color .25s, color .25s, transform .12s; }
+  .bt:hover{ border-color:var(--u-ink); }
+  .bt:active:not(:disabled){ transform:translateY(1px); }
   .bt.pri{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
-  .bt[aria-pressed="true"]{ border-color:var(--u-ink); }
+  .bt.pri:hover{ background:#2C2F36; }
+  .bt.big{ font-size:14px; padding:.62em 1.2em; }
+  .bt.rvk{ border-color:var(--u-ink); }
+  .bt[aria-pressed="true"]{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
+  .bt[aria-busy="true"]{ opacity:1 !important; cursor:progress; }
+  .bt.done::before{ content:"✓ "; }
+  .share.flash{ animation:flash 1.4s var(--ease); }
+  @keyframes flash{ 0%, 35%{ background:var(--hit); } 100%{ background:var(--u-soft); } }
   .bt:disabled{ opacity:.45; cursor:default; }
-  .bt.off{ color:var(--u-3); cursor:default; }
+  .bt.off{ color:var(--u-3); border-color:var(--u-line); cursor:default; }
   .pnl{ margin-top:14px; padding-top:12px; border-top:1px solid var(--u-line); }
   .pnl.in{ animation:rise .3s var(--ease); }
   .pnl h3{ margin:0 0 .6em; font-size:13px; font-weight:500; }
@@ -130,7 +142,11 @@
   .doc{ flex:1; display:flex; flex-direction:column; align-items:flex-start; }
   .doc > div{ align-self:stretch; }
   .frame{ position:relative; display:inline-block; max-width:100%; border-radius:4px; box-shadow:0 0 0 1px var(--u-line), 0 30px 70px -40px rgba(17,19,24,.4); line-height:0; }
-  .frame.in{ animation:rise .4s var(--ease); }
+  .frame.pre{ clip-path:inset(0 0 100% 0); }
+  .frame.wipe{ animation:wipe .6s var(--ease) both; }
+  @keyframes wipe{ from{ clip-path:inset(0 0 100% 0); } to{ clip-path:inset(0 0 0 0); } }
+  .qr.next{ box-shadow:0 0 0 2px var(--u-ink); transition:box-shadow .3s var(--ease) .5s; }
+  .late{ animation:rise .35s var(--ease) 1s both; }
   .frame img{ display:block; max-width:100%; height:auto; max-height:420px; width:auto; border-radius:4px; }
   .qr{ position:absolute; background:none; border:0; padding:0; cursor:pointer; border-radius:3px; }
   .qr:hover{ box-shadow:0 0 0 2px var(--u-ink); }
@@ -156,7 +172,11 @@
   .ph-f button{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; border:0; border-radius:8px; background:var(--u-ink); color:#fff; cursor:pointer; }
   .ph-res{ padding:10px 12px 14px; min-height:150px; }
   .card{ background:#fff; border-radius:12px; padding:14px; box-shadow:0 0 0 1px var(--u-line); }
-  .card.in{ animation:rise .35s var(--ease); }
+  .card.in{ animation:rise .35s var(--ease) both; }
+  .card.in.vq{ animation-delay:1.2s; }
+  .card.stale{ animation:dim .4s var(--ease) 1s both; }
+  @keyframes dim{ to{ opacity:.38; } }
+  #ph-url b.new{ border-radius:3px; animation:flash 1.4s var(--ease) .5s both; }
   .card .s{ margin:0 0 .55em; font-weight:500; font-size:15px; letter-spacing:-.01em; display:flex; align-items:center; gap:.45em; }
   .card .s i{ width:7px; height:7px; border-radius:50%; background:var(--fire); flex-shrink:0; }
   .card dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:.3em .9em; font-size:12.5px; }
@@ -184,8 +204,8 @@
   .steps li.skip b{ color:var(--u-3); font-weight:400; }
   .steps li.skip::before{ background:var(--u-line); }
   .steps s{ text-decoration-thickness:1px; color:var(--u-3); }
-  .steps.in li{ animation:rise .3s var(--ease) both; }
-  .steps.in li:nth-child(2){ animation-delay:.08s; } .steps.in li:nth-child(3){ animation-delay:.16s; } .steps.in li:nth-child(4){ animation-delay:.24s; }
+  .steps.in li{ animation:rise .3s var(--ease) var(--d0, 0s) both; }
+  .steps.in li:nth-child(2){ animation-delay:calc(var(--d0, 0s) + .12s); } .steps.in li:nth-child(3){ animation-delay:calc(var(--d0, 0s) + .24s); } .steps.in li:nth-child(4){ animation-delay:calc(var(--d0, 0s) + .36s); }
   .cmp{ font-size:12.5px; color:var(--u-ink); padding:.55em .7em; margin-bottom:12px; border-radius:8px; background:var(--hit); }
   .src{ font-size:12px; color:var(--u-2); margin-bottom:12px; line-height:1.45; }
   .src b{ font-weight:500; color:var(--u-ink); }
@@ -198,54 +218,75 @@
   .tx-sub{ margin:32px 0 0; font-size:clamp(1.0625rem,1.6vw,1.5rem); letter-spacing:-.015em; line-height:1.45; color:var(--ink-2); max-width:46ch; }
   .tx-note{ margin:clamp(56px,8vh,88px) 0 0; font-size:clamp(1rem,1.2vw,1.125rem); line-height:1.55; color:var(--ink-3); max-width:60ch; }
 
-  /* o fio com pontos em linha (o "Como trabalho" da Home): etapas pretas, conclusão vermelha */
+  /* o fio com pontos em linha (o "Como trabalho" da Home): o fio cresce e cada ponto entra quando ele chega;
+     etapas pretas, conclusão vermelha. --dl é o instante em que o fio alcança a etapa. */
   .ln{ list-style:none; margin:clamp(64px,9vh,104px) 0 0; padding:44px 0 0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(20px,2.6vw,40px); position:relative; }
-  .ln::before{ content:""; position:absolute; left:0; right:0; top:21px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.8s var(--ease); }
-  .ln li{ position:relative; transition:opacity .7s var(--ease), transform .7s var(--ease); }
-  .ln li::before{ content:""; position:absolute; left:0; top:-27px; width:9px; height:9px; border-radius:50%; background:var(--ink); transition:background-color .5s var(--ease), transform .5s var(--ease); }
-  .ln li:last-child::before{ background:var(--fire); transition-delay:1.7s; }
+  .ln::before{ content:""; position:absolute; left:0; right:0; top:21px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.25s cubic-bezier(.45,0,.55,1); }
+  .ln li{ --dl:0s; position:relative; transition:opacity .45s var(--ease) var(--dl), transform .45s var(--ease) var(--dl); }
+  .ln li::before{ content:""; position:absolute; left:0; top:-27px; width:9px; height:9px; border-radius:50%; background:var(--ink); transition:transform .35s var(--ease) var(--dl), background-color .4s var(--ease) var(--dl); }
+  .ln li:nth-child(2){ --dl:.31s; } .ln li:nth-child(3){ --dl:.62s; } .ln li:nth-child(4){ --dl:.94s; } .ln li:nth-child(5){ --dl:1.25s; }
+  .ln:not(.ln-alt) li:last-child::before{ background:var(--fire); transition:transform .35s var(--ease) var(--dl), background-color .4s var(--ease) 1.5s; }
   .ln-n{ display:block; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); margin-bottom:14px; }
   .ln b{ display:block; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; margin-bottom:10px; }
   .ln li > span:last-child{ display:block; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.5; }
-  .ln li:nth-child(2){ transition-delay:.3s; } .ln li:nth-child(3){ transition-delay:.6s; } .ln li:nth-child(4){ transition-delay:.9s; } .ln li:nth-child(5){ transition-delay:1.2s; }
-  /* contrato → implementações: o fio contínuo chega à referência; a alternativa vem tracejada, com ponto vazado */
-  .ln-alt{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(24px,4vw,64px); }
-  .ln-alt::before{ right:calc((100% - 2 * clamp(24px,4vw,64px)) / 3 + clamp(24px,4vw,64px)); }
-  .ln-alt li:last-child::before{ background:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink-3); z-index:1; transition-delay:0s; }
-  .ln-alt li.par::after{ content:""; position:absolute; left:0; right:0; top:-23px; border-top:1.5px dashed var(--ink-4); transform-origin:left; transition:transform 1.2s var(--ease) .9s; }
-  .ln-alt li:nth-child(2)::before{ background:var(--ink); }
+  html.js:not(.static) .ln:not(.on)::before{ transform:scaleX(0); }
+  html.js:not(.static) .ln:not(.on) li{ opacity:0; transform:translateY(8px); }
+  html.js:not(.static) .ln:not(.on) li::before{ transform:scale(.4); }
+  html.js:not(.static) .ln:not(.ln-alt):not(.on) li:last-child::before{ background:var(--ink); }
+  /* contrato → implementações: o fio contínuo leva da especificação à referência; da mesma especificação
+     nasce, depois, o caminho tracejado até o n8n (ponto vazado: relação que não é sequência) */
+  .ln-alt{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(24px,4vw,64px); padding-top:72px; }
+  .ln-alt::before{ top:49px; right:auto; width:var(--sx, 33%); transition:transform .7s var(--ease); }
+  .ln-alt::after{ content:""; position:absolute; left:4px; top:49px; width:var(--bx, 66%); height:18px; border:1.5px dashed var(--ink-4); border-top:0; border-radius:0 0 12px 12px; transition:clip-path .8s var(--ease) .85s; clip-path:inset(0 0 0 0); }
+  .ln-alt li:nth-child(2){ --dl:.6s; } .ln-alt li:nth-child(3){ --dl:1.55s; }
+  .ln-alt li:last-child::before{ background:var(--bg); box-shadow:inset 0 0 0 1.5px var(--ink-3); z-index:1; }
   .ln-alt p{ margin:0 0 10px; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.55; max-width:40ch; }
   .ln-alt small{ display:block; margin-top:14px; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
-  html.js:not(.static) .ln:not(.on)::before{ transform:scaleX(0); }
-  html.js:not(.static) .ln-alt:not(.on) li.par::after{ transform:scaleX(0); }
-  html.js:not(.static) .ln:not(.on) li{ opacity:0; transform:translateY(10px); }
-  html.js:not(.static) .ln:not(.ln-alt):not(.on) li:last-child::before{ background:var(--ink); transform:scale(.8); }
+  html.js:not(.static) .ln-alt:not(.on)::after{ clip-path:inset(0 100% 0 0); }
 
-  /* público × fora da resposta: nomes de coluna em mono, o que fica fora riscado */
+  /* público × fora da resposta: primeiro o que a consulta responde; depois o que fica fora, e o traço que o tira */
   .cols{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,6vw,96px); margin-top:clamp(64px,9vh,104px); max-width:1100px; }
   .col-h{ margin:0 0 18px; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
   .kv{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
-  .kv li{ display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:12px 0; border-bottom:1px solid var(--line); font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); }
+  .kv li{ --i:0; display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:12px 0; border-bottom:1px solid var(--line); font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); transition:opacity .4s var(--ease) calc(var(--i) * 70ms); }
+  .kv.off li{ transition-delay:calc(.55s + var(--i) * 70ms); }
   .kv code{ color:var(--ink); font-size:.82em; }
   .kv span{ text-align:right; }
-  .kv.off code{ color:var(--ink-3); text-decoration:line-through; text-decoration-thickness:1px; }
+  .kv.off code{ color:var(--ink-3); background:linear-gradient(currentColor, currentColor) 0 55% / 100% 1px no-repeat; transition:background-size .35s var(--ease) calc(.8s + var(--i) * 70ms); }
   .kv.off span{ color:var(--ink-3); white-space:nowrap; }
-  .col-n{ margin:18px 0 0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:44ch; }
+  .col-n{ margin:18px 0 0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:44ch; transition:opacity .4s var(--ease) 1.3s; }
+  html.js:not(.static) .cols:not(.on) li, html.js:not(.static) .cols:not(.on) .col-n{ opacity:0; }
+  html.js:not(.static) .cols:not(.on) .kv.off code{ background-size:0% 1px; }
 
-  /* revogação: a cópia que circulou → o fio → a resposta de agora */
+  /* revogação: a cópia existe e valida; a revogação chega pelo fio; a mesma cópia deixa de valer */
   .rvx{ margin:clamp(64px,9vh,104px) 0 0; display:flex; align-items:center; gap:20px; max-width:1100px; }
   .rvx img{ width:clamp(180px,24vw,300px); height:auto; border-radius:3px; box-shadow:0 0 0 1px var(--line), 0 30px 70px -40px rgba(14,15,18,.4); flex-shrink:0; }
-  .rvx-ln{ flex:1; min-width:40px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.2s var(--ease); }
-  .rvx-pt{ width:10px; height:10px; border-radius:50%; background:var(--fire); flex-shrink:0; transition:opacity .3s var(--ease) 1.1s; }
-  .rvx figcaption{ flex-shrink:0; display:flex; flex-direction:column; gap:4px; max-width:30ch; }
+  .rvx-ln{ flex:1; min-width:40px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform .85s var(--ease); }
+  .rvx-pt{ width:10px; height:10px; border-radius:50%; background:var(--fire); flex-shrink:0; }
+  .rvx figcaption{ flex-shrink:0; display:grid; max-width:30ch; }
+  .rvx figcaption > span{ grid-area:1/1; display:flex; flex-direction:column; gap:4px; }
   .rvx figcaption b{ font-size:clamp(1.125rem,1.6vw,1.5rem); font-weight:500; letter-spacing:-.025em; line-height:1.2; }
-  .rvx figcaption span{ color:var(--ink-2); font-size:clamp(.9375rem,1.1vw,1.0625rem); }
+  .rvx figcaption span span{ color:var(--ink-2); font-size:clamp(.9375rem,1.1vw,1.0625rem); }
   .rvx figcaption .mono{ font-size:.75rem; color:var(--ink-3); }
+  .rvx .was{ display:none; }
+  html.js:not(.static) .rvx .was{ display:flex; opacity:0; }
   html.js:not(.static) .rvx:not(.on) .rvx-ln{ transform:scaleX(0); }
-  html.js:not(.static) .rvx:not(.on) .rvx-pt{ opacity:0; }
+  html.js:not(.static) .rvx:not(.on) .rvx-pt, html.js:not(.static) .rvx:not(.on) .now{ opacity:0; }
+  html.js:not(.static) .rvx.on .was{ animation:was 1.5s var(--ease) .8s both; }
+  html.js:not(.static) .rvx.on .now{ animation:appear .45s var(--ease) 2.15s both; }
+  html.js:not(.static) .rvx.on .rvx-pt{ animation:verdict 1.5s var(--ease) .75s both; }
+  @keyframes was{ 0%{ opacity:0; } 18%, 72%{ opacity:1; } 100%{ opacity:0; } }
+  @keyframes appear{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+  @keyframes verdict{ 0%{ opacity:0; background:var(--ink); } 12%, 80%{ opacity:1; background:var(--ink); } 100%{ opacity:1; background:var(--fire); } }
   .pts{ list-style:none; margin:clamp(56px,8vh,88px) 0 0; padding:0; max-width:64ch; }
   .pts li{ position:relative; padding:0 0 18px 26px; font-size:clamp(1rem,1.25vw,1.1875rem); line-height:1.55; color:var(--ink-2); }
   .pts li::before{ content:""; position:absolute; left:2px; top:.62em; width:7px; height:7px; border-radius:50%; background:var(--ink); }
+
+  /* abertura: entra discreta; a energia fica para quando a pessoa usa o sistema */
+  html.js:not(.static) .dm-hd > *{ animation:appear .6s var(--ease) both; }
+  html.js:not(.static) .dm-hd > :nth-child(2){ animation-delay:.08s; }
+  html.js:not(.static) .dm-hd > :nth-child(3){ animation-delay:.16s; }
+  html.js:not(.static) .dm-hd > :nth-child(4){ animation-delay:.24s; }
 
   /* detalhes técnicos: linhas, não cartões */
   .dt{ margin:0; max-width:1100px; border-top:1px solid var(--line); }
@@ -273,11 +314,11 @@
   @media (max-width:900px){
     .ln, .ln-alt{ grid-template-columns:1fr; gap:36px; padding:0 0 0 30px; margin-top:56px; }
     .ln::before{ left:4px; right:auto !important; top:7px; bottom:7px; width:1.5px; height:auto; transform-origin:top; }
-    .ln-alt::before{ bottom:auto; height:var(--tl, 60%); }
+    .ln-alt::before{ top:7px; bottom:auto; width:1.5px; height:var(--tl, 40%); }
     html.js:not(.static) .ln:not(.on)::before{ transform:scaleY(0); }
     .ln li::before{ left:-30px; top:3px; }
-    .ln-alt li.par::after{ left:-26px; right:auto; top:-36px; bottom:auto; height:36px; border-top:0; border-left:1.5px dashed var(--ink-4); transform-origin:top; }
-    html.js:not(.static) .ln-alt:not(.on) li.par::after{ transform:scaleY(0); }
+    .ln-alt::after{ left:-14px; top:7px; width:18px; height:var(--tb, 70%); border:1.5px dashed var(--ink-4); border-right:0; border-radius:12px 0 0 12px; }
+    html.js:not(.static) .ln-alt:not(.on)::after{ clip-path:inset(0 0 100% 0); }
     .ln li > span:last-child, .ln-alt p{ font-size:1rem; max-width:52ch; }
     .ln-alt small{ font-size:.8125rem; }
   }
@@ -302,8 +343,7 @@
   /* movimento reduzido: tudo aparece direto, os fios já desenhados */
   html.static .dm *, html.static .dm *::before{ animation:none !important; transition:none !important; }
   html.static .cks li{ opacity:1; }
-  html.static .th path.draw{ stroke-dashoffset:0; }
-  html.static .th circle.draw{ opacity:1; }
+  html.static .card.stale{ opacity:.38; }
 
   @media (max-width:1320px){
     .sheet{ --cols:8.4em minmax(9.5em,1.2fr) minmax(8em,1fr) 7.6em 7.4em 6.8em 8.8em 9.4em minmax(8em,1fr) minmax(8em,1.1fr); }
@@ -437,25 +477,25 @@
       <div>
         <h3 class="col-h">Na resposta pública</h3>
         <ul class="kv">
-          <li><code>tipo_documento</code><span>Documento</span></li>
-          <li><code>nome</code><span>Nome</span></li>
-          <li><code>curso</code><span>Curso</span></li>
-          <li><code>carga_horaria</code><span>Carga horária</span></li>
-          <li><code>data_emissao</code><span>Emissão</span></li>
-          <li><code>status</code><span>✓ válido ou ✗ não é mais válido</span></li>
+          <li style="--i:0"><code>tipo_documento</code><span>Documento</span></li>
+          <li style="--i:1"><code>nome</code><span>Nome</span></li>
+          <li style="--i:2"><code>curso</code><span>Curso</span></li>
+          <li style="--i:3"><code>carga_horaria</code><span>Carga horária</span></li>
+          <li style="--i:4"><code>data_emissao</code><span>Emissão</span></li>
+          <li style="--i:5"><code>status</code><span>✓ válido ou ✗ não é mais válido</span></li>
         </ul>
         <p class="col-n">De um documento revogado, só o tipo e o nome abreviado: “Maria S.”.</p>
       </div>
       <div>
         <h3 class="col-h">Fora da resposta</h3>
         <ul class="kv off">
-          <li><code>cpf</code><span>só na emissão</span></li>
-          <li><code>rg</code><span>só na emissão</span></li>
-          <li><code>endereco</code><span>só na emissão</span></li>
-          <li><code>dia_aula</code><span>só na emissão</span></li>
-          <li><code>revogado_em</code><span>só na emissão</span></li>
-          <li><code>revogado_por</code><span>só na emissão</span></li>
-          <li><code>motivo_revogacao</code><span>só na emissão</span></li>
+          <li style="--i:0"><code>cpf</code><span>só na emissão</span></li>
+          <li style="--i:1"><code>rg</code><span>só na emissão</span></li>
+          <li style="--i:2"><code>endereco</code><span>só na emissão</span></li>
+          <li style="--i:3"><code>dia_aula</code><span>só na emissão</span></li>
+          <li style="--i:4"><code>revogado_em</code><span>só na emissão</span></li>
+          <li style="--i:5"><code>revogado_por</code><span>só na emissão</span></li>
+          <li style="--i:6"><code>motivo_revogacao</code><span>só na emissão</span></li>
         </ul>
         <p class="col-n">O PDF das declarações, que leva CPF, RG e endereço, nunca é servido pela página pública. Na demo, a declaração de João mostra isso: os dados estão na planilha e no PDF, e a validação responde sem eles.</p>
       </div>
@@ -470,7 +510,7 @@
     <figure class="rvx">
       <img src="img/doc-Hx3pV9sKd7Qe.webp" width="1521" height="1075" loading="lazy" alt="Certificado de conclusão de trimestre de Carlos Exemplo Pereira, curso de Oratória, com o ID Hx3pV9sKd7Qe e o QR code: a cópia entregue antes da revogação">
       <span class="rvx-ln" aria-hidden="true"></span><span class="rvx-pt" aria-hidden="true"></span>
-      <figcaption><b>✗ Este documento não é mais válido.</b><span>Certificado de conclusão de trimestre</span><span>Carlos P.</span><span class="mono">Hx3pV9sKd7Qe · revogado em 12/02/2026 09:40</span></figcaption>
+      <figcaption><span class="was" aria-hidden="true"><b>✓ Documento válido</b><span>Certificado de conclusão de trimestre</span><span>Carlos Exemplo Pereira</span><span class="mono">Hx3pV9sKd7Qe · emitido em 10/02/2026</span></span><span class="now"><b>✗ Este documento não é mais válido.</b><span>Certificado de conclusão de trimestre</span><span>Carlos P.</span><span class="mono">Hx3pV9sKd7Qe · revogado em 12/02/2026 09:40</span></span></figcaption>
     </figure>
     <ul class="pts">
       <li>O ID continua na planilha. Muda só o <code>status</code>.</li>
@@ -1103,7 +1143,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     return { rows: REG.map(function(r){ var o = {}; for(var k in r) o[k] = r[k]; return o; }),
       sel: null, panel: null, busy: false, checks: null, doc: null, page: 0, copied: false,
       rv: { m: "", d: "", ok: false, err: "" }, q: "", res: null, prev: {}, lastRead: 0, pending: {}, edited: {},
-      threads: [], hit: {}, evt: null, open: false };
+      threads: [], hit: {}, evt: null, open: false, reading: null, docPre: false, docAnim: false, qrNext: null, stale: null, late: false };
   }
 
   var esc = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
@@ -1144,8 +1184,8 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
   function sheetHTML(){
     var h = '<div class="r h" role="row">' + COLS.map(function(c){ return '<span role="columnheader" class="' + c[1] + '">' + c[0] + "</span>"; }).join("") + "</div>";
     return h + S.rows.map(function(r, i){
-      return '<div class="r d" role="row" data-row="' + i + '" aria-selected="' + (S.sel === i) + '">' + COLS.map(function(c){
-        var k = c[0], v = r[k] || "", hit = S.hit[i + ":" + k] ? " hit" : "";
+      return '<div class="r d' + (S.reading === i ? " reading" : "") + '" role="row" data-row="' + i + '" aria-selected="' + (S.sel === i) + '">' + COLS.map(function(c){
+        var k = c[0], v = r[k] || "", hit = S.hit[i + ":" + k] ? " hit" + (S.late ? " late" : "") : "";
         if(k === "nome") return '<span role="gridcell" class="' + c[1] + hit + '"><button type="button" class="pick" data-act="pick" data-i="' + i + '" data-k="pick' + i + '">' + esc(v) + "</button></span>";
         if(k === "status") return '<span role="gridcell" class="' + c[1] + hit + '" data-st="' + i + '"><label class="st"><span class="sr-only">status de ' + esc(r.nome) + '</span><select data-act="status" data-i="' + i + '" data-k="st' + i + '">' +
           ["ativo", "revogado"].map(function(o){ return "<option" + (o === r.status ? " selected" : "") + ">" + o + "</option>"; }).join("") + "</select></label></span>";
@@ -1164,7 +1204,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
       ["<b>PDF gerado</b>", "agora, a partir da linha; nada fica guardado"]
     ];
     return '<ul class="cks' + (done ? " done" : "") + '">' + it.map(function(x, i){
-      return '<li' + (done ? "" : ' style="animation-delay:' + (i * .22) + 's"') + '><span class="m">' + (i === it.length - 1 ? (done ? "●" : "<i></i>") : "✓") + "</span><span>" + x[0] + ": " + x[1] + "</span></li>";
+      return '<li' + (done ? "" : ' style="animation-delay:' + (i * .18) + 's"') + '><span class="m">' + (i === it.length - 1 ? (done ? "●" : "<i></i>") : "✓") + "</span><span>" + x[0] + ": " + x[1] + "</span></li>";
     }).join("") + "</ul>";
   }
 
@@ -1178,12 +1218,12 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
       return h + "</div>";
     }
     h += '<div class="state">ativo</div><div class="acts">' +
-      '<button type="button" class="bt pri" data-act="pdf" data-k="pdf"' + (S.busy ? " disabled" : "") + ">Baixar PDF</button>" +
+      '<button type="button" class="bt pri big" data-act="pdf" data-k="pdf"' + (S.busy ? ' disabled aria-busy="true"' : "") + ">" + (S.busy ? "Gerando PDF…" : "Baixar PDF") + "</button>" +
       '<button type="button" class="bt" data-act="share" data-k="share" aria-pressed="' + (S.panel === "share") + '"' + (S.busy ? " disabled" : "") + ">Compartilhar</button>" +
-      '<button type="button" class="bt" data-act="revoke" data-k="revoke" aria-pressed="' + (S.panel === "revoke") + '"' + (S.busy ? " disabled" : "") + ">Revogar</button></div>";
+      '<button type="button" class="bt rvk" data-act="revoke" data-k="revoke" aria-pressed="' + (S.panel === "revoke") + '"' + (S.busy ? " disabled" : "") + ">Revogar</button></div>";
     if(S.panel === "pdf") h += '<div class="pnl" data-k="cks">' + checksHTML(r, !S.busy) + "</div>";
-    if(S.panel === "share") h += '<div class="pnl' + (S.open ? " in" : "") + '"><textarea class="share" id="share" rows="6" readonly aria-label="Texto para o aluno">' + esc(shareText(r)) + '</textarea>' +
-      '<div class="acts"><button type="button" class="bt pri" data-act="copy" data-k="copy">' + (S.copied ? "Copiado" : "Copiar texto") + '</button>' +
+    if(S.panel === "share") h += '<div class="pnl' + (S.open ? " in" : "") + '"><textarea class="share' + (S.copied ? " flash" : "") + '" id="share" rows="6" readonly aria-label="Texto para o aluno">' + esc(shareText(r)) + '</textarea>' +
+      '<div class="acts"><button type="button" class="bt pri' + (S.copied ? " done" : "") + '" data-act="copy" data-k="copy">' + (S.copied ? "Copiado" : "Copiar texto") + '</button>' +
       '<span class="bt off" aria-disabled="true" title="Na emissão, abre o WhatsApp com o texto">WhatsApp</span><span class="bt off" aria-disabled="true" title="Na emissão, abre o e-mail com o texto">E-mail</span></div>' +
       '<p class="small">WhatsApp e E-mail ficam só como representação: aqui não abrem nada.</p></div>';
     if(S.panel === "revoke") h += '<form class="pnl rv' + (S.open ? " in" : "") + '" id="rv" novalidate><h3>Revogar este documento?</h3>' +
@@ -1199,26 +1239,26 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
   function docHTML(){
     if(!S.doc) return ['<div class="void">nenhum PDF aberto</div>', ""];
     var r = rowOf(S.doc.id) || S.rows.filter(function(x){ return x.id === S.doc.id; })[0], p = PDF[S.doc.id], pg = S.page, q = p.qr;
-    var h = '<div class="frame in" data-k="frame' + S.doc.id + pg + '"><img src="' + p.pages[pg] + '" width="' + p.w + '" height="' + p.h + '" alt="' + esc(tipoNome(r) + " de " + r.nome + ", curso de " + r.curso + ", com o ID de validação " + r.id + (pg ? ": página do conteúdo programático" : " e o QR code")) + '">';
-    if(pg === 0) h += '<button type="button" class="qr" data-act="qr" data-k="qr" style="left:' + q[0] + "%;top:" + q[1] + "%;width:" + q[2] + "%;height:" + q[3] + '%" aria-label="Ler o QR code: abre a validação do ID ' + r.id + '"></button>';
+    var h = '<div class="frame' + (S.docPre ? " pre" : S.docAnim ? " wipe" : "") + '" data-k="frame' + S.doc.id + pg + '"><img src="' + p.pages[pg] + '" width="' + p.w + '" height="' + p.h + '" alt="' + esc(tipoNome(r) + " de " + r.nome + ", curso de " + r.curso + ", com o ID de validação " + r.id + (pg ? ": página do conteúdo programático" : " e o QR code")) + '">';
+    if(pg === 0) h += '<button type="button" class="qr' + (S.qrNext === S.doc.id ? " next" : "") + '" data-act="qr" data-k="qr" style="left:' + q[0] + "%;top:" + q[1] + "%;width:" + q[2] + "%;height:" + q[3] + '%" aria-label="Ler o QR code: abre a validação do ID ' + r.id + '"></button>';
     h += "</div>";
     var c, kind = S.doc.kind === "copia" ? "Cópia que circulou antes da revogação" : ativo(r) ? "PDF gerado agora, a partir da linha" : "Cópia baixada antes da revogação";
-    c = '<div class="cap"><span><b>' + kind + "</b> · ID " + r.id + "</span>";
+    c = '<div class="cap"><span' + (S.evt === "rev" ? ' class="late"' : "") + "><b>" + kind + "</b> · ID " + r.id + "</span>";
     if(p.pages.length > 1) c += '<span class="pg">' + p.pages.map(function(_, i){ return '<button type="button" data-act="page" data-p="' + i + '" data-k="pg' + i + '" aria-current="' + (i === pg) + '">' + (i ? "2 · conteúdo" : "página 1") + "</button>"; }).join("") + "</span>";
     if(pg === 0) c += "<span>Toque no QR code para conferir.</span>";
-    return [h, c + "</div>"];
+    return [h, S.docPre ? "" : c + "</div>"];
   }
 
   function resHTML(){
     var x = S.res;
     if(!x) return '<p class="ph-hint">Toque no QR de um documento, ou digite um ID.</p>';
-    var k = ' data-k="res' + x.at + '"';
-    if(x.kind === "nao") return '<div class="card in"' + k + '><p class="s">Documento não encontrado.</p><p class="t">Confira o ID e tente de novo.</p></div>';
+    var k = ' data-k="res' + x.at + '"', cl = "card" + (x.fresh ? " in" : "") + (x.viaQr ? " vq" : "") + (S.stale && x.r && x.r.id === S.stale ? " stale" : "");
+    if(x.kind === "nao") return '<div class="' + cl + '"' + k + '><p class="s">Documento não encontrado.</p><p class="t">Confira o ID e tente de novo.</p></div>';
     var r = x.r;
-    if(x.kind === "invalido") return '<div class="card in"' + k + '><p class="s">✗ Este documento não é mais válido.</p><dl>' +
+    if(x.kind === "invalido") return '<div class="' + cl + '"' + k + '><p class="s">✗ Este documento não é mais válido.</p><dl>' +
       (tipoNome(r) ? "<dt>Documento</dt><dd>" + esc(tipoNome(r)) + "</dd>" : "") + "<dt>Nome</dt><dd>" + esc(parcial(r.nome)) + "</dd></dl></div>";
     var cert = r.tipo_documento.indexOf("certificado_") === 0;
-    return '<div class="card in"' + k + '><p class="s">✓ Documento válido</p><dl>' +
+    return '<div class="' + cl + '"' + k + '><p class="s">✓ Documento válido</p><dl>' +
       "<dt>Documento</dt><dd>" + esc(tipoNome(r)) + "</dd><dt>Nome</dt><dd>" + esc(r.nome) + "</dd><dt>Curso</dt><dd>" + esc(r.curso) + "</dd>" +
       (r.carga_horaria ? "<dt>Carga horária</dt><dd>" + esc(r.carga_horaria) + " horas</dd>" : "") + "<dt>Emissão</dt><dd>" + dataExtenso(r.data_emissao) + "</dd></dl>" +
       (cert ? '<span class="li" role="link" aria-disabled="true">Adicionar ao LinkedIn</span><p class="li-n">Desativado na demo. No sistema, abre o formulário de certificação do LinkedIn já preenchido.</p>' : "") + "</div>";
@@ -1229,6 +1269,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     var x = S.res;
     if(!x) return tests;
     var h = '<span class="lb">o que a validação fez</span>';
+    if(S.stale && x.r && x.r.id === S.stale) h += '<div class="cmp late">A planilha mudou depois desta consulta: valide de novo.</div>';
     if(x.cmp && S.evt === "val") h += '<div class="cmp">Mesmo ID, consulta anterior: ' + x.cmp[0] + ". Agora: " + x.cmp[1] + ".</div>";
     if(x.cache){ var age = Math.floor((Date.now() - S.lastRead) / 1000), left = Math.max(0, Math.ceil((S.lastRead + CACHE - Date.now()) / 1000));
       h += '<div class="src"><b>Resposta do cache (Python).</b> A planilha foi lida há ' + age + " s; " + (left ? "a mudança no status aparece em até " + left + " s." : "o cache expirou: valide de novo.") + "</div>"; }
@@ -1243,7 +1284,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
       st.push(["end", "Resposta", x.kind === "valido" ? "tipo, nome, curso, " + (r.carga_horaria ? "carga horária, " : "") + "data" + (dec ? '<br><s>CPF</s> · <s>RG</s> · <s>endereço</s>: não lidos para a resposta' : "")
         : "só o tipo e o nome abreviado (" + esc(parcial(r.nome)) + ")"]);
     }
-    return tests + h + '<ol class="steps' + (x.fresh ? " in" : "") + '">' + st.map(function(s){ return '<li class="' + (S.evt === "val" ? s[0] : s[0].replace("end", "")) + '"><b>' + s[1] + "</b>" + s[2] + "</li>"; }).join("") + "</ol>";
+    return tests + h + '<ol class="steps' + (x.fresh ? " in" : "") + '"' + (x.viaQr ? ' style="--d0:.62s"' : "") + '>' + st.map(function(s){ return '<li class="' + (S.evt === "val" ? s[0] : s[0].replace("end", "")) + '"><b>' + s[1] + "</b>" + s[2] + "</li>"; }).join("") + "</ol>";
   }
 
   /* ---------- fios: só como consequência de uma ação ---------- */
@@ -1280,32 +1321,45 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     }
     return pts;
   }
-  function drawThreads(anim){
+  var A = null;                                      /* fio sendo percorrido: { k, t0, cb } */
+  var ease = function(k){ return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
+  function drawThreads(anim, cb){
+    if(anim){ if(reduce){ if(cb) setTimeout(cb, 0); } else A = { k: anim, t0: performance.now(), cb: cb }; }
     svg.setAttribute("viewBox", "0 0 " + sf.clientWidth + " " + sf.clientHeight);
     svg.innerHTML = "";
     S.threads.forEach(function(k, i){
       var p = ends(k); if(!p) return;
-      var now = i === S.threads.length - 1 && k === S.evt, d = anim === k && !reduce ? " draw" : "", dd = p.r ? route(p.r, 14) : cubic(p[0], p[1], p[2], p[3]);
+      var now = i === S.threads.length - 1 && k === S.evt, live = A && A.k === k, dd = p.r ? route(p.r, 14) : cubic(p[0], p[1], p[2], p[3]);
       if(p.r) p = [p.r[0], 0, 0, p.r[p.r.length - 1]];
-      var path = document.createElementNS(NS, "path"); path.setAttribute("d", dd); path.setAttribute("pathLength", "1"); path.setAttribute("class", d.trim());
+      var path = document.createElementNS(NS, "path"); path.setAttribute("d", dd); path.setAttribute("pathLength", "1"); path.setAttribute("data-k", k);
+      if(live){ path.style.strokeDasharray = "1"; path.style.strokeDashoffset = "1"; }
       var c0 = document.createElementNS(NS, "circle"); c0.setAttribute("cx", p[0][0]); c0.setAttribute("cy", p[0][1]); c0.setAttribute("r", "3");
-      var c1 = document.createElementNS(NS, "circle"); c1.setAttribute("cx", p[3][0]); c1.setAttribute("cy", p[3][1]); c1.setAttribute("r", "4"); c1.setAttribute("class", "end" + (now ? " now" : "") + d);
+      var c1 = document.createElementNS(NS, "circle"); c1.setAttribute("cx", p[3][0]); c1.setAttribute("cy", p[3][1]); c1.setAttribute("r", "4"); c1.setAttribute("class", "end" + (now ? " now" : "") + (live ? " pend" : ""));
       svg.appendChild(path); svg.appendChild(c0); svg.appendChild(c1);
+      if(live){ var hd = document.createElementNS(NS, "circle"); hd.setAttribute("r", "4.5"); hd.setAttribute("class", "head"); svg.appendChild(hd); }
     });
+    if(A && !A.raf) A.raf = requestAnimationFrame(step);
+  }
+  function step(t){
+    if(!A) return;
+    var k = Math.min(1, (t - A.t0) / 650), e = ease(k), path = svg.querySelector('path[data-k="' + A.k + '"]'), hd = svg.querySelector(".head");
+    if(path){ path.style.strokeDashoffset = String(1 - e); var pt = path.getPointAtLength(e * path.getTotalLength()); if(hd){ hd.setAttribute("cx", pt.x); hd.setAttribute("cy", pt.y); } }
+    if(k < 1){ A.raf = requestAnimationFrame(step); return; }
+    var cb = A.cb; A = null; drawThreads(); if(cb) cb();
   }
 
   /* ---------- render: cada região só é trocada quando o conteúdo muda ---------- */
   function put(id, html){ if(last[id] === html) return false; last[id] = html; $(id).innerHTML = html; return true; }
-  function render(anim){
+  function render(anim, cb){
     var f = document.activeElement && document.activeElement.getAttribute("data-k");
     put("sheet", sheetHTML()); put("ctl", ctlHTML()); var d = docHTML(); put("docf", d[0]); put("docc", d[1]);
-    put("ph-url", "/documentos-verificaveis/" + (S.q ? "?id=<b>" + esc(S.q) + "</b>" : ""));
+    put("ph-url", "/documentos-verificaveis/" + (S.q ? "?id=<b" + (S.res && S.res.fresh && S.res.viaQr ? ' class="new"' : "") + ">" + esc(S.q) + "</b>" : ""));
     put("ph-res", resHTML()); put("tr", trHTML());
     if(f){ var e = sf.querySelector('[data-k="' + f + '"]'); if(e && e !== document.activeElement) e.focus({ preventScroll: true }); }
     var img = sf.querySelector(".frame img");
     if(img && !img.complete) img.addEventListener("load", function(){ drawThreads(); }, { once: true });
     var ta = $("share"); if(ta){ ta.style.height = "auto"; ta.style.height = ta.scrollHeight + 2 + "px"; }
-    drawThreads(anim);
+    drawThreads(anim, cb);
     if(S.res && S.res.fresh) S.res.fresh = false;
     S.open = false;
     clearInterval(tick); tick = null;
@@ -1317,8 +1371,8 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
   function check(q, from){
     var x = validar(q); S.q = q.trim(); $("ph-q").value = S.q;
     if(x && x.kind !== "nao"){ var p = S.prev[x.q]; if(p && p !== x.kind) x.cmp = [label(p), label(x.kind)]; S.prev[x.q] = x.kind; }
-    if(x) x.fresh = true;
-    S.res = x; S.evt = "val"; S.hit = {};
+    if(x){ x.fresh = true; x.viaQr = from === "qr"; }
+    S.res = x; S.evt = "val"; S.hit = {}; S.late = false; S.stale = null; S.qrNext = null;
     S.threads = from === "qr" ? S.threads.filter(function(k){ return k === "pdf"; }).concat("qr") : [];
     render(from === "qr" ? "qr" : null);
     say(!x ? "" : x.kind === "valido" ? "Documento válido." : x.kind === "invalido" ? "Este documento não é mais válido. " + parcial(x.r.nome) + "." : "Documento não encontrado.");
@@ -1328,13 +1382,20 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
   function pick(i){
     if(S.busy) return;
     if(S.sel !== i){ S.sel = i; S.panel = null; S.copied = false; S.rv = { m: "", d: "", ok: false, err: "" }; S.threads = []; S.hit = {};
-      if(S.doc && S.doc.id !== S.rows[i].id) S.doc = null; S.page = 0; S.evt = null; }
+      if(S.doc && S.doc.id !== S.rows[i].id) S.doc = null; S.page = 0; S.evt = null; S.late = false; }
     render(); say(S.rows[i].nome + ", " + S.rows[i].status + ".");
   }
   function makePdf(){
     var r = S.rows[S.sel]; if(!ativo(r)) return;   /* pdf_for(): revogado não gera PDF */
-    S.panel = "pdf"; S.busy = true; S.doc = null; S.threads = []; S.hit = {}; render();
-    setTimeout(function(){ S.busy = false; S.doc = { id: r.id, kind: "gerado" }; S.page = 0; S.threads = ["pdf"]; S.evt = "pdf"; render("pdf"); show(sf.querySelector(".frame")); say("PDF gerado a partir da linha de " + r.nome + "."); }, reduce ? 0 : 5 * 220 + 150);
+    S.panel = "pdf"; S.busy = true; S.doc = null; S.threads = []; S.hit = {}; S.late = false; S.reading = S.sel; S.qrNext = null; render();
+    setTimeout(function(){
+      S.busy = false; S.reading = null; S.doc = { id: r.id, kind: "gerado" }; S.page = 0; S.docPre = !reduce; S.threads = ["pdf"]; S.evt = "pdf";
+      render("pdf", function(){
+        S.docPre = false; S.docAnim = !reduce; S.qrNext = r.id; render();
+        setTimeout(function(){ if(S.docAnim){ S.docAnim = false; render(); } }, 700);
+      });
+      show(sf.querySelector(".frame")); say("PDF gerado a partir da linha de " + r.nome + ".");
+    }, reduce ? 0 : 5 * 180 + 220);
   }
   function revoke(form){
     var r = S.rows[S.sel], fd = new FormData(form);
@@ -1344,7 +1405,9 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     r.status = "revogado"; r.revogado_em = agoraBrasilia(); r.revogado_por = POR; r.motivo_revogacao = S.rv.m + (S.rv.d ? ": " + S.rv.d : "");
     delete S.pending[r.id];                          /* n8n lê a planilha a cada consulta */
     S.hit = {}; ["status", "revogado_em", "revogado_por", "motivo_revogacao"].forEach(function(k){ S.hit[S.sel + ":" + k] = 1; });
-    S.panel = "revoked"; S.open = true; S.rv = { m: "", d: "", ok: false, err: "" }; S.threads = ["rev"]; S.evt = "rev";
+    S.panel = "revoked"; S.open = true; S.rv = { m: "", d: "", ok: false, err: "" }; S.threads = ["rev"]; S.evt = "rev"; S.late = true;
+    S.stale = S.res && S.res.r && S.res.r.id === r.id && S.res.kind === "valido" ? r.id : null;
+    S.qrNext = S.doc && S.doc.id === r.id ? r.id : null;
     render("rev"); show(sf.querySelector('[data-st="' + S.sel + '"]'));
     say(r.nome + ": documento revogado. Status gravado na planilha.");
   }
@@ -1352,7 +1415,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     var r = S.rows[i], old = r.status; if(old === v) return;
     if(S.lastRead && Date.now() - S.lastRead < CACHE){ if(!(r.id in S.pending)) S.pending[r.id] = old; else if(S.pending[r.id] === v) delete S.pending[r.id]; }
     r.status = v; S.edited[r.id] = 1;
-    S.hit = {}; S.hit[i + ":status"] = 1; S.threads = []; S.evt = "edit";
+    S.hit = {}; S.hit[i + ":status"] = 1; S.threads = []; S.evt = "edit"; S.late = false;
     if(S.sel === i){ S.panel = null; }
     render(); say("Status de " + r.nome + " mudado para " + v + " na planilha.");
   }
@@ -1389,7 +1452,7 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
     else if(id === "ph-f") check($("ph-q").value);
   });
 
-  function reset(){ clearInterval(tick); S = fresh(); last = {}; $("ph-q").value = ""; render(); say("Demonstração no estado inicial."); }
+  function reset(){ clearInterval(tick); A = null; S = fresh(); last = {}; $("ph-q").value = ""; render(); say("Demonstração no estado inicial."); }
   if(window.ResizeObserver) new ResizeObserver(function(){ drawThreads(); }).observe(sf);
   else addEventListener("resize", function(){ drawThreads(); });
 
@@ -1403,9 +1466,13 @@ footer { background: var(--dark); padding: 46px 24px 30px; border-top: 1px solid
 /* Seções de texto: cada fio se desenha uma vez, quando entra na tela (o padrão do Sobre da Home).
    Com movimento reduzido ou sem IntersectionObserver, tudo aparece no estado final. */
 (function(){
-  var els = document.querySelectorAll(".ln, .rvx, .end-row"), alt = document.querySelector(".ln-alt");
-  /* no celular o fio contínuo vai do contrato até a implementação de referência; dali segue tracejado */
-  function fit(){ var li = alt.querySelectorAll("li"); alt.style.setProperty("--tl", Math.max(0, li[2].offsetTop - li[0].offsetTop - 43) + "px"); }
+  var els = document.querySelectorAll(".ln, .cols, .rvx, .end-row"), alt = document.querySelector(".ln-alt");
+  /* o fio contínuo vai da especificação à referência (Python); o tracejado sai da especificação até o n8n */
+  function fit(){ var li = alt.querySelectorAll("li");
+    alt.style.setProperty("--tl", Math.max(0, li[1].offsetTop - li[0].offsetTop) + "px");
+    alt.style.setProperty("--tb", Math.max(0, li[2].offsetTop - li[0].offsetTop) + "px");
+    alt.style.setProperty("--bx", Math.max(0, li[2].offsetLeft - li[0].offsetLeft) + "px");
+    alt.style.setProperty("--sx", Math.max(0, li[1].offsetLeft - li[0].offsetLeft) + "px"); }
   fit(); addEventListener("resize", fit);
   if(!("IntersectionObserver" in window) || document.documentElement.classList.contains("static")){ Array.prototype.forEach.call(els, function(l){ l.classList.add("on"); }); return; }
   Array.prototype.forEach.call(els, function(l){
