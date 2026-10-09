@@ -2,943 +2,637 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>TicketScript — Demo de Portfólio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TicketScript · Otto Canabrava</title>
+<meta name="description" content="TicketScript: extensão para Chrome e Edge que lê o ticket aberto, identifica operadora, tipo de problema e resolução, e preenche a resposta padronizada a partir de uma planilha. Demonstração com dados fictícios.">
+<meta name="theme-color" content="#F7F7F5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<!-- Componentes compartilhados dos cases (topo, fechamento, base). Fonte e uso: .claude/template-de-cases.md -->
+<link rel="stylesheet" href="../assets/case/case.css">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+  /* Específico deste case. Tokens, topo e fechamento vêm de ../assets/case/case.css.
+     A linguagem (abertura, superfície da demo, fios, seções de texto) é a de Documentos Verificáveis,
+     a mesma do FormPilot: preto, branco e o vermelho só no instante em que algo acontece. */
 
-:root {
-  --bg:         #ECEEF2;
-  --surface:    #FFFFFF;
-  --header:     #131D2E;
-  --hero:       #1A2740;
-  --text:       #111827;
-  --muted:      #6B7280;
-  --faint:      #9CA3AF;
-  --border:     #E5E7EB;
-  --critical:   #DC2626;
-  --crit-bg:    #FEF2F2;
-  --warning:    #D97706;
-  --ok:         #16A34A;
-  --ok-bg:      #F0FDF4;
-  --blue:       #2563EB;
-  --blue-bg:    #EFF6FF;
-  --neutral-bg: #F9FAFB;
-}
+  .dm-sec{ padding:calc(64px + clamp(40px,8vh,96px)) 0 0; }
+  .dm-hd{ padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
+  .dm-hd .ix{ font-size:.875rem; color:var(--ink-3); }
+  .dm-hd .ix a{ color:var(--ink-2); text-decoration:underline; text-decoration-color:var(--ink-4); text-underline-offset:4px; }
+  .dm-hd .ix a:hover{ color:var(--ink); text-decoration-color:currentColor; }
+  .dm-hd h1{ margin:.5em 0 0; font-size:clamp(1.75rem,3.4vw,3.25rem); font-weight:500; letter-spacing:-.04em; line-height:1.04; max-width:22ch; }
+  .dm-hd p{ margin:1em 0 0; font-size:clamp(1rem,1.5vw,1.375rem); line-height:1.45; color:var(--ink-2); max-width:44ch; }
+  .dm-hd .fic{ font-size:.875rem; color:var(--ink-3); max-width:72ch; line-height:1.5; }
+  .dm-hd .tags{ font-size:.75rem; color:var(--ink-3); max-width:none; line-height:1.6; margin-top:.4em; }
+  .dm-hd .tags:first-of-type{ margin-top:1.4em; }
+  .facts{ display:grid; grid-template-columns:repeat(4,minmax(0,12em)); gap:clamp(20px,3vw,48px); margin:clamp(28px,4vw,44px) 0 0; padding:0; }
+  .facts div{ border-top:1px solid var(--line); padding-top:14px; }
+  .facts dt{ font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
+  .facts dd{ margin:6px 0 0; font-size:.875rem; color:var(--ink-3); line-height:1.45; }
+  .idx{ display:flex; flex-wrap:wrap; gap:6px 20px; margin:clamp(24px,3vw,36px) 0 0; font-size:.875rem; color:var(--ink-3); }
+  .idx a{ color:var(--ink-2); text-decoration:underline; text-decoration-color:var(--ink-4); text-underline-offset:4px; }
+  .idx a:hover{ color:var(--ink); text-decoration-color:currentColor; }
 
-body {
-  font-family: 'DM Sans', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  font-size: 14px;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
+  /* ============ superfície de trabalho: fila → ticket → painel da extensão → planilha (sempre clara) ============ */
+  .sf{
+    --u-ink:#111318; --u-2:#4B4F58; --u-3:#8C9099; --u-line:#E6E7EA; --u-soft:#F4F5F6; --hit:#FFF1E8;
+    position:relative; margin:0 clamp(12px,2.4vw,40px);
+    background:#fff; color:var(--u-ink); border-radius:20px;
+    box-shadow:0 0 0 1px rgba(14,15,18,.06), 0 40px 100px -50px rgba(14,15,18,.3);
+    font-size:14px; line-height:1.45;
+  }
+  .dm{ display:grid; grid-template-columns:minmax(0,1fr) 300px; grid-template-areas:"bar bar" "q q" "tk pn" "cv pn"; grid-template-rows:auto auto auto 1fr; column-gap:clamp(24px,2.6vw,40px); padding:clamp(18px,2vw,28px); }
+  .th{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:3; }
+  .th path{ fill:none; stroke:var(--u-ink); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+  .th circle{ fill:var(--u-ink); }
+  .th circle.end.now{ fill:var(--fire); }
+  .th circle.pend{ opacity:0; }
+  @keyframes show{ to{ opacity:1; } }
+  @keyframes rise{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
 
-/* ── HEADER ── */
-header {
-  background: var(--header);
-  padding: 0 32px;
-  height: 52px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 200;
-  border-bottom: 1px solid rgba(255,255,255,.05);
-}
-.h-brand {
-  display: flex; align-items: center; gap: 10px;
-  font-size: 13px; font-weight: 600; color: #E2E8F0;
-}
-.h-live { width: 7px; height: 7px; border-radius: 50%; background: #22C55E; }
-.h-links { display: flex; align-items: center; gap: 4px; }
-.h-link {
-  padding: 4px 10px; border-radius: 4px;
-  font-size: 12px; font-weight: 500; color: #94A3B8;
-  text-decoration: none; transition: color .12s, background .12s;
-}
-.h-link:hover { color: #E2E8F0; background: rgba(255,255,255,.06); }
-.h-cta {
-  padding: 4px 12px; border-radius: 4px;
-  background: var(--blue); color: #fff;
-  font-size: 12px; font-weight: 600; text-decoration: none;
-  transition: opacity .12s;
-}
-.h-cta:hover { opacity: .88; }
+  .lb{ display:block; font-size:12px; color:var(--u-3); margin-bottom:10px; }
+  .bar{ grid-area:bar; display:flex; align-items:baseline; gap:12px 24px; flex-wrap:wrap; margin-bottom:10px; }
+  .bar .lb{ margin:0; }
+  .bar .py{ font-size:12px; color:var(--u-2); }
+  .rs{ margin-left:auto; font:inherit; font-size:12px; color:var(--u-2); background:none; border:0; padding:4px 0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--u-line); text-underline-offset:3px; }
+  .rs:hover{ color:var(--u-ink); text-decoration-color:currentColor; }
 
-/* ── HERO ── */
-.hero {
-  background: var(--hero);
-  padding: 32px 32px 36px;
-}
-.hero-inner { max-width: 1160px; margin: 0 auto; }
-.hero-eyebrow {
-  font-size: 11px; color: #475569; font-weight: 500;
-  letter-spacing: .02em; margin-bottom: 8px;
-}
-.hero-chips { display: flex; gap: 6px; margin-bottom: 18px; flex-wrap: wrap; }
-.chip {
-  display: inline-flex; align-items: center;
-  padding: 2px 8px; border-radius: 3px;
-  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
-}
-.chip-bd  { border: 1px solid rgba(255,255,255,.12); color: #94A3B8; }
-.chip-ok  { background: rgba(22,163,74,.18); color: #86EFAC; }
+  /* tabelas: a fila de tickets e a planilha de scripts */
+  .tb{ border:1px solid var(--u-line); border-radius:12px; overflow:hidden; }
+  .q{ grid-area:q; margin-bottom:clamp(24px,3vw,36px); --cols:6.6em minmax(14em,1.6fr) minmax(7em,.6fr) 8em; }
+  .cv{ grid-area:cv; margin-top:clamp(28px,3.4vw,44px); align-self:start; min-width:0; }
+  .cv .tb{ --cols:8em 10.5em 9em minmax(0,1fr); }
+  .r{ position:relative; display:grid; grid-template-columns:var(--cols); border-bottom:1px solid var(--u-line); }
+  .r:last-child{ border-bottom:0; }
+  .r > *{ padding:.62em .65em; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-right:1px solid var(--u-line); color:var(--u-2); font-size:13px; }
+  .r > *:last-child{ border-right:0; }
+  .r.h > *{ font-family:"Geist Mono",ui-monospace,monospace; font-size:11px; color:var(--u-3); padding-block:.6em; background:var(--u-soft); }
+  .r.d{ cursor:pointer; }
+  .r.d:hover{ background:var(--u-soft); }
+  .r.d:hover::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:#B9BCC3; }
+  .r.d[aria-selected="true"]{ background:var(--u-soft); }
+  .r.d[aria-selected="true"]::before, .r.on::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--u-ink); }
+  .r .c-id{ font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; }
+  .r .c-as{ color:var(--u-ink); }
+  .pick{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-align:left; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration:underline; text-decoration-color:#B9BCC3; text-decoration-thickness:1px; text-underline-offset:3px; transition:text-decoration-color .2s; }
+  .r.d:hover .pick, .pick:focus-visible, .r.d[aria-selected="true"] .pick{ text-decoration-color:var(--u-ink); }
+  .r .hit{ background:var(--hit); color:var(--u-ink); }
+  .r .hit.late{ animation:cell .45s var(--ease) .62s both; }
+  @keyframes cell{ from{ background:transparent; color:transparent; } to{ background:var(--hit); color:var(--u-ink); } }
+  .cv .c-sc{ color:var(--u-ink); }
 
-.hero h1 {
-  font-size: clamp(22px, 3.5vw, 32px); font-weight: 700;
-  line-height: 1.18; letter-spacing: -.015em;
-  color: #F1F5F9; margin-bottom: 10px;
-}
-.hero-hl { color: #93C5FD; }
-.hero-sub { font-size: 13px; color: #64748B; max-width: 540px; line-height: 1.65; margin-bottom: 28px; }
+  /* ticket */
+  .tk{ grid-area:tk; min-width:0; }
+  .tk-url{ font-family:"Geist Mono",ui-monospace,monospace; font-size:11px; color:var(--u-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tk-as{ margin-top:6px; font-size:18px; font-weight:500; letter-spacing:-.02em; line-height:1.2; }
+  .tk-de{ margin-top:.35em; color:var(--u-2); }
+  .tk-body{ margin:14px 0 0; padding:12px 0 0; border-top:1px solid var(--u-line); color:var(--u-ink); font-size:14px; line-height:1.6; max-width:58ch; }
+  .tk-in > *{ animation:rise .35s var(--ease) both; }
+  .tk-body mark{ background:none; color:inherit; border-radius:3px; padding:0 .1em; margin:0 -.1em; }
+  .tk-body.reading mark{ animation:read 1.15s var(--ease) both; }
+  .tk-body.reading mark:nth-of-type(2){ animation-delay:.15s; } .tk-body.reading mark:nth-of-type(3){ animation-delay:.3s; }
+  @keyframes read{ 0%{ background:transparent; } 30%, 100%{ background:var(--hit); } }
+  .tk-body.read mark{ background:var(--hit); }
+  .rp{ margin-top:18px; }
+  .rp-box{ min-height:92px; border:1px dashed var(--u-line); border-radius:8px; padding:10px 12px; font-size:13.5px; line-height:1.55; color:var(--u-3); }
+  .rp-box.on{ border-style:solid; border-color:var(--u-ink); color:var(--u-ink); }
+  .rp-box.in{ animation:flash 1.4s var(--ease) .6s both; }
+  @keyframes flash{ 0%{ background:#fff; } 20%, 50%{ background:var(--hit); } 100%{ background:#fff; } }
+  .rp-ok{ margin-top:8px; font-size:12.5px; color:var(--u-2); display:flex; align-items:center; gap:.45em; }
+  .rp-ok i{ width:7px; height:7px; border-radius:50%; background:var(--fire); flex-shrink:0; }
+  .rp-ok.late{ animation:rise .35s var(--ease) .9s both; }
+  .empty{ color:var(--u-3); }
 
-.hero-stats { display: flex; gap: 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.06); flex-wrap: wrap; }
-.h-stat { padding-right: 28px; margin-right: 28px; border-right: 1px solid rgba(255,255,255,.07); }
-.h-stat:last-child { border-right: none; padding-right: 0; margin-right: 0; }
-.h-stat-val { font-family: 'DM Mono', monospace; font-size: 20px; font-weight: 500; color: #F1F5F9; line-height: 1; margin-bottom: 4px; }
-.h-stat-lbl { font-size: 11px; color: #475569; }
+  /* painel da extensão */
+  .pn{ grid-area:pn; min-width:0; display:flex; flex-direction:column; align-self:start; }
+  .meta{ color:var(--u-2); font-size:13px; }
+  .acts{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .bt{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; min-height:34px; border-radius:99px; border:1px solid var(--u-ink); background:#fff; color:var(--u-ink); cursor:pointer; white-space:nowrap; transition:background-color .25s, color .25s, transform .12s; }
+  .bt:hover{ background:var(--u-soft); }
+  .bt:active:not(:disabled){ transform:translateY(1px); }
+  .bt.pri{ background:var(--u-ink); color:#fff; }
+  .bt.pri:hover{ background:#2C2F36; }
+  .bt.big{ font-size:14px; padding:.62em 1.2em; min-height:40px; }
+  .bt[aria-busy="true"]{ cursor:progress; }
+  .bt:disabled{ opacity:.45; cursor:default; }
+  .bt.off, .bt.off:hover{ color:var(--u-3); border-color:var(--u-line); background:#fff; cursor:default; font-weight:400; font-size:12.5px; min-height:30px; }
+  .pnl{ margin-top:14px; padding-top:12px; border-top:1px solid var(--u-line); }
+  .pnl.in{ animation:rise .3s var(--ease); }
+  .idf{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:.35em .9em; font-size:13px; }
+  .idf dt{ color:var(--u-3); }
+  .idf dd{ margin:0; font-weight:500; min-width:0; overflow-wrap:anywhere; }
+  .idf.in dt, .idf.in dd{ animation:rise .3s var(--ease) both; }
+  .idf.in dt:nth-of-type(2), .idf.in dd:nth-of-type(2){ animation-delay:.1s; } .idf.in dt:nth-of-type(3), .idf.in dd:nth-of-type(3){ animation-delay:.2s; }
+  .lk{ font-size:12.5px; color:var(--u-2); }
+  .lk b{ font-weight:500; color:var(--u-ink); }
+  .sc{ margin-top:8px; font-size:13px; line-height:1.55; color:var(--u-ink); max-height:9.6em; overflow:auto; padding-right:4px; }
+  .sc.late, .lk.late{ animation:rise .35s var(--ease) 1.1s both; }
+  .small{ font-size:12px; color:var(--u-3); }
+  .dbg{ margin-left:auto; font:inherit; font-size:12px; color:var(--u-2); background:none; border:0; padding:4px 0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--u-line); text-underline-offset:3px; }
+  .dbg:hover, .dbg[aria-expanded="true"]{ color:var(--u-ink); text-decoration-color:currentColor; }
+  .ft{ display:flex; align-items:baseline; gap:12px; }
+  .dl{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:.25em .9em; font-family:"Geist Mono",ui-monospace,monospace; font-size:11.5px; color:var(--u-2); }
+  .dl dt{ color:var(--u-3); }
+  .dl dd{ margin:0; min-width:0; overflow-wrap:anywhere; }
 
-/* ── WRAP / LAYOUT ── */
-.content { max-width: 1160px; margin: 0 auto; padding: 24px 32px 40px; }
+  /* o que a extensão fez */
+  .steps{ list-style:none; margin:0; padding:0; }
+  .steps li{ position:relative; padding:0 0 .7em 20px; font-size:12.5px; color:var(--u-2); line-height:1.4; }
+  .steps li::before{ content:""; position:absolute; left:2px; top:.42em; width:7px; height:7px; border-radius:50%; background:var(--u-ink); }
+  .steps li::after{ content:""; position:absolute; left:5px; top:1.15em; bottom:-.1em; border-left:1px solid var(--u-line); }
+  .steps li:last-child::after{ display:none; }
+  .steps li b{ display:block; font-weight:500; color:var(--u-ink); }
+  .steps li.end::before{ background:var(--fire); }
+  .steps li.skip{ color:var(--u-3); }
+  .steps li.skip b{ color:var(--u-3); font-weight:400; }
+  .steps li.skip::before{ background:var(--u-line); }
+  .steps li.in{ animation:rise .3s var(--ease) .35s both; }
+  .note{ grid-column:1/-1; margin:24px 0 0; padding-top:12px; border-top:1px solid var(--u-line); font-size:12px; color:var(--u-3); line-height:1.5; }
 
-/* ── CARD SHELL ── */
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 10px; overflow: hidden;
-}
-.card + .card { margin-top: 16px; }
-.card-body  { padding: 20px; }
+  /* ============ seções de texto: o mesmo ritmo de Documentos Verificáveis ============ */
+  .tx-lead{ margin:0; font-size:clamp(2.25rem,5.6vw,5.5rem); font-weight:500; letter-spacing:-.05em; line-height:1; max-width:15ch; }
+  .tx-lead a{ text-decoration:underline; text-decoration-thickness:.06em; text-underline-offset:.1em; text-decoration-color:var(--ink-4); }
+  .tx-lead a:hover{ text-decoration-color:currentColor; }
+  .tx-note{ margin:clamp(56px,8vh,88px) 0 0; font-size:clamp(1rem,1.2vw,1.125rem); line-height:1.55; color:var(--ink-3); max-width:60ch; }
+  .tx-note b{ font-weight:500; color:var(--ink-2); }
 
-/* ── SECTION HEADER (inline cards) ── */
-.sec-hd { margin-bottom: 16px; }
-.sec-hd h2 {
-  font-size: clamp(17px, 2.5vw, 22px); font-weight: 700;
-  letter-spacing: -.015em; line-height: 1.2; color: var(--text); margin-bottom: 5px;
-}
-.sec-hd p { font-size: 12px; color: var(--muted); max-width: 480px; line-height: 1.6; }
-.sec-tag {
-  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
-  color: var(--blue); letter-spacing: .04em; display: block; margin-bottom: 6px;
-}
+  /* antes × depois */
+  .cols{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,6vw,96px); margin-top:clamp(64px,9vh,104px); max-width:1100px; }
+  .col-h{ margin:0 0 18px; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
+  .ba{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .ba li{ --i:0; padding:14px 0; border-bottom:1px solid var(--line); transition:opacity .4s var(--ease) calc(var(--i) * 70ms); }
+  .ba b{ display:inline; font-weight:500; font-size:clamp(1rem,1.25vw,1.1875rem); letter-spacing:-.015em; }
+  .ba span{ display:block; margin-top:4px; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.5; color:var(--ink-2); }
+  .ba .off b{ color:var(--ink-3); background:linear-gradient(currentColor, currentColor) 0 55% / 100% 1px no-repeat; transition:background-size .35s var(--ease) calc(.8s + var(--i) * 70ms); }
+  .flow{ margin:0; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.2; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .flow b{ font-weight:500; margin-right:.4em; }
+  .col-p{ margin:14px 0 0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:46ch; }
+  html.js:not(.static) .cols:not(.on) li, html.js:not(.static) .cols:not(.on) .flow, html.js:not(.static) .cols:not(.on) .col-p{ opacity:0; }
+  .cols .flow, .cols .col-p{ transition:opacity .4s var(--ease) .5s; }
+  html.js:not(.static) .cols:not(.on) .ba .off b{ background-size:0% 1px; }
 
-/* ── DEMO GRID ── */
-.demo-grid {
-  display: grid; grid-template-columns: 200px 1fr 252px; gap: 12px; align-items: start;
-}
+  /* o fio com pontos em linha: etapas pretas, conclusão vermelha */
+  .ln{ list-style:none; margin:clamp(64px,9vh,104px) 0 0; padding:44px 0 0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(20px,2.6vw,40px); position:relative; max-width:1240px; }
+  .ln::before{ content:""; position:absolute; left:0; right:0; top:21px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.25s cubic-bezier(.45,0,.55,1); }
+  .ln li{ --dl:0s; position:relative; transition:opacity .45s var(--ease) var(--dl), transform .45s var(--ease) var(--dl); }
+  .ln li::before{ content:""; position:absolute; left:0; top:-27px; width:9px; height:9px; border-radius:50%; background:var(--ink); transition:transform .35s var(--ease) var(--dl), background-color .4s var(--ease) var(--dl); }
+  .ln li:nth-child(2){ --dl:.42s; } .ln li:nth-child(3){ --dl:.83s; } .ln li:nth-child(4){ --dl:1.25s; }
+  .ln li:last-child::before{ background:var(--fire); transition:transform .35s var(--ease) var(--dl), background-color .4s var(--ease) 1.5s; }
+  .ln-n{ display:block; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); margin-bottom:14px; }
+  .ln b{ display:block; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; margin-bottom:10px; }
+  .ln li > span:not(.ln-n){ display:block; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.5; }
+  .ln small{ display:block; margin-top:14px; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
+  html.js:not(.static) .ln:not(.on)::before{ transform:scaleX(0); }
+  html.js:not(.static) .ln:not(.on) li{ opacity:0; transform:translateY(8px); }
+  html.js:not(.static) .ln:not(.on) li::before{ transform:scale(.4); }
+  html.js:not(.static) .ln:not(.on) li:last-child::before{ background:var(--ink); }
 
-/* Queue */
-.q-col { display: flex; flex-direction: column; gap: 6px; }
-.q-hd  {
-  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
-  letter-spacing: .1em; color: var(--faint); padding: 0 2px; margin-bottom: 1px;
-}
-.qc {
-  background: var(--surface); border: 1px solid var(--border);
-  border-left: 3px solid transparent;
-  border-radius: 8px; padding: 10px 12px;
-  cursor: pointer; transition: border-color .14s, background .14s;
-  user-select: none;
-}
-.qc:hover { background: var(--neutral-bg); }
-.qc.on   { border-left-color: var(--blue); background: var(--blue-bg); }
-.qc-id   { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--faint); margin-bottom: 3px; }
-.qc.on .qc-id { color: var(--blue); }
-.qc-sub  { font-size: 11px; font-weight: 500; line-height: 1.35; color: var(--text); margin-bottom: 6px; }
-.qc-dots { display: flex; gap: 4px; }
-.qc-dot  { width: 6px; height: 6px; border-radius: 50%; }
+  /* duas camadas: colunas de linhas, não cartões */
+  .lay{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(28px,5vw,80px); margin-top:clamp(64px,9vh,104px); max-width:1100px; }
+  .lay h3{ margin:0; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
+  .lay .mono{ display:block; margin:8px 0 18px; font-size:.75rem; color:var(--ink-3); line-height:1.5; }
+  .lay ul{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .lay li{ padding:14px 0; border-bottom:1px solid var(--line); }
+  .lay li b{ display:block; font-weight:500; font-size:clamp(1rem,1.2vw,1.125rem); letter-spacing:-.015em; }
+  .lay li span{ display:block; margin-top:4px; font-size:clamp(.9375rem,1.05vw,1rem); line-height:1.55; color:var(--ink-2); }
 
-/* Ticket viewer */
-.tv {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
-}
-.tv-chrome {
-  background: #1C1C2E; padding: 8px 12px;
-  display: flex; align-items: center; gap: 6px;
-}
-.tv-dots { display: flex; gap: 4px; }
-.tv-dot  { width: 8px; height: 8px; border-radius: 50%; }
-.tv-url  {
-  flex: 1; background: rgba(255,255,255,.06);
-  border-radius: 3px; padding: 3px 8px; margin: 0 6px;
-  font-family: 'DM Mono', monospace; font-size: 9px; color: #4B5563;
-}
-.tv-ext {
-  width: 20px; height: 20px; background: var(--ok); border-radius: 4px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 11px; cursor: pointer; flex-shrink: 0; transition: opacity .12s;
-}
-.tv-ext:hover { opacity: .85; }
+  /* decisões: linhas, não cartões */
+  .dt{ margin:clamp(48px,7vh,72px) 0 0; max-width:1100px; border-top:1px solid var(--line); }
+  .dt div{ display:grid; grid-template-columns:minmax(0,17em) minmax(0,1fr); gap:24px; padding:20px 0; border-bottom:1px solid var(--line); }
+  .dt dt{ font-weight:500; font-size:clamp(1rem,1.25vw,1.1875rem); letter-spacing:-.015em; }
+  .dt dt span{ display:block; margin-top:6px; font-weight:400; font-size:.875em; letter-spacing:0; line-height:1.5; color:var(--ink-3); }
+  .dt dd{ margin:0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:64ch; }
+  .dt dd small{ display:block; margin-top:8px; font-size:.9em; color:var(--ink-3); }
+  .stk{ margin:32px 0 0; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
 
-.tv-hd {
-  padding: 11px 16px 10px; border-bottom: 1px solid var(--border);
-  background: var(--neutral-bg);
-}
-.tv-id  { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--faint); margin-bottom: 2px; }
-.tv-sub { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
-.tv-tags { display: flex; gap: 4px; flex-wrap: wrap; }
-.tv-tag { font-size: 10px; font-weight: 500; padding: 1px 7px; border-radius: 3px; font-family: 'DM Mono', monospace; }
+  /* abertura: entra discreta */
+  @keyframes appear{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+  html.js:not(.static) .dm-hd > *{ animation:appear .6s var(--ease) both; }
+  html.js:not(.static) .dm-hd > :nth-child(2){ animation-delay:.08s; }
+  html.js:not(.static) .dm-hd > :nth-child(3){ animation-delay:.16s; }
+  html.js:not(.static) .dm-hd > :nth-child(n+4){ animation-delay:.24s; }
 
-.tv-msg { padding: 12px 16px; border-bottom: 1px solid var(--border); }
-.tv-from { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 1px; }
-.tv-when { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--faint); margin-bottom: 8px; }
-.tv-body { font-size: 12px; color: var(--muted); line-height: 1.65; }
+  @media (max-width:1180px){
+    .q{ --cols:6.6em minmax(14em,1.6fr) minmax(7em,.6fr); }
+    .q .c-ts{ display:none; }
+  }
+  /* coluna única: fila → ticket → painel → planilha, com os fios na vertical */
+  @media (max-width:1023px){
+    .dm{ grid-template-columns:minmax(0,1fr); grid-template-areas:"bar" "q" "tk" "pn" "cv"; }
+    .tk{ margin-bottom:32px; }
+  }
+  @media (max-width:900px){
+    .ln{ grid-template-columns:1fr; gap:36px; padding:0 0 0 30px; margin-top:56px; }
+    .ln::before{ left:4px; right:auto; top:7px; bottom:7px; width:1.5px; height:auto; transform-origin:top; }
+    html.js:not(.static) .ln:not(.on)::before{ transform:scaleY(0); }
+    .ln li::before{ left:-30px; top:3px; }
+    .ln li > span:not(.ln-n){ font-size:1rem; max-width:52ch; }
+    .lay{ grid-template-columns:1fr; gap:48px; }
+  }
+  @media (max-width:760px){
+    .facts{ grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 20px; }
+    .facts div{ padding:12px 0; }
+    .cols{ grid-template-columns:1fr; gap:56px; }
+    .ba span, .col-p, .dt dd, .lay li span{ font-size:1rem; }
+    .dt div{ grid-template-columns:1fr; gap:6px; }
+    .stk{ font-size:.8125rem; }
+    .sf{ border-radius:16px; margin:0 10px; font-size:15px; }
+    .dm{ padding:16px 16px 20px; }
+    .q{ --cols:minmax(0,1fr) 6.4em; }
+    .q .c-id, .q .c-ts{ display:none; }
+    .cv .tb{ --cols:minmax(0,.9fr) minmax(0,1.2fr) minmax(0,1fr); }
+    .cv .c-sc{ display:none; }
+    .r > *{ font-size:14px; padding:.8em .8em; }
+    .r.h > *{ font-size:12.5px; }
+    .bt, .idf, .steps li, .note, .meta, .lk, .sc, .rp-box{ font-size:14px; }
+    .bar .lb, .bar .py, .rs, .lb, .tk-url, .dbg{ font-size:13px; }
+    .bt{ min-height:40px; }
+  }
 
-.tv-reply { padding: 12px 16px; }
-.tv-reply-lbl { font-size: 11px; font-weight: 600; color: var(--faint); margin-bottom: 5px; }
-.tv-box {
-  border: 1px solid var(--border); border-radius: 6px;
-  padding: 9px 11px; min-height: 60px;
-  font-size: 12px; color: var(--faint); line-height: 1.65;
-  font-family: inherit; transition: border-color .25s, background .25s, color .25s;
-  background: var(--neutral-bg);
-}
-.tv-box.filled { border-color: #86EFAC; background: var(--ok-bg); color: #166534; }
-.tv-ok {
-  display: flex; align-items: center; gap: 6px;
-  margin-top: 7px; font-size: 11px; font-weight: 500;
-  color: var(--ok); opacity: 0; transition: opacity .28s;
-}
-.tv-ok.vis { opacity: 1; }
-.ok-ck {
-  width: 14px; height: 14px; background: var(--ok);
-  border-radius: 50%; display: flex; align-items: center;
-  justify-content: center; color: #fff; font-size: 8px; flex-shrink: 0;
-}
-
-/* Extension popup */
-.ep {
-  border: 1px solid var(--border); border-radius: 10px; overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.08);
-  background: var(--surface); position: sticky; top: 64px;
-}
-.ep-hd {
-  background: var(--ok); padding: 9px 12px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.ep-brand { display: flex; align-items: center; gap: 7px; color: #fff; }
-.ep-ico {
-  width: 20px; height: 20px; background: rgba(255,255,255,.2);
-  border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px;
-}
-.ep-name { font-weight: 600; font-size: 13px; }
-.ep-ver  { font-family: 'DM Mono', monospace; font-size: 9px; color: rgba(255,255,255,.6); }
-
-.ep-body { padding: 10px; display: flex; flex-direction: column; gap: 8px; }
-.ep-lbl  {
-  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
-  letter-spacing: .08em; color: var(--faint); margin-bottom: 5px; display: block;
-}
-
-.ep-idle { padding: 14px 6px; text-align: center; }
-.ep-idle-ico { font-size: 24px; display: block; margin-bottom: 8px; }
-.ep-idle-txt { font-size: 12px; color: var(--muted); line-height: 1.55; }
-
-.ep-abtn {
-  width: 100%; padding: 8px;
-  background: var(--blue); color: #fff; border: none; border-radius: 5px;
-  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
-  cursor: pointer; transition: opacity .12s;
-}
-.ep-abtn:hover { opacity: .88; }
-.ep-abtn:disabled { background: var(--faint); cursor: not-allowed; opacity: 1; }
-
-.ep-scan { padding: 12px 6px; text-align: center; }
-.ep-scan-bar { height: 3px; background: var(--border); border-radius: 9999px; overflow: hidden; margin-bottom: 7px; }
-.ep-scan-fill {
-  height: 100%; background: var(--blue); border-radius: 9999px;
-  animation: sfill 1.3s cubic-bezier(.4,0,.2,1) forwards;
-}
-@keyframes sfill { from { width: 0 } to { width: 100% } }
-.ep-scan-txt { font-size: 11px; color: var(--faint); font-style: italic; }
-
-.ep-fields { display: flex; flex-direction: column; gap: 4px; }
-.ep-field {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 6px 9px; border-radius: 5px;
-  background: var(--neutral-bg); border: 1px solid var(--border);
-}
-.ep-fk {
-  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
-  color: var(--faint); text-transform: uppercase; letter-spacing: .05em; margin-bottom: 2px;
-}
-.ep-fv { font-size: 12px; font-weight: 600; color: var(--text); }
-.ep-fchk { font-size: 12px; color: var(--ok); }
-
-.ep-script {
-  background: var(--neutral-bg); border: 1px solid var(--border);
-  border-radius: 5px; padding: 8px;
-  font-size: 11px; line-height: 1.6; color: var(--muted);
-  max-height: 100px; overflow-y: auto;
-}
-
-.ep-ibtn {
-  width: 100%; padding: 8px;
-  background: var(--ok); color: #fff; border: none; border-radius: 5px;
-  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
-  cursor: pointer; transition: opacity .12s;
-}
-.ep-ibtn:hover { opacity: .88; }
-
-.ep-suc {
-  background: var(--ok-bg); margin: -10px;
-  padding: 20px 14px; text-align: center;
-}
-.ep-suc-ico { font-size: 22px; display: block; margin-bottom: 6px; }
-.ep-suc-ttl { font-weight: 700; font-size: 13px; color: var(--ok); }
-.ep-suc-sub { font-size: 11px; color: #166534; margin-top: 3px; line-height: 1.55; }
-
-.ep-q-btns { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
-.ep-q-btn {
-  font-size: 10px; font-weight: 500; padding: 3px 8px;
-  background: var(--neutral-bg); border: 1px solid var(--border);
-  border-radius: 3px; cursor: pointer; color: var(--muted);
-  font-family: 'DM Sans', sans-serif; transition: all .1s;
-}
-.ep-q-btn:hover { background: var(--ok-bg); border-color: #86EFAC; color: #166534; }
-
-.ep-ft {
-  border-top: 1px solid var(--border); padding: 5px 10px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.ep-ft-a { font-size: 10px; color: var(--faint); cursor: pointer; font-weight: 500; }
-.ep-ft-a:hover { color: var(--blue); }
-.ep-dbg {
-  font-family: 'DM Mono', monospace; font-size: 9px; padding: 2px 6px;
-  border-radius: 3px; background: var(--neutral-bg); border: 1px solid var(--border); color: var(--faint); cursor: pointer;
-}
-.ep-dbg:hover { border-color: var(--blue); color: var(--blue); }
-
-/* ── BEFORE / AFTER ── */
-.ba-grid { display: grid; grid-template-columns: 1fr 40px 1fr; gap: 16px; align-items: center; margin-top: 4px; }
-.ba-lbl { font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500; letter-spacing: .08em; display: block; margin-bottom: 8px; }
-.ba-lbl.before { color: var(--critical); }
-.ba-lbl.after  { color: var(--ok); }
-
-.ba-steps { border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-.ba-step {
-  display: flex; align-items: flex-start; gap: 10px;
-  padding: 11px 14px; border-bottom: 1px solid var(--border);
-  border-left: 3px solid transparent;
-}
-.ba-step:last-child { border-bottom: none; }
-.ba-step.pain { background: var(--crit-bg); border-left-color: var(--critical); }
-.ba-si { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
-.ba-st { font-weight: 600; font-size: 12px; color: var(--text); margin-bottom: 2px; }
-.ba-step.pain .ba-st { color: var(--critical); }
-.ba-sd { font-size: 11px; color: var(--muted); line-height: 1.5; }
-
-.ba-arr { display: flex; justify-content: center; align-items: center; font-size: 16px; color: var(--faint); font-weight: 700; }
-.ba-after { border: 1px solid #86EFAC; border-radius: 8px; overflow: hidden; }
-.ba-after-top { padding: 22px 18px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-.ba-num { font-family: 'DM Mono', monospace; font-size: 32px; font-weight: 500; color: var(--ok); letter-spacing: -.03em; line-height: 1; }
-.ba-num-s { font-size: 12px; color: var(--muted); line-height: 1.45; }
-.ba-after-ft { background: var(--ok-bg); padding: 9px 18px; font-size: 11px; color: #166534; font-weight: 500; text-align: center; }
-.ba-note { margin-top: 10px; padding: 11px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; font-size: 11px; color: var(--muted); line-height: 1.6; }
-.ba-note strong { display: block; color: var(--text); margin-bottom: 2px; font-weight: 600; font-size: 12px; }
-
-/* ── HOW IT WORKS (inside card) ── */
-.hiw-row {
-  display: flex; align-items: flex-start; gap: 14px;
-  padding: 14px 20px; border-bottom: 1px solid var(--border);
-}
-.hiw-row:last-child { border-bottom: none; }
-.hiw-n {
-  font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 500;
-  background: var(--bg); color: var(--muted);
-  padding: 1px 7px; border-radius: 3px; flex-shrink: 0; margin-top: 2px;
-  border: 1px solid var(--border);
-}
-.hiw-body { flex: 1; }
-.hiw-ttl { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-.hiw-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
-.hiw-tag {
-  font-family: 'DM Mono', monospace; font-size: 10px; padding: 2px 7px;
-  border-radius: 3px; background: var(--blue-bg); color: var(--blue);
-  display: inline-block; margin-top: 5px;
-}
-
-/* ── ARCHITECTURE ── */
-.arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.arch-hd {
-  padding: 13px 20px 11px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; gap: 10px;
-}
-.arch-ico { width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-.ico-g { background: #E6F4EA; }
-.ico-e { background: var(--ok-bg); }
-.arch-hd h3 { font-size: 13px; font-weight: 600; color: var(--text); }
-.arch-hd p  { font-size: 11px; color: var(--muted); margin-top: 1px; }
-.arch-row {
-  display: flex; align-items: flex-start; gap: 9px;
-  padding: 10px 20px; border-bottom: 1px solid var(--border);
-}
-.arch-row:last-child { border-bottom: none; }
-.arch-ri { font-size: 12px; flex-shrink: 0; margin-top: 1px; }
-.arch-tt { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 1px; }
-.arch-dd { font-size: 11px; color: var(--muted); line-height: 1.55; }
-
-/* ── DECISIONS TABLE ── */
-.dec-thead { display: grid; grid-template-columns: 1fr 1fr 1fr; background: var(--bg); }
-.dec-th {
-  padding: 9px 16px; border-right: 1px solid var(--border);
-  font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 500;
-  letter-spacing: .08em; color: var(--faint);
-}
-.dec-th:last-child { border-right: none; }
-.dec-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid var(--border); }
-.dec-cell { padding: 13px 16px; border-right: 1px solid var(--border); font-size: 12px; line-height: 1.55; }
-.dec-cell:last-child { border-right: none; }
-.dec-cell h4 { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
-.dec-cell p  { color: var(--muted); }
-.ok-t  { color: var(--ok);      font-weight: 600; }
-.trd-t { color: var(--warning); font-weight: 600; }
-
-/* ── STACK ── */
-.pills { display: flex; flex-wrap: wrap; gap: 6px; }
-.pill {
-  display: flex; align-items: center; gap: 5px;
-  padding: 4px 10px; border-radius: 9999px;
-  border: 1px solid var(--border); background: var(--surface);
-  font-size: 12px; font-weight: 500; color: var(--text);
-  transition: border-color .12s;
-}
-.pill:hover { border-color: var(--ok); }
-.pill-ico { font-size: 12px; }
-.pill-g { background: var(--ok-bg); border-color: #86EFAC; color: #166534; }
-
-/* ── FOOTER ── */
-footer {
-  border-top: 1px solid var(--border);
-  max-width: 1160px; margin: 0 auto 32px;
-  padding: 16px 32px 0;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.footer-note { font-size: 11px; color: var(--faint); }
-.footer-arch { font-size: 10px; color: var(--faint); font-family: 'DM Mono', monospace; }
-
-/* ── SECTION GAPS ── */
-.sec { margin-bottom: 20px; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 880px) {
-  .demo-grid { grid-template-columns: 1fr; }
-  .q-col { flex-direction: row; flex-wrap: wrap; gap: 6px; }
-  .qc { flex: 1; min-width: 120px; }
-  .ep { position: static; }
-  .ba-grid { grid-template-columns: 1fr; }
-  .ba-arr { transform: rotate(90deg); }
-  .arch-grid { grid-template-columns: 1fr; }
-  .dec-thead { display: none; }
-  .dec-row { grid-template-columns: 1fr; }
-  .dec-cell { border-right: none; }
-  header { padding: 0 16px; }
-  .content { padding: 16px 16px 32px; }
-  .hero { padding: 24px 16px 28px; }
-  .h-links .h-link { display: none; }
-  footer { padding: 14px 16px 0; flex-direction: column; gap: 4px; align-items: flex-start; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ep-scan-fill { animation: none; width: 100%; }
-}
+  /* sem JS: a fila e a planilha, paradas */
+  html:not(.js) .rs, html:not(.js) .acts{ display:none; }
+  /* movimento reduzido: tudo aparece direto, os fios já desenhados */
+  html.static .dm *, html.static .dm *::before{ animation:none !important; transition:none !important; }
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="h-brand">
-    <span class="h-live"></span>
-    TicketScript — Demo de Portfólio
-  </div>
-  <div class="h-links">
-    <a class="h-link" href="/">← Portfólio</a>
-    <a class="h-link" href="#demo">Demo</a>
-    <a class="h-link" href="#problema">Problema</a>
-    <a class="h-link" href="#como">Como funciona</a>
-    <a class="h-link" href="#stack">Stack</a>
-    <a class="h-cta"  href="#demo">Testar demo</a>
-  </div>
+<header class="nav">
+  <a href="/"><b>Otto Canabrava</b></a>
+  <nav><a href="/#projetos">Sistemas</a><a href="/#sobre">Sobre</a><a href="/#contato">Contato</a></nav>
 </header>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-inner">
-    <div class="hero-eyebrow">Extensão de navegador · Chrome e Edge · Projeto solo · Fev–Mai 2025</div>
-    <div class="hero-chips">
-      <span class="chip chip-bd">Chrome + Edge · MV3</span>
-      <span class="chip chip-bd">JavaScript puro</span>
-      <span class="chip chip-bd">Zero dependências</span>
-      <span class="chip chip-ok">Produção</span>
-      <a class="chip" href="/formpilot/" style="background:rgba(124,58,237,.18);color:#C4B5FD;text-decoration:none;">↳ Origem do FormPilot</a>
+<main>
+  <section class="dm-sec" id="demo" aria-labelledby="dm-t">
+    <div class="dm-hd">
+      <span class="ix">04 · TicketScript · origem do <a href="/formpilot/">FormPilot</a></span>
+      <h1 id="dm-t">Um clique. Ticket resolvido.</h1>
+      <p>Extensão para Chrome e Edge que lê o ticket aberto, identifica operadora, tipo de problema e resolução automaticamente, e preenche a resposta padronizada — sem trocar de aba.</p>
+      <p>Selecione um ticket. Um clique.</p>
+      <p class="fic">Demonstração conceitual · dados 100% fictícios · empresa, nomes e operadoras não reais.</p>
+      <p class="tags mono">Extensão de navegador · Chrome e Edge · Projeto solo · Fev–Mai 2025</p>
+      <p class="tags mono">Chrome + Edge · MV3 · JavaScript puro · Zero dependências · Produção</p>
+      <dl class="facts">
+        <div><dt>4 → 1</dt><dd>passos por ticket</dd></div>
+        <div><dt>0</dt><dd>backend necessário</dd></div>
+        <div><dt>0</dt><dd>dependências externas</dd></div>
+        <div><dt>v2.4</dt><dd>versão atual</dd></div>
+      </dl>
+      <nav class="idx" aria-label="Nesta página"><span>Nesta página:</span><a href="#problema">Problema</a><a href="#como">Como funciona</a><a href="#arquitetura">Arquitetura</a><a href="#decisoes">Decisões</a><a href="#stack">Stack</a></nav>
     </div>
-    <h1>Um clique.<br><span class="hero-hl">Ticket resolvido.</span></h1>
-    <p class="hero-sub">Extensão para Chrome e Edge que lê o ticket aberto, identifica operadora, tipo de problema e resolução automaticamente, e preenche a resposta padronizada — sem trocar de aba.</p>
-    <div class="hero-stats">
-      <div class="h-stat"><div class="h-stat-val">4 → 1</div><div class="h-stat-lbl">passos por ticket</div></div>
-      <div class="h-stat"><div class="h-stat-val">0</div><div class="h-stat-lbl">backend necessário</div></div>
-      <div class="h-stat"><div class="h-stat-val">0</div><div class="h-stat-lbl">dependências externas</div></div>
-      <div class="h-stat"><div class="h-stat-val">v2.4</div><div class="h-stat-lbl">versão atual</div></div>
-    </div>
-  </div>
-</section>
 
-<!-- CONTENT -->
-<div class="content">
+    <div class="sf dm" id="dm">
+      <div class="bar">
+        <span class="lb">tickets abertos</span>
+        <span class="py">Escolha qualquer ticket da fila e use o painel da extensão. Todos os nomes, operadoras e scripts são fictícios.</span>
+        <button type="button" class="rs" data-act="reset">Recomeçar</button>
+      </div>
+      <div class="q tb" id="q" role="grid" aria-label="Tickets abertos (fictícios). Escolha um ticket."><div class="r h" role="row"><span role="columnheader" class="c-id">ticket</span><span role="columnheader" class="c-as">assunto</span><span role="columnheader" class="c-cl">cliente</span><span role="columnheader" class="c-ts">aberto</span></div><div class="r d" role="row" data-row="0" aria-selected="false"><span role="gridcell" class="c-id">TKT-4821</span><span role="gridcell" class="c-as">Pacote não chegou — entrega FleetEx</span><span role="gridcell" class="c-cl">Marcos T.</span><span role="gridcell" class="c-ts">Hoje, 09h14</span></div><div class="r d" role="row" data-row="1" aria-selected="false"><span role="gridcell" class="c-id">TKT-5033</span><span role="gridcell" class="c-as">Caixa danificada — entrega NovaPak</span><span role="gridcell" class="c-cl">Priya S.</span><span role="gridcell" class="c-ts">Hoje, 10h42</span></div><div class="r d" role="row" data-row="2" aria-selected="false"><span role="gridcell" class="c-id">TKT-5119</span><span role="gridcell" class="c-as">Entrega QuickSend — 10 dias de atraso</span><span role="gridcell" class="c-cl">Jordan L.</span><span role="gridcell" class="c-ts">Ontem, 16h08</span></div><div class="r d" role="row" data-row="3" aria-selected="false"><span role="gridcell" class="c-id">TKT-5244</span><span role="gridcell" class="c-as">Item errado enviado — entrega AirDrop</span><span role="gridcell" class="c-cl">Yuki M.</span><span role="gridcell" class="c-ts">Ontem, 11h55</span></div></div>
 
-  <!-- DEMO -->
-  <div class="sec" id="demo">
-    <div class="sec-hd">
-      <span class="sec-tag">demonstração interativa</span>
-      <h2>Selecione um ticket. Um clique.</h2>
-      <p>Escolha qualquer ticket da fila e use o painel da extensão à direita. Todos os nomes, operadoras e scripts são fictícios.</p>
-    </div>
-    <div class="demo-grid" id="demo-root"></div>
-  </div>
+      <div class="tk">
+        <span class="lb">ticket</span>
+        <div id="tk"><p class="empty">Escolha um ticket da fila.</p></div>
+      </div>
 
-  <!-- PROBLEM -->
-  <div class="sec" id="problema">
-    <div class="sec-hd">
-      <span class="sec-tag">o problema</span>
-      <h2>Uma planilha que precisava ficar aberta. Sempre.</h2>
-      <p>Cada ticket exigia uma resposta padronizada em uma matriz de operadora × tipo de problema × resolução. A consulta era manual — e constante.</p>
+      <div class="pn">
+        <span class="lb">painel do TicketScript</span>
+        <div id="pn"><p class="empty">A extensão abre ao lado do ticket.</p></div>
+      </div>
+
+      <div class="cv">
+        <span class="lb">planilha de scripts · CSV publicado (fictício)</span>
+        <div class="tb" id="cv"><div class="r h"><span class="c-op">operadora</span><span class="c-pb">tipo_problema</span><span class="c-rs">resolucao</span><span class="c-sc">script</span></div><div class="r" data-csv="0"><span class="c-op">FleetEx</span><span class="c-pb">Pacote Perdido</span><span class="c-rs">Reenvio</span><span class="c-sc" title="Obrigado por entrar em contato. Investigamos junto à FleetEx e confirmamos que sua remessa não foi localizada no destino. Um pedido de reposição prioritário foi criado — você receberá um novo código de rastreamento por e-mail em até 24 horas. Pedimos sinceras desculpas por esta experiência.">Obrigado por entrar em contato. Investigamos junto à FleetEx e confirmamos que sua remessa não foi localizada no destino. Um pedido de reposição prioritário foi criado — você receberá um novo código de rastreamento por e-mail em até 24 horas. Pedimos sinceras desculpas por esta experiência.</span></div><div class="r" data-csv="1"><span class="c-op">NovaPak</span><span class="c-pb">Item Danificado</span><span class="c-rs">Troca</span><span class="c-sc" title="Lamentamos muito que sua entrega NovaPak tenha chegado em más condições. A troca foi aprovada — uma etiqueta de devolução pré-paga foi enviada para seu e-mail. Envie o item danificado de volta assim que puder e o substituto será despachado assim que processarmos a devolução. Prazo: 3 a 5 dias úteis.">Lamentamos muito que sua entrega NovaPak tenha chegado em más condições. A troca foi aprovada — uma etiqueta de devolução pré-paga foi enviada para seu e-mail. Envie o item danificado de volta assim que puder e o substituto será despachado assim que processarmos a devolução. Prazo: 3 a 5 dias úteis.</span></div><div class="r" data-csv="2"><span class="c-op">QuickSend</span><span class="c-pb">Atraso na Entrega</span><span class="c-rs">Reembolso</span><span class="c-sc" title="Pedimos sinceras desculpas pelo atraso prolongado com sua remessa QuickSend — isso está muito abaixo da experiência que buscamos oferecer. O reembolso integral foi processado e deve aparecer no seu método de pagamento original em 3 a 5 dias úteis. Você pode fazer um novo pedido quando quiser.">Pedimos sinceras desculpas pelo atraso prolongado com sua remessa QuickSend — isso está muito abaixo da experiência que buscamos oferecer. O reembolso integral foi processado e deve aparecer no seu método de pagamento original em 3 a 5 dias úteis. Você pode fazer um novo pedido quando quiser.</span></div><div class="r" data-csv="3"><span class="c-op">AirDrop</span><span class="c-pb">Item Errado</span><span class="c-rs">Crédito em Loja</span><span class="c-sc" title="Pedimos desculpas pela troca na sua entrega AirDrop. Um crédito em loja equivalente ao valor total da compra foi adicionado à sua conta — ele não expira e pode ser usado em qualquer produto do catálogo. Uma etiqueta de devolução pré-paga para o item incorreto está a caminho do seu e-mail.">Pedimos desculpas pela troca na sua entrega AirDrop. Um crédito em loja equivalente ao valor total da compra foi adicionado à sua conta — ele não expira e pode ser usado em qualquer produto do catálogo. Uma etiqueta de devolução pré-paga para o item incorreto está a caminho do seu e-mail.</span></div></div>
+      </div>
+
+      <p class="note">Reprodução sem servidor. Na extensão, a planilha é baixada como CSV uma vez por dia e guardada no navegador; a busca e a inserção acontecem localmente, sem servidor intermediário.</p>
+      <svg class="th" id="th" aria-hidden="true"></svg>
+      <p class="sr-only" id="live" aria-live="polite"></p>
     </div>
-    <div class="ba-grid">
+  </section>
+
+  <section class="tx" id="problema" aria-labelledby="pr-t">
+    <h2 class="tx-k" id="pr-t">O problema</h2>
+    <p class="tx-lead">Uma planilha que precisava ficar aberta. Sempre.</p>
+    <p class="tx-sub">Cada ticket exigia uma resposta padronizada em uma matriz de operadora × tipo de problema × resolução. A consulta era manual — e constante.</p>
+    <div class="cols">
       <div>
-        <span class="ba-lbl before">antes — 4 passos em cada ticket</span>
-        <div class="ba-steps">
-          <div class="ba-step">
-            <span class="ba-si">🎫</span>
-            <div><div class="ba-st">Abrir o ticket</div><div class="ba-sd">Identificar operadora, tipo de problema e resolução desejada.</div></div>
-          </div>
-          <div class="ba-step pain">
-            <span class="ba-si">📊</span>
-            <div><div class="ba-st">Trocar de aba para a planilha</div><div class="ba-sd">Percorrer a matriz de combinações para encontrar a linha certa.</div></div>
-          </div>
-          <div class="ba-step pain">
-            <span class="ba-si">📋</span>
-            <div><div class="ba-st">Copiar o script</div><div class="ba-sd">A linha errada significa o script errado enviado ao cliente.</div></div>
-          </div>
-          <div class="ba-step">
-            <span class="ba-si">🔁</span>
-            <div><div class="ba-st">Voltar e colar</div><div class="ba-sd">Repetir dezenas de vezes por dia.</div></div>
-          </div>
-        </div>
+        <h3 class="col-h">Antes — 4 passos em cada ticket</h3>
+        <ol class="ba">
+          <li style="--i:0"><b>Abrir o ticket</b><span>Identificar operadora, tipo de problema e resolução desejada.</span></li>
+          <li style="--i:1" class="off"><b>Trocar de aba para a planilha</b><span>Percorrer a matriz de combinações para encontrar a linha certa.</span></li>
+          <li style="--i:2" class="off"><b>Copiar o script</b><span>A linha errada significa o script errado enviado ao cliente.</span></li>
+          <li style="--i:3" class="off"><b>Voltar e colar</b><span>Repetir dezenas de vezes por dia.</span></li>
+        </ol>
       </div>
-      <div class="ba-arr">→</div>
       <div>
-        <span class="ba-lbl after">depois — mesmo ticket, um clique</span>
-        <div class="ba-after">
-          <div class="ba-after-top">
-            <div class="ba-num">1×</div>
-            <div class="ba-num-s">Analisar → Inserir.<br>Script vai direto para o campo certo.</div>
-          </div>
-          <div class="ba-after-ft">A planilha ainda existe. Só não precisa mais ficar aberta.</div>
-        </div>
-        <div class="ba-note">
-          <strong>Por que não eliminar a planilha?</strong>
-          Ela é o lugar certo para manter scripts — qualquer pessoa do time edita uma célula sem mexer no código. A extensão a torna invisível no fluxo diário, não obsoleta.
-        </div>
+        <h3 class="col-h">Depois — mesmo ticket, um clique</h3>
+        <p class="flow"><b>1×</b>Analisar → Inserir.</p>
+        <p class="col-p">Script vai direto para o campo certo.</p>
+        <p class="col-p">A planilha ainda existe. Só não precisa mais ficar aberta.</p>
       </div>
     </div>
-  </div>
+    <p class="tx-note"><b>Por que não eliminar a planilha?</b> Ela é o lugar certo para manter scripts — qualquer pessoa do time edita uma célula sem mexer no código. A extensão a torna invisível no fluxo diário, não obsoleta.</p>
+  </section>
 
-  <!-- HOW IT WORKS -->
-  <div class="sec" id="como">
-    <div class="sec-hd">
-      <span class="sec-tag">fluxo técnico</span>
-      <h2>O que acontece entre o clique e a resposta.</h2>
-    </div>
-    <div class="card">
-      <div class="hiw-row">
-        <span class="hiw-n">01</span>
-        <div class="hiw-body">
-          <div class="hiw-ttl">Content script lê a página</div>
-          <div class="hiw-desc">Script injetado na plataforma de suporte captura texto via seletores DOM priorizados. Strings de domínio interno removidas antes da análise — um edge case encontrado em produção.</div>
-          <span class="hiw-tag">content.js · chrome.scripting</span>
-        </div>
-      </div>
-      <div class="hiw-row">
-        <span class="hiw-n">02</span>
-        <div class="hiw-body">
-          <div class="hiw-ttl">Texto normalizado</div>
-          <div class="hiw-desc">Acentos removidos via decomposição NFD. Convertido para minúsculas. Pontuação eliminada. "FleetEx" e "fleetex" viram o mesmo candidato — sem isso qualquer variação quebra o lookup.</div>
-          <span class="hiw-tag">normalizeText()</span>
-        </div>
-      </div>
-      <div class="hiw-row">
-        <span class="hiw-n">03</span>
-        <div class="hiw-body">
-          <div class="hiw-ttl">Valores cruzados com o CSV por prefixo</div>
-          <div class="hiw-desc">Matching via regex encontra valores mesmo quando o ticket usa variantes mais longas. Valores mais longos da planilha têm prioridade — regra necessária para evitar matches ambíguos com termos curtos.</div>
-          <span class="hiw-tag">detectValue() · regex prefixo</span>
-        </div>
-      </div>
-      <div class="hiw-row">
-        <span class="hiw-n">04</span>
-        <div class="hiw-body">
-          <div class="hiw-ttl">Injeção via setter nativo do React</div>
-          <div class="hiw-desc">Campo preenchido com o setter nativo compatível com React. Atribuição direta ao DOM deixa o campo visualmente preenchido mas funcionalmente vazio — o setter nativo dispara o evento corretamente.</div>
-          <span class="hiw-tag">executeScript · Object.getOwnPropertyDescriptor</span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <section class="tx" id="como" aria-labelledby="co-t">
+    <h2 class="tx-k" id="co-t">Fluxo técnico</h2>
+    <p class="tx-lead">O que acontece entre o clique e a resposta.</p>
+    <ol class="ln">
+      <li><span class="ln-n">01</span><b>Content script lê a página</b><span>Script injetado na plataforma de suporte captura texto via seletores DOM priorizados. Strings de domínio interno removidas antes da análise — um edge case encontrado em produção.</span><small>content.js · chrome.scripting</small></li>
+      <li><span class="ln-n">02</span><b>Texto normalizado</b><span>Acentos removidos via decomposição NFD. Convertido para minúsculas. Pontuação eliminada. "FleetEx" e "fleetex" viram o mesmo candidato — sem isso qualquer variação quebra o lookup.</span><small>normalizeText()</small></li>
+      <li><span class="ln-n">03</span><b>Valores cruzados com o CSV por prefixo</b><span>Matching via regex encontra valores mesmo quando o ticket usa variantes mais longas. Valores mais longos da planilha têm prioridade — regra necessária para evitar matches ambíguos com termos curtos.</span><small>detectValue() · regex prefixo</small></li>
+      <li><span class="ln-n">04</span><b>Injeção via setter nativo do React</b><span>Campo preenchido com o setter nativo compatível com React. Atribuição direta ao DOM deixa o campo visualmente preenchido mas funcionalmente vazio — o setter nativo dispara o evento corretamente.</span><small>executeScript · Object.getOwnPropertyDescriptor</small></li>
+    </ol>
+  </section>
 
-  <!-- ARCHITECTURE -->
-  <div class="sec">
-    <div class="sec-hd">
-      <span class="sec-tag">arquitetura</span>
-      <h2>Duas camadas. Nenhuma infraestrutura.</h2>
-      <p>A camada de dados e a de execução são independentes. Qualquer uma pode mudar sem tocar na outra — nenhuma exige servidor.</p>
-    </div>
-    <div class="arch-grid">
-      <div class="card">
-        <div class="arch-hd">
-          <div class="arch-ico ico-g">📊</div>
-          <div><h3>Camada de dados</h3><p>Google Sheets · CSV público</p></div>
-        </div>
-        <div class="arch-row"><span class="arch-ri">🔗</span><div><div class="arch-tt">Uma URL, sempre atualizada</div><div class="arch-dd">Publicar na web → CSV. Qualquer pessoa do time atualiza scripts imediatamente sem tocar no código da extensão.</div></div></div>
-        <div class="arch-row"><span class="arch-ri">⚡</span><div><div class="arch-tt">Cache diário</div><div class="arch-dd">Dados baixados uma vez por dia e guardados no chrome.storage.local. Refresh manual disponível em Configurações.</div></div></div>
-        <div class="arch-row"><span class="arch-ri">🔓</span><div><div class="arch-tt">Sem autenticação</div><div class="arch-dd">CSV acessível publicamente. Nenhuma chave de API, nenhum OAuth, nenhuma credencial para gerenciar.</div></div></div>
+  <section class="tx" id="arquitetura" aria-labelledby="ar-t">
+    <h2 class="tx-k" id="ar-t">Arquitetura</h2>
+    <p class="tx-lead">Duas camadas. Nenhuma infraestrutura.</p>
+    <p class="tx-sub">A camada de dados e a de execução são independentes. Qualquer uma pode mudar sem tocar na outra — nenhuma exige servidor.</p>
+    <div class="lay">
+      <div>
+        <h3>Camada de dados</h3><span class="mono">Google Sheets · CSV público</span>
+        <ul>
+          <li><b>Uma URL, sempre atualizada</b><span>Publicar na web → CSV. Qualquer pessoa do time atualiza scripts imediatamente sem tocar no código da extensão.</span></li>
+          <li><b>Cache diário</b><span>Dados baixados uma vez por dia e guardados no chrome.storage.local. Refresh manual disponível em Configurações.</span></li>
+          <li><b>Sem autenticação</b><span>CSV acessível publicamente. Nenhuma chave de API, nenhum OAuth, nenhuma credencial para gerenciar.</span></li>
+        </ul>
       </div>
-      <div class="card">
-        <div class="arch-hd">
-          <div class="arch-ico ico-e">🔌</div>
-          <div><h3>Camada de execução</h3><p>Chrome / Edge · Manifest V3</p></div>
-        </div>
-        <div class="arch-row"><span class="arch-ri">🏠</span><div><div class="arch-tt">Tudo local, no navegador</div><div class="arch-dd">Nenhum servidor intermediário. A extensão lê a página, busca o CSV e preenche o campo — só isso.</div></div></div>
-        <div class="arch-row"><span class="arch-ri">📦</span><div><div class="arch-tt">Zero dependências externas</div><div class="arch-dd">Sem npm, sem bundler, sem build step. HTML + CSS + JS + APIs do Chrome. Parser CSV próprio — suporta campos com vírgulas entre aspas.</div></div></div>
-        <div class="arch-row"><span class="arch-ri">✏️</span><div><div class="arch-tt">Respostas Rápidas configuráveis</div><div class="arch-dd">Até 5 respostas configuradas pelo próprio usuário via editor contenteditable — negrito, itálico, listas, emojis. Copiadas como text/html via ClipboardItem, com fallback text/plain para ambientes sem suporte.</div></div></div>
+      <div>
+        <h3>Camada de execução</h3><span class="mono">Chrome / Edge · Manifest V3</span>
+        <ul>
+          <li><b>Tudo local, no navegador</b><span>Nenhum servidor intermediário. A extensão lê a página, busca o CSV e preenche o campo — só isso.</span></li>
+          <li><b>Zero dependências externas</b><span>Sem npm, sem bundler, sem build step. HTML + CSS + JS + APIs do Chrome. Parser CSV próprio — suporta campos com vírgulas entre aspas.</span></li>
+          <li><b>Respostas Rápidas configuráveis</b><span>Até 5 respostas configuradas pelo próprio usuário via editor contenteditable — negrito, itálico, listas, emojis. Copiadas como text/html via ClipboardItem, com fallback text/plain para ambientes sem suporte.</span></li>
+        </ul>
       </div>
     </div>
-  </div>
+    <p class="stk mono">extensão de navegador → CSV → popup → ticket</p>
+  </section>
 
-  <!-- DECISIONS -->
-  <div class="sec">
-    <div class="sec-hd">
-      <span class="sec-tag">decisões de design</span>
-      <h2>Trade-offs feitos de propósito.</h2>
-    </div>
-    <div class="card">
-      <div class="dec-thead">
-        <div class="dec-th">Decisão</div>
-        <div class="dec-th">Justificativa</div>
-        <div class="dec-th">Trade-off aceito</div>
-      </div>
-      <div class="dec-row">
-        <div class="dec-cell"><h4>CSV em vez de banco de dados</h4><p>Scripts ficam numa planilha, não em banco ou endpoint de API.</p></div>
-        <div class="dec-cell"><p><span class="ok-t">✓</span> Zero infraestrutura. O time já usava planilhas. Novos scripts entram em produção em minutos, editados por qualquer um.</p></div>
-        <div class="dec-cell"><p><span class="trd-t">~</span> Sem sincronização em tempo real. Atualizações aparecem na próxima abertura do dia ou ao forçar atualização.</p></div>
-      </div>
-      <div class="dec-row">
-        <div class="dec-cell"><h4>Sem backend</h4><p>Tudo roda localmente. Zero componente server-side.</p></div>
-        <div class="dec-cell"><p><span class="ok-t">✓</span> Nada para hospedar, fazer deploy, monitorar ou pagar. Funciona offline após o primeiro fetch do dia.</p></div>
-        <div class="dec-cell"><p><span class="trd-t">~</span> Sem analytics centralizado nem logs. Diagnosticado via modo Debug embutido.</p></div>
-      </div>
-      <div class="dec-row">
-        <div class="dec-cell"><h4>Matching por prefixo</h4><p>Valor "envio" na planilha bate com "envios" no ticket.</p></div>
-        <div class="dec-cell"><p><span class="ok-t">✓</span> Valores na planilha ficam curtos e legíveis. Variações e plurais tratados automaticamente.</p></div>
-        <div class="dec-cell"><p><span class="trd-t">~</span> Valores mais longos têm prioridade para evitar matches ambíguos. Edge cases resolvidos via Debug.</p></div>
-      </div>
-    </div>
-  </div>
+  <section class="tx" id="decisoes" aria-labelledby="de-t">
+    <h2 class="tx-k" id="de-t">Decisões de design</h2>
+    <p class="tx-lead">Trade-offs feitos de propósito.</p>
+    <dl class="dt">
+      <div><dt>CSV em vez de banco de dados<span>Scripts ficam numa planilha, não em banco ou endpoint de API.</span></dt><dd>Zero infraestrutura. O time já usava planilhas. Novos scripts entram em produção em minutos, editados por qualquer um.<small>Trade-off aceito: sem sincronização em tempo real. Atualizações aparecem na próxima abertura do dia ou ao forçar atualização.</small></dd></div>
+      <div><dt>Sem backend<span>Tudo roda localmente. Zero componente server-side.</span></dt><dd>Nada para hospedar, fazer deploy, monitorar ou pagar. Funciona offline após o primeiro fetch do dia.<small>Trade-off aceito: sem analytics centralizado nem logs. Diagnosticado via modo Debug embutido.</small></dd></div>
+      <div><dt>Matching por prefixo<span>Valor "envio" na planilha bate com "envios" no ticket.</span></dt><dd>Valores na planilha ficam curtos e legíveis. Variações e plurais tratados automaticamente.<small>Trade-off aceito: valores mais longos têm prioridade para evitar matches ambíguos. Edge cases resolvidos via Debug.</small></dd></div>
+    </dl>
+  </section>
 
-  <!-- STACK -->
-  <div class="sec" id="stack">
-    <div class="sec-hd">
-      <span class="sec-tag">stack</span>
-      <h2>Construído com o que o problema exigia.</h2>
-    </div>
-    <div class="card">
-      <div class="card-body">
-        <div class="pills">
-          <div class="pill pill-g"><span class="pill-ico">🧩</span> Chrome Extensions API MV3</div>
-          <div class="pill"><span class="pill-ico">⚡</span> JavaScript vanilla — ES6+</div>
-          <div class="pill"><span class="pill-ico">💾</span> chrome.storage.local</div>
-          <div class="pill"><span class="pill-ico">🔍</span> chrome.scripting.executeScript</div>
-          <div class="pill"><span class="pill-ico">📋</span> ClipboardItem API</div>
-          <div class="pill"><span class="pill-ico">📊</span> Google Sheets CSV</div>
-          <div class="pill"><span class="pill-ico">✏️</span> contenteditable + execCommand</div>
-          <div class="pill"><span class="pill-ico">🤖</span> Claude — dev assistido por IA</div>
-          <div class="pill"><span class="pill-ico">📐</span> Semantic Versioning</div>
-          <div class="pill"><span class="pill-ico">📝</span> Keep a Changelog</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <section class="tx" id="stack" aria-labelledby="st-t">
+    <h2 class="tx-k" id="st-t">Stack</h2>
+    <p class="tx-sub">Construído com o que o problema exigia.</p>
+    <p class="stk mono">Chrome Extensions API MV3 · JavaScript vanilla — ES6+ · chrome.storage.local · chrome.scripting.executeScript · ClipboardItem API · Google Sheets CSV · contenteditable + execCommand · Claude — dev assistido por IA · Semantic Versioning · Keep a Changelog</p>
+  </section>
 
-  <!-- EVOLUÇÃO -->
-  <div class="sec">
-    <div class="card" style="border-left: 3px solid #7C3AED;">
-      <div class="card-body" style="display:flex;align-items:flex-start;gap:14px;">
-        <span style="font-size:22px;flex-shrink:0;margin-top:1px;">🔄</span>
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:5px;">Este projeto evoluiu para o <a href="/formpilot/" style="color:#7C3AED;">FormPilot</a></div>
-          <div style="font-size:12px;color:var(--muted);line-height:1.65;">O TicketScript foi a base conceitual e técnica do FormPilot — uma extensão que expandiu o mesmo núcleo (leitura de contexto no navegador + injeção de conteúdo + configuração via planilha) para automação de formulários de operadoras de saúde. A arquitetura sem backend, o matching por prefixo e as Respostas Rápidas configuráveis foram todos reaproveitados e evoluídos no projeto seguinte.</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <section class="tx" id="evolucao" aria-labelledby="ev-t">
+    <h2 class="tx-k" id="ev-t">Evolução</h2>
+    <p class="tx-lead">Este projeto evoluiu para o <a href="/formpilot/">FormPilot</a>.</p>
+    <p class="tx-sub">O TicketScript foi a base conceitual e técnica do FormPilot — uma extensão que expandiu o mesmo núcleo (leitura de contexto no navegador + injeção de conteúdo + configuração via planilha) para automação de formulários de operadoras de saúde. A arquitetura sem backend, o matching por prefixo e as Respostas Rápidas configuráveis foram todos reaproveitados e evoluídos no projeto seguinte.</p>
+  </section>
 
-</div><!-- /content -->
-
-<!-- FOOTER -->
-<footer>
-  <span class="footer-note">Demonstração conceitual · dados 100% fictícios · empresa, nomes e operadoras não reais</span>
-  <span class="footer-arch">extensão de navegador → CSV → popup → ticket</span>
-</footer>
+  <section class="tx tx-end" id="autoria" aria-labelledby="au-t">
+    <h2 class="tx-k" id="au-t">Sobre o projeto</h2>
+    <p class="tx-sub tx-au">Projeto solo, de fevereiro a maio de 2025: extensão de navegador para Chrome e Edge, em produção. Esta página é uma demonstração conceitual — dados 100% fictícios; empresa, nomes e operadoras não reais.</p>
+    <p class="tx-src"><a href="/formpilot/">FormPilot, a evolução deste projeto →</a></p>
+    <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="end-a" href="/#projetos">Todos os sistemas</a></div>
+  </section>
+  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#demo">↑ Topo</a></footer>
+</main>
 
 <script>
-/* ── Dados fictícios — todos inventados para a demo ── */
-const TICKETS = [
-  {
-    id: 'TKT-4821',
-    subject: 'Pacote não chegou — entrega FleetEx',
-    customer: 'Marcos T.',
-    ts: 'Hoje, 09h14',
-    body: 'Oi, estou esperando há 8 dias e o rastreamento da FleetEx mostra "entregue" desde terça — mas nunca recebi nada. Meu vizinho também não viu. Pedido nº 2847-B. Gostaria que reenviassem o quanto antes.',
-    tags: [
-      { l: 'FleetEx',      bg: '#EFF6FF', c: '#2563EB' },
-      { l: 'Pacote Perdido', bg: '#FEF2F2', c: '#DC2626' },
-      { l: 'Reenvio',      bg: '#F0FDF4', c: '#16A34A' }
-    ],
-    dots: ['#2563EB','#DC2626','#16A34A'],
-    det: { carrier: 'FleetEx', issue: 'Pacote Perdido', resolution: 'Reenvio' },
-    script: 'Obrigado por entrar em contato. Investigamos junto à FleetEx e confirmamos que sua remessa não foi localizada no destino. Um pedido de reposição prioritário foi criado — você receberá um novo código de rastreamento por e-mail em até 24 horas. Pedimos sinceras desculpas por esta experiência.'
-  },
-  {
-    id: 'TKT-5033',
-    subject: 'Caixa danificada — entrega NovaPak',
-    customer: 'Priya S.',
-    ts: 'Hoje, 10h42',
-    body: 'Minha entrega da NovaPak chegou com a caixa completamente amassada de um lado. O item dentro está visivelmente quebrado — tirei fotos. Gostaria de fazer uma troca. Pedido nº 3391-C.',
-    tags: [
-      { l: 'NovaPak',       bg: '#EFF6FF', c: '#2563EB' },
-      { l: 'Item Danificado', bg: '#FEF2F2', c: '#DC2626' },
-      { l: 'Troca',         bg: '#F0FDF4', c: '#16A34A' }
-    ],
-    dots: ['#2563EB','#DC2626','#16A34A'],
-    det: { carrier: 'NovaPak', issue: 'Item Danificado', resolution: 'Troca' },
-    script: 'Lamentamos muito que sua entrega NovaPak tenha chegado em más condições. A troca foi aprovada — uma etiqueta de devolução pré-paga foi enviada para seu e-mail. Envie o item danificado de volta assim que puder e o substituto será despachado assim que processarmos a devolução. Prazo: 3 a 5 dias úteis.'
-  },
-  {
-    id: 'TKT-5119',
-    subject: 'Entrega QuickSend — 10 dias de atraso',
-    customer: 'Jordan L.',
-    ts: 'Ontem, 16h08',
-    body: 'Fiz meu pedido há 12 dias e ainda não chegou. O rastreamento da QuickSend está parado há 6 dias sem atualização. A previsão era há 10 dias. Quero o reembolso — não dá mais para esperar.',
-    tags: [
-      { l: 'QuickSend',        bg: '#EFF6FF', c: '#2563EB' },
-      { l: 'Atraso na Entrega', bg: '#FEF2F2', c: '#DC2626' },
-      { l: 'Reembolso',        bg: '#F0FDF4', c: '#16A34A' }
-    ],
-    dots: ['#2563EB','#DC2626','#16A34A'],
-    det: { carrier: 'QuickSend', issue: 'Atraso na Entrega', resolution: 'Reembolso' },
-    script: 'Pedimos sinceras desculpas pelo atraso prolongado com sua remessa QuickSend — isso está muito abaixo da experiência que buscamos oferecer. O reembolso integral foi processado e deve aparecer no seu método de pagamento original em 3 a 5 dias úteis. Você pode fazer um novo pedido quando quiser.'
-  },
-  {
-    id: 'TKT-5244',
-    subject: 'Item errado enviado — entrega AirDrop',
-    customer: 'Yuki M.',
-    ts: 'Ontem, 11h55',
-    body: 'Pedi a versão azul tamanho M, mas a AirDrop entregou a vermelha tamanho G — completamente errado. Não quero reenvio; prefiro crédito em loja para escolher outra coisa. Pedido nº 4102-A.',
-    tags: [
-      { l: 'AirDrop',      bg: '#EFF6FF', c: '#2563EB' },
-      { l: 'Item Errado',  bg: '#FEF2F2', c: '#DC2626' },
-      { l: 'Crédito em Loja', bg: '#F0FDF4', c: '#16A34A' }
-    ],
-    dots: ['#2563EB','#DC2626','#16A34A'],
-    det: { carrier: 'AirDrop', issue: 'Item Errado', resolution: 'Crédito em Loja' },
-    script: 'Pedimos desculpas pela troca na sua entrega AirDrop. Um crédito em loja equivalente ao valor total da compra foi adicionado à sua conta — ele não expira e pode ser usado em qualquer produto do catálogo. Uma etiqueta de devolução pré-paga para o item incorreto está a caminho do seu e-mail.'
+/* Demonstração: reprodução sem servidor do fluxo do TicketScript (ler → normalizar → buscar no CSV → inserir).
+   Tickets, clientes, operadoras e scripts são fictícios. */
+(function(){
+  var T = [
+    { id: "TKT-4821", assunto: "Pacote não chegou — entrega FleetEx", cliente: "Marcos T.", ts: "Hoje, 09h14",
+      corpo: 'Oi, estou esperando há 8 dias e o rastreamento da FleetEx mostra "entregue" desde terça — mas nunca recebi nada. Meu vizinho também não viu. Pedido nº 2847-B. Gostaria que reenviassem o quanto antes.',
+      mk: ["FleetEx", "nunca recebi nada", "reenviassem"],
+      det: { carrier: "FleetEx", issue: "Pacote Perdido", resolution: "Reenvio" },
+      script: "Obrigado por entrar em contato. Investigamos junto à FleetEx e confirmamos que sua remessa não foi localizada no destino. Um pedido de reposição prioritário foi criado — você receberá um novo código de rastreamento por e-mail em até 24 horas. Pedimos sinceras desculpas por esta experiência." },
+    { id: "TKT-5033", assunto: "Caixa danificada — entrega NovaPak", cliente: "Priya S.", ts: "Hoje, 10h42",
+      corpo: "Minha entrega da NovaPak chegou com a caixa completamente amassada de um lado. O item dentro está visivelmente quebrado — tirei fotos. Gostaria de fazer uma troca. Pedido nº 3391-C.",
+      mk: ["NovaPak", "visivelmente quebrado", "troca"],
+      det: { carrier: "NovaPak", issue: "Item Danificado", resolution: "Troca" },
+      script: "Lamentamos muito que sua entrega NovaPak tenha chegado em más condições. A troca foi aprovada — uma etiqueta de devolução pré-paga foi enviada para seu e-mail. Envie o item danificado de volta assim que puder e o substituto será despachado assim que processarmos a devolução. Prazo: 3 a 5 dias úteis." },
+    { id: "TKT-5119", assunto: "Entrega QuickSend — 10 dias de atraso", cliente: "Jordan L.", ts: "Ontem, 16h08",
+      corpo: "Fiz meu pedido há 12 dias e ainda não chegou. O rastreamento da QuickSend está parado há 6 dias sem atualização. A previsão era há 10 dias. Quero o reembolso — não dá mais para esperar.",
+      mk: ["ainda não chegou", "QuickSend", "reembolso"],
+      det: { carrier: "QuickSend", issue: "Atraso na Entrega", resolution: "Reembolso" },
+      script: "Pedimos sinceras desculpas pelo atraso prolongado com sua remessa QuickSend — isso está muito abaixo da experiência que buscamos oferecer. O reembolso integral foi processado e deve aparecer no seu método de pagamento original em 3 a 5 dias úteis. Você pode fazer um novo pedido quando quiser." },
+    { id: "TKT-5244", assunto: "Item errado enviado — entrega AirDrop", cliente: "Yuki M.", ts: "Ontem, 11h55",
+      corpo: "Pedi a versão azul tamanho M, mas a AirDrop entregou a vermelha tamanho G — completamente errado. Não quero reenvio; prefiro crédito em loja para escolher outra coisa. Pedido nº 4102-A.",
+      mk: ["AirDrop", "completamente errado", "crédito em loja"],
+      det: { carrier: "AirDrop", issue: "Item Errado", resolution: "Crédito em Loja" },
+      script: "Pedimos desculpas pela troca na sua entrega AirDrop. Um crédito em loja equivalente ao valor total da compra foi adicionado à sua conta — ele não expira e pode ser usado em qualquer produto do catálogo. Uma etiqueta de devolução pré-paga para o item incorreto está a caminho do seu e-mail." }
+  ];
+  var URL0 = "suporte.helixcommerce.com.br/agente/tickets/";
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce) document.documentElement.classList.add("static");
+  var $ = function(id){ return document.getElementById(id); };
+  var sf = $("dm"), svg = $("th"), NS = "http://www.w3.org/2000/svg";
+  var narrow = window.matchMedia("(max-width:1023px)");
+  var S, last = {}, A = null, timer = null;
+
+  function fresh(){ return { sel: null, st: "idle", picked: false, threads: [], evt: null, done: {}, dbg: false }; }
+  var esc = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var say = function(t){ $("live").textContent = t; };
+
+  /* ---------- telas ---------- */
+  function qHTML(){
+    var h = '<div class="r h" role="row"><span role="columnheader" class="c-id">ticket</span><span role="columnheader" class="c-as">assunto</span><span role="columnheader" class="c-cl">cliente</span><span role="columnheader" class="c-ts">aberto</span></div>';
+    return h + T.map(function(t, i){
+      return '<div class="r d" role="row" data-row="' + i + '" aria-selected="' + (S.sel === i) + '"><span role="gridcell" class="c-id">' + t.id + "</span>" +
+        '<span role="gridcell" class="c-as"><button type="button" class="pick" data-act="pick" data-i="' + i + '" data-k="pick' + i + '">' + esc(t.assunto) + "</button></span>" +
+        '<span role="gridcell" class="c-cl">' + esc(t.cliente) + '</span><span role="gridcell" class="c-ts">' + esc(t.ts) + "</span></div>";
+    }).join("");
   }
-];
+  /* a planilha de scripts: uma linha por operadora × tipo de problema × resolução */
+  function cvHTML(){
+    var found = S.sel !== null && ["detected", "inserted"].indexOf(S.st) >= 0 ? S.sel : null;
+    var h = '<div class="r h"><span class="c-op">operadora</span><span class="c-pb">tipo_problema</span><span class="c-rs">resolucao</span><span class="c-sc">script</span></div>';
+    return h + T.map(function(t, i){
+      var on = found === i, hit = on ? " hit" + (S.evt === "csv" ? " late" : "") : "";
+      return '<div class="r' + (on ? " on" : "") + '" data-csv="' + i + '"><span class="c-op' + hit + '">' + esc(t.det.carrier) + '</span><span class="c-pb' + hit + '">' + esc(t.det.issue) + '</span><span class="c-rs' + hit + '">' + esc(t.det.resolution) + '</span><span class="c-sc" title="' + esc(t.script) + '">' + esc(t.script) + "</span></div>";
+    }).join("");
+  }
+  function marked(t){
+    var s = esc(t.corpo);
+    t.mk.forEach(function(m){ var e = esc(m), i = s.indexOf(e); if(i >= 0) s = s.slice(0, i) + "<mark>" + e + "</mark>" + s.slice(i + e.length); });
+    return s;
+  }
+  function tkHTML(){
+    if(S.sel === null) return '<p class="empty">Escolha um ticket da fila.</p>';
+    var t = T[S.sel], cls = S.st === "reading" ? " reading" : S.st === "idle" ? "" : " read", ins = S.st === "inserted";
+    return '<div class="' + (S.picked ? "tk-in" : "") + '"><div class="tk-url">' + URL0 + t.id.toLowerCase() + "</div>" +
+      '<div class="tk-as">' + esc(t.assunto) + '</div><div class="tk-de">' + esc(t.cliente) + " · " + esc(t.ts) + " · " + t.id + "</div>" +
+      '<p class="tk-body' + cls + '">' + marked(t) + "</p>" +
+      '<div class="rp"><span class="lb">responder ao cliente</span><div class="rp-box' + (ins ? " on" + (S.evt === "inserir" && !reduce ? " in" : "") : "") + '" id="rp">' +
+      (ins ? esc(t.script) : "O script aparecerá aqui após clicar em Inserir na extensão…") + "</div>" +
+      (ins ? '<p class="rp-ok' + (S.evt === "inserir" && !reduce ? " late" : "") + '"><i></i>Script inserido pelo TicketScript</p>' : "") + "</div></div>";
+  }
+  function stepsHTML(){
+    var n = { idle: 0, reading: 0, detected: 3, inserted: 4 }[S.st], t = T[S.sel];
+    if(!n) return "";
+    var it = [
+      ["Leitura", "texto do ticket capturado; strings de domínio interno removidas"],
+      ["Normalização", "sem acentos, em minúsculas, sem pontuação"],
+      ["Busca no CSV", "por prefixo, valores mais longos primeiro: " + t.det.carrier + " · " + t.det.issue + " · " + t.det.resolution],
+      ["Inserção", "setter nativo do React: o campo fica preenchido de fato"]
+    ];
+    return '<div class="pnl"><span class="lb">o que a extensão fez</span><ol class="steps">' + it.map(function(x, i){
+      var c = i >= n ? "skip" : (i === n - 1 && S.evt ? "end" : "");
+      if(i === n - 1 && S.evt && !reduce) c += " in";
+      return '<li class="' + c + '"><b>' + x[0] + "</b>" + (i >= n ? "a seguir" : esc(x[1])) + "</li>";
+    }).join("") + "</ol></div>";
+  }
+  function quickHTML(){
+    return '<div class="pnl"><span class="lb">respostas rápidas · configuráveis pelo usuário</span><div class="acts" style="margin-top:0">' +
+      ["Preciso de mais tempo", "Escalar", "Resolvido"].map(function(q){ return '<span class="bt off" aria-disabled="true" title="Configurada pelo usuário; aqui, só representação">' + q + "</span>"; }).join("") + "</div></div>";
+  }
+  function dbgHTML(t){
+    var na = S.st === "idle" || S.st === "reading";
+    return '<div class="pnl"><dl class="dl"><dt>Operadora</dt><dd>' + (na ? "(não analisado)" : esc(t.det.carrier)) + "</dd><dt>Tipo de problema</dt><dd>" + (na ? "(não analisado)" : esc(t.det.issue)) +
+      "</dd><dt>Resolução</dt><dd>" + (na ? "(não analisado)" : esc(t.det.resolution)) + "</dd><dt>Estado</dt><dd>" + S.st + "</dd><dt>Linhas no CSV</dt><dd>48</dd><dt>Cache</dt><dd>atualizado (hoje)</dd><dt>URL</dt><dd>" + URL0 + t.id.toLowerCase() + "</dd></dl></div>";
+  }
+  function pnHTML(){
+    if(S.sel === null) return '<p class="empty">A extensão abre ao lado do ticket.</p>';
+    var t = T[S.sel], st = S.st, h = "";
+    if(st === "idle") h = '<p class="meta">Ticket detectado. Clique em Analisar para identificar operadora, tipo de problema e resolução automaticamente.</p><div class="acts"><button type="button" class="bt pri big" data-act="ler" data-k="ler">Analisar ticket</button></div>';
+    else if(st === "reading") h = '<p class="meta">Lendo o conteúdo do ticket…</p><div class="acts"><button type="button" class="bt pri big" disabled aria-busy="true" data-k="ler">Analisando…</button></div>';
+    else {
+      h = '<span class="lb">detectado</span><dl class="idf' + (S.evt === "ler" ? " in" : "") + '" id="idf"><dt>Operadora</dt><dd>' + esc(t.det.carrier) + "</dd><dt>Tipo de problema</dt><dd>" + esc(t.det.issue) + "</dd><dt>Resolução</dt><dd>" + esc(t.det.resolution) + "</dd></dl>";
+      var late = (S.evt === "ler" || S.evt === "csv") && !reduce ? " late" : "";
+      h += '<div class="pnl"><p class="lk' + late + '" id="lk"><b>Script gerado</b> · linha da planilha</p><div class="sc' + late + '">' + esc(t.script) + "</div></div>";
+      if(st === "detected") h += '<div class="acts"><button type="button" class="bt pri big" data-act="inserir" data-k="inserir">Inserir no ticket</button></div>';
+      else h += '<p class="meta" style="margin-top:14px">Inserido · ' + esc(t.det.carrier) + " · " + esc(t.det.issue) + "<br>Script inserido no campo de resposta.</p>";
+    }
+    h += stepsHTML() + quickHTML();
+    h += '<div class="ft pnl"><span class="small">v2.4 · ⚙ Configurações</span><button type="button" class="dbg" data-act="dbg" data-k="dbg" aria-expanded="' + S.dbg + '">Debug</button></div>';
+    if(S.dbg) h += dbgHTML(t);
+    return h;
+  }
 
-let cur = 0, st = 'idle';
+  /* ---------- fios: só como consequência de uma ação ---------- */
+  function rel(el){ var a = el.getBoundingClientRect(), b = sf.getBoundingClientRect(); return { l: a.left - b.left, t: a.top - b.top, w: a.width, h: a.height, r: a.right - b.left, b: a.bottom - b.top }; }
+  function cubic(p){ var f = function(q){ return q[0].toFixed(1) + " " + q[1].toFixed(1); }; return "M" + f(p[0]) + "C" + f(p[1]) + " " + f(p[2]) + " " + f(p[3]); }
+  function route(p, rad){
+    var d = "M" + p[0][0].toFixed(1) + " " + p[0][1].toFixed(1);
+    for(var i = 1; i < p.length - 1; i++){
+      var a = p[i - 1], c = p[i], b = p[i + 1], l1 = Math.hypot(c[0] - a[0], c[1] - a[1]), l2 = Math.hypot(b[0] - c[0], b[1] - c[1]), r = Math.min(rad, l1 / 2, l2 / 2);
+      var u = [c[0] - (c[0] - a[0]) / (l1 || 1) * r, c[1] - (c[1] - a[1]) / (l1 || 1) * r], v = [c[0] + (b[0] - c[0]) / (l2 || 1) * r, c[1] + (b[1] - c[1]) / (l2 || 1) * r];
+      d += "L" + u[0].toFixed(1) + " " + u[1].toFixed(1) + "Q" + c[0].toFixed(1) + " " + c[1].toFixed(1) + " " + v[0].toFixed(1) + " " + v[1].toFixed(1);
+    }
+    var e = p[p.length - 1]; return d + "L" + e[0].toFixed(1) + " " + e[1].toFixed(1);
+  }
+  /* ler: do trecho lido ao painel · csv: do painel à linha encontrada · inserir: da linha ao campo de resposta.
+     O da inserção corre pela margem esquerda, para não cruzar texto. */
+  function ends(k){
+    var n = narrow.matches, gx = 7, row = sf.querySelector('[data-csv="' + S.sel + '"]'), a, b;
+    if(k === "ler"){
+      var ms = sf.querySelectorAll(".tk-body mark"), m = ms[ms.length - 1], I = $("idf"); if(!m || !I) return null;
+      var M = rel(m), D = rel(I);
+      if(n){ var col = rel(m.closest(".tk")); a = [col.l - 2, M.t + M.h / 2]; b = [D.l - 4, D.t + 10]; return { r: [a, [gx, a[1]], [gx, b[1]], b] }; }
+      var B = rel(m.closest(".tk-body"));   /* sai da borda direita do texto, na altura do trecho: não cruza nenhuma linha */
+      a = [B.r + 6, M.t + M.h / 2]; b = [D.l - 6, D.t + 12]; return [a, [a[0] + (b[0] - a[0]) * .5, a[1]], [b[0] - (b[0] - a[0]) * .5, b[1]], b];
+    }
+    if(k === "csv"){
+      var L = $("lk"); if(!L || !row) return null; var Lr = rel(L), R = rel(row);
+      if(n){ var pc = rel(L.closest(".pn")); a = [pc.l - 2, Lr.t + Lr.h / 2]; b = [R.l + 1, R.t + R.h / 2]; return { r: [a, [gx, a[1]], [gx, b[1]], b] }; }
+      a = [Lr.l - 6, Lr.t + Lr.h / 2]; b = [R.r + 3, R.t + R.h / 2]; return [a, [a[0] - (a[0] - b[0]) * .5, a[1]], [b[0] + (a[0] - b[0]) * .5, b[1]], b];
+    }
+    if(k === "inserir"){
+      var P = $("rp"); if(!P || !row) return null; var Pr = rel(P), R2 = rel(row);
+      a = [R2.l + 1, R2.t + R2.h / 2]; b = [Pr.l - 4, Pr.t + 14]; return { r: [a, [gx, a[1]], [gx, b[1]], b] };
+    }
+    return null;
+  }
+  var ease = function(k){ return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
+  function drawThreads(anim, cb){
+    if(anim){ if(reduce){ if(cb) setTimeout(cb, 0); } else A = { k: anim, t0: performance.now(), cb: cb }; }
+    svg.setAttribute("viewBox", "0 0 " + sf.clientWidth + " " + sf.clientHeight);
+    svg.innerHTML = "";
+    S.threads.forEach(function(k, i){
+      var p = ends(k); if(!p) return;
+      var now = i === S.threads.length - 1 && k === S.evt, live = A && A.k === k, dd = p.r ? route(p.r, 14) : cubic(p);
+      if(p.r) p = [p.r[0], 0, 0, p.r[p.r.length - 1]];
+      var path = document.createElementNS(NS, "path"); path.setAttribute("d", dd); path.setAttribute("pathLength", "1"); path.setAttribute("data-k", k);
+      if(live){ path.style.strokeDasharray = "1"; path.style.strokeDashoffset = "1"; }
+      var c0 = document.createElementNS(NS, "circle"); c0.setAttribute("cx", p[0][0]); c0.setAttribute("cy", p[0][1]); c0.setAttribute("r", "3");
+      var c1 = document.createElementNS(NS, "circle"); c1.setAttribute("cx", p[3][0]); c1.setAttribute("cy", p[3][1]); c1.setAttribute("r", "4"); c1.setAttribute("class", "end" + (now ? " now" : "") + (live ? " pend" : ""));
+      svg.appendChild(path); svg.appendChild(c0); svg.appendChild(c1);
+      if(live){ var hd = document.createElementNS(NS, "circle"); hd.setAttribute("r", "4.5"); hd.setAttribute("class", "head"); svg.appendChild(hd); }
+    });
+    if(A && !A.raf) A.raf = requestAnimationFrame(step);
+  }
+  function step(t){
+    if(!A) return;
+    var k = Math.min(1, (t - A.t0) / 650), e = ease(k), path = svg.querySelector('path[data-k="' + A.k + '"]'), hd = svg.querySelector(".head");
+    if(path){ path.style.strokeDashoffset = String(1 - e); var pt = path.getPointAtLength(e * path.getTotalLength()); if(hd){ hd.setAttribute("cx", pt.x); hd.setAttribute("cy", pt.y); } }
+    if(k < 1){ A.raf = requestAnimationFrame(step); return; }
+    var cb = A.cb; A = null; drawThreads(); if(cb) cb();
+  }
 
-function render() {
-  document.getElementById('demo-root').innerHTML = fila() + viewer() + popup();
-  bind();
-}
+  /* ---------- render: cada região só é trocada quando o conteúdo muda ---------- */
+  function put(id, html){ if(last[id] === html) return; last[id] = html; $(id).innerHTML = html; }
+  function render(anim, cb){
+    var f = document.activeElement && document.activeElement.getAttribute("data-k");
+    put("q", qHTML()); put("tk", tkHTML()); put("pn", pnHTML()); put("cv", cvHTML());
+    if(f){ var e = sf.querySelector('[data-k="' + f + '"]'); if(e && e !== document.activeElement) e.focus({ preventScroll: true }); }
+    drawThreads(anim, cb);
+  }
+  function show(el){ if(narrow.matches && el){ var b = el.getBoundingClientRect(); if(b.top < 72 || b.bottom > innerHeight) el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); } }
 
-function fila() {
-  return `<div class="q-col">
-    <div class="q-hd">TICKETS ABERTOS</div>
-    ${TICKETS.map((t, i) => `
-      <div class="qc ${i === cur ? 'on' : ''}" data-i="${i}">
-        <div class="qc-id">${t.id}</div>
-        <div class="qc-sub">${t.subject}</div>
-        <div class="qc-dots">${t.dots.map(c => `<div class="qc-dot" style="background:${c}"></div>`).join('')}</div>
-      </div>`).join('')}
-  </div>`;
-}
+  /* ---------- ações ---------- */
+  function pick(i){
+    if(S.st === "reading") return;
+    if(S.sel !== i){ S.sel = i; S.st = S.done[i] ? "inserted" : "idle"; S.threads = []; S.evt = null; S.picked = true; }
+    render(); S.picked = false; say(T[i].assunto + ".");
+  }
+  function ler(){
+    var t = T[S.sel]; S.st = "reading"; S.evt = null; S.threads = []; render();
+    timer = setTimeout(function(){
+      S.st = "detected"; S.evt = "ler"; S.threads = ["ler"];
+      render("ler", function(){ S.evt = "csv"; S.threads = ["ler", "csv"]; render("csv"); show(sf.querySelector('[data-csv="' + S.sel + '"]')); });
+      show($("idf")); say("Detectado: " + t.det.carrier + ", " + t.det.issue + ", " + t.det.resolution + ". Script encontrado na planilha.");
+    }, reduce ? 0 : 1350);
+  }
+  function inserir(){
+    var t = T[S.sel]; S.st = "inserted"; S.done[S.sel] = true; S.evt = "inserir"; S.threads = ["ler", "csv", "inserir"]; render("inserir");
+    show($("rp")); say("Script inserido no campo de resposta do " + t.id + ".");
+  }
+  function reset(){ clearTimeout(timer); A = null; S = fresh(); last = {}; render(); say("Demonstração no estado inicial."); }
 
-function viewer() {
-  const t = TICKETS[cur], ins = st === 'inserted';
-  return `<div class="tv">
-    <div class="tv-chrome">
-      <div class="tv-dots">
-        <div class="tv-dot" style="background:#EF4444"></div>
-        <div class="tv-dot" style="background:#F59E0B"></div>
-        <div class="tv-dot" style="background:#10B981"></div>
-      </div>
-      <div class="tv-url">suporte.helixcommerce.com.br/agente/tickets/${t.id.toLowerCase()}</div>
-      <div class="tv-ext" title="TicketScript">⚡</div>
-    </div>
-    <div class="tv-hd">
-      <div class="tv-id">${t.id} · ${t.ts}</div>
-      <div class="tv-sub">${t.subject}</div>
-      <div class="tv-tags">${t.tags.map(g => `<span class="tv-tag" style="background:${g.bg};color:${g.c}">${g.l}</span>`).join('')}</div>
-    </div>
-    <div class="tv-msg">
-      <div class="tv-from">${t.customer}</div>
-      <div class="tv-when">${t.ts}</div>
-      <div class="tv-body">${t.body}</div>
-    </div>
-    <div class="tv-reply">
-      <div class="tv-reply-lbl">Responder ao cliente</div>
-      <div class="tv-box ${ins ? 'filled' : ''}">
-        ${ins ? t.script : '<span style="font-style:italic">O script aparecerá aqui após clicar em Inserir na extensão…</span>'}
-      </div>
-      <div class="tv-ok ${ins ? 'vis' : ''}">
-        <div class="ok-ck">✓</div>
-        Script inserido pelo TicketScript
-      </div>
-    </div>
-  </div>`;
-}
-
-function popup() {
-  const t = TICKETS[cur];
-  return `<div class="ep">
-    <div class="ep-hd">
-      <div class="ep-brand"><div class="ep-ico">⚡</div><span class="ep-name">TicketScript</span></div>
-      <span class="ep-ver">v2.4</span>
-    </div>
-    <div class="ep-body">${corpo(t)}</div>
-    <div class="ep-ft">
-      <span class="ep-ft-a">⚙ Configurações</span>
-      <span class="ep-dbg" id="dbg">Debug</span>
-    </div>
-  </div>`;
-}
-
-function corpo(t) {
-  if (st === 'idle') return `
-    <div class="ep-idle"><span class="ep-idle-ico">🎫</span>
-    <div class="ep-idle-txt">Ticket detectado. Clique em Analisar para identificar operadora, tipo de problema e resolução automaticamente.</div></div>
-    <button class="ep-abtn" id="abtn">Analisar ticket</button>${atalhos()}`;
-
-  if (st === 'scanning') return `
-    <div class="ep-scan"><div class="ep-scan-bar"><div class="ep-scan-fill"></div></div>
-    <div class="ep-scan-txt">Lendo o conteúdo do ticket…</div></div>
-    <button class="ep-abtn" disabled>Analisando…</button>${atalhos()}`;
-
-  if (st === 'detected') return `
-    <div><span class="ep-lbl">Detectado</span>
-    <div class="ep-fields">
-      ${[['Operadora', t.det.carrier], ['Tipo de problema', t.det.issue], ['Resolução', t.det.resolution]].map(([k, v]) => `
-        <div class="ep-field">
-          <div><div class="ep-fk">${k}</div><div class="ep-fv">${v}</div></div>
-          <span class="ep-fchk">✓</span>
-        </div>`).join('')}
-    </div></div>
-    <div><span class="ep-lbl">Script gerado</span><div class="ep-script">${t.script}</div></div>
-    <button class="ep-ibtn" id="ibtn">Inserir no ticket</button>${atalhos()}`;
-
-  if (st === 'inserted') return `
-    <div class="ep-suc"><span class="ep-suc-ico">✅</span>
-    <div class="ep-suc-ttl">Inserido</div>
-    <div class="ep-suc-sub">${t.det.carrier} · ${t.det.issue}<br>Script inserido no campo de resposta.</div></div>
-    ${atalhos()}`;
-}
-
-function atalhos() {
-  return `<div><span class="ep-lbl">Respostas rápidas <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--faint);">· configuráveis pelo usuário</span></span>
-    <div class="ep-q-btns">
-      <button class="ep-q-btn">⏳ Preciso de mais tempo</button>
-      <button class="ep-q-btn">📞 Escalar</button>
-      <button class="ep-q-btn">✅ Resolvido</button>
-    </div></div>`;
-}
-
-function bind() {
-  document.querySelectorAll('.qc').forEach(c =>
-    c.addEventListener('click', () => {
-      const i = +c.dataset.i;
-      if (i !== cur) { cur = i; st = 'idle'; render(); }
-    })
-  );
-  const ab = document.getElementById('abtn');
-  if (ab) ab.addEventListener('click', () => {
-    st = 'scanning'; render();
-    setTimeout(() => { st = 'detected'; render(); }, 1350);
+  sf.addEventListener("click", function(e){
+    var t = e.target.closest("[data-act]");
+    if(!t){ var row = e.target.closest(".r.d"); if(row) pick(+row.getAttribute("data-row")); return; }
+    var a = t.getAttribute("data-act");
+    if(a === "pick") pick(+t.getAttribute("data-i"));
+    else if(a === "ler") ler();
+    else if(a === "inserir") inserir();
+    else if(a === "dbg"){ S.dbg = !S.dbg; render(); }
+    else if(a === "reset") reset();
   });
-  const ib = document.getElementById('ibtn');
-  if (ib) ib.addEventListener('click', () => { st = 'inserted'; render(); });
-  const db = document.getElementById('dbg');
-  if (db) db.addEventListener('click', () => {
-    const t = TICKETS[cur];
-    alert(
-      `Debug — ${t.id}\n\n` +
-      `Operadora:        ${st === 'idle' ? '(não analisado)' : t.det.carrier}\n` +
-      `Tipo de problema: ${st === 'idle' ? '(não analisado)' : t.det.issue}\n` +
-      `Resolução:        ${st === 'idle' ? '(não analisado)' : t.det.resolution}\n\n` +
-      `Estado: ${st}\nLinhas no CSV: 48\nCache: atualizado (hoje)\n` +
-      `URL: suporte.helixcommerce.com.br/agente/tickets/${t.id.toLowerCase()}`
-    );
-  });
-}
+  if(window.ResizeObserver) new ResizeObserver(function(){ drawThreads(); }).observe(sf);
+  else addEventListener("resize", function(){ drawThreads(); });
 
-render();
+  S = fresh(); render();
+})();
 </script>
-
-<!-- CONTINUE EXPLORANDO: sequência Extrator → Daily Ops → Motor → TicketScript → FormPilot → Documentos Verificáveis (mesma ordem da home) -->
-<style>
-  /* Continue explorando — navegação entre cases (estilos isolados, prefixo cx-) */
-  .cx{ background:#131D2E; color:#B7BFCE; padding:40px 24px 44px; font-family:'DM Sans',-apple-system,'Segoe UI',sans-serif; line-height:1.45; }
-  .cx *{ box-sizing:border-box; }
-  .cx-in{ max-width:1120px; margin:0 auto; }
-  .cx-hd{ display:flex; justify-content:space-between; align-items:baseline; gap:12px; flex-wrap:wrap; margin:0 0 16px; font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
-  .cx-k{ display:inline-flex; align-items:center; gap:8px; color:#5FD1B8; font-weight:500; margin:0; font-size:inherit; letter-spacing:inherit; }
-  .cx-k::before{ content:""; width:7px; height:7px; border-radius:50%; background:#5FD1B8; }
-  .cx-pos{ color:#6B7A96; }
-  .cx-grid{ display:grid; grid-template-columns:1fr minmax(180px,.7fr) 1fr; gap:12px; }
-  .cx-card{ display:flex; flex-direction:column; gap:4px; min-width:0; padding:16px 18px; border:1px solid rgba(255,255,255,.1); border-radius:10px; background:rgba(255,255,255,.03); color:inherit; text-decoration:none; transition:border-color .15s, background .15s; }
-  a.cx-card:hover, a.cx-card:focus-visible{ border-color:rgba(255,255,255,.34); background:rgba(255,255,255,.06); }
-  a.cx-card:focus-visible{ outline:2px solid #5FD1B8; outline-offset:2px; }
-  .cx-dir{ font-family:'DM Mono',monospace; font-size:11px; letter-spacing:.04em; text-transform:uppercase; color:#8FA0BE; }
-  .cx-name{ font-size:16px; font-weight:600; color:#fff; }
-  .cx-sum{ font-size:13px; color:#8FA0BE; }
-  .cx-rel{ align-self:flex-start; margin-top:4px; font-family:'DM Mono',monospace; font-size:10px; letter-spacing:.04em; text-transform:uppercase; color:#C4B5FD; background:rgba(124,58,237,.18); padding:3px 8px; border-radius:99px; }
-  .cx-next{ text-align:right; align-items:flex-end; }
-  .cx-next .cx-rel{ align-self:flex-end; }
-  .cx-all{ justify-content:center; align-items:center; text-align:center; }
-  .cx-edge{ justify-content:center; border-style:dashed; background:none; }
-  .cx-edge .cx-name{ font-size:14px; font-weight:500; color:#6B7A96; }
-  @media (max-width:720px){
-    .cx{ padding:32px 18px 36px; }
-    .cx-grid{ grid-template-columns:1fr; }
-    .cx-next{ text-align:left; align-items:flex-start; }
-    .cx-next .cx-rel{ align-self:flex-start; }
-    .cx-all{ order:3; align-items:flex-start; text-align:left; }
-    .cx-edge{ display:none; }
-  }
-</style>
-<div class="cx" role="navigation" aria-labelledby="cx-h">
-  <div class="cx-in">
-  <div class="cx-hd"><h2 class="cx-k" id="cx-h">Continue explorando</h2><span class="cx-pos">Projeto 4 de 6</span></div>
-  <div class="cx-grid">
-    <a class="cx-card cx-prev" href="/motor-triagem/"><span class="cx-dir">← Anterior</span><span class="cx-name">Motor de Triagem de Divergências</span><span class="cx-sum">Diagnóstico de divergências backoffice × fatura</span></a>
-    <a class="cx-card cx-all" href="/#projetos"><span class="cx-dir">Portfólio</span><span class="cx-name">Todos os projetos</span></a>
-    <a class="cx-card cx-next" href="/formpilot/"><span class="cx-dir">Próximo →</span><span class="cx-name">FormPilot</span><span class="cx-sum">Formulário de movimentação até a assinatura · etapa 2</span><span class="cx-rel">evolução deste projeto</span></a>
-  </div>
-  </div>
-</div>
-
+<script>
+/* Seções de texto: cada fio se desenha uma vez, quando entra na tela (o padrão de Documentos Verificáveis). */
+(function(){
+  var els = document.querySelectorAll(".ln, .cols");   /* .end-row: ../assets/case/case.js */
+  if(!("IntersectionObserver" in window) || document.documentElement.classList.contains("static")){ Array.prototype.forEach.call(els, function(l){ l.classList.add("on"); }); return; }
+  Array.prototype.forEach.call(els, function(l){
+    var o = new IntersectionObserver(function(en){ if(en[0].isIntersecting){ l.classList.add("on"); o.disconnect(); } }, { rootMargin: "0px 0px -20% 0px" });
+    o.observe(l);
+  });
+})();
+</script>
+<script src="../assets/case/case.js"></script>
 </body>
 </html>
