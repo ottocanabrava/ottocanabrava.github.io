@@ -1,35 +1,26 @@
 /* =====================================================================
    Componentes compartilhados dos cases do portfólio — estilo
    Fonte de verdade: documentos-verificaveis/index.html, de onde estas regras
-   foram EXTRAÍDAS (mesmos valores, mesma ordem). Acréscimo posterior: o modo isolado
-   (.case-isolado), que só vale para páginas com identidade própria e não muda nada
-   em Documentos Verificáveis.
+   foram EXTRAÍDAS sem alteração (mesmos valores, mesma ordem).
    Uso, o que pode variar e o que não deve ser duplicado: .claude/template-de-cases.md
    Não copie estas regras para dentro de uma página: ligue este arquivo.
    ===================================================================== */
 
-/* ---------- base: tokens (claro e escuro), página, foco ----------
-   Página com identidade própria (ex.: FormPilot): <html class="case-isolado">.
-   Ela recebe só os componentes (topo e fechamento), que trazem as próprias cores, fonte e
-   herança tipográfica; a página não recebe a base abaixo nem o modo escuro.
-   Raízes dos componentes: body > header.nav, section.tx-end, footer.foot. Uso: .claude/template-de-cases.md */
-  :root:not(.case-isolado), :where(.case-isolado) :where(body > header.nav, section.tx-end, footer.foot){
+/* ---------- base: tokens (claro e escuro), página, foco ---------- */
+  :root{
     --bg:#F7F7F5; --ink:#0E0F12; --ink-2:#4A4D55; --ink-3:#8A8D95; --ink-4:#C4C6CB; --line:#E2E3E0;
     --fire:#E5482A;
     --ease:cubic-bezier(.22,.61,.36,1);
+    color-scheme:light dark;
   }
-  :root:not(.case-isolado){ color-scheme:light dark; }
   @media (prefers-color-scheme: dark){
-    :root:not(.case-isolado){ --bg:#0C0D0F; --ink:#EDEDEA; --ink-2:#B4B6BB; --ink-3:#7C7F87; --ink-4:#3A3C42; --line:#1E2024; --fire:#F2583A; }
+    :root{ --bg:#0C0D0F; --ink:#EDEDEA; --ink-2:#B4B6BB; --ink-3:#7C7F87; --ink-4:#3A3C42; --line:#1E2024; --fire:#F2583A; }
   }
   *{ box-sizing:border-box; }
-  :where(html:not(.case-isolado)), :where(.case-isolado) :where(body > header.nav, section.tx-end, footer.foot){ -webkit-text-size-adjust:100%; }
-  :where(html:not(.case-isolado)) body, :where(.case-isolado) :where(body > header.nav, section.tx-end, footer.foot){ margin:0; background:var(--bg); color:var(--ink); font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased; }
-  :where(html:not(.case-isolado)) body{ overflow-x:clip; }
-  /* herança tipográfica das raízes isoladas: os valores efetivos medidos em Documentos Verificáveis */
-  :where(.case-isolado) :where(body > header.nav, section.tx-end, footer.foot){ font-size:medium; font-weight:400; font-style:normal; line-height:normal; letter-spacing:normal; word-spacing:normal; text-align:start; text-transform:none; text-indent:0; }
-  :where(html:not(.case-isolado)) a, :where(.case-isolado) :where(body > header.nav, section.tx-end, footer.foot) a{ color:inherit; text-decoration:none; }
-  :where(html:not(.case-isolado)) :focus-visible, .case-isolado :is(body > header.nav, section.tx-end, footer.foot) :focus-visible{ outline:2px solid var(--fire); outline-offset:4px; border-radius:2px; }
+  html{ -webkit-text-size-adjust:100%; }
+  body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--fire); outline-offset:4px; border-radius:2px; }
   .mono{ font-family:"Geist Mono",ui-monospace,monospace; }
   .sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
 
@@ -39,8 +30,6 @@
   .nav b{ font-weight:500; letter-spacing:-.01em; }
   .nav nav{ display:flex; gap:28px; color:var(--ink-2); }
   .nav nav a:hover{ color:var(--ink); }
-  /* página isolada: o topo fica no fluxo e rola com a página (não flutua sobre seções escuras) */
-  .case-isolado body > header.nav{ position:relative; }
 
 /* ---------- fechamento "Sobre o projeto": rótulo, texto editorial, link, fio → ponto → saída ---------- */
   .tx{ padding:clamp(96px,14vh,160px) clamp(20px,6vw,96px) 0; }

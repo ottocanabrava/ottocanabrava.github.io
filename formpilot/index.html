@@ -1,755 +1,658 @@
 <!DOCTYPE html>
-<html lang="pt-BR" class="case-isolado">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>FormPilot — Demo de Portfólio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FormPilot · Otto Canabrava</title>
+<meta name="description" content="FormPilot: um painel que lê o pedido de movimentação, identifica a operadora e o tipo de solicitação, monta o formulário certo e encaminha para assinatura. Demonstração com empresa, operadoras e pessoas fictícias.">
+<meta name="theme-color" content="#F7F7F5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
 <script>document.documentElement.classList.add("js");</script>
-<!-- Componentes compartilhados dos cases (topo e fechamento), em modo isolado (class="case-isolado" no <html>):
-     esta página mantém a identidade própria. Fonte e uso: .claude/template-de-cases.md -->
+<!-- Componentes compartilhados dos cases (topo, fechamento, base). Fonte e uso: .claude/template-de-cases.md -->
 <link rel="stylesheet" href="../assets/case/case.css">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: 'DM Sans', system-ui, sans-serif;
-  background: var(--paper); color: var(--ink);
-  line-height: 1.6; -webkit-font-smoothing: antialiased;
-}
-:root {
-  --paper: #ECEEF2; --surf: #FFFFFF;
-  --line: #E5E7EB; --line-md: #D1D5DB;
-  --ink: #111827; --ink-2: #6B7280; --ink-3: #9CA3AF;
-  --dark: #131D2E; --dark2: #1A2740; --dark3: #2B3B57;
-  --dt1: #F1F5F9; --dt2: #CBD5E1; --dt3: #64748B;
-  --accent: #16A34A; --accent2: #15803D;
-  --accent-l: #F0FDF4; --accent-m: #BBF7D0;
-  --warn: #DC2626; --warn-l: #FEF2F2;
-  --purple: #7C3AED; --purple-l: #EDE9FE;
-  --r-s: 4px; --r: 9px; --r-l: 15px;
-  --sh: 0 3px 10px -3px rgba(17,24,39,.14), 0 1px 3px rgba(17,24,39,.08);
-  --sh-lg: 0 22px 44px -12px rgba(17,24,39,.24), 0 6px 16px -6px rgba(17,24,39,.12);
-}
-.wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  /* Específico deste case. Tokens, topo e fechamento vêm de ../assets/case/case.css.
+     A linguagem (abertura, superfície da demo, fios, seções de texto) é a de Documentos Verificáveis:
+     preto, branco e o vermelho só no instante em que algo acontece. Cor própria, só no formulário da operadora. */
 
-/* Índice da página, no fim do hero: os acessos que ficavam na barra antiga (mesmos valores de .nav-a e .nav-cta).
-   O topo é o componente compartilhado (../assets/case/case.css). */
-.hero-idx { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 40px; }
-.hero-idx a { padding: 6px 12px; border-radius: var(--r-s); font-size: .8125rem; font-weight: 500; color: var(--dt2); text-decoration: none; transition: color .12s, background .12s; }
-.hero-idx a:hover { color: var(--dt1); background: var(--dark2); }
-.hero-idx .hero-cta { padding: 6px 15px; border-radius: var(--r-s); background: var(--accent); color: #fff; font-size: .8125rem; font-weight: 600; text-decoration: none; transition: background .12s; }
-.hero-idx .hero-cta:hover { color: #fff; background: var(--accent2); }
+  .dm-sec{ padding:calc(64px + clamp(40px,8vh,96px)) 0 0; }
+  .dm-hd{ padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
+  .dm-hd .ix{ font-size:.875rem; color:var(--ink-3); }
+  .dm-hd .ix a{ color:var(--ink-2); text-decoration:underline; text-decoration-color:var(--ink-4); text-underline-offset:4px; }
+  .dm-hd .ix a:hover{ color:var(--ink); text-decoration-color:currentColor; }
+  .dm-hd h1{ margin:.5em 0 0; font-size:clamp(1.75rem,3.4vw,3.25rem); font-weight:500; letter-spacing:-.04em; line-height:1.04; max-width:22ch; }
+  .dm-hd p{ margin:1em 0 0; font-size:clamp(1rem,1.5vw,1.375rem); line-height:1.45; color:var(--ink-2); max-width:44ch; }
+  .dm-hd .fic{ font-size:.875rem; color:var(--ink-3); max-width:72ch; line-height:1.5; }
+  .facts{ display:grid; grid-template-columns:repeat(3,minmax(0,15em)); gap:clamp(20px,3vw,48px); margin:clamp(28px,4vw,44px) 0 0; padding:0; }
+  .facts div{ border-top:1px solid var(--line); padding-top:14px; }
+  .facts dt{ font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
+  .facts dd{ margin:6px 0 0; font-size:.875rem; color:var(--ink-3); line-height:1.45; }
+  .idx{ display:flex; flex-wrap:wrap; gap:6px 20px; margin:clamp(24px,3vw,36px) 0 0; font-size:.875rem; color:var(--ink-3); }
+  .idx a{ color:var(--ink-2); text-decoration:underline; text-decoration-color:var(--ink-4); text-underline-offset:4px; }
+  .idx a:hover{ color:var(--ink); text-decoration-color:currentColor; }
 
-/* Hero */
-.hero { background: var(--dark); padding: 76px 24px 62px; border-bottom: 1px solid var(--dark3); background-image: radial-gradient(circle at 88% 8%, rgba(14,124,107,.16), transparent 46%); }
-.hero-in { max-width: 1100px; margin: 0 auto; }
-.hero-chips { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
-.chip { display: inline-flex; align-items: center; padding: 4px 11px; border-radius: 9999px; font-family: 'DM Mono', monospace; font-size: .6875rem; font-weight: 500; }
-.chip-bd  { border: 1px solid var(--dark3); color: var(--dt2); }
-.chip-ac { background: rgba(14,124,107,.18); color: #5FD1B8; border: 1px solid rgba(14,124,107,.32); }
-.hero h1 { font-family: 'DM Sans', sans-serif; font-size: clamp(2.375rem, 4.6vw, 3.75rem); font-weight: 600; line-height: 1.14; letter-spacing: -.015em; color: var(--dt1); margin-bottom: 20px; max-width: 640px; }
-.hero-sub { font-size: 1.0625rem; color: var(--dt2); max-width: 500px; line-height: 1.65; margin-bottom: 14px; }
-.hero-role { font-family: 'DM Mono', monospace; font-size: .8125rem; color: var(--dt3); max-width: 500px; line-height: 1.5; margin-bottom: 46px; }
-.hero-facts { display: flex; gap: 0; padding-top: 32px; border-top: 1px solid var(--dark3); flex-wrap: wrap; }
-.hf { padding-right: 34px; margin-right: 34px; border-right: 1px solid var(--dark3); }
-.hf:last-child { border-right: none; padding-right: 0; margin-right: 0; }
-.hf-val { font-family: 'DM Sans', sans-serif; font-size: 1.75rem; font-weight: 600; color: var(--dt1); letter-spacing: -.01em; line-height: 1; margin-bottom: 5px; }
-.hf-lbl { font-size: .75rem; color: var(--dt3); line-height: 1.4; max-width: 130px; }
+  /* ============ superfície de trabalho: fila → chamado → painel → formulário (sempre clara, como em Documentos Verificáveis) ============ */
+  .sf{
+    --u-ink:#111318; --u-2:#4B4F58; --u-3:#8C9099; --u-line:#E6E7EA; --u-soft:#F4F5F6; --hit:#FFF1E8;
+    position:relative; margin:0 clamp(12px,2.4vw,40px);
+    background:#fff; color:var(--u-ink); border-radius:20px;
+    box-shadow:0 0 0 1px rgba(14,15,18,.06), 0 40px 100px -50px rgba(14,15,18,.3);
+    font-size:14px; line-height:1.45;
+  }
+  .dm{ display:grid; grid-template-columns:minmax(0,1fr) 280px minmax(0,1.15fr); grid-template-areas:"bar bar bar" "q q q" "tk pn dc"; column-gap:clamp(24px,2.6vw,40px); padding:clamp(18px,2vw,28px); }
+  .th{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:3; }
+  .th path{ fill:none; stroke:var(--u-ink); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+  .th circle{ fill:var(--u-ink); }
+  .th circle.end.now{ fill:var(--fire); }
+  .th circle.pend{ opacity:0; }
+  @keyframes show{ to{ opacity:1; } }
+  @keyframes rise{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
 
-/* Section header */
-.sec { padding: 68px 0; }
-.sh { margin-bottom: 38px; max-width: 620px; }
-.sh h2 { font-family: 'DM Sans', sans-serif; font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 600; letter-spacing: -.015em; line-height: 1.16; color: var(--ink); margin-bottom: 12px; }
-.sh p { font-size: .9375rem; color: var(--ink-2); line-height: 1.65; }
-.stag { font-size: .8125rem; font-weight: 600; color: var(--accent2); display: block; margin-bottom: 12px; }
-.hiw-bg .stag { color: #5FD1B8; }
+  .lb{ display:block; font-size:12px; color:var(--u-3); margin-bottom:10px; }
+  .bar{ grid-area:bar; display:flex; align-items:baseline; gap:12px 24px; flex-wrap:wrap; margin-bottom:10px; }
+  .bar .lb{ margin:0; }
+  .bar .py{ font-size:12px; color:var(--u-2); }
+  .rs{ margin-left:auto; font:inherit; font-size:12px; color:var(--u-2); background:none; border:0; padding:4px 0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--u-line); text-underline-offset:3px; }
+  .rs:hover{ color:var(--u-ink); text-decoration-color:currentColor; }
 
-/* Demo */
-.demo-bg { background: var(--surf); border-bottom: 1px solid var(--line); }
-.demo-grid { display: grid; grid-template-columns: 228px 1fr 280px; gap: 16px; align-items: start; }
+  /* fila de chamados: as linhas são a fonte, como a planilha em Documentos Verificáveis */
+  .q{ grid-area:q; border:1px solid var(--u-line); border-radius:12px; overflow:hidden; margin-bottom:clamp(24px,3vw,36px); --cols:5.4em minmax(12em,1.5fr) minmax(10em,1fr) 7.4em minmax(10.5em,.9fr); }
+  .r{ position:relative; display:grid; grid-template-columns:var(--cols); border-bottom:1px solid var(--u-line); }
+  .r:last-child{ border-bottom:0; }
+  .r > *{ padding:.62em .65em; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-right:1px solid var(--u-line); color:var(--u-2); font-size:13px; }
+  .r > *:last-child{ border-right:0; }
+  .r.h > *{ font-family:"Geist Mono",ui-monospace,monospace; font-size:11px; color:var(--u-3); padding-block:.6em; background:var(--u-soft); }
+  .r.d{ cursor:pointer; }
+  .r.d:hover{ background:var(--u-soft); }
+  .r.d:hover::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:#B9BCC3; }
+  .r.d[aria-selected="true"]{ background:var(--u-soft); }
+  .r.d[aria-selected="true"]::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--u-ink); }
+  .r .c-id{ font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; }
+  .r .c-as{ color:var(--u-ink); }
+  .pick{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-align:left; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration:underline; text-decoration-color:#B9BCC3; text-decoration-thickness:1px; text-underline-offset:3px; transition:text-decoration-color .2s; }
+  .r.d:hover .pick, .pick:focus-visible, .r.d[aria-selected="true"] .pick{ text-decoration-color:var(--u-ink); }
+  .r .hit{ background:var(--hit); color:var(--u-ink); }
+  .r .hit.late{ animation:cell .45s var(--ease) .62s both; }
+  @keyframes cell{ from{ background:transparent; color:transparent; } to{ background:var(--hit); color:var(--u-ink); } }
 
-/* Queue */
-.q-col { display: flex; flex-direction: column; gap: 8px; }
-.q-hd { font-size: .6875rem; font-weight: 600; color: var(--ink-3); padding: 0 3px; margin-bottom: 2px; }
-.qc { background: var(--surf); border: 1.5px solid var(--line); border-radius: var(--r); padding: 12px 14px; cursor: pointer; transition: border-color .14s, box-shadow .14s; user-select: none; }
-.qc:hover { border-color: var(--line-md); box-shadow: var(--sh); }
-.qc.on { border-color: var(--accent); border-left-width: 3px; padding-left: 12px; box-shadow: 0 0 0 3px rgba(14,124,107,.1); }
-.qc-id { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--ink-3); margin-bottom: 4px; }
-.qc.on .qc-id { color: var(--accent2); }
-.qc-sub { font-size: .8125rem; font-weight: 600; line-height: 1.32; color: var(--ink); margin-bottom: 8px; }
-.qc-op { font-size: .6875rem; color: var(--ink-2); }
+  /* chamado */
+  .tk{ grid-area:tk; min-width:0; }
+  .tk-url{ font-family:"Geist Mono",ui-monospace,monospace; font-size:11px; color:var(--u-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .tk-as{ margin-top:6px; font-size:18px; font-weight:500; letter-spacing:-.02em; line-height:1.2; }
+  .tk-de{ margin-top:.35em; color:var(--u-2); }
+  .tk-body{ margin:14px 0 0; padding:12px 0 0; border-top:1px solid var(--u-line); color:var(--u-ink); font-size:14px; line-height:1.6; max-width:52ch; }
+  .tk-in > *{ animation:rise .35s var(--ease) both; }
+  .tk-body mark{ background:none; color:inherit; border-radius:3px; padding:0 .1em; margin:0 -.1em; }
+  .tk-body.reading mark{ animation:read 1.15s var(--ease) both; }
+  .tk-body.reading mark:nth-of-type(2){ animation-delay:.15s; } .tk-body.reading mark:nth-of-type(3){ animation-delay:.3s; } .tk-body.reading mark:nth-of-type(4){ animation-delay:.45s; }
+  @keyframes read{ 0%{ background:transparent; } 30%, 100%{ background:var(--hit); } }
+  .tk-body.read mark{ background:var(--hit); }
+  .empty{ color:var(--u-3); }
 
-/* Ticket viewer */
-.tv { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; box-shadow: var(--sh); }
-.tv-chrome { background: var(--dark); padding: 10px 14px; display: flex; align-items: center; gap: 8px; }
-.tv-dots { display: flex; gap: 5px; }
-.tv-dot { width: 8px; height: 8px; border-radius: 50%; }
-.tv-url { flex: 1; background: rgba(255,255,255,.07); border-radius: 4px; padding: 4px 10px; margin: 0 8px; font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--dt3); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tv-ext-btn { width: 24px; height: 24px; background: var(--accent); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: .8125rem; cursor: pointer; flex-shrink: 0; transition: background .12s; color: #fff; }
-.tv-ext-btn:hover { background: var(--accent2); }
-.tv-hd { padding: 14px 18px 12px; border-bottom: 1px solid var(--line); background: var(--paper); }
-.tv-id { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--ink-3); margin-bottom: 4px; }
-.tv-sub { font-size: .9375rem; font-weight: 700; color: var(--ink); margin-bottom: 8px; }
-.tv-tags { display: flex; gap: 6px; flex-wrap: wrap; }
-.tv-tag { font-size: .6875rem; font-weight: 600; padding: 3px 9px; border-radius: 9999px; }
-.tv-msg { padding: 15px 18px; border-bottom: 1px solid var(--line); }
-.tv-from { font-size: .8125rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
-.tv-when { font-family: 'DM Mono', monospace; font-size: .625rem; color: var(--ink-3); margin-bottom: 10px; }
-.tv-body { font-size: .875rem; color: var(--ink-2); line-height: 1.65; }
-.tv-doc { padding: 15px 18px; }
-.tv-doc-lbl { font-size: .6875rem; font-weight: 600; color: var(--ink-3); margin-bottom: 9px; }
-.tv-paper { border: 1.5px dashed var(--line-md); border-radius: var(--r-s); padding: 14px 16px; position: relative; overflow: hidden; transition: border-color .3s, background .3s; }
-.tv-paper.ready { border-style: solid; border-color: var(--accent-m); background: var(--accent-l); }
-.tv-pl { height: 8px; background: var(--line); border-radius: 3px; margin-bottom: 8px; transition: background .3s; }
-.tv-pl:last-child { margin-bottom: 0; width: 62%; }
-.tv-paper.ready .tv-pl { background: var(--accent-m); }
-.tv-stamp { position: absolute; right: 12px; top: 10px; border: 2px solid var(--accent); color: var(--accent2); font-family: 'DM Mono', monospace; font-size: .5625rem; font-weight: 700; letter-spacing: .06em; padding: 3px 8px; border-radius: 4px; transform: rotate(-6deg); opacity: 0; transition: opacity .3s; background: #fff; }
-.tv-paper.ready .tv-stamp { opacity: 1; }
-.tv-empty { font-size: .8125rem; color: var(--ink-3); font-style: italic; text-align: center; padding: 6px 0; }
-.tv-sent { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: .8125rem; font-weight: 600; color: var(--accent2); opacity: 0; transition: opacity .3s; }
-.tv-sent.vis { opacity: 1; }
-.ok-ck { width: 17px; height: 17px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: .5625rem; flex-shrink: 0; }
+  /* painel do FormPilot: a extensão, hoje app nativo da ferramenta de atendimento */
+  .pn{ grid-area:pn; min-width:0; display:flex; flex-direction:column; }
+  .who{ font-size:15px; font-weight:500; letter-spacing:-.01em; }
+  .meta{ color:var(--u-2); margin-top:.25em; font-size:13px; }
+  .acts{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .bt{ font:inherit; font-size:13px; font-weight:500; padding:.5em .9em; min-height:34px; border-radius:99px; border:1px solid var(--u-ink); background:#fff; color:var(--u-ink); cursor:pointer; white-space:nowrap; transition:background-color .25s, color .25s, transform .12s; }
+  .bt:hover{ background:var(--u-soft); }
+  .bt:active:not(:disabled){ transform:translateY(1px); }
+  .bt.pri{ background:var(--u-ink); color:#fff; }
+  .bt.pri:hover{ background:#2C2F36; }
+  .bt.big{ font-size:14px; padding:.62em 1.2em; min-height:40px; }
+  .bt[aria-busy="true"]{ cursor:progress; }
+  .bt:disabled{ opacity:.45; cursor:default; }
+  .pnl{ margin-top:14px; padding-top:12px; border-top:1px solid var(--u-line); }
+  .pnl.in{ animation:rise .3s var(--ease); }
+  .idf{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:.35em .9em; font-size:13px; }
+  .idf dt{ color:var(--u-3); }
+  .idf dd{ margin:0; font-weight:500; min-width:0; overflow-wrap:anywhere; }
+  .idf.in dt, .idf.in dd{ animation:rise .3s var(--ease) both; }
+  .idf.in dt:nth-of-type(2), .idf.in dd:nth-of-type(2){ animation-delay:.1s; } .idf.in dt:nth-of-type(3), .idf.in dd:nth-of-type(3){ animation-delay:.2s; }
+  .cks{ list-style:none; margin:0; padding:0; }
+  .cks li{ display:flex; gap:.6em; padding:.3em 0; font-size:13px; color:var(--u-2); opacity:0; animation:show .2s forwards; }
+  .cks.done li{ opacity:1; animation:none; }
+  .cks li b{ font-weight:500; color:var(--u-ink); }
+  .cks .m{ flex-shrink:0; width:1em; text-align:center; color:var(--u-ink); }
+  .cks .m i{ display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--fire); }
+  .sent{ font-size:13px; color:var(--u-2); }
+  .sent .s{ margin:0 0 .4em; font-weight:500; font-size:15px; color:var(--u-ink); display:flex; align-items:center; gap:.45em; }
+  .sent .s i{ width:7px; height:7px; border-radius:50%; background:var(--fire); flex-shrink:0; }
+  .sent .mono{ display:block; margin-top:.5em; font-size:12px; color:var(--u-3); }
+  .sent.late{ animation:rise .35s var(--ease) .7s both; }
 
-/* Extension panel */
-.ep { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; box-shadow: var(--sh-lg); background: var(--surf); position: sticky; top: 14px; }
-.ep-hd { background: var(--dark); padding: 11px 14px; display: flex; align-items: center; justify-content: space-between; }
-.ep-brand { display: flex; align-items: center; gap: 8px; color: #fff; }
-.ep-ico { width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--dt1); display: flex; align-items: center; justify-content: center; font-size: .625rem; font-family: 'DM Mono', monospace; font-weight: 700; color: var(--dt1); }
-.ep-name { font-weight: 700; font-size: .9375rem; letter-spacing: -.005em; }
-.ep-ver { font-family: 'DM Mono', monospace; font-size: .5625rem; color: var(--dt3); }
-.ep-body { padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 200px; }
-.ep-lbl { font-size: .6875rem; font-weight: 600; color: var(--ink-3); margin-bottom: 6px; display: block; }
-.ep-idle { padding: 18px 6px; text-align: center; }
-.ep-idle-ico { display: block; margin-bottom: 10px; }
-.ep-idle-ico svg { width: 28px; height: 28px; }
-.ep-idle-txt { font-size: .8125rem; color: var(--ink-2); line-height: 1.55; }
-.ep-abtn { width: 100%; padding: 10px; background: var(--dark); color: var(--dt1); border: none; border-radius: var(--r-s); font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 600; cursor: pointer; transition: background .12s; }
-.ep-abtn:hover { background: var(--dark2); }
-.ep-abtn:disabled { background: var(--ink-3); cursor: not-allowed; }
-.ep-scan { padding: 16px 6px; text-align: center; }
-.ep-scan-bar { height: 3px; background: var(--line); border-radius: 9999px; overflow: hidden; margin-bottom: 9px; }
-.ep-scan-fill { height: 100%; background: var(--accent); border-radius: 9999px; animation: sfill 1.2s cubic-bezier(.4,0,.2,1) forwards; }
-@keyframes sfill { from { width: 0 } to { width: 100% } }
-.ep-scan-txt { font-size: .75rem; color: var(--ink-3); font-style: italic; }
-.ep-fields { display: flex; flex-direction: column; gap: 6px; }
-.ep-field { display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; border-radius: var(--r-s); background: var(--paper); border: 1px solid var(--line); }
-.ep-fk { font-size: .625rem; font-weight: 600; color: var(--ink-3); margin-bottom: 2px; }
-.ep-fv { font-size: .8125rem; font-weight: 700; color: var(--ink); }
-.ep-fchk { font-size: .875rem; color: var(--accent); flex-shrink: 0; }
-.ep-ibtn { width: 100%; padding: 10px; background: var(--accent); color: #fff; border: none; border-radius: var(--r-s); font-family: 'DM Sans', sans-serif; font-size: .875rem; font-weight: 700; cursor: pointer; transition: background .12s; }
-.ep-ibtn:hover { background: var(--accent2); }
-.ep-suc { background: var(--accent-l); margin: -12px; padding: 24px 15px; text-align: center; }
-.ep-suc-ico { display: block; margin-bottom: 8px; }
-.ep-suc-ico svg { width: 26px; height: 26px; }
-.ep-suc-ttl { font-weight: 700; font-size: .9375rem; color: var(--accent2); }
-.ep-suc-sub { font-size: .75rem; color: #166534; margin-top: 4px; line-height: 1.55; }
-.ep-proto { font-family: 'DM Mono', monospace; font-size: .6875rem; color: #166534; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--accent-m); }
-.ep-ft { border-top: 1px solid var(--line); padding: 7px 12px; display: flex; align-items: center; justify-content: space-between; }
-.ep-ft-a { font-size: .625rem; color: var(--ink-3); cursor: pointer; font-weight: 500; }
-.ep-ft-a:hover { color: var(--accent); }
+  /* o que o painel fez */
+  .steps{ list-style:none; margin:0; padding:0; }
+  .steps li{ position:relative; padding:0 0 .7em 20px; font-size:12.5px; color:var(--u-2); line-height:1.4; }
+  .steps li::before{ content:""; position:absolute; left:2px; top:.42em; width:7px; height:7px; border-radius:50%; background:var(--u-ink); }
+  .steps li::after{ content:""; position:absolute; left:5px; top:1.15em; bottom:-.1em; border-left:1px solid var(--u-line); }
+  .steps li:last-child::after{ display:none; }
+  .steps li b{ display:block; font-weight:500; color:var(--u-ink); }
+  .steps li.end::before{ background:var(--fire); }
+  .steps li.skip{ color:var(--u-3); }
+  .steps li.skip b{ color:var(--u-3); font-weight:400; }
+  .steps li.skip::before{ background:var(--u-line); }
+  .steps li.in{ animation:rise .3s var(--ease) .35s both; }
 
-/* Problem */
-.prob-bg { background: var(--paper); }
-.ba-grid { display: grid; grid-template-columns: 1fr 46px 1fr; gap: 20px; align-items: center; margin-top: 40px; }
-.ba-lbl { font-family: 'DM Mono', monospace; font-size: .6875rem; font-weight: 600; display: block; margin-bottom: 11px; }
-.ba-lbl.before { color: var(--warn); }
-.ba-lbl.after  { color: var(--accent2); }
-.ba-steps { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; background: var(--surf); }
-.ba-step { display: flex; align-items: flex-start; gap: 11px; padding: 13px 16px; border-bottom: 1px solid var(--line); }
-.ba-step:last-child { border-bottom: none; }
-.ba-si { width: 22px; height: 22px; flex-shrink: 0; margin-top: 1px; display: flex; align-items: center; justify-content: center; }
-.ba-si svg { width: 16px; height: 16px; }
-.ba-st { font-weight: 600; font-size: .875rem; color: var(--ink); margin-bottom: 2px; }
-.ba-sd { font-size: .8125rem; color: var(--ink-2); line-height: 1.5; }
-.ba-step.pain { background: var(--warn-l); }
-.ba-step.pain .ba-st { color: var(--warn); }
-.ba-step.pain .ba-si svg { stroke: var(--warn); }
-.ba-arr { display: flex; justify-content: center; align-items: center; font-size: 1.375rem; color: var(--ink-3); }
-.ba-after { border: 1.5px solid var(--accent-m); border-radius: var(--r-l); overflow: hidden; background: var(--surf); }
-.ba-after-top { padding: 26px 22px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
-.ba-num-s { font-size: .9375rem; color: var(--ink-2); line-height: 1.45; max-width: 280px; }
-.ba-after-ft { background: var(--accent-l); padding: 11px 22px; font-size: .8125rem; color: #166534; font-weight: 500; text-align: center; }
-.ba-note { margin-top: 13px; padding: 13px 16px; background: var(--surf); border: 1px solid var(--line); border-radius: var(--r); font-size: .8125rem; color: var(--ink-2); line-height: 1.6; }
-.ba-note strong { display: block; color: var(--ink); margin-bottom: 3px; font-weight: 600; }
-.ba-flow { font-family: 'DM Mono', monospace; font-weight: 600; font-size: 1.125rem; color: var(--accent2); letter-spacing: -.01em; }
-.ba-time { margin-top: 12px; padding: 10px 14px; border-radius: var(--r); font-family: 'DM Mono', monospace; font-size: .8125rem; display: flex; align-items: baseline; gap: 7px; }
-.ba-time b { font-size: 1.0625rem; }
-.ba-time.before { background: var(--warn-l); color: var(--warn); }
-.ba-time.after { background: var(--accent-l); color: var(--accent2); }
+  /* formulário da operadora: o único lugar com cor própria (a da operadora, fictícia) */
+  .dc{ grid-area:dc; min-width:0; display:flex; flex-direction:column; }
+  .void{ flex:1; min-height:300px; border:1px dashed var(--u-line); border-radius:6px; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; color:var(--u-3); font-size:13px; }
+  .fm{ --op:#111318; position:relative; background:#FEFEFD; border-radius:4px; box-shadow:0 0 0 1px var(--u-line), 0 30px 70px -40px rgba(17,19,24,.4); padding:22px 24px 24px; font-size:12.5px; }
+  .fm.pre{ clip-path:inset(0 0 100% 0); }
+  .fm.wipe{ animation:wipe .6s var(--ease) both; }
+  @keyframes wipe{ from{ clip-path:inset(0 0 100% 0); } to{ clip-path:inset(0 0 0 0); } }
+  .fm-hd{ display:flex; justify-content:space-between; align-items:flex-start; gap:12px; padding-bottom:12px; border-bottom:2px solid var(--op); }
+  .fm-op{ font-size:15px; font-weight:600; letter-spacing:-.01em; color:var(--op); }
+  .fm-t{ margin-top:2px; font-size:11.5px; color:#5B5F68; }
+  .fm-pr{ font-family:"Geist Mono",ui-monospace,monospace; font-size:10.5px; color:#5B5F68; text-align:right; white-space:nowrap; }
+  .fm-g{ margin:16px 0 0; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px 20px; }
+  .fm-g div{ min-width:0; }
+  .fm-g dt{ font-family:"Geist Mono",ui-monospace,monospace; font-size:9.5px; letter-spacing:.04em; text-transform:uppercase; color:#8C9099; }
+  .fm-g dd{ margin:3px 0 0; padding-bottom:5px; border-bottom:1px solid #E6E7EA; font-size:13px; font-weight:500; color:#111318; overflow-wrap:anywhere; }
+  .fm-sg{ margin-top:22px; display:flex; gap:24px; }
+  .fm-sg span{ flex:1; padding-top:28px; border-bottom:1px solid #8C9099; }
+  .fm-sg small{ display:block; margin-top:6px; font-family:"Geist Mono",ui-monospace,monospace; font-size:9.5px; text-transform:uppercase; letter-spacing:.04em; color:#8C9099; }
+  .fm-st{ position:absolute; right:22px; bottom:62px; transform:rotate(-5deg); border:1.5px solid var(--op); border-radius:4px; padding:4px 8px; font-family:"Geist Mono",ui-monospace,monospace; font-size:10px; letter-spacing:.06em; text-transform:uppercase; color:var(--op); background:rgba(255,255,255,.92); }
+  .fm-st.late{ animation:rise .35s var(--ease) .7s both; }
+  .cap{ margin-top:12px; font-size:12px; color:var(--u-3); line-height:1.5; }
+  .cap b{ font-weight:500; color:var(--u-2); }
+  .note{ grid-column:1/-1; margin:24px 0 0; padding-top:12px; border-top:1px solid var(--u-line); font-size:12px; color:var(--u-3); line-height:1.5; }
 
-/* How it works */
-.hiw-bg { background: var(--dark); }
-.hiw-bg .sh h2 { color: var(--dt1); }
-.hiw-bg .sh p  { color: var(--dt2); }
-.hiw-list { display: flex; flex-direction: column; gap: 0; margin-top: 40px; }
-.hiw-row { display: grid; grid-template-columns: 46px 1fr max-content; gap: 22px; padding: 21px 0; border-bottom: 1px solid var(--dark3); align-items: start; }
-.hiw-row:first-child { border-top: 1px solid var(--dark3); }
-.hiw-n { font-family: 'DM Sans', sans-serif; font-size: 1.375rem; font-weight: 600; color: var(--dark3); padding-top: 1px; }
-.hiw-ttl { font-size: 1.0625rem; font-weight: 700; color: var(--dt1); margin-bottom: 5px; }
-.hiw-desc { font-size: .9375rem; color: var(--dt2); line-height: 1.6; max-width: 540px; }
-.hiw-tag { font-family: 'DM Mono', monospace; font-size: .625rem; font-weight: 500; padding: 5px 9px; border-radius: var(--r-s); background: var(--dark2); border: 1px solid var(--dark3); color: var(--dt2); white-space: nowrap; margin-top: 2px; }
+  /* ============ seções de texto: o mesmo ritmo de Documentos Verificáveis ============ */
+  .tx-lead{ margin:0; font-size:clamp(2.25rem,5.6vw,5.5rem); font-weight:500; letter-spacing:-.05em; line-height:1; max-width:15ch; }
+  .tx-note{ margin:clamp(56px,8vh,88px) 0 0; font-size:clamp(1rem,1.2vw,1.125rem); line-height:1.55; color:var(--ink-3); max-width:60ch; }
+  .tx-note b{ font-weight:500; color:var(--ink-2); }
 
-/* Architecture */
-.arch-bg { background: var(--paper); }
-.arch-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-top: 40px; }
-.arch-card { background: var(--surf); border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; }
-.arch-hd { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
-.arch-ico { width: 38px; height: 38px; border-radius: var(--r); display: flex; align-items: center; justify-content: center; }
-.arch-ico svg { width: 19px; height: 19px; }
-.ico-a { background: var(--accent-l); }
-.ico-b { background: #E5E7EB; }
-.ico-c { background: var(--purple-l); }
-.arch-hd h3 { font-size: 1rem; font-weight: 700; color: var(--ink); }
-.arch-hd p { font-size: .8125rem; color: var(--ink-2); margin-top: 1px; }
-.arch-body { padding: 6px 22px 18px; }
-.arch-row { display: flex; align-items: flex-start; gap: 10px; padding: 11px 0; border-bottom: 1px solid var(--line); }
-.arch-row:last-child { border-bottom: none; }
-.arch-ri { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
-.arch-ri svg { width: 15px; height: 15px; stroke: var(--accent2); }
-.arch-tt { font-size: .875rem; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
-.arch-dd { font-size: .8125rem; color: var(--ink-2); line-height: 1.5; }
+  /* antes × depois: o esforço manual e o que o painel tira dele (o traço chega quando a seção entra) */
+  .cols{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,6vw,96px); margin-top:clamp(64px,9vh,104px); max-width:1100px; }
+  .col-h{ margin:0 0 18px; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
+  .ba{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .ba li{ --i:0; padding:14px 0; border-bottom:1px solid var(--line); transition:opacity .4s var(--ease) calc(var(--i) * 70ms); }
+  .ba b{ display:inline; font-weight:500; font-size:clamp(1rem,1.25vw,1.1875rem); letter-spacing:-.015em; }
+  .ba span{ display:block; margin-top:4px; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.5; color:var(--ink-2); }
+  .ba .off b{ color:var(--ink-3); background:linear-gradient(currentColor, currentColor) 0 55% / 100% 1px no-repeat; transition:background-size .35s var(--ease) calc(.8s + var(--i) * 70ms); }
+  .flow{ margin:0; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.2; padding:14px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .col-p{ margin:14px 0 0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:46ch; }
+  .col-n{ margin:18px 0 0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:44ch; transition:opacity .4s var(--ease) 1.3s; }
+  .col-n b{ font-weight:500; color:var(--ink); }
+  html.js:not(.static) .cols:not(.on) li, html.js:not(.static) .cols:not(.on) .col-n, html.js:not(.static) .cols:not(.on) .flow, html.js:not(.static) .cols:not(.on) .col-p{ opacity:0; }
+  .cols .flow, .cols .col-p{ transition:opacity .4s var(--ease) .5s; }
+  html.js:not(.static) .cols:not(.on) .ba .off b{ background-size:0% 1px; }
 
-/* Decisions */
-.dec-bg { background: var(--surf); border-top: 1px solid var(--line); }
-.dec-table { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; margin-top: 40px; }
-.dec-thead { display: grid; grid-template-columns: 1fr 1fr 1fr; background: var(--dark); }
-.dec-th { padding: 10px 20px; border-right: 1px solid var(--dark3); font-family: 'DM Mono', monospace; font-size: .625rem; font-weight: 600; color: var(--dt3); }
-.dec-th:last-child { border-right: none; }
-.dec-row { display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid var(--line); }
-.dec-cell { padding: 16px 20px; border-right: 1px solid var(--line); font-size: .875rem; line-height: 1.55; }
-.dec-cell:last-child { border-right: none; }
-.dec-cell h4 { font-size: .9375rem; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-.dec-cell p { color: var(--ink-2); }
-.ok  { color: var(--accent2); font-weight: 600; }
-.trd { color: #B45309; font-weight: 600; }
+  /* o fio com pontos em linha: o fio cresce e cada ponto entra quando ele chega; etapas pretas, conclusão vermelha */
+  .ln{ list-style:none; margin:clamp(64px,9vh,104px) 0 0; padding:44px 0 0; display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:clamp(20px,2.6vw,40px); position:relative; max-width:1240px; }
+  .ln::before{ content:""; position:absolute; left:0; right:0; top:21px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.25s cubic-bezier(.45,0,.55,1); }
+  .ln li{ --dl:0s; position:relative; transition:opacity .45s var(--ease) var(--dl), transform .45s var(--ease) var(--dl); }
+  .ln li::before{ content:""; position:absolute; left:0; top:-27px; width:9px; height:9px; border-radius:50%; background:var(--ink); transition:transform .35s var(--ease) var(--dl), background-color .4s var(--ease) var(--dl); }
+  .ln li:nth-child(2){ --dl:.42s; } .ln li:nth-child(3){ --dl:.83s; } .ln li:nth-child(4){ --dl:1.25s; }
+  .ln li:last-child::before{ background:var(--fire); transition:transform .35s var(--ease) var(--dl), background-color .4s var(--ease) 1.5s; }
+  .ln-n{ display:block; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); margin-bottom:14px; }
+  .ln b{ display:block; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; margin-bottom:10px; }
+  .ln li > span:not(.ln-n){ display:block; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.5; }
+  .ln small{ display:block; margin-top:14px; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
+  html.js:not(.static) .ln:not(.on)::before{ transform:scaleX(0); }
+  html.js:not(.static) .ln:not(.on) li{ opacity:0; transform:translateY(8px); }
+  html.js:not(.static) .ln:not(.on) li::before{ transform:scale(.4); }
+  html.js:not(.static) .ln:not(.on) li:last-child::before{ background:var(--ink); }
 
-/* Mapeamento (FormPilot Studio) */
-.map-bg { background: var(--surf); border-top: 1px solid var(--line); }
-.ancora-frame { border: 1px solid var(--line); border-radius: var(--r-l); overflow: hidden; box-shadow: var(--sh); }
-.ancora-bar { background: var(--dark); color: #fff; padding: 10px 16px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px; font-family: 'DM Mono', monospace; font-size: .75rem; }
-.ancora-bar .ancora-tag { color: #8FA0BE; white-space: nowrap; }
-@media (max-width: 480px) { .ancora-bar { font-size: .6875rem; } }
-.ancora-frame iframe { width: 100%; height: 900px; border: 0; display: block; background: #ECEEF2; }
-@media (max-width: 700px) { .ancora-frame iframe { height: 640px; } }
-.ancora-open { text-align: right; margin-top: 10px; }
-.ancora-open a { color: var(--accent); font-weight: 600; font-size: .8125rem; }
-.ancora-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 32px; }
-@media (max-width: 700px) { .ancora-meta { grid-template-columns: 1fr; } }
-.ancora-meta-k { font-family: 'DM Mono', monospace; font-size: .6875rem; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-3); margin-bottom: 6px; }
-.ancora-meta-v { font-size: .875rem; color: var(--ink-2); line-height: 1.6; }
-.ancora-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.ancora-chip { font-family: 'DM Mono', monospace; font-size: .6875rem; padding: 4px 10px; border-radius: 9999px; border: 1px solid var(--line); color: var(--ink-2); background: var(--paper); }
-.ancora-thesis { font-size: 1.0625rem; font-weight: 600; color: var(--ink); margin: 14px 0 0; line-height: 1.5; max-width: 62ch; }
-.ancora-thesis strong { color: var(--accent2); }
-.config-meta-note { font-size: .875rem; color: var(--ink-2); line-height: 1.6; margin-bottom: 20px; background: var(--paper); border-left: 3px solid var(--accent); border-radius: 4px; padding: 12px 16px; max-width: 68ch; }
-.config-meta-note strong { color: var(--ink); }
+  /* três camadas: colunas de linhas, não cartões */
+  .lay{ display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(28px,4vw,64px); margin-top:clamp(64px,9vh,104px); max-width:1240px; }
+  .lay h3{ margin:0; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
+  .lay .mono{ display:block; margin:8px 0 18px; font-size:.75rem; color:var(--ink-3); line-height:1.5; }
+  .lay ul{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .lay li{ padding:14px 0; border-bottom:1px solid var(--line); }
+  .lay li b{ display:block; font-weight:500; font-size:clamp(1rem,1.2vw,1.125rem); letter-spacing:-.015em; }
+  .lay li span{ display:block; margin-top:4px; font-size:clamp(.9375rem,1.05vw,1rem); line-height:1.55; color:var(--ink-2); }
 
-/* Stack */
-.stack-bg { background: var(--paper); border-top: 1px solid var(--line); }
-.pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; }
-.pill { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9999px; border: 1.5px solid var(--line); background: var(--surf); font-size: .875rem; font-weight: 600; color: var(--ink); transition: border-color .12s; }
-.pill:hover { border-color: var(--accent); }
-.pill-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ink-3); }
-.pill-ac .pill-dot { background: var(--accent); }
+  /* mapeamento: o Studio embutido, numa moldura discreta */
+  .thesis{ margin:clamp(40px,6vh,64px) 0 0; font-size:clamp(1.25rem,2vw,1.875rem); font-weight:500; letter-spacing:-.03em; line-height:1.2; max-width:34ch; }
+  .meta-n{ margin:24px 0 0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-3); max-width:68ch; }
+  .meta-n b{ font-weight:500; color:var(--ink-2); }
+  .stu{ margin:clamp(32px,5vh,48px) 0 0; max-width:1240px; }
+  .stu-bar{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; font-size:.8125rem; color:var(--ink-3); margin-bottom:10px; }
+  .stu-frame{ border-radius:14px; overflow:hidden; box-shadow:0 0 0 1px var(--line), 0 40px 100px -60px rgba(14,15,18,.35); background:#F7F7F5; }
+  .stu-frame iframe{ display:block; width:100%; height:900px; border:0; background:#F7F7F5; }
+  .stu-open{ margin:14px 0 0; font-size:clamp(1rem,1.25vw,1.1875rem); }
+  .stu-open a{ color:var(--ink); text-decoration:underline; text-decoration-color:var(--ink-4); text-underline-offset:5px; }
+  .stu-open a:hover{ text-decoration-color:currentColor; }
 
-/* Responsive */
-@media (max-width: 880px) {
-  .demo-grid { grid-template-columns: 1fr; }
-  .q-col { flex-direction: row; flex-wrap: wrap; gap: 8px; }
-  .qc { flex: 1; min-width: 140px; }
-  .ep { position: static; }
-  .ba-grid { grid-template-columns: 1fr; }
-  .ba-arr { transform: rotate(90deg); }
-  .arch-grid { grid-template-columns: 1fr; }
-  .hiw-row { grid-template-columns: 36px 1fr; }
-  .hiw-tag { display: none; }
-  .dec-thead { display: none; }
-  .dec-row { grid-template-columns: 1fr; }
-  .dec-cell { border-right: none; }
-  .hf { margin-right: 20px; padding-right: 20px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .ep-scan-fill { animation: none; width: 100%; }
-}
+  /* decisões e detalhes: linhas, não cartões */
+  .dt{ margin:clamp(48px,7vh,72px) 0 0; max-width:1100px; border-top:1px solid var(--line); }
+  .dt div{ display:grid; grid-template-columns:minmax(0,17em) minmax(0,1fr); gap:24px; padding:20px 0; border-bottom:1px solid var(--line); }
+  .dt dt{ font-weight:500; font-size:clamp(1rem,1.25vw,1.1875rem); letter-spacing:-.015em; }
+  .dt dd{ margin:0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:64ch; }
+  .dt dd small{ display:block; margin-top:8px; font-size:.9em; color:var(--ink-3); }
+  .stk{ margin:32px 0 0; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
+
+  /* abertura: entra discreta; a energia fica para quando a pessoa usa o sistema */
+  @keyframes appear{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+  html.js:not(.static) .dm-hd > *{ animation:appear .6s var(--ease) both; }
+  html.js:not(.static) .dm-hd > :nth-child(2){ animation-delay:.08s; }
+  html.js:not(.static) .dm-hd > :nth-child(3){ animation-delay:.16s; }
+  html.js:not(.static) .dm-hd > :nth-child(n+4){ animation-delay:.24s; }
+
+  @media (max-width:1180px){
+    .dm{ grid-template-columns:minmax(0,1fr) 280px; grid-template-areas:"bar bar" "q q" "tk pn" "dc dc"; }
+    .dc{ margin-top:36px; max-width:640px; }
+    .q{ --cols:5.4em minmax(12em,1.5fr) minmax(10em,1fr) minmax(10.5em,.9fr); }
+    .q .c-ts{ display:none; }
+  }
+  /* coluna única: fila → chamado → painel → formulário, com os fios na vertical */
+  @media (max-width:1023px){
+    .dm{ grid-template-columns:minmax(0,1fr); grid-template-areas:"bar" "q" "tk" "pn" "dc"; }
+    .tk{ margin-bottom:32px; }
+    .dc{ margin-top:32px; }
+  }
+  @media (max-width:900px){
+    .ln{ grid-template-columns:1fr; gap:36px; padding:0 0 0 30px; margin-top:56px; }
+    .ln::before{ left:4px; right:auto; top:7px; bottom:7px; width:1.5px; height:auto; transform-origin:top; }
+    html.js:not(.static) .ln:not(.on)::before{ transform:scaleY(0); }
+    .ln li::before{ left:-30px; top:3px; }
+    .ln li > span:not(.ln-n){ font-size:1rem; max-width:52ch; }
+    .lay{ grid-template-columns:1fr; gap:48px; }
+  }
+  @media (max-width:760px){
+    .facts{ grid-template-columns:1fr; gap:0; }
+    .facts div{ padding:12px 0; }
+    .cols{ grid-template-columns:1fr; gap:56px; }
+    .ba span, .col-n, .col-p, .dt dd, .lay li span{ font-size:1rem; }
+    .dt div{ grid-template-columns:1fr; gap:6px; }
+    .stk{ font-size:.8125rem; }
+    .stu-frame iframe{ height:720px; }
+    .sf{ border-radius:16px; margin:0 10px; font-size:15px; }
+    .dm{ padding:16px 16px 20px; }
+    .q{ --cols:minmax(0,1fr) 8.6em; }
+    .q .c-id, .q .c-em, .q .c-ts{ display:none; }
+    .r > *{ font-size:14px; padding:.8em .8em; }
+    .r.h > *{ font-size:12.5px; }
+    .bt, .idf, .cks li, .steps li, .cap, .note, .meta, .sent{ font-size:14px; }
+    .bar .lb, .bar .py, .rs, .lb, .tk-url{ font-size:13px; }
+    .bt{ min-height:40px; }
+    .fm{ padding:18px 16px 20px; }
+    .fm-g{ grid-template-columns:1fr; }
+  }
+
+  /* sem JS: a fila e o primeiro chamado, parados */
+  html:not(.js) .rs, html:not(.js) .acts{ display:none; }
+  /* movimento reduzido: tudo aparece direto, os fios já desenhados */
+  html.static .dm *, html.static .dm *::before{ animation:none !important; transition:none !important; }
+  html.static .cks li{ opacity:1; }
 </style>
 </head>
 <body>
 
-<!-- TOPO (compartilhado): marcação do template, sem alteração -->
 <header class="nav">
   <a href="/"><b>Otto Canabrava</b></a>
   <nav><a href="/#projetos">Sistemas</a><a href="/#sobre">Sobre</a><a href="/#contato">Contato</a></nav>
 </header>
 
-<header class="hero" id="inicio">
-  <div class="hero-in">
-    <div class="hero-chips">
-      <span class="chip chip-bd">estudo de caso</span>
-      <span class="chip chip-ac">● dados e marca 100% fictícios</span>
-      <a class="chip chip-bd" href="/ticketscript/" style="text-decoration:none;">↳ evoluiu do TicketScript</a>
+<main>
+  <section class="dm-sec" id="demo" aria-labelledby="dm-t">
+    <div class="dm-hd">
+      <span class="ix">04 · FormPilot · evoluiu do <a href="/ticketscript/">TicketScript</a></span>
+      <h1 id="dm-t">Do ticket de RH até a assinatura, sem trocar de aba.</h1>
+      <p>Um painel que lê o pedido de movimentação, identifica a operadora e o tipo de solicitação, monta o formulário certo e encaminha para assinatura — sem que o analista precise procurar nada manualmente.</p>
+      <p>Escolha um chamado. Veja o painel montar o formulário.</p>
+      <p class="fic">Vero Benefícios, as operadoras, os chamados e todas as pessoas mencionadas são fictícios, criados para demonstrar o tipo de solução — não reproduzem nenhum sistema, dado ou processo real de qualquer empresa.</p>
+      <dl class="facts">
+        <div><dt>3</dt><dd>operadoras configuradas nesta demo</dd></div>
+        <div><dt>config</dt><dd>nova operadora entra por arquivo, não por código</dd></div>
+        <div><dt>nativo</dt><dd>deixou de ser extensão de navegador — hoje roda como painel embutido na própria ferramenta de atendimento</dd></div>
+      </dl>
+      <nav class="idx" aria-label="Nesta página"><span>Nesta página:</span><a href="#problema">Problema</a><a href="#como">Como funciona</a><a href="#arquitetura">Arquitetura</a><a href="#mapeamento">Mapeamento</a><a href="#decisoes">Decisões</a></nav>
     </div>
-    <h1>Do ticket de RH até a assinatura, sem trocar de aba.</h1>
-    <p class="hero-sub">Um painel que lê o pedido de movimentação, identifica a operadora e o tipo de solicitação, monta o formulário certo e encaminha para assinatura — sem que o analista precise procurar nada manualmente.</p>
-    <p class="hero-role">Idealizei, arquitetei, desenvolvi, integrei, validei e mantenho o FormPilot de ponta a ponta — da extensão original ao app nativo em uso hoje.</p>
-    <div class="hero-facts">
-      <div class="hf"><div class="hf-val">3</div><div class="hf-lbl">operadoras configuradas nesta demo</div></div>
-      <div class="hf"><div class="hf-val">config</div><div class="hf-lbl">nova operadora entra por arquivo, não por código</div></div>
-      <div class="hf"><div class="hf-val">nativo</div><div class="hf-lbl">deixou de ser extensão de navegador — hoje roda como painel embutido na própria ferramenta de atendimento</div></div>
-    </div>
-    <nav class="hero-idx" aria-label="Nesta página">
-      <a class="hero-cta" href="#demo">Ver demo</a>
-      <a href="#problema">Problema</a>
-      <a href="#como">Como funciona</a>
-      <a href="#mapeamento">Mapeamento</a>
-    </nav>
-  </div>
-</header>
 
-<section class="sec demo-bg" id="demo">
-  <div class="wrap">
-    <div class="sh">
-      <span class="stag">demonstração interativa</span>
-      <h2>Escolha um chamado.<br>Veja o painel montar o formulário.</h2>
-      <p>Selecione qualquer chamado da fila e use o painel do FormPilot à direita. Empresa, pessoas e operadoras são inteiramente fictícias.</p>
-    </div>
-    <div class="demo-grid" id="demo-root"></div>
-  </div>
-</section>
+    <div class="sf dm" id="dm">
+      <div class="bar">
+        <span class="lb">fila de chamados</span>
+        <span class="py">Selecione qualquer chamado da fila e use o painel do FormPilot. Empresa, pessoas e operadoras são inteiramente fictícias.</span>
+        <button type="button" class="rs" data-act="reset">Recomeçar</button>
+      </div>
+      <div class="q" id="q" role="grid" aria-label="Fila de chamados (fictícia). Escolha um chamado."><div class="r h" role="row"><span role="columnheader" class="c-id">chamado</span><span role="columnheader" class="c-as">assunto</span><span role="columnheader" class="c-em">empresa</span><span role="columnheader" class="c-ts">aberto</span><span role="columnheader" class="c-st">status</span></div><div class="r d" role="row" data-row="0" aria-selected="false"><span role="gridcell" class="c-id">#4821</span><span role="gridcell" class="c-as">Inclusão de titular — Vitalis Saúde</span><span role="gridcell" class="c-em">Nordeste Componentes Ltda</span><span role="gridcell" class="c-ts">hoje, 09:14</span><span role="gridcell" class="c-st">aberto</span></div><div class="r d" role="row" data-row="1" aria-selected="false"><span role="gridcell" class="c-id">#4835</span><span role="gridcell" class="c-as">Exclusão de dependente — Amparo Seguros</span><span role="gridcell" class="c-em">Grão Fino Alimentos S.A.</span><span role="gridcell" class="c-ts">ontem, 16:47</span><span role="gridcell" class="c-st">aberto</span></div><div class="r d" role="row" data-row="2" aria-selected="false"><span role="gridcell" class="c-id">#4849</span><span role="gridcell" class="c-as">Alteração cadastral — Convênio Prisma</span><span role="gridcell" class="c-em">Estúdio Cana Design</span><span role="gridcell" class="c-ts">seg, 11:02</span><span role="gridcell" class="c-st">aberto</span></div></div>
 
-<section class="sec prob-bg" id="problema">
-  <div class="wrap">
-    <div class="sh">
-      <span class="stag">o problema</span>
-      <h2>Cada operadora, um formulário diferente. Nenhum atalho.</h2>
-      <p>Toda solicitação de inclusão, exclusão ou alteração exigia localizar o modelo certo da operadora, preencher campo a campo e só então seguir para a assinatura.</p>
+      <div class="tk">
+        <span class="lb">chamado</span>
+        <div id="tk"><p class="empty">Escolha um chamado da fila.</p></div>
+      </div>
+
+      <div class="pn">
+        <span class="lb">painel do FormPilot</span>
+        <div id="pn"><p class="empty">O painel abre ao lado do chamado.</p></div>
+      </div>
+
+      <div class="dc">
+        <span class="lb">formulário da operadora</span>
+        <div id="dc"><div class="void">O formulário aparece aqui quando o painel o gera.</div></div>
+      </div>
+
+      <p class="note">Reprodução sem servidor. No FormPilot, o painel roda dentro da ferramenta de atendimento (Zendesk App Framework), monta o documento no navegador do analista e envia para o Adobe Sign por um fluxo n8n.</p>
+      <svg class="th" id="th" aria-hidden="true"></svg>
+      <p class="sr-only" id="live" aria-live="polite"></p>
     </div>
-    <div class="ba-grid">
+  </section>
+
+  <section class="tx" id="problema" aria-labelledby="pr-t">
+    <h2 class="tx-k" id="pr-t">O problema</h2>
+    <p class="tx-lead">Cada operadora, um formulário diferente. Nenhum atalho.</p>
+    <p class="tx-sub">Toda solicitação de inclusão, exclusão ou alteração exigia localizar o modelo certo da operadora, preencher campo a campo e só então seguir para a assinatura.</p>
+    <div class="cols">
       <div>
-        <span class="ba-lbl before">antes — o mesmo esforço em todo chamado</span>
-        <div class="ba-steps">
-          <div class="ba-step">
-            <span class="ba-si"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M4 5l8 7 8-7"/></svg></span>
-            <div><div class="ba-st">Abrir o chamado</div><div class="ba-sd">Ler o pedido do RH para identificar operadora, tipo de movimentação e dados do beneficiário.</div></div>
-          </div>
-          <div class="ba-step pain">
-            <span class="ba-si"><svg viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.6"><path d="M6 3h9l5 5v13H6z"/><path d="M15 3v5h5"/></svg></span>
-            <div><div class="ba-st">Localizar o modelo certo</div><div class="ba-sd">Encontrar, entre os modelos de cada operadora, aquele que corresponde ao tipo de movimentação pedido.</div></div>
-          </div>
-          <div class="ba-step pain">
-            <span class="ba-si"><svg viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6M9 13h6M9 17h3"/></svg></span>
-            <div><div class="ba-st">Preencher campo a campo</div><div class="ba-sd">Digitar ou colar cada dado no lugar certo do formulário — um campo trocado significa retrabalho.</div></div>
-          </div>
-          <div class="ba-step">
-            <span class="ba-si"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" stroke-width="1.6"><path d="M4 12l6 6L20 6"/></svg></span>
-            <div><div class="ba-st">Enviar para assinatura</div><div class="ba-sd">Anexar o documento pronto a um fluxo de assinatura separado e acompanhar manualmente o retorno.</div></div>
-          </div>
-        </div>
-        <div class="ba-time before"><b>10–20 min</b> por movimentação — processo manual, do início ao fim.</div>
-      </div>
-      <div class="ba-arr">→</div>
-      <div>
-        <span class="ba-lbl after">depois — mesmo chamado, um painel</span>
-        <div class="ba-after">
-          <div class="ba-after-top">
-            <div class="ba-flow">Identificar → Gerar → Revisar → Enviar</div>
-            <div class="ba-num-s">O painel identifica a operadora e monta o formulário; a revisão humana continua antes do envio.</div>
-          </div>
-          <div class="ba-after-ft">Os modelos de cada operadora continuam existindo. Só deixam de exigir busca manual.</div>
-        </div>
-        <div class="ba-time after"><b>~2 min</b> por movimentação — revisão + geração, com a operadora já configurada.</div>
-        <div class="ba-note">
-          <strong>Por que manter um modelo por operadora?</strong>
-          Cada operadora define seu próprio layout de formulário — isso não muda. A diferença é que o painel guarda essa regra como configuração, então adicionar uma operadora nova não exige reescrever nada, só descrever seus campos.
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec hiw-bg" id="como">
-  <div class="wrap">
-    <div class="sh">
-      <span class="stag">fluxo técnico</span>
-      <h2>O que acontece entre o clique e a assinatura.</h2>
-      <p>Quatro etapas independentes — cada uma pode mudar sem afetar as outras.</p>
-    </div>
-    <div class="hiw-list">
-      <div class="hiw-row">
-        <div class="hiw-n">1</div>
-        <div>
-          <div class="hiw-ttl">O painel lê o chamado</div>
-          <div class="hiw-desc">O texto do pedido é capturado e normalizado — variações de escrita e formatação não podem impedir a identificação do tipo de movimentação pedido.</div>
-        </div>
-        <span class="hiw-tag">leitura · normalização</span>
-      </div>
-      <div class="hiw-row">
-        <div class="hiw-n">2</div>
-        <div>
-          <div class="hiw-ttl">Operadora e tipo de movimentação são identificados</div>
-          <div class="hiw-desc">O conteúdo é cruzado com uma lista de operadoras conhecidas para determinar qual modelo de formulário e quais campos usar.</div>
-        </div>
-        <span class="hiw-tag">detecção por configuração</span>
-      </div>
-      <div class="hiw-row">
-        <div class="hiw-n">3</div>
-        <div>
-          <div class="hiw-ttl">O formulário é montado por coordenada</div>
-          <div class="hiw-desc">Cada campo tem uma posição definida no modelo daquela operadora; os dados do beneficiário são estampados diretamente no documento, sem servidor — tudo roda no navegador do analista.</div>
-        </div>
-        <span class="hiw-tag">geração client-side</span>
-      </div>
-      <div class="hiw-row">
-        <div class="hiw-n">4</div>
-        <div>
-          <div class="hiw-ttl">Documento segue para assinatura via Adobe Sign</div>
-          <div class="hiw-desc">O documento pronto é enviado ao Adobe Sign para coleta de assinatura eletrônica. Como a autenticação OAuth exige um segredo que não pode ficar exposto no navegador, essa chamada passa por um pequeno fluxo de automação (n8n) que atua só como intermediário — o painel acompanha o retorno e atualiza o chamado automaticamente.</div>
-        </div>
-        <span class="hiw-tag">Adobe Sign · OAuth via n8n</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec arch-bg">
-  <div class="wrap">
-    <div class="sh">
-      <span class="stag">arquitetura</span>
-      <h2>Três camadas, cada uma trocável sozinha.</h2>
-      <p>A ferramenta nasceu como extensão de navegador e hoje roda nativamente dentro da própria plataforma de atendimento, como um painel oficial via Zendesk App Framework (ZAF) — sem mais depender de nada instalado no navegador do analista. Configuração, painel e automação server-side seguem totalmente independentes entre si.</p>
-    </div>
-    <div class="arch-grid">
-      <div class="arch-card">
-        <div class="arch-hd">
-          <div class="arch-ico ico-a"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="1.6"><path d="M4 6h16M4 12h16M4 18h10"/></svg></div>
-          <div><h3>Configuração</h3><p>Um arquivo por operadora</p></div>
-        </div>
-        <div class="arch-body">
-          <div class="arch-row">
-            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 2v20M2 12h20"/></svg></span>
-            <div><div class="arch-tt">Operadora nova = arquivo novo</div><div class="arch-dd">Adicionar uma operadora não altera nenhuma parte do painel — apenas descreve seus campos, posições e dependências entre eles.</div></div>
-          </div>
-          <div class="arch-row">
-            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M12 3l8 4v6c0 5-3.5 7.5-8 8-4.5-.5-8-3-8-8V7z"/></svg></span>
-            <div><div class="arch-tt">Regras de dependência entre campos</div><div class="arch-dd">Alguns campos só existem se outro campo tiver determinado valor — a configuração descreve isso explicitamente, para não haver campo preenchido "por engano" quando a condição não se aplica.</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="arch-card">
-        <div class="arch-hd">
-          <div class="arch-ico ico-b"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink)" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></div>
-          <div><h3>Painel nativo (ZAF)</h3><p>Roda dentro da própria ferramenta de atendimento</p></div>
-        </div>
-        <div class="arch-body">
-          <div class="arch-row">
-            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M5 13l4 4L19 7"/></svg></span>
-            <div><div class="arch-tt">Deixou de ser extensão de navegador</div><div class="arch-dd">A versão anterior era uma extensão instalada no navegador de cada analista; hoje é um app oficial da plataforma, carregado automaticamente para todo o time, sem instalação individual.</div></div>
-          </div>
-          <div class="arch-row">
-            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 5h16v14H4z"/><path d="M4 5l8 7 8-7"/></svg></span>
-            <div><div class="arch-tt">Lê o chamado direto da plataforma</div><div class="arch-dd">O painel usa o SDK oficial (ZAF) para ler os dados do chamado em que o analista está — sem depender de raspagem de tela.</div></div>
-          </div>
-        </div>
-      </div>
-      <div class="arch-card">
-        <div class="arch-hd">
-          <div class="arch-ico ico-c"><svg viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="1.6"><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11z"/></svg></div>
-          <div><h3>Automação server-side</h3><p>n8n como intermediário para Adobe Sign</p></div>
-        </div>
-        <div class="arch-body">
-          <div class="arch-row">
-            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></span>
-            <div><div class="arch-tt">Documento montado no navegador</div><div class="arch-dd">A estampagem dos dados no PDF continua acontecendo no cliente; nenhum dado de beneficiário trafega por um servidor só para gerar o documento.</div></div>
-          </div>
-          <div class="arch-row">
-            <span class="arch-ri"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg></span>
-            <div><div class="arch-tt">n8n cuida só do que exige segredo</div><div class="arch-dd">Um fluxo de automação (n8n) guarda a credencial OAuth do Adobe Sign e faz a chamada em nome do painel — o segredo nunca chega ao navegador do analista.</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="sec map-bg" id="mapeamento">
-  <div class="wrap">
-    <div class="sh">
-      <span class="stag">arquitetura · demonstração</span>
-      <h2>O formulário muda. O motor continua o mesmo.</h2>
-      <p>No FormPilot, cada operadora define seu próprio layout de formulário — isso nunca muda. O que muda é que adicionar uma operadora deixou de significar escrever código: significa descrever, uma vez, onde cada campo fica e que regras ele segue. É essa configuração que um motor genérico interpreta para montar, preencher e validar o documento.</p>
-      <p class="ancora-thesis">Formulários diferentes passaram a ser <strong>configurações de um mesmo motor</strong>, em vez de exigirem uma nova implementação a cada documento.</p>
-    </div>
-
-    <div class="config-meta-note">FormPilot é o projeto real. <strong>FormPilot Studio</strong>, logo abaixo, é a reconstrução conceitual e anonimizada dessa etapa de mapeamento — a mesma lógica de arquitetura usada no FormPilot, aplicada a um documento, operadora e dados fictícios, para mostrar como o motor funciona sem expor sistemas ou informações reais.</div>
-
-    <div class="ancora-frame">
-      <div class="ancora-bar"><span>FormPilot Studio · workbench de mapeamento e configuração</span><span class="ancora-tag">reconstrução conceitual</span></div>
-      <iframe src="formpilot-studio.html" title="FormPilot Studio — workbench de mapeamento e configuração" loading="lazy"></iframe>
-    </div>
-    <div class="ancora-open"><a href="formpilot-studio.html" target="_blank" rel="noopener">Abrir o FormPilot Studio em tela cheia ↗</a></div>
-
-    <div class="ancora-meta">
-      <div>
-        <div class="ancora-meta-k">Configuração × operação</div>
-        <div class="ancora-meta-v">Mapear uma operadora nova é trabalho de configuração, feito uma vez — sem código novo. Depois de configurada, cada movimentação é uma operação: antes, 10 a 20 minutos de preenchimento manual; hoje, cerca de <strong>2 minutos</strong> entre revisão e geração do documento. O ganho não é só velocidade — é menos exposição a erro de preenchimento e uma operação mais consistente entre analistas.</div>
+        <h3 class="col-h">Antes — o mesmo esforço em todo chamado</h3>
+        <ol class="ba">
+          <li style="--i:0"><b>Abrir o chamado</b><span>Ler o pedido do RH para identificar operadora, tipo de movimentação e dados do beneficiário.</span></li>
+          <li style="--i:1" class="off"><b>Localizar o modelo certo</b><span>Encontrar, entre os modelos de cada operadora, aquele que corresponde ao tipo de movimentação pedido.</span></li>
+          <li style="--i:2" class="off"><b>Preencher campo a campo</b><span>Digitar ou colar cada dado no lugar certo do formulário — um campo trocado significa retrabalho.</span></li>
+          <li style="--i:3"><b>Enviar para assinatura</b><span>Anexar o documento pronto a um fluxo de assinatura separado e acompanhar manualmente o retorno.</span></li>
+        </ol>
+        <p class="col-n"><b>10–20 min</b> por movimentação — processo manual, do início ao fim.</p>
       </div>
       <div>
-        <div class="ancora-meta-k">Tecnologias e abordagem</div>
-        <div class="ancora-chips"><span class="ancora-chip">Motor de configuração genérico</span><span class="ancora-chip">Mapeamento por configuração</span><span class="ancora-chip">Demonstração anonimizada</span></div>
+        <h3 class="col-h">Depois — mesmo chamado, um painel</h3>
+        <p class="flow">Identificar → Gerar → Revisar → Enviar</p>
+        <p class="col-p">O painel identifica a operadora e monta o formulário; a revisão humana continua antes do envio.</p>
+        <p class="col-p">Os modelos de cada operadora continuam existindo. Só deixam de exigir busca manual.</p>
+        <p class="col-n"><b>~2 min</b> por movimentação — revisão + geração, com a operadora já configurada.</p>
       </div>
     </div>
-  </div>
-</section>
+    <p class="tx-note"><b>Por que manter um modelo por operadora?</b> Cada operadora define seu próprio layout de formulário — isso não muda. A diferença é que o painel guarda essa regra como configuração, então adicionar uma operadora nova não exige reescrever nada, só descrever seus campos.</p>
+  </section>
 
-<section class="sec dec-bg">
-  <div class="wrap">
-    <div class="sh">
-      <span class="stag">decisões de projeto</span>
-      <h2>Trade-offs que definiram a solução.</h2>
-      <p>Escolhas concretas, com o que cada uma custou.</p>
-    </div>
-    <div class="dec-table">
-      <div class="dec-thead">
-        <div class="dec-th">decisão</div>
-        <div class="dec-th">por quê</div>
-        <div class="dec-th">custo aceito</div>
-      </div>
-      <div class="dec-row">
-        <div class="dec-cell"><h4>Configuração em vez de código por operadora</h4></div>
-        <div class="dec-cell"><p>Operadora nova entra sem alterar o painel — só descrever seus campos.</p></div>
-        <div class="dec-cell"><p class="trd">Exige manter a configuração correta e testada a cada mudança de layout da operadora.</p></div>
-      </div>
-      <div class="dec-row">
-        <div class="dec-cell"><h4>Montagem do documento no navegador</h4></div>
-        <div class="dec-cell"><p>Nenhum dado de beneficiário passa por um servidor só para gerar o formulário.</p></div>
-        <div class="dec-cell"><p class="ok">Nenhum custo relevante — a operação é leve o suficiente para rodar no cliente.</p></div>
-      </div>
-      <div class="dec-row">
-        <div class="dec-cell"><h4>Assinatura via Adobe Sign</h4></div>
-        <div class="dec-cell"><p>Reaproveita uma infraestrutura de assinatura eletrônica já confiável e auditável, em vez de construir isso do zero.</p></div>
-        <div class="dec-cell"><p class="trd">Depende de disponibilidade e limites de uso de um serviço externo.</p></div>
-      </div>
-      <div class="dec-row">
-        <div class="dec-cell"><h4>Migrar de extensão para app nativo (ZAF)</h4></div>
-        <div class="dec-cell"><p>Elimina a instalação individual em cada navegador e centraliza atualizações para todo o time de uma vez.</p></div>
-        <div class="dec-cell"><p class="trd">Exigiu reescrever a camada de execução inteira para se adequar ao SDK oficial da plataforma.</p></div>
-      </div>
-    </div>
-  </div>
-</section>
+  <section class="tx" id="como" aria-labelledby="co-t">
+    <h2 class="tx-k" id="co-t">Fluxo técnico</h2>
+    <p class="tx-lead">O que acontece entre o clique e a assinatura.</p>
+    <p class="tx-sub">Quatro etapas independentes — cada uma pode mudar sem afetar as outras.</p>
+    <ol class="ln">
+      <li><span class="ln-n">01</span><b>O painel lê o chamado</b><span>O texto do pedido é capturado e normalizado — variações de escrita e formatação não podem impedir a identificação do tipo de movimentação pedido.</span><small>leitura · normalização</small></li>
+      <li><span class="ln-n">02</span><b>Operadora e tipo de movimentação são identificados</b><span>O conteúdo é cruzado com uma lista de operadoras conhecidas para determinar qual modelo de formulário e quais campos usar.</span><small>detecção por configuração</small></li>
+      <li><span class="ln-n">03</span><b>O formulário é montado por coordenada</b><span>Cada campo tem uma posição definida no modelo daquela operadora; os dados do beneficiário são estampados diretamente no documento, sem servidor — tudo roda no navegador do analista.</span><small>geração client-side</small></li>
+      <li><span class="ln-n">04</span><b>Documento segue para assinatura via Adobe Sign</b><span>O documento pronto é enviado ao Adobe Sign para coleta de assinatura eletrônica. Como a autenticação OAuth exige um segredo que não pode ficar exposto no navegador, essa chamada passa por um pequeno fluxo de automação (n8n) que atua só como intermediário — o painel acompanha o retorno e atualiza o chamado automaticamente.</span><small>Adobe Sign · OAuth via n8n</small></li>
+    </ol>
+  </section>
 
-<section class="sec stack-bg">
-  <div class="wrap">
-    <div class="sh">
-      <span class="stag">stack</span>
-      <h2>O que roda por trás do painel.</h2>
+  <section class="tx" id="arquitetura" aria-labelledby="ar-t">
+    <h2 class="tx-k" id="ar-t">Arquitetura</h2>
+    <p class="tx-lead">Três camadas, cada uma trocável sozinha.</p>
+    <p class="tx-sub">A ferramenta nasceu como extensão de navegador e hoje roda nativamente dentro da própria plataforma de atendimento, como um painel oficial via Zendesk App Framework (ZAF) — sem mais depender de nada instalado no navegador do analista. Configuração, painel e automação server-side seguem totalmente independentes entre si.</p>
+    <div class="lay">
+      <div>
+        <h3>Configuração</h3><span class="mono">Um arquivo por operadora</span>
+        <ul>
+          <li><b>Operadora nova = arquivo novo</b><span>Adicionar uma operadora não altera nenhuma parte do painel — apenas descreve seus campos, posições e dependências entre eles.</span></li>
+          <li><b>Regras de dependência entre campos</b><span>Alguns campos só existem se outro campo tiver determinado valor — a configuração descreve isso explicitamente, para não haver campo preenchido "por engano" quando a condição não se aplica.</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Painel nativo (ZAF)</h3><span class="mono">Roda dentro da própria ferramenta de atendimento</span>
+        <ul>
+          <li><b>Deixou de ser extensão de navegador</b><span>A versão anterior era uma extensão instalada no navegador de cada analista; hoje é um app oficial da plataforma, carregado automaticamente para todo o time, sem instalação individual.</span></li>
+          <li><b>Lê o chamado direto da plataforma</b><span>O painel usa o SDK oficial (ZAF) para ler os dados do chamado em que o analista está — sem depender de raspagem de tela.</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Automação server-side</h3><span class="mono">n8n como intermediário para Adobe Sign</span>
+        <ul>
+          <li><b>Documento montado no navegador</b><span>A estampagem dos dados no PDF continua acontecendo no cliente; nenhum dado de beneficiário trafega por um servidor só para gerar o documento.</span></li>
+          <li><b>n8n cuida só do que exige segredo</b><span>Um fluxo de automação (n8n) guarda a credencial OAuth do Adobe Sign e faz a chamada em nome do painel — o segredo nunca chega ao navegador do analista.</span></li>
+        </ul>
+      </div>
     </div>
-    <div class="pills">
-      <div class="pill pill-ac"><span class="pill-dot"></span>JavaScript</div>
-      <div class="pill"><span class="pill-dot"></span>Zendesk App Framework (ZAF)</div>
-      <div class="pill"><span class="pill-dot"></span>Geração de documento no navegador</div>
-      <div class="pill"><span class="pill-dot"></span>Configuração declarativa (JSON)</div>
-      <div class="pill"><span class="pill-dot"></span>Adobe Sign (assinatura eletrônica)</div>
-      <div class="pill"><span class="pill-dot"></span>n8n (automação / proxy OAuth)</div>
-      <div class="pill"><span class="pill-dot"></span>Planilha como fonte de referência</div>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- FECHAMENTO "Sobre o projeto" (compartilhado): marcação do template; textos do antigo rodapé -->
-<section class="tx tx-end" id="autoria" aria-labelledby="au-t">
-  <h2 class="tx-k" id="au-t">Sobre o projeto</h2>
-  <p class="tx-sub tx-au">Estudo de caso de portfólio: reconstrução conceitual e independente, nenhum dado real utilizado. Vero Benefícios, as operadoras, os chamados e todas as pessoas mencionadas são fictícios, criados para demonstrar o tipo de solução — não reproduzem nenhum sistema, dado ou processo real de qualquer empresa.</p>
-  <p class="tx-src"><a href="formpilot-studio.html" target="_blank" rel="noopener">Abrir o FormPilot Studio em tela cheia ↗</a></p>
-  <!-- Saída: o destino /#projetos é fixo em todos os cases -->
-  <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="end-a" href="/#projetos">Todos os sistemas</a></div>
-</section>
-<footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#inicio">↑ Topo</a></footer>
+  <section class="tx" id="mapeamento" aria-labelledby="ma-t">
+    <h2 class="tx-k" id="ma-t">Arquitetura · demonstração</h2>
+    <p class="tx-lead">O formulário muda. O motor continua o mesmo.</p>
+    <p class="tx-sub">No FormPilot, cada operadora define seu próprio layout de formulário — isso nunca muda. O que muda é que adicionar uma operadora deixou de significar escrever código: significa descrever, uma vez, onde cada campo fica e que regras ele segue. É essa configuração que um motor genérico interpreta para montar, preencher e validar o documento.</p>
+    <p class="thesis">Formulários diferentes passaram a ser configurações de um mesmo motor, em vez de exigirem uma nova implementação a cada documento.</p>
+    <p class="meta-n">FormPilot é o projeto real. <b>FormPilot Studio</b>, logo abaixo, é a reconstrução conceitual e anonimizada dessa etapa de mapeamento — a mesma lógica de arquitetura usada no FormPilot, aplicada a um documento, operadora e dados fictícios, para mostrar como o motor funciona sem expor sistemas ou informações reais.</p>
+    <div class="stu">
+      <div class="stu-bar"><span>FormPilot Studio · workbench de mapeamento e configuração</span><span>reconstrução conceitual</span></div>
+      <div class="stu-frame"><iframe src="formpilot-studio.html" title="FormPilot Studio — workbench de mapeamento e configuração" loading="lazy"></iframe></div>
+      <p class="stu-open"><a href="formpilot-studio.html" target="_blank" rel="noopener">Abrir o FormPilot Studio em tela cheia ↗</a></p>
+    </div>
+    <dl class="dt">
+      <div><dt>Configuração × operação</dt><dd>Mapear uma operadora nova é trabalho de configuração, feito uma vez — sem código novo. Depois de configurada, cada movimentação é uma operação: antes, 10 a 20 minutos de preenchimento manual; hoje, cerca de 2 minutos entre revisão e geração do documento. O ganho não é só velocidade — é menos exposição a erro de preenchimento e uma operação mais consistente entre analistas.</dd></div>
+      <div><dt>Tecnologias e abordagem</dt><dd>Motor de configuração genérico · Mapeamento por configuração · Demonstração anonimizada</dd></div>
+    </dl>
+  </section>
+
+  <section class="tx" id="decisoes" aria-labelledby="de-t">
+    <h2 class="tx-k" id="de-t">Decisões de projeto</h2>
+    <p class="tx-lead">Trade-offs que definiram a solução.</p>
+    <p class="tx-sub">Escolhas concretas, com o que cada uma custou.</p>
+    <dl class="dt">
+      <div><dt>Configuração em vez de código por operadora</dt><dd>Operadora nova entra sem alterar o painel — só descrever seus campos.<small>Custo aceito: exige manter a configuração correta e testada a cada mudança de layout da operadora.</small></dd></div>
+      <div><dt>Montagem do documento no navegador</dt><dd>Nenhum dado de beneficiário passa por um servidor só para gerar o formulário.<small>Custo aceito: nenhum custo relevante — a operação é leve o suficiente para rodar no cliente.</small></dd></div>
+      <div><dt>Assinatura via Adobe Sign</dt><dd>Reaproveita uma infraestrutura de assinatura eletrônica já confiável e auditável, em vez de construir isso do zero.<small>Custo aceito: depende de disponibilidade e limites de uso de um serviço externo.</small></dd></div>
+      <div><dt>Migrar de extensão para app nativo (ZAF)</dt><dd>Elimina a instalação individual em cada navegador e centraliza atualizações para todo o time de uma vez.<small>Custo aceito: exigiu reescrever a camada de execução inteira para se adequar ao SDK oficial da plataforma.</small></dd></div>
+    </dl>
+    <p class="stk mono">O que roda por trás do painel: JavaScript · Zendesk App Framework (ZAF) · Geração de documento no navegador · Configuração declarativa (JSON) · Adobe Sign (assinatura eletrônica) · n8n (automação / proxy OAuth) · Planilha como fonte de referência</p>
+  </section>
+
+  <section class="tx tx-end" id="autoria" aria-labelledby="au-t">
+    <h2 class="tx-k" id="au-t">Sobre o projeto</h2>
+    <p class="tx-sub tx-au">Idealizei, arquitetei, desenvolvi, integrei, validei e mantenho o FormPilot de ponta a ponta — da extensão original ao app nativo em uso hoje. Esta página é um estudo de caso de portfólio: reconstrução conceitual e independente, nenhum dado real utilizado.</p>
+    <p class="tx-src"><a href="formpilot-studio.html" target="_blank" rel="noopener">Abrir o FormPilot Studio em tela cheia ↗</a></p>
+    <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="end-a" href="/#projetos">Todos os sistemas</a></div>
+  </section>
+  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#demo">↑ Topo</a></footer>
+</main>
 
 <script>
-const TICKETS = [
-  {
-    id: '#4821', proto: 'MOV-2026-04821',
-    empresa: 'Nordeste Componentes Ltda',
-    subject: 'Inclusão de titular — Vitalis Saúde',
-    tags: [{l:'inclusão', bg:'#F0FDF4', c:'#15803D'}, {l:'titular', bg:'#E5E7EB', c:'#374151'}],
-    customer: 'RH — Nordeste Componentes',
-    ts: 'hoje, 09:14',
-    body: 'Precisamos incluir a colaboradora Marina Torres Almeida no plano titular da Vitalis Saúde. Admissão em 03/03. Segue CPF e demais dados em anexo.',
-    det: { operadora: 'Vitalis Saúde', tipo: 'Inclusão de titular', beneficiario: 'Marina T. Almeida', proto: 'MOV-2026-04821' }
-  },
-  {
-    id: '#4835', proto: 'MOV-2026-04835',
-    empresa: 'Grão Fino Alimentos S.A.',
-    subject: 'Exclusão de dependente — Amparo Seguros',
-    tags: [{l:'exclusão', bg:'#FEF2F2', c:'#DC2626'}, {l:'dependente', bg:'#E5E7EB', c:'#374151'}],
-    customer: 'RH — Grão Fino Alimentos',
-    ts: 'ontem, 16:47',
-    body: 'Solicitamos a exclusão da dependente Sofia Ramos Costa do plano do titular Eduardo Ramos Costa, na Amparo Seguros. Motivo: fim de vínculo de dependência.',
-    det: { operadora: 'Amparo Seguros', tipo: 'Exclusão de dependente', beneficiario: 'Sofia R. Costa', proto: 'MOV-2026-04835' }
-  },
-  {
-    id: '#4849', proto: 'MOV-2026-04849',
-    empresa: 'Estúdio Cana Design',
-    subject: 'Alteração cadastral — Convênio Prisma',
-    tags: [{l:'alteração', bg:'#EDE9FE', c:'#7C3AED'}, {l:'endereço', bg:'#E5E7EB', c:'#374151'}],
-    customer: 'RH — Estúdio Cana Design',
-    ts: 'seg, 11:02',
-    body: 'A colaboradora Helena Duarte Pires mudou de endereço. Precisamos atualizar o cadastro dela no Convênio Prisma com os novos dados anexados.',
-    det: { operadora: 'Convênio Prisma', tipo: 'Alteração cadastral', beneficiario: 'Helena D. Pires', proto: 'MOV-2026-04849' }
+/* Demonstração: reprodução sem servidor do fluxo do FormPilot (ler → identificar → gerar → enviar).
+   Chamados, empresas, pessoas e operadoras são fictícios; a cor de cada formulário é a da operadora fictícia. */
+(function(){
+  var T = [
+    { id: "#4821", proto: "MOV-2026-04821", empresa: "Nordeste Componentes Ltda", assunto: "Inclusão de titular — Vitalis Saúde", de: "RH — Nordeste Componentes", ts: "hoje, 09:14",
+      corpo: "Precisamos incluir a colaboradora Marina Torres Almeida no plano titular da Vitalis Saúde. Admissão em 03/03. Segue CPF e demais dados em anexo.",
+      mk: ["incluir", "Marina Torres Almeida", "plano titular", "Vitalis Saúde"],
+      op: "Vitalis Saúde", tipo: "Inclusão de titular", ben: "Marina T. Almeida", cor: "#0F6B5F",
+      campos: [["Movimentação", "Inclusão de titular"], ["Empresa", "Nordeste Componentes Ltda"], ["Beneficiário", "Marina Torres Almeida"], ["Plano", "Titular"], ["Admissão", "03/03"], ["Documentos", "CPF e demais dados em anexo"]] },
+    { id: "#4835", proto: "MOV-2026-04835", empresa: "Grão Fino Alimentos S.A.", assunto: "Exclusão de dependente — Amparo Seguros", de: "RH — Grão Fino Alimentos", ts: "ontem, 16:47",
+      corpo: "Solicitamos a exclusão da dependente Sofia Ramos Costa do plano do titular Eduardo Ramos Costa, na Amparo Seguros. Motivo: fim de vínculo de dependência.",
+      mk: ["exclusão da dependente", "Sofia Ramos Costa", "Amparo Seguros"],
+      op: "Amparo Seguros", tipo: "Exclusão de dependente", ben: "Sofia R. Costa", cor: "#23407A",
+      campos: [["Movimentação", "Exclusão de dependente"], ["Empresa", "Grão Fino Alimentos S.A."], ["Dependente", "Sofia Ramos Costa"], ["Titular", "Eduardo Ramos Costa"], ["Motivo", "Fim de vínculo de dependência"]] },
+    { id: "#4849", proto: "MOV-2026-04849", empresa: "Estúdio Cana Design", assunto: "Alteração cadastral — Convênio Prisma", de: "RH — Estúdio Cana Design", ts: "seg, 11:02",
+      corpo: "A colaboradora Helena Duarte Pires mudou de endereço. Precisamos atualizar o cadastro dela no Convênio Prisma com os novos dados anexados.",
+      mk: ["Helena Duarte Pires", "mudou de endereço", "atualizar o cadastro", "Convênio Prisma"],
+      op: "Convênio Prisma", tipo: "Alteração cadastral", ben: "Helena D. Pires", cor: "#5B3A8C",
+      campos: [["Movimentação", "Alteração cadastral"], ["Empresa", "Estúdio Cana Design"], ["Beneficiário", "Helena Duarte Pires"], ["Alteração", "Endereço"], ["Novos dados", "Conforme anexo do chamado"]] }
+  ];
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce) document.documentElement.classList.add("static");
+  var $ = function(id){ return document.getElementById(id); };
+  var sf = $("dm"), svg = $("th"), NS = "http://www.w3.org/2000/svg";
+  var narrow = window.matchMedia("(max-width:1023px)");
+  var S, last = {}, A = null, timer = null;
+
+  function fresh(){ return { sel: null, st: "idle", picked: false, threads: [], evt: null, sent: {}, docPre: false, docAnim: false }; }
+  var esc = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var say = function(t){ $("live").textContent = t; };
+
+  /* ---------- telas ---------- */
+  function qHTML(){
+    var h = '<div class="r h" role="row"><span role="columnheader" class="c-id">chamado</span><span role="columnheader" class="c-as">assunto</span><span role="columnheader" class="c-em">empresa</span><span role="columnheader" class="c-ts">aberto</span><span role="columnheader" class="c-st">status</span></div>';
+    return h + T.map(function(t, i){
+      var sent = S.sent[i], hit = sent ? " hit" + (S.evt === "enviar" && S.sel === i ? " late" : "") : "";
+      return '<div class="r d" role="row" data-row="' + i + '" aria-selected="' + (S.sel === i) + '"><span role="gridcell" class="c-id">' + t.id + '</span>' +
+        '<span role="gridcell" class="c-as"><button type="button" class="pick" data-act="pick" data-i="' + i + '" data-k="pick' + i + '">' + esc(t.assunto) + "</button></span>" +
+        '<span role="gridcell" class="c-em">' + esc(t.empresa) + '</span><span role="gridcell" class="c-ts">' + esc(t.ts) + "</span>" +
+        '<span role="gridcell" class="c-st' + hit + '" data-st="' + i + '">' + (sent ? "aguardando assinatura" : "aberto") + "</span></div>";
+    }).join("");
   }
-];
+  function marked(t){
+    var s = esc(t.corpo);
+    t.mk.forEach(function(m){ var e = esc(m), i = s.indexOf(e); if(i >= 0) s = s.slice(0, i) + '<mark data-m="' + esc(m) + '">' + e + "</mark>" + s.slice(i + e.length); });
+    return s;
+  }
+  function tkHTML(){
+    if(S.sel === null) return '<p class="empty">Escolha um chamado da fila.</p>';
+    var t = T[S.sel], cls = S.st === "reading" ? " reading" : S.st === "idle" ? "" : " read";
+    return '<div class="' + (S.picked ? "tk-in" : "") + '"><div class="tk-url">atendimento.verobeneficios.com.br/chamados/' + t.id.slice(1) + "</div>" +
+      '<div class="tk-as">' + esc(t.assunto) + '</div><div class="tk-de">' + esc(t.de) + " · " + esc(t.ts) + " · " + t.proto + "</div>" +
+      '<p class="tk-body' + cls + '">' + marked(t) + "</p></div>";
+  }
+  function stepsHTML(){
+    var st = S.st, n = { idle: 0, reading: 0, detected: 2, generating: 2, generated: 3, sent: 4 }[st];
+    var t = T[S.sel], it = [
+      ["Leitura", "texto do chamado capturado e normalizado"],
+      ["Operadora e tipo", t.op + " · " + t.tipo + ", cruzados com as operadoras configuradas"],
+      ["Formulário", "modelo da " + t.op + ", campos estampados por coordenada, no navegador"],
+      ["Assinatura", "Adobe Sign, pelo fluxo n8n; o chamado é atualizado"]
+    ];
+    if(!n) return "";
+    return '<div class="pnl"><span class="lb">o que o painel fez</span><ol class="steps">' + it.map(function(x, i){
+      var c = i >= n ? "skip" : (i === n - 1 && S.evt ? "end" : "");
+      if(i === n - 1 && S.evt && !reduce) c += " in";
+      return '<li class="' + c + '"><b>' + x[0] + "</b>" + (i >= n ? "a seguir" : esc(x[1])) + "</li>";
+    }).join("") + "</ol></div>";
+  }
+  function pnHTML(){
+    if(S.sel === null) return '<p class="empty">O painel abre ao lado do chamado.</p>';
+    var t = T[S.sel], st = S.st, h = "";
+    if(st === "idle") return '<p class="meta">Chamado detectado. Clique em Analisar para identificar operadora, tipo de movimentação e beneficiário.</p><div class="acts"><button type="button" class="bt pri big" data-act="ler" data-k="ler">Analisar chamado</button></div>';
+    if(st === "reading") return '<p class="meta">Lendo o conteúdo do chamado…</p><div class="acts"><button type="button" class="bt pri big" disabled aria-busy="true" data-k="ler">Analisando…</button></div>';
+    h += '<span class="lb">identificado</span><dl class="idf' + (S.evt === "ler" ? " in" : "") + '" id="idf"><dt>Operadora</dt><dd>' + esc(t.op) + "</dd><dt>Movimentação</dt><dd>" + esc(t.tipo) + "</dd><dt>Beneficiário</dt><dd>" + esc(t.ben) + "</dd></dl>";
+    if(st === "detected") h += '<div class="acts"><button type="button" class="bt pri big" data-act="gerar" data-k="gerar">Gerar formulário</button></div>';
+    if(st === "generating" || st === "generated"){
+      var done = st === "generated", it = [["<b>modelo</b>", esc(t.op) + " · " + esc(t.tipo)], ["<b>campos</b>", t.campos.length + " estampados por coordenada"], ["<b>no navegador</b>", "nenhum dado sai para gerar o documento"], ["<b>revisão humana</b>", "antes do envio"]];
+      h += '<div class="pnl"><ul class="cks' + (done ? " done" : "") + '">' + it.map(function(x, i){
+        return "<li" + (done ? "" : ' style="animation-delay:' + (i * .18) + 's"') + '><span class="m">' + (i === it.length - 1 ? (done ? "●" : "<i></i>") : "✓") + "</span><span>" + x[0] + ": " + x[1] + "</span></li>";
+      }).join("") + "</ul></div>";
+      h += '<div class="acts"><button type="button" class="bt pri big" data-act="enviar" data-k="enviar"' + (done ? "" : ' disabled aria-busy="true"') + ">" + (done ? "Enviar para assinatura" : "Gerando…") + "</button></div>";
+    }
+    if(st === "sent") h += '<div class="pnl"><div class="sent' + (S.evt === "enviar" && !reduce ? " late" : "") + '" id="sent"><p class="s"><i></i>Enviado para assinatura eletrônica</p>' + esc(t.op) + " · " + esc(t.tipo) + "<br>Documento encaminhado ao beneficiário para assinatura.<span class=\"mono\">protocolo " + t.proto + "</span></div></div>";
+    return h + stepsHTML();
+  }
+  function dcHTML(){
+    if(S.sel === null || ["generated", "sent"].indexOf(S.st) < 0) return '<div class="void">' + (S.st === "generating" ? "Montando o formulário da " + esc(T[S.sel].op) + "…" : "O formulário aparece aqui quando o painel o gera.") + "</div>";
+    var t = T[S.sel];
+    return '<div class="fm' + (S.docPre ? " pre" : S.docAnim ? " wipe" : "") + '" id="fm" style="--op:' + t.cor + '"><div class="fm-hd"><div><div class="fm-op">' + esc(t.op) + '</div><div class="fm-t">Formulário de movimentação · ' + esc(t.tipo) + '</div></div><div class="fm-pr">' + t.proto + "<br>" + esc(t.empresa) + "</div></div>" +
+      '<dl class="fm-g">' + t.campos.map(function(c){ return "<div><dt>" + esc(c[0]) + "</dt><dd>" + esc(c[1]) + "</dd></div>"; }).join("") + "</dl>" +
+      '<div class="fm-sg"><span><small>Assinatura do beneficiário</small></span><span><small>Data</small></span></div>' +
+      (S.st === "sent" ? '<div class="fm-st' + (S.evt === "enviar" && !reduce ? " late" : "") + '">enviado p/ assinatura</div>' : "") + "</div>" +
+      '<p class="cap"><b>Montado agora, no navegador</b> · modelo da ' + esc(t.op) + "</p>";
+  }
 
-let cur = 0, st = 'idle';
+  /* ---------- fios: só como consequência de uma ação ---------- */
+  function rel(el){ var a = el.getBoundingClientRect(), b = sf.getBoundingClientRect(); return { l: a.left - b.left, t: a.top - b.top, w: a.width, h: a.height, r: a.right - b.left, b: a.bottom - b.top }; }
+  function cubic(p){ var f = function(q){ return q[0].toFixed(1) + " " + q[1].toFixed(1); }; return "M" + f(p[0]) + "C" + f(p[1]) + " " + f(p[2]) + " " + f(p[3]); }
+  function route(p, rad){
+    var d = "M" + p[0][0].toFixed(1) + " " + p[0][1].toFixed(1);
+    for(var i = 1; i < p.length - 1; i++){
+      var a = p[i - 1], c = p[i], b = p[i + 1], l1 = Math.hypot(c[0] - a[0], c[1] - a[1]), l2 = Math.hypot(b[0] - c[0], b[1] - c[1]), r = Math.min(rad, l1 / 2, l2 / 2);
+      var u = [c[0] - (c[0] - a[0]) / (l1 || 1) * r, c[1] - (c[1] - a[1]) / (l1 || 1) * r], v = [c[0] + (b[0] - c[0]) / (l2 || 1) * r, c[1] + (b[1] - c[1]) / (l2 || 1) * r];
+      d += "L" + u[0].toFixed(1) + " " + u[1].toFixed(1) + "Q" + c[0].toFixed(1) + " " + c[1].toFixed(1) + " " + v[0].toFixed(1) + " " + v[1].toFixed(1);
+    }
+    var e = p[p.length - 1]; return d + "L" + e[0].toFixed(1) + " " + e[1].toFixed(1);
+  }
+  /* cada fio: de onde a informação sai para onde ela chega */
+  function ends(k){
+    var n = narrow.matches, gx = 7, from, to;
+    if(k === "ler"){ var ms = sf.querySelectorAll(".tk-body mark"); from = ms[ms.length - 1]; to = $("idf"); }
+    else if(k === "gerar"){ from = $("idf"); to = $("fm"); }
+    else if(k === "enviar"){ from = $("fm"); to = sf.querySelector('[data-st="' + S.sel + '"]'); }
+    if(!from || !to) return null;
+    var F = rel(from), D = rel(to), a, b;
+    /* coluna única: os fios correm pela margem esquerda e entram pela borda do bloco, sem cruzar texto */
+    if(n){ var col = rel(from.closest(".tk, .pn, .dc")), row = rel(to.closest(".r") || to);
+      a = [col.l - 2, F.t + F.h / 2]; b = k === "enviar" ? [row.l + 1, row.t + row.h / 2] : [D.l - 4, D.t + 10]; return { r: [a, [gx, a[1]], [gx, b[1]], b] }; }
+    if(k === "enviar"){ a = [F.l + F.w * .75, F.t - 4]; b = [D.l + D.w / 2, D.b + 3]; return [a, [a[0], a[1] - (a[1] - b[1]) * .5], [b[0], b[1] + (a[1] - b[1]) * .5], b]; }
+    if(D.l > F.r){ a = [F.r + 4, F.t + F.h / 2]; b = [D.l - 6, D.t + 14]; return [a, [a[0] + (b[0] - a[0]) * .5, a[1]], [b[0] - (b[0] - a[0]) * .5, b[1]], b]; }
+    a = [F.l + F.w / 2, F.b + 4]; b = [D.l + Math.min(D.w / 2, 60), D.t - 6]; return [a, [a[0], a[1] + (b[1] - a[1]) * .5], [b[0], b[1] - (b[1] - a[1]) * .5], b];
+  }
+  var ease = function(k){ return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
+  function drawThreads(anim, cb){
+    if(anim){ if(reduce){ if(cb) setTimeout(cb, 0); } else A = { k: anim, t0: performance.now(), cb: cb }; }
+    svg.setAttribute("viewBox", "0 0 " + sf.clientWidth + " " + sf.clientHeight);
+    svg.innerHTML = "";
+    S.threads.forEach(function(k, i){
+      var p = ends(k); if(!p) return;
+      var now = i === S.threads.length - 1 && k === S.evt, live = A && A.k === k, dd = p.r ? route(p.r, 14) : cubic(p);
+      if(p.r) p = [p.r[0], 0, 0, p.r[p.r.length - 1]];
+      var path = document.createElementNS(NS, "path"); path.setAttribute("d", dd); path.setAttribute("pathLength", "1"); path.setAttribute("data-k", k);
+      if(live){ path.style.strokeDasharray = "1"; path.style.strokeDashoffset = "1"; }
+      var c0 = document.createElementNS(NS, "circle"); c0.setAttribute("cx", p[0][0]); c0.setAttribute("cy", p[0][1]); c0.setAttribute("r", "3");
+      var c1 = document.createElementNS(NS, "circle"); c1.setAttribute("cx", p[3][0]); c1.setAttribute("cy", p[3][1]); c1.setAttribute("r", "4"); c1.setAttribute("class", "end" + (now ? " now" : "") + (live ? " pend" : ""));
+      svg.appendChild(path); svg.appendChild(c0); svg.appendChild(c1);
+      if(live){ var hd = document.createElementNS(NS, "circle"); hd.setAttribute("r", "4.5"); hd.setAttribute("class", "head"); svg.appendChild(hd); }
+    });
+    if(A && !A.raf) A.raf = requestAnimationFrame(step);
+  }
+  function step(t){
+    if(!A) return;
+    var k = Math.min(1, (t - A.t0) / 650), e = ease(k), path = svg.querySelector('path[data-k="' + A.k + '"]'), hd = svg.querySelector(".head");
+    if(path){ path.style.strokeDashoffset = String(1 - e); var pt = path.getPointAtLength(e * path.getTotalLength()); if(hd){ hd.setAttribute("cx", pt.x); hd.setAttribute("cy", pt.y); } }
+    if(k < 1){ A.raf = requestAnimationFrame(step); return; }
+    var cb = A.cb; A = null; drawThreads(); if(cb) cb();
+  }
 
-function render() {
-  document.getElementById('demo-root').innerHTML = queue() + viewer() + popup();
-  bind();
-}
+  /* ---------- render: cada região só é trocada quando o conteúdo muda ---------- */
+  function put(id, html){ if(last[id] === html) return; last[id] = html; $(id).innerHTML = html; }
+  function render(anim, cb){
+    var f = document.activeElement && document.activeElement.getAttribute("data-k");
+    put("q", qHTML()); put("tk", tkHTML()); put("pn", pnHTML()); put("dc", dcHTML());
+    if(f){ var e = sf.querySelector('[data-k="' + f + '"]'); if(e && e !== document.activeElement) e.focus({ preventScroll: true }); }
+    drawThreads(anim, cb);
+  }
+  function show(el){ if(narrow.matches && el){ var b = el.getBoundingClientRect(); if(b.top < 72 || b.bottom > innerHeight) el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "center" }); } }
 
-function queue() {
-  return `<div class="q-col">
-    <div class="q-hd">fila de chamados</div>
-    ${TICKETS.map((t,i) => `
-      <div class="qc ${i===cur?'on':''}" data-i="${i}">
-        <div class="qc-id">${t.id} · ${t.ts}</div>
-        <div class="qc-sub">${t.subject}</div>
-        <div class="qc-op">${t.empresa}</div>
-      </div>`).join('')}
-  </div>`;
-}
+  /* ---------- ações ---------- */
+  function pick(i){
+    if(S.st === "reading" || S.st === "generating") return;
+    if(S.sel !== i){ S.sel = i; S.st = S.sent[i] ? "sent" : "idle"; S.threads = []; S.evt = null; S.picked = true; }
+    render(); S.picked = false; say(T[i].assunto + ".");
+  }
+  function ler(){
+    var t = T[S.sel]; S.st = "reading"; S.evt = null; S.threads = []; render();
+    timer = setTimeout(function(){ S.st = "detected"; S.evt = "ler"; S.threads = ["ler"]; render("ler"); show($("idf")); say("Identificado: " + t.op + ", " + t.tipo + ", " + t.ben + "."); }, reduce ? 0 : 1250);
+  }
+  function gerar(){
+    var t = T[S.sel]; S.st = "generating"; S.evt = null; S.threads = ["ler"]; render();
+    timer = setTimeout(function(){
+      S.st = "generated"; S.evt = "gerar"; S.threads = ["ler", "gerar"]; S.docPre = !reduce; render("gerar", function(){
+        S.docPre = false; S.docAnim = !reduce; render();
+        setTimeout(function(){ if(S.docAnim){ S.docAnim = false; render(); } }, 700);
+      });
+      show($("fm")); say("Formulário da " + t.op + " montado no navegador.");
+    }, reduce ? 0 : 4 * 180 + 220);
+  }
+  function enviar(){
+    var t = T[S.sel]; S.st = "sent"; S.sent[S.sel] = true; S.evt = "enviar"; S.threads = ["ler", "gerar", "enviar"]; render("enviar");
+    show(sf.querySelector('[data-st="' + S.sel + '"]')); say("Enviado para assinatura. Chamado " + t.id + " atualizado: aguardando assinatura.");
+  }
+  function reset(){ clearTimeout(timer); A = null; S = fresh(); last = {}; render(); say("Demonstração no estado inicial."); }
 
-function viewer() {
-  const t = TICKETS[cur];
-  const gen = st === 'generated' || st === 'sent';
-  const sent = st === 'sent';
-  return `<div class="tv">
-    <div class="tv-chrome">
-      <div class="tv-dots">
-        <div class="tv-dot" style="background:#DC2626"></div>
-        <div class="tv-dot" style="background:#D97706"></div>
-        <div class="tv-dot" style="background:#16A34A"></div>
-      </div>
-      <div class="tv-url">atendimento.verobeneficios.com.br/chamados/${t.id.replace('#','')}</div>
-      <div class="tv-ext-btn" title="FormPilot — abrir painel">◆</div>
-    </div>
-    <div class="tv-hd">
-      <div class="tv-id">${t.id} · ${t.proto}</div>
-      <div class="tv-sub">${t.subject}</div>
-      <div class="tv-tags">${t.tags.map(g => `<span class="tv-tag" style="background:${g.bg};color:${g.c}">${g.l}</span>`).join('')}</div>
-    </div>
-    <div class="tv-msg">
-      <div class="tv-from">${t.customer}</div>
-      <div class="tv-when">${t.ts}</div>
-      <div class="tv-body">${t.body}</div>
-    </div>
-    <div class="tv-doc">
-      <div class="tv-doc-lbl">Formulário da operadora</div>
-      <div class="tv-paper ${gen?'ready':''}">
-        <div class="tv-stamp">pronto p/ assinar</div>
-        ${gen ? `<div class="tv-pl"></div><div class="tv-pl"></div><div class="tv-pl"></div><div class="tv-pl"></div>` : `<div class="tv-empty">O formulário aparecerá aqui após clicar em Gerar formulário no painel…</div>`}
-      </div>
-      <div class="tv-sent ${sent?'vis':''}">
-        <div class="ok-ck">✓</div>
-        Enviado para assinatura eletrônica
-      </div>
-    </div>
-  </div>`;
-}
-
-function popup() {
-  const t = TICKETS[cur];
-  return `<div class="ep">
-    <div class="ep-hd">
-      <div class="ep-brand"><div class="ep-ico">F</div><span class="ep-name">FormPilot</span></div>
-      <span class="ep-ver">v1.0</span>
-    </div>
-    <div class="ep-body">${corpo(t)}</div>
-    <div class="ep-ft">
-      <span class="ep-ft-a">⚙ Operadoras configuradas</span>
-    </div>
-  </div>`;
-}
-
-function corpo(t) {
-  if (st === 'idle') return `
-    <div class="ep-idle">
-      <span class="ep-idle-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--ink-3)" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M8 9h8M8 13h5"/></svg></span>
-      <div class="ep-idle-txt">Chamado detectado. Clique em Analisar para identificar operadora, tipo de movimentação e beneficiário.</div>
-    </div>
-    <button class="ep-abtn" id="abtn">Analisar chamado</button>`;
-
-  if (st === 'scanning') return `
-    <div class="ep-scan">
-      <div class="ep-scan-bar"><div class="ep-scan-fill"></div></div>
-      <div class="ep-scan-txt">Lendo o conteúdo do chamado…</div>
-    </div>
-    <button class="ep-abtn" disabled>Analisando…</button>`;
-
-  if (st === 'detected') return `
-    <div>
-      <span class="ep-lbl">Identificado</span>
-      <div class="ep-fields">
-        ${[['Operadora', t.det.operadora], ['Movimentação', t.det.tipo], ['Beneficiário', t.det.beneficiario]].map(([k,v]) => `
-          <div class="ep-field">
-            <div><div class="ep-fk">${k}</div><div class="ep-fv">${v}</div></div>
-            <span class="ep-fchk">✓</span>
-          </div>`).join('')}
-      </div>
-    </div>
-    <button class="ep-ibtn" id="gbtn">Gerar formulário</button>`;
-
-  if (st === 'generated') return `
-    <div>
-      <span class="ep-lbl">Identificado</span>
-      <div class="ep-fields">
-        ${[['Operadora', t.det.operadora], ['Movimentação', t.det.tipo]].map(([k,v]) => `
-          <div class="ep-field">
-            <div><div class="ep-fk">${k}</div><div class="ep-fv">${v}</div></div>
-            <span class="ep-fchk">✓</span>
-          </div>`).join('')}
-      </div>
-    </div>
-    <div>
-      <span class="ep-lbl">Formulário montado</span>
-      <div class="ep-field"><div><div class="ep-fk">documento</div><div class="ep-fv">pronto para assinatura</div></div><span class="ep-fchk">✓</span></div>
-    </div>
-    <button class="ep-ibtn" id="sbtn">Enviar para assinatura</button>`;
-
-  if (st === 'sent') return `
-    <div class="ep-suc">
-      <span class="ep-suc-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--accent2)" stroke-width="1.8"><path d="M5 13l4 4L19 7"/></svg></span>
-      <div class="ep-suc-ttl">Enviado</div>
-      <div class="ep-suc-sub">${t.det.operadora} · ${t.det.tipo}<br>Documento encaminhado ao beneficiário para assinatura.</div>
-      <div class="ep-proto">protocolo ${t.det.proto}</div>
-    </div>`;
-}
-
-function bind() {
-  document.querySelectorAll('.qc').forEach(c =>
-    c.addEventListener('click', () => {
-      const i = +c.dataset.i;
-      if (i !== cur) { cur = i; st = 'idle'; render(); }
-    })
-  );
-  const ab = document.getElementById('abtn');
-  if (ab) ab.addEventListener('click', () => {
-    st = 'scanning'; render();
-    setTimeout(() => { st = 'detected'; render(); }, 1250);
+  sf.addEventListener("click", function(e){
+    var t = e.target.closest("[data-act]");
+    if(!t){ var row = e.target.closest(".r.d"); if(row) pick(+row.getAttribute("data-row")); return; }
+    var a = t.getAttribute("data-act");
+    if(a === "pick") pick(+t.getAttribute("data-i"));
+    else if(a === "ler") ler();
+    else if(a === "gerar") gerar();
+    else if(a === "enviar") enviar();
+    else if(a === "reset") reset();
   });
-  const gb = document.getElementById('gbtn');
-  if (gb) gb.addEventListener('click', () => { st = 'generated'; render(); });
-  const sb = document.getElementById('sbtn');
-  if (sb) sb.addEventListener('click', () => { st = 'sent'; render(); });
-}
+  if(window.ResizeObserver) new ResizeObserver(function(){ drawThreads(); }).observe(sf);
+  else addEventListener("resize", function(){ drawThreads(); });
 
-render();
+  S = fresh(); render();   /* troca a composição estática (sem JS) pelo estado inicial */
+})();
 </script>
-
+<script>
+/* Seções de texto: cada fio se desenha uma vez, quando entra na tela (o padrão de Documentos Verificáveis).
+   Com movimento reduzido ou sem IntersectionObserver, tudo aparece no estado final. */
+(function(){
+  var els = document.querySelectorAll(".ln, .cols");   /* .end-row: ../assets/case/case.js */
+  if(!("IntersectionObserver" in window) || document.documentElement.classList.contains("static")){ Array.prototype.forEach.call(els, function(l){ l.classList.add("on"); }); return; }
+  Array.prototype.forEach.call(els, function(l){
+    var o = new IntersectionObserver(function(en){ if(en[0].isIntersecting){ l.classList.add("on"); o.disconnect(); } }, { rootMargin: "0px 0px -20% 0px" });
+    o.observe(l);
+  });
+})();
+</script>
 <script src="../assets/case/case.js"></script>
 </body>
 </html>

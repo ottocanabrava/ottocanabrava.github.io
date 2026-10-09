@@ -58,60 +58,6 @@ Se um componente compartilhado precisar mudar, a mudança é feita no arquivo de
 `assets/case/` e vale para todos os cases que o ligam. Ela não é feita dentro
 de uma página.
 
-## Página com identidade própria (`case-isolado`)
-
-Um case que mantém a identidade visual própria, como o FormPilot, usa o topo e o
-fechamento compartilhados sem receber a base de Documentos Verificáveis. Para
-isso, marca `<html lang="pt-BR" class="case-isolado">`.
-
-**O que a página recebe:** só os componentes, com a identidade de Documentos
-Verificáveis (cores, Geist, foco vermelho). As raízes dos componentes são
-exatamente três:
-- `body > header.nav` (o topo, filho direto de `<body>`);
-- `section.tx-end` (o fechamento);
-- `footer.foot` (o rodapé).
-
-**O que a página não recebe:**
-- as cores de Documentos Verificáveis no `:root`;
-- o modo escuro e o `color-scheme`;
-- as regras de `body` e `html`, o reset de links e o foco global.
-
-A página continua com as próprias fontes, cores e foco, e sem modo escuro se não
-tiver.
-
-**Contrato de herança.** As raízes declaram o que os componentes herdariam do
-`<body>` de Documentos Verificáveis, para não herdar nada da página. Os valores
-foram medidos na página real:
-- `font-family` (Geist), `color`, fundo `--bg`, `-webkit-font-smoothing` e
-  `-webkit-text-size-adjust`, das mesmas regras usadas pela base;
-- `font-size:medium`, `font-weight:400`, `font-style:normal`,
-  `line-height:normal`, `letter-spacing:normal`, `word-spacing:normal`,
-  `text-align:start`, `text-transform:none` e `text-indent:0`, que são os
-  valores efetivos em Documentos Verificáveis.
-
-Essas regras ficam em `:where()`, com prioridade zero, para que as regras do
-próprio componente vençam (por exemplo `.nav{font-size}` e `.foot{color}`).
-
-**O topo no fluxo.** No modo isolado, o topo não é fixo: fica no fluxo da
-página, sobre o fundo `--bg`, e rola junto com ela. Assim ele não flutua sobre
-seções escuras da página.
-
-**Regras para a página isolada:**
-- **Sem seletores de elemento soltos** que alcancem a marcação dos componentes:
-  nada de `nav{}`, `footer{}`, `header{}`, `section{}`, `h2{}`, `p{}` ou `a{}`.
-  Seletores dependentes de uma classe da página (`.hero h1`, `.sh p`) estão
-  liberados.
-- **Sem redefinir** as classes dos componentes, como em qualquer case.
-- **Acessos internos:** se a página precisar de atalhos para as próprias seções,
-  eles ficam no conteúdo dela (no FormPilot, o índice `.hero-idx`, no fim do
-  hero), e não no topo.
-- **Validação:** compare os estilos calculados dos componentes da página com os
-  de Documentos Verificáveis. As únicas diferenças aceitas são:
-  - o fundo pintado nas raízes;
-  - `position` do topo (e o `bottom` resolvido);
-  - alturas onde o texto é diferente;
-  - variáveis da página que os componentes não leem.
-
 ## Como usar num case
 
 1. Parta de `_template/case.html`.
