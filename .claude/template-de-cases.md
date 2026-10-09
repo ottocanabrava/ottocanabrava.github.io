@@ -89,13 +89,13 @@ de uma página.
 
 ## Navegação entre projetos (decisão pendente)
 
-Documentos Verificáveis, FormPilot e TicketScript **não** têm navegação entre
-projetos. As três páginas terminam no fechamento e no rodapé; no FormPilot e no
-TicketScript, o Otto pediu para tirá-la. O componente com setas foi extraído dos cinco cases da
+Documentos Verificáveis, FormPilot, TicketScript e Motor de Triagem **não** têm
+navegação entre projetos. As quatro páginas terminam no fechamento e no rodapé;
+nas três últimas, o Otto pediu para tirá-la. O componente com setas foi extraído dos cinco cases da
 identidade anterior (faixa escura, acento verde-água) para
 `assets/case/projetos.css`, sem alteração. Ele não é usado a partir desse
-arquivo: os três cases que ainda o têm (Extrator, Daily Ops e Motor) mantêm a
-cópia embutida.
+arquivo: os dois cases que ainda o têm (Extrator e Daily Ops) mantêm a cópia
+embutida.
 
 Ordem dos projetos (a mesma da Home):
 
