@@ -8,8 +8,8 @@ também carregam os arquivos compartilhados de `assets/case/`.
 - `index.html`: a Home, referência da identidade visual. Antes de criar ou
   mudar qualquer página, leia [`identidade.md`](identidade.md).
 - `<projeto>/index.html`: case de cada sistema. Documentos Verificáveis é a
-  referência oficial; FormPilot já segue a mesma linguagem; os demais ainda
-  estão na identidade anterior.
+  referência oficial; FormPilot e TicketScript já seguem a mesma linguagem;
+  os demais ainda estão na identidade anterior.
 - `assets/case/` e `_template/case.html`: componentes compartilhados dos cases,
   o topo e o fechamento, extraídos de Documentos Verificáveis. Antes de criar
   ou mudar um case, leia [`template-de-cases.md`](template-de-cases.md).
