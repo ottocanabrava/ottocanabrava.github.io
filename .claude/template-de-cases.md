@@ -143,11 +143,13 @@ seções escuras da página.
 
 ## Navegação entre projetos (decisão pendente)
 
-Documentos Verificáveis **não** tem navegação entre projetos hoje. A página
-termina no fechamento e no rodapé. O componente com setas existe nos outros
-cinco cases, na identidade anterior (faixa escura, acento verde-água), e foi
-extraído para `assets/case/projetos.css` sem alteração. Ele ainda não é usado
-a partir desse arquivo: os cinco cases mantêm a cópia embutida até migrarem.
+Documentos Verificáveis e FormPilot **não** têm navegação entre projetos. As
+duas páginas terminam no fechamento e no rodapé; no FormPilot, o Otto pediu
+para tirá-la. O componente com setas foi extraído dos cinco cases da
+identidade anterior (faixa escura, acento verde-água) para
+`assets/case/projetos.css`, sem alteração. Ele não é usado a partir desse
+arquivo: os quatro cases que ainda o têm (Extrator, Daily Ops, Motor e
+TicketScript) mantêm a cópia embutida.
 
 Ordem dos projetos (a mesma da Home):
 
