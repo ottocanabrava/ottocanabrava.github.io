@@ -41,6 +41,8 @@
   .tx-src a{ color:var(--ink); text-decoration:underline; text-decoration-color:var(--ink-4); text-underline-offset:5px; }
   .tx-src a:hover{ text-decoration-color:currentColor; }
   .end-row{ display:flex; align-items:center; gap:20px; }
+  /* sem o link de referência (.tx-src é opcional), a linha ganha o mesmo espaço que ele daria */
+  .tx-au + .end-row{ margin-top:clamp(64px,9vh,104px); }
   .end-ln{ flex:1; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.4s var(--ease); }
   .end-pt{ width:10px; height:10px; border-radius:50%; background:var(--fire); flex-shrink:0; transition:opacity .3s var(--ease) 1.3s; }
   html.js:not(.static) .end-row:not(.on) .end-ln{ transform:scaleX(0); }
