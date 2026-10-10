@@ -106,6 +106,10 @@
   .sgs{ display:flex; flex-wrap:wrap; gap:6px; margin-top:auto; padding-top:14px; }
   .sgs span{ font-family:"Geist Mono",ui-monospace,monospace; font-size:11px; color:var(--u-2); border:1px solid var(--u-line); border-radius:99px; padding:2px 8px; white-space:nowrap; }
   .cd[aria-pressed="true"] .sgs span{ border-color:#B9BCC3; color:var(--u-ink); }
+  /* os sinais, como na Home: saem soltos de cada fonte ("Empresa · sinal") e pousam no cartão da empresa */
+  .cds.wait .sgs span{ visibility:hidden; }
+  .chip{ position:absolute; left:0; top:0; z-index:4; display:inline-flex; font-family:"Geist Mono",ui-monospace,monospace; font-size:11px; line-height:1.45; color:var(--u-ink); background:#fff; border:1px solid var(--u-ink); border-radius:99px; padding:2px 8px; white-space:nowrap; pointer-events:none; }
+  .chip em{ font-style:normal; color:var(--u-3); overflow:hidden; display:inline-block; white-space:nowrap; }
   .void{ min-height:220px; border:1px dashed var(--u-line); border-radius:12px; display:flex; align-items:center; justify-content:center; text-align:center; padding:20px; color:var(--u-3); font-size:13px; }
   .note{ grid-area:note; margin:28px 0 0; padding-top:12px; border-top:1px solid var(--u-line); font-size:12px; color:var(--u-3); line-height:1.5; }
 
@@ -169,7 +173,7 @@
     .l2, .sb .ft, .bt, .steps li, .note, .cd .rz{ font-size:14px; }
     .l1 .v, .bar .lb, .bar .py, .rs, .lb{ font-size:13px; }
     .cd .co{ font-size:17px; }
-    .sgs span{ font-size:12px; }
+    .sgs span, .chip{ font-size:12px; }
     .bt{ min-height:40px; }
   }
 
@@ -303,7 +307,7 @@
   var narrow = window.matchMedia("(max-width:1023px)");
   var S, last = {}, A = null, timer = null;
 
-  function fresh(){ return { st: "fontes", sel: null, evt: null, cdIn: false }; }
+  function fresh(){ return { st: "fontes", sel: null, evt: null, cdIn: false, wait: false }; }
   var esc = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var say = function(t){ $("live").textContent = t; };
   $("hoje").textContent = " · " + new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
@@ -325,7 +329,7 @@
   }
   function prHTML(){
     if(S.st !== "pronto") return '<div class="void">' + (S.st === "rodando" ? "Cruzando tickets, carteira e faturas…" : "As prioridades aparecem aqui depois de gerar o painel.") + "</div>";
-    return '<div class="cds' + (S.cdIn ? " cds-in" : "") + '">' + P.map(function(p, i){
+    return '<div class="cds' + (S.cdIn ? " cds-in" : "") + (S.wait ? " wait" : "") + '">' + P.map(function(p, i){
       return '<button type="button" class="cd" aria-pressed="' + (S.sel === i) + '" data-act="sel" data-i="' + i + '" data-k="cd' + i + '"><span class="sq">prioridade ' + (i + 1) + ' de 3</span><span class="co">' + esc(p.nm) + '</span><span class="rz">' + esc(p.rz) + '</span><span class="sgs">' +
         p.sg.map(function(s){ return "<span>" + esc(s) + "</span>"; }).join("") + "</span></button>";
     }).join("") + "</div>";
@@ -345,7 +349,7 @@
   /* largo: sai pela direita da linha, desce pelo vão entre as listas, corre por baixo delas e desce pelo vão à esquerda do cartão.
      estreito: sai pela esquerda e desce pela margem. Nos dois, os três chegam ao mesmo ponto, na lateral esquerda do cartão. */
   function ends(j){
-    if(S.sel === null) return null;
+    if(S.sel === null || S.wait) return null;
     var co = P[S.sel].co, row = sf.querySelector("#s" + j + ' [data-co="' + co + '"]'), cd = sf.querySelector('.cd[data-i="' + S.sel + '"]');
     if(!row || !cd) return null;
     var R = rel(row), C = rel(cd), y = R.t + Math.min(R.h, 26) / 2 + 1;
@@ -398,10 +402,37 @@
   function gen(){
     if(S.st !== "fontes") return;
     S.st = "rodando"; render(); say("Cruzando tickets, carteira e faturas.");
-    timer = setTimeout(function(){ S.st = "pronto"; S.sel = 0; S.evt = "gen"; S.cdIn = !reduce; render(true); S.cdIn = false; var c0 = sf.querySelector(".cd"); if(sf.contains(document.activeElement) || document.activeElement === document.body) c0.focus({ preventScroll: true }); show(c0); say("Prioridades geradas. Prioridade 1 de 3, " + sinais(0)); }, reduce ? 0 : 1500);
+    timer = setTimeout(function(){
+      S.st = "pronto"; S.sel = 0; S.evt = "gen"; S.cdIn = !reduce; S.wait = !reduce; render(true); S.cdIn = false;
+      var c0 = sf.querySelector(".cd"); if(sf.contains(document.activeElement) || document.activeElement === document.body) c0.focus({ preventScroll: true }); show(c0);
+      say("Prioridades geradas. Prioridade 1 de 3, " + sinais(0));
+      if(S.wait) voo(function(){ S.wait = false; render(true); });
+    }, reduce ? 0 : 1500);
   }
+  /* cada sinal sai da linha da sua fonte (SLA e churn: carteira; ticket: fila; fatura: faturas), em ordem embaralhada,
+     e pousa no seu lugar no cartão; no pouso, o nome da empresa se recolhe e fica só o sinal */
+  var FONTE = [1, 1, 0, 2], ORDEM = [5, 0, 9, 3, 11, 7, 1, 10, 4, 8, 2, 6], chips = [];
+  function voo(fim){
+    var cds = sf.querySelectorAll(".cd"), fin = 0, total = 0;
+    ORDEM.forEach(function(n, k){
+      var i = Math.floor(n / 4), j = n % 4, p = P[i], row = sf.querySelector("#s" + FONTE[j] + ' [data-co="' + p.co + '"]'), alvo = cds[i] && cds[i].querySelectorAll(".sgs span")[j];
+      if(!row || !alvo) return;
+      var el = document.createElement("span"); el.className = "chip"; el.setAttribute("aria-hidden", "true");
+      el.innerHTML = "<em>" + esc(p.nm.split(" ")[0]) + " · </em><span>" + esc(p.sg[j]) + "</span>";
+      sf.appendChild(el); chips.push(el);
+      var R = rel(row), T = rel(alvo), em = el.querySelector("em"), w = em.offsetWidth;
+      var x0 = Math.max(8, Math.min(R.r - el.offsetWidth - 8, R.l + R.w * (.25 + .1 * (k % 4)))), y0 = R.t + (R.h - el.offsetHeight) / 2;
+      el.style.left = x0 + "px"; el.style.top = y0 + "px";
+      var o = { duration: 1700, delay: k * 70, easing: "cubic-bezier(.65,0,.35,1)", fill: "forwards" };
+      total++;
+      el.animate([{ opacity: 0, transform: "translate(0,6px)" }, { opacity: 1, transform: "translate(0,0)", offset: .18 }, { opacity: 1, transform: "translate(0,0)", offset: .42 }, { opacity: 1, transform: "translate(" + (T.l - x0) + "px," + (T.t - y0) + "px)" }], o);
+      em.animate([{ maxWidth: w + "px" }, { maxWidth: w + "px", offset: .42 }, { maxWidth: "0px" }], o).onfinish = function(){ if(++fin === total){ limpa(); fim(); } };
+    });
+    if(!total) fim();
+  }
+  function limpa(){ chips.forEach(function(c){ c.querySelectorAll("*").forEach(function(e){ e.getAnimations().forEach(function(x){ x.cancel(); }); }); c.getAnimations().forEach(function(x){ x.cancel(); }); c.remove(); }); chips = []; }
   function sel(i){ if(S.st !== "pronto" || S.sel === i) return; S.sel = i; S.evt = "sel"; render(true); say("Prioridade " + (i + 1) + " de 3, " + sinais(i)); }
-  function reset(){ clearTimeout(timer); A = null; S = fresh(); last = {}; render(); say("Demonstração no estado inicial."); }
+  function reset(){ clearTimeout(timer); limpa(); A = null; S = fresh(); last = {}; render(); say("Demonstração no estado inicial."); }
 
   sf.addEventListener("click", function(e){
     var t = e.target.closest("[data-act]"); if(!t) return;
