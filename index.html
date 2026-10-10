@@ -322,7 +322,11 @@
   .scn.flow .band p{ top:22px; }
   .scn.flow .band .go{ top:72px; }
   .scn.flow .res{ position:relative; inset:auto; padding-top:32px; }
-  #daily-ops.flow .band{ height:120px; }
+  /* Daily Ops é o único com o link na faixa: a última frase ocupa espaço e o link vem 40px abaixo dela,
+     como o link dos outros capítulos (.go: margin-top 40px), com a frase em uma ou duas linhas */
+  html:not(.static) #daily-ops.flow .band{ height:auto; padding-top:22px; }
+  html:not(.static) #daily-ops.flow .band p:last-of-type{ position:relative; top:0; }
+  html:not(.static) #daily-ops.flow .band .go{ position:relative; top:auto; margin-top:40px; }
   .p2.flow{ height:auto; overflow:visible; padding-top:clamp(96px,14vh,160px); }
   .p2.flow .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none; padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
   .stage2{ position:relative; height:min(86svh, 880px); overflow:hidden; }
@@ -415,7 +419,6 @@
     .scn.flow .sf{ height:600px; }
     .scn.flow .sf.sm{ width:auto; margin:0 10px; height:520px; }
     .scn.flow .band{ height:96px; }
-    #daily-ops.flow .band{ height:132px; }
     .stage2{ height:88svh; }
     #documentos.flow .sf{ height:600px; }
     #documentos.flow .band{ height:96px; }
