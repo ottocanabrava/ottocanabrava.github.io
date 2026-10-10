@@ -211,6 +211,7 @@
     .nums{ flex-direction:column; align-items:center; text-align:center; gap:14px; }
     .nums .arrow{ width:1.5px; height:40px; margin:0; }
     .nums .arrow::after{ right:-3.5px; top:auto; bottom:-4px; }
+    .p2.flow .close .fim, .p2.flow .close .fim .after{ align-items:center; }
     .steps{ flex-direction:column; gap:8px; }
     .steps i{ width:1.5px; height:16px; transform-origin:top; }
   }
@@ -330,6 +331,10 @@
   .p2.flow{ height:auto; overflow:visible; padding-top:clamp(96px,14vh,160px); }
   .p2.flow .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none; padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
   .stage2{ position:relative; height:min(86svh, 880px); overflow:hidden; }
+  /* os links de TicketScript e FormPilot vêm 40px abaixo dos números, como o link dos outros capítulos */
+  .p2.flow .fim{ position:absolute; display:flex; flex-direction:column; align-items:flex-start; }
+  .p2.flow .fim .nums{ position:static; }
+  .p2.flow .fim .after{ min-height:0; padding:0; margin-top:40px; opacity:0; }
   .p2.flow .sf{ top:0; height:calc(100% - var(--band)); }
   /* 05 em fluxo */
   #documentos.flow{ height:auto; overflow:visible; padding:clamp(96px,14vh,160px) 0 clamp(40px,7vh,88px); }
@@ -908,7 +913,7 @@
   var replyPh = sf.querySelector(".rp .ph"), replyTx = sf.querySelector(".rp .tx");
   var T = {}; Array.prototype.forEach.call(sf.querySelectorAll("[data-t]"), function(el){ T[el.getAttribute("data-t")] = el; });
   var lines = p2.querySelectorAll(".band p"), words = p2.querySelectorAll(".band .w"), nmTs = p2.querySelector(".nm-ts"), nmFp = p2.querySelector(".nm-fp");
-  var bigOne = p2.querySelector(".big.one"), bigBut = p2.querySelector(".big.but"), steps = p2.querySelector(".steps"), nums = p2.querySelector(".nums");
+  var bigOne = p2.querySelector(".big.one"), bigBut = p2.querySelector(".big.but"), steps = p2.querySelector(".steps"), nums = p2.querySelector(".nums"), after = null;
   var stepRules = steps.querySelectorAll("i"), pdf = sf.querySelector(".pdf"), sweep = sf.querySelector(".sweep");
   var signDot = sf.querySelector(".sign-l i"), signTx = sf.querySelector(".sign-l span");
   var opEl = sf.querySelector(".op"), opAmp = opEl.querySelector(".amp"), opVit = opEl.querySelector(".vit");
@@ -1111,6 +1116,7 @@
     steps.style.opacity = fade(p, .96, .968, .983, .988);
     Array.prototype.forEach.call(stepRules, function(r, i){ r.style.transform = (nar2 ? "scaleY(" : "scaleX(") + clamp(seg(p, .962, .978) * 3 - i) + ")"; });
     nums.style.opacity = seg(p, .989, .997);
+    if(after){ after.style.opacity = nums.style.opacity; after.style.pointerEvents = p >= .997 ? "auto" : "none"; }
   }
 
   /* =========================================================
@@ -1359,7 +1365,7 @@
   /* ---------- gatilho por entrada na tela (o mesmo do 05) ----------
      Entrou na tela → a animação própria da cena roda uma vez → para no estado final.
      Só volta ao começo quando a cena sai inteira da tela, para não piscar durante o scroll. */
-  function onEnter(target, START, END, dur, render){
+  function onEnter(target, START, END, dur, render, keep){
     var tw = null, cur = START;
     function reset(){ if(tw) tw.kill(); tw = null; cur = START; render(cur); }
     function play(){ if(tw) return; var st = { p: cur };
@@ -1367,7 +1373,7 @@
     new IntersectionObserver(function(en){
       var e = en[0];
       if(e.intersectionRatio >= .55) play();
-      else if(!e.isIntersecting) reset();
+      else if(!e.isIntersecting && !(keep && cur >= END)) reset();
     }, { threshold: [0, .55] }).observe(target);
     return { reset: reset, now: function(){ return cur; } };
   }
@@ -1411,9 +1417,12 @@
   var stage2 = document.createElement("div"); stage2.className = "stage2";
   [sf, p2.querySelector(".band"), bigOne, bigBut, p2.querySelector(".close")].forEach(function(el){ stage2.appendChild(el); });
   p2.appendChild(stage2);
+  /* números e links num bloco só; terminada a cena, ela fica no quadro final para os links não sumirem */
+  var fim = document.createElement("div"); fim.className = "fim"; after = document.querySelector(".after");
+  nums.parentNode.insertBefore(fim, nums); fim.appendChild(nums); fim.appendChild(after);
   layout1(); layout2();
   CH.forEach(function(c){ c.layout(); });
-  onEnter(stage2, 0, 1, 36, function(v){ P2 = v; render2(); });
+  onEnter(stage2, 0, 1, 36, function(v){ P2 = v; render2(); }, true);
   strands.forEach(function(s, j){
     s.el.setAttribute("pathLength", "1"); s.el.style.strokeDasharray = "1"; s.el.style.strokeDashoffset = "1";
     gsap.to(s.el.style, { strokeDashoffset: 0, duration: 2.2, delay: .15 + j * .05, ease: "power2.inOut", onComplete: function(){ s.el.removeAttribute("pathLength"); s.el.style.strokeDasharray = ""; s.el.style.strokeDashoffset = ""; } });
