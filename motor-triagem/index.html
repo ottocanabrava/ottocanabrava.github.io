@@ -143,8 +143,8 @@
 
   /* saídas: a nota identificada e o banco anonimizado */
   .out{ grid-area:out; min-width:0; margin-top:clamp(28px,3.4vw,44px); display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(20px,2.6vw,40px); }
-  .ob h3{ margin:0; font-size:15px; font-weight:500; letter-spacing:-.01em; display:flex; align-items:center; gap:.45em; }
-  .ob h3 i{ width:7px; height:7px; border-radius:50%; background:var(--fire); flex-shrink:0; }
+  .ob h2{ margin:0; font-size:15px; font-weight:500; letter-spacing:-.01em; display:flex; align-items:center; gap:.45em; }
+  .ob h2 i{ width:7px; height:7px; border-radius:50%; background:var(--fire); flex-shrink:0; }
   .ob .small{ display:block; margin-top:2px; font-size:12px; color:var(--u-3); }
   .ob pre{ margin:10px 0 0; min-height:120px; padding:12px; border:1px solid var(--u-line); border-radius:10px; background:var(--u-soft); font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; line-height:1.6; color:var(--u-ink); white-space:pre-wrap; overflow-wrap:anywhere; }
   .ob pre .ln-new{ display:block; animation:fl 1.4s var(--ease) .55s both; border-radius:3px; }
@@ -444,7 +444,7 @@
     var h = '<div class="dv-hd"><span class="lb">divergências encontradas · clique na linha para ver a sugestão</span><span class="pg"><b>' + n + " / 5</b> divergências tratadas" +
       (S.st === "fim" ? " · <b>Triagem concluída</b> · " + conf + " confirmada" + (conf !== 1 ? "s" : "") + ", " + ign + " ignorada" + (ign !== 1 ? "s" : "") : "") + "</span></div>" +
       '<p class="lg" style="margin:0 0 10px">A skill localizou a planilha, triou as linhas, validou os CPFs e cruzou com o mês anterior. Clique em uma linha para ver a sugestão — confirme ou ignore cada item.</p>' +
-      '<div class="tb" id="dvt" role="grid" aria-label="Divergências do ticket 1247"><div class="r h" role="row"><span class="c-be">beneficiário</span><span class="c-ca">campo</span><span class="c-si">no sistema</span><span class="c-fa">na fatura</span><span class="c-hi">histórico</span><span class="c-cl">classificação</span><span class="c-st">decisão</span></div>';
+      '<div class="tb" id="dvt" role="grid" aria-label="Divergências do ticket 1247"><div class="r h" role="row"><span role="columnheader" class="c-be">beneficiário</span><span role="columnheader" class="c-ca">campo</span><span role="columnheader" class="c-si">no sistema</span><span role="columnheader" class="c-fa">na fatura</span><span role="columnheader" class="c-hi">histórico</span><span role="columnheader" class="c-cl">classificação</span><span role="columnheader" class="c-st">decisão</span></div>';
     h += ROWS.map(function(r){
       var a = S.act[r.id], d = diff(r.sv, r.iv), now = S.lastOk === r.id && S.evt === "ok";
       return '<div class="r d' + (a === "ok" ? " ok" : a === "ig" ? " ig" : "") + (now ? " now" : "") + '" role="row" data-row="' + r.id + '" aria-selected="' + (S.sel === r.id) + '">' +
@@ -484,9 +484,9 @@
     var fim = S.st === "fim", nl = nota(), conf = ROWS.filter(function(r){ return S.act[r.id] === "ok"; }).length, ign = feitos() - conf;
     var pre = nl.map(function(l){ return l.charAt(0) === "\u0001" ? '<span class="ln-new" id="nl-new">' + esc(l.slice(1)) + "</span>" : esc(l); }).join("\n");
     if(!conf && !ign) pre += '\n<span class="wait">As linhas confirmadas entram aqui.</span>';
-    return '<div class="ob"><h3>' + (fim && S.evt === "fim" ? "<i></i>" : "") + 'Nota para o ticket</h3><span class="small">Identificada · para uso interno · com nomes</span><pre id="nota">' + pre + "</pre>" +
+    return '<div class="ob"><h2>' + (fim && S.evt === "fim" ? "<i></i>" : "") + 'Nota para o ticket</h2><span class="small">Identificada · para uso interno · com nomes</span><pre id="nota">' + pre + "</pre>" +
       '<div class="ft"><span>' + (fim ? "Nota gerada. Próximo passo: colar no ticket e marcar como concluído." : "Colar no ticket da ferramenta de gestão") + "</span>" + '<button type="button" class="cp" data-act="copy" data-k="copy"' + (conf || ign ? "" : " disabled") + ">" + (S.copied ? "Copiado ✓" : "Copiar") + "</button></div></div>" +
-      '<div class="ob"><h3>Banco de padrões</h3><span class="small">Após sua confirmação · anonimizado</span><pre id="banco">' + (fim ? esc(banco()) : '<span class="wait">Preparado quando as 5 linhas forem decididas (' + feitos() + " de 5).</span>") + "</pre>" +
+      '<div class="ob"><h2>Banco de padrões</h2><span class="small">Após sua confirmação · anonimizado</span><pre id="banco">' + (fim ? esc(banco()) : '<span class="wait">Preparado quando as 5 linhas forem decididas (' + feitos() + " de 5).</span>") + "</pre>" +
       '<div class="ft"><span>Nenhum dado pessoal gravado — apenas padrões e resoluções</span></div></div>' +
       "";
   }
