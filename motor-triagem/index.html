@@ -73,11 +73,19 @@
   .pick{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-align:left; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration:underline; text-decoration-color:#B9BCC3; text-decoration-thickness:1px; text-underline-offset:3px; transition:text-decoration-color .2s; }
   .r.d:hover .pick, .pick:focus-visible, .r.d[aria-selected="true"] .pick{ text-decoration-color:var(--u-ink); }
   .vm{ font-family:"Geist Mono",ui-monospace,monospace; font-size:12.5px !important; }
-  mark{ background:var(--hit); color:var(--u-ink); border-radius:2px; padding:0 1px; }
-  mark.gap{ display:inline-block; width:.45em; height:1em; vertical-align:-.15em; padding:0; }
+  /* o que difere entre os dois valores: sublinhado, como na prévia da Home */
+  mark{ background:none; color:var(--u-ink); font-weight:600; border-bottom:2px solid var(--u-ink); }
+  mark.gap{ display:inline-block; width:.45em; height:1em; vertical-align:-.15em; }
+  /* classificação: as mesmas etiquetas da Home (Verificar cheia, Atenção com contorno, Pronto suave) */
+  .tg{ display:inline-block; font-size:11.5px; line-height:1.4; padding:.15em .75em; border-radius:99px; color:var(--u-3); border:1px solid var(--u-line); white-space:nowrap; }
+  .tg.t-v{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
+  .tg.t-a{ color:var(--u-ink); border-color:var(--u-ink); }
+  .tg.t-p{ color:var(--u-2); background:var(--u-soft); border-color:var(--u-soft); }
   .r.ok > *{ color:var(--u-3); }
   .r.ok .c-st{ color:var(--u-ink); }
   .r.ig > *{ color:var(--u-3); }
+  .r.ok mark, .r.ig mark{ color:var(--u-3); border-bottom-color:var(--u-line); }
+  .r.ok .tg, .r.ig .tg{ background:none; color:var(--u-3); border-color:var(--u-line); }
   .r.ig .c-be, .r.ig .c-be .pick, .r.ig .c-ca{ text-decoration:line-through; text-decoration-color:var(--u-3); }
   .r.now .c-st{ background:var(--hit); color:var(--u-ink); }
 
@@ -387,7 +395,7 @@
       na: "CPF corrigido — zero à esquerda restaurado e dígito verificador confirmado por validação automática",
       be: "CPF com 10 dígitos · Zero à esquerda suprimido pelo Excel ao exportar (padrão recorrente) · Resolução: completado para 11 dígitos após confirmação do dígito verificador" }
   ];
-  var CLS = { pronto: "✓ Pronto", atencao: "⚠ Atenção", verificar: "✕ Verificar", investigar: "? Investigar" };
+  var CLS = { pronto: '<span class="tg t-p">Pronto</span>', atencao: '<span class="tg t-a">Atenção</span>', verificar: '<span class="tg t-v">Verificar</span>', investigar: '<span class="tg">Investigar</span>' };
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   if(reduce) document.documentElement.classList.add("static");
   var $ = function(id){ return document.getElementById(id); };
