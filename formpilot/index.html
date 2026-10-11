@@ -552,7 +552,18 @@
   function ends(k){
     var n = narrow.matches, gx = 7, from, to;
     if(k === "ler"){ var ms = sf.querySelectorAll(".tk-body mark"); from = ms[ms.length - 1]; to = $("idf"); }
-    else if(k === "gerar"){ from = $("idf"); to = $("fm"); }
+    else if(/^gerar\d$/.test(k)){
+      /* um fio por dado, como no "Mapear → Preencher" da Home: operadora → cabeçalho do modelo, movimentação e beneficiário → seus campos */
+      var j = +k.slice(5), dds = sf.querySelectorAll("#idf dd"), fm = $("fm"), alvo = j === 0 ? sf.querySelector("#fm .fm-op") : sf.querySelectorAll("#fm .fm-g > div")[j === 1 ? 0 : 2];
+      if(!dds[j] || !alvo || !fm) return null;
+      var Fd = rel(dds[j]), Al = rel(alvo), y1 = Fd.t + Fd.h / 2, y2 = Al.t + Math.min(Al.h, 40) / 2;
+      if(n){ var c2 = rel(dds[j].closest(".pn")); return { r: [[c2.l - 2, y1], [gx, y1], [gx, y2], [rel(fm).l - 4, y2]] }; }
+      var a2 = [Fd.l + dds[j].scrollWidth + 8, y1], FM = rel(fm);
+      /* formulário à direita do painel: curva direta até o campo */
+      if(FM.l > a2[0]){ var b2 = [Al.l - 10, y2]; return [a2, [a2[0] + (b2[0] - a2[0]) * .5, a2[1]], [b2[0] - (b2[0] - a2[0]) * .5, b2[1]], b2]; }
+      /* formulário embaixo (duas colunas): desce pela margem direita e entra pela borda direita do formulário */
+      var xr = sf.clientWidth - 8 - j * 6; return { r: [a2, [xr, y1], [xr, y2], [FM.r + 5, y2]] };
+    }
     else if(k === "enviar"){ from = $("fm"); to = sf.querySelector('[data-st="' + S.sel + '"]'); }
     if(!from || !to) return null;
     var F = rel(from), D = rel(to), a, b;
@@ -570,7 +581,7 @@
     svg.innerHTML = "";
     S.threads.forEach(function(k, i){
       var p = ends(k); if(!p) return;
-      var now = i === S.threads.length - 1 && k === S.evt, live = A && A.k === k, dd = p.r ? route(p.r, 14) : cubic(p);
+      var now = i === S.threads.length - 1 && k.indexOf(S.evt) === 0, live = A && k.indexOf(A.k) === 0, dd = p.r ? route(p.r, 14) : cubic(p);
       if(p.r) p = [p.r[0], 0, 0, p.r[p.r.length - 1]];
       var path = document.createElementNS(NS, "path"); path.setAttribute("d", dd); path.setAttribute("pathLength", "1"); path.setAttribute("data-k", k);
       if(live){ path.style.strokeDasharray = "1"; path.style.strokeDashoffset = "1"; }
@@ -583,8 +594,10 @@
   }
   function step(t){
     if(!A) return;
-    var k = Math.min(1, (t - A.t0) / 650), e = ease(k), path = svg.querySelector('path[data-k="' + A.k + '"]'), hd = svg.querySelector(".head");
-    if(path){ path.style.strokeDashoffset = String(1 - e); var pt = path.getPointAtLength(e * path.getTotalLength()); if(hd){ hd.setAttribute("cx", pt.x); hd.setAttribute("cy", pt.y); } }
+    var k = Math.min(1, (t - A.t0) / 650), e = ease(k), hds = svg.querySelectorAll(".head");
+    Array.prototype.forEach.call(svg.querySelectorAll('path[data-k^="' + A.k + '"]'), function(path, i){
+      path.style.strokeDashoffset = String(1 - e); var pt = path.getPointAtLength(e * path.getTotalLength()); if(hds[i]){ hds[i].setAttribute("cx", pt.x); hds[i].setAttribute("cy", pt.y); }
+    });
     if(k < 1){ A.raf = requestAnimationFrame(step); return; }
     var cb = A.cb; A = null; drawThreads(); if(cb) cb();
   }
@@ -612,15 +625,15 @@
   function gerar(){
     var t = T[S.sel]; S.st = "generating"; S.evt = null; S.threads = ["ler"]; render();
     timer = setTimeout(function(){
-      S.st = "generated"; S.evt = "gerar"; S.threads = ["ler", "gerar"]; S.docPre = !reduce; render("gerar", function(){
-        S.docPre = false; S.docAnim = !reduce; render();
-        setTimeout(function(){ if(S.docAnim){ S.docAnim = false; render(); } }, 700);
-      });
+      /* como na Home: o modelo da operadora aparece e, em seguida, cada dado do chamado chega ao seu campo */
+      var s0 = S.sel, fios = function(){ if(S.st !== "generated" || S.sel !== s0) return; S.docAnim = false; S.evt = "gerar"; S.threads = ["ler", "gerar0", "gerar1", "gerar2"]; render("gerar"); };
+      S.st = "generated"; S.docAnim = !reduce; render();
+      if(reduce) fios(); else timer = setTimeout(fios, 650);
       show($("fm")); say("Formulário da " + t.op + " montado no navegador.");
     }, reduce ? 0 : 4 * 180 + 220);
   }
   function enviar(){
-    var t = T[S.sel]; S.st = "sent"; S.sent[S.sel] = true; S.evt = "enviar"; S.threads = ["ler", "gerar", "enviar"]; render("enviar");
+    var t = T[S.sel]; S.st = "sent"; S.sent[S.sel] = true; S.evt = "enviar"; S.threads = ["ler", "gerar0", "gerar1", "gerar2", "enviar"]; render("enviar");
     show(sf.querySelector('[data-st="' + S.sel + '"]')); say("Enviado para assinatura. Chamado " + t.id + " atualizado: aguardando assinatura.");
   }
   function reset(){ clearTimeout(timer); A = null; S = fresh(); last = {}; render(); say("Demonstração no estado inicial."); }
