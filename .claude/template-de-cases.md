@@ -28,7 +28,8 @@ servidor local e nas pré-visualizações (raw.githack).
 | Arquivo | O que é | Fonte |
 |---|---|---|
 | `assets/case/case.css` | Base (tokens claro/escuro, página, foco, `.mono`, `.sr-only`), **topo** (`.nav`) e **fechamento** (`.tx`, `.tx-k`, `.tx-sub`, `.tx-end`, `.tx-au`, `.tx-src`, `.end-row`, `.end-ln`, `.end-pt`, `.end-a`, `.foot`), com as regras de celular | Extraído de Documentos Verificáveis |
-| `assets/case/case.js` | Revelação do fio do fechamento (`.end-row` ganha `.on` ao entrar na tela; com movimento reduzido ou sem `IntersectionObserver`, já aparece pronto) | Extraído do script "Seções de texto" de Documentos Verificáveis, mais dois acréscimos (ver abaixo) |
+| `assets/case/demo.css` | A demo e as seções de texto: abertura (`.dm-sec`, `.dm-hd`, `.idx`), superfície clara (`.sf`), fios (`.th`), rótulos e barra (`.lb`, `.bar`, `.rs`), botões (`.bt`), registro de etapas (`.steps`), linha de pontos (`.ln`) e as animações `rise` e `appear` | As 54 regras que eram idênticas, cópia por cópia, em cinco ou seis cases (ver abaixo) |
+| `assets/case/case.js` | Revelação do fio do fechamento (`.end-row`) e das seções de texto (`.ln`, `.cols`): ganham `.on` ao entrar na tela; com movimento reduzido ou sem `IntersectionObserver`, já aparecem prontos | Extraído do script "Seções de texto" de Documentos Verificáveis, mais dois acréscimos (ver abaixo) |
 | `assets/case/projetos.css` | Navegação entre projetos ("Continue explorando": ← Anterior · Todos os projetos · Próximo →), prefixo `cx-` | Extraído dos cinco cases que a usam (CSS idêntico nos cinco) |
 | `_template/case.html` | Esqueleto de um case com a marcação exata dos componentes e as partes variáveis marcadas com ✎ | Marcação de Documentos Verificáveis |
 
@@ -54,6 +55,21 @@ Nenhum dos dois muda Documentos Verificáveis. Lá, a linha aparece no mesmo
 ponto da rolagem antes e depois da extração, medido em 1440×900, 390×844 e
 1440×600.
 
+### O que entrou em `demo.css` e o que ficou nas páginas
+
+Uma regra só foi para `demo.css` se era idêntica em pelo menos cinco cases **e**
+nenhuma página tinha outra versão do mesmo seletor. Como `demo.css` vem antes
+do `<style>` da página, uma regra compartilhada perde para qualquer regra da
+página com o mesmo seletor. Por isso ficam nas páginas:
+- o que varia por case: a grade de cada demo, o número de colunas da `.ln`, as tabelas;
+- as regras de celular cujo seletor tem uma versão própria na página, como `.ln`, `.sf` e `.dm` em até 760px;
+- o último ponto vermelho da `.ln` (`.ln li:last-child::before`), porque em Documentos Verificáveis ele alcançaria o fio tracejado.
+
+A extração foi validada comparando o estilo calculado de todos os elementos,
+antes e depois, nos seis cases. A comparação cobriu 1440, 820 e 390px, o modo
+escuro e a página sem JS, no estado inicial e com a demo executada, e não
+mudou nenhum valor.
+
 Se um componente compartilhado precisar mudar, a mudança é feita no arquivo de
 `assets/case/` e vale para todos os cases que o ligam. Ela não é feita dentro
 de uma página.
@@ -64,10 +80,10 @@ de uma página.
 2. Mantenha no `<head>`, nesta ordem:
    - as fontes Geist e Geist Mono;
    - `<script>document.documentElement.classList.add("js");</script>`, que precisa vir antes do CSS, porque as regras de revelação dependem de `html.js`;
-   - `<link rel="stylesheet" href="../assets/case/case.css">`, **antes** do `<style>` do case, para que o case possa acrescentar estilos sem disputar a cascata com os componentes.
+   - `<link rel="stylesheet" href="../assets/case/case.css">` e, em seguida, `<link rel="stylesheet" href="../assets/case/demo.css">`, **antes** do `<style>` do case, para que o case possa acrescentar estilos sem disputar a cascata com os componentes.
 3. Escreva o conteúdo próprio em `<main>`, antes do fechamento.
 4. Preencha o fechamento só nos pontos marcados.
-5. Ligue `<script src="../assets/case/case.js"></script>` como último script, depois dos scripts do case. Se o case usar a classe `static` para movimento reduzido, como faz Documentos Verificáveis, o script compartilhado a respeita.
+5. Ligue `<script src="../assets/case/case.js"></script>` como último script, depois dos scripts do case. Se o case usar a classe `static` para movimento reduzido, como faz Documentos Verificáveis, o script compartilhado a respeita. Ele também revela as seções de texto (`.ln`, `.cols`): não copie esse script para a página.
 
 ## O que pode variar por case
 
@@ -84,8 +100,9 @@ de uma página.
 ## O que não deve ser duplicado nem recriado
 
 - Os tokens `:root`, a `.nav`, `.tx`, `.tx-k`, `.tx-sub`, `.tx-end`, `.tx-au`, `.tx-src`, `.end-*` e `.foot`. Não redefina essas classes no `<style>` do case. Se uma página precisar de outro valor, é sinal de que o componente compartilhado deve mudar (em `assets/case/`), não de que a página deve divergir.
+- As regras de `demo.css`. Não copie nenhuma para a página. Se a demo de um case precisar de outro valor, sobreponha só a propriedade no `<style>` do case, como o Extrator faz com `#dm{ color-scheme:light; }`.
 - A marcação do topo e do fechamento: mesmos elementos, classes e ordem do esqueleto.
-- O script de revelação do fio: não copie para a página, ligue `case.js`.
+- O script de revelação do fio e das seções de texto: não copie para a página, ligue `case.js`.
 
 ## Navegação entre projetos (decisão pendente)
 
