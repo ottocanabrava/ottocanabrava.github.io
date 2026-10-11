@@ -571,6 +571,8 @@
     if(n){ var col = rel(from.closest(".tk, .pn, .dc")), row = rel(to.closest(".r") || to);
       a = [col.l - 2, F.t + F.h / 2]; b = k === "enviar" ? [row.l + 1, row.t + row.h / 2] : [D.l - 4, D.t + 10]; return { r: [a, [gx, a[1]], [gx, b[1]], b] }; }
     if(k === "enviar"){ a = [F.l + F.w * .75, F.t - 4]; b = [D.l + D.w / 2, D.b + 3]; return [a, [a[0], a[1] - (a[1] - b[1]) * .5], [b[0], b[1] + (a[1] - b[1]) * .5], b]; }
+    /* ler: sai da borda direita do texto do chamado, na altura do trecho marcado — não cruza nenhuma linha (como no TicketScript) */
+    if(k === "ler" && D.l > F.r){ var B = rel(from.closest(".tk-body")); a = [B.r + 6, F.t + F.h / 2]; b = [D.l - 6, D.t + 14]; return [a, [a[0] + (b[0] - a[0]) * .5, a[1]], [b[0] - (b[0] - a[0]) * .5, b[1]], b]; }
     if(D.l > F.r){ a = [F.r + 4, F.t + F.h / 2]; b = [D.l - 6, D.t + 14]; return [a, [a[0] + (b[0] - a[0]) * .5, a[1]], [b[0] - (b[0] - a[0]) * .5, b[1]], b]; }
     a = [F.l + F.w / 2, F.b + 4]; b = [D.l + Math.min(D.w / 2, 60), D.t - 6]; return [a, [a[0], a[1] + (b[1] - a[1]) * .5], [b[0], b[1] - (b[1] - a[1]) * .5], b];
   }
