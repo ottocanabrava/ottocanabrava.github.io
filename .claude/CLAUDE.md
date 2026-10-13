@@ -38,6 +38,31 @@ também carregam os arquivos compartilhados de `assets/case/`.
   recriados por página. A navegação entre projetos não entra nessa exceção
   até a decisão sobre a identidade visual dela.
 
+## Ponytail (obrigatório)
+
+Todo trabalho neste repositório usa o plugin
+[Ponytail](https://github.com/DietrichGebert/ponytail), registrado em
+`.claude/settings.json` (o Claude Code oferece a instalação ao abrir o
+projeto; à mão: `/plugin marketplace add DietrichGebert/ponytail` e
+`/plugin install ponytail@ponytail`).
+
+Para que serve: manter as mudanças pequenas e completas. O Ponytail faz a
+menor mudança que resolve o pedido, evita abstração e dependência por
+antecipação e marca com `shortcut:` o atalho deliberado. Ele nunca corta
+validação, segurança nem acessibilidade. Isso reforça as regras acima (sem
+CSS compartilhado por antecipação, componentes do template ligados e não
+recriados).
+
+Como usar:
+
+- antes de abrir um PR, rodar `/ponytail-review` no diff da branch;
+- numa revisão geral do site, rodar `/ponytail-audit`, que só gera o
+  relatório e não muda nada.
+
+O Ponytail não substitui a identidade visual nem o fluxo abaixo: quando
+houver conflito, valem `identidade.md`, `template-de-cases.md` e este
+arquivo.
+
 ## Fluxo obrigatório de trabalho
 
 Vale para todo trabalho no repositório, inclusive novos cases e mudanças em
