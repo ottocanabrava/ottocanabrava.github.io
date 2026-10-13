@@ -1413,8 +1413,9 @@
       var START = .19, END = .735, tw = null;
       c.p = START;
       function reset(){ if(tw) tw.kill(); tw = null; c.p = START; c.render(c.p); }
-      function play(){ if(tw) return; var st = { p: START };
+      function play(){ if(tw || c.p >= END) return; var st = { p: START };
         tw = gsap.to(st, { p: END, duration: 10, ease: "none", onUpdate: function(){ c.p = st.p; c.render(c.p); } }); }
+      c.finish = function(){ if(tw) tw.kill(); tw = null; c.p = END; c.render(c.p); };
       new IntersectionObserver(function(en){
         var e = en[0];
         if(e.intersectionRatio >= .55) play();
@@ -1463,13 +1464,13 @@
       if(e.intersectionRatio >= .55) play();
       else if(!e.isIntersecting && !(keep && cur >= END)) reset();
     }, { threshold: [0, .55] }).observe(target);
-    return { reset: reset, now: function(){ return cur; } };
+    return { reset: reset, now: function(){ return cur; }, finish: function(){ if(tw) tw.kill(); tw = null; cur = END; render(cur); } };
   }
   function autoplayChapter(c, START, END, dur){
     c.flow = true; c.el.classList.add("flow"); c.doneO = 0;
     if(c.res) c.res.style.opacity = 0; if(c.bgo) c.bgo.style.opacity = 0;
     c.p = START;
-    onEnter(c.sf, START, END, dur, function(v){ c.p = v; c.render(v); });
+    c.finish = onEnter(c.sf, START, END, dur, function(v){ c.p = v; c.render(v); }).finish;
   }
 
   /* ---------- contato: o fio chega ao ponto ---------- */
@@ -1511,7 +1512,7 @@
   nums.parentNode.insertBefore(fim, nums); fim.appendChild(nums); fim.appendChild(after);
   layout1(); layout2();
   CH.forEach(function(c){ c.layout(); });
-  onEnter(stage2, 0, 1, 36, function(v){ P2 = v; render2(); }, true);
+  var stage2Enter = onEnter(stage2, 0, 1, 36, function(v){ P2 = v; render2(); }, true);
   strands.forEach(function(s, j){
     s.el.setAttribute("pathLength", "1"); s.el.style.strokeDasharray = "1"; s.el.style.strokeDashoffset = "1";
     gsap.to(s.el.style, { strokeDashoffset: 0, duration: 2.2, delay: .15 + j * .05, ease: "power2.inOut", onComplete: function(){ s.el.removeAttribute("pathLength"); s.el.style.strokeDasharray = ""; s.el.style.strokeDashoffset = ""; } });
@@ -1536,6 +1537,14 @@
     if(e) history.replaceState(null, "", "#projetos");
   }
   Array.prototype.forEach.call(document.querySelectorAll('a[href="#mapa"]'), function(a){ a.addEventListener("click", goMap); });
+  /* teclado: o foco que entra numa cena ainda não tocada a leva ao quadro final,
+     senão ele para em links ainda invisíveis (a cena só toca com 55% dela na tela) */
+  document.addEventListener("focusin", function(e){
+    var t = e.target;
+    if(p1.contains(t) && P1 < 1) heroFinish();
+    if(stage2.contains(t) && stage2Enter.now() < 1) stage2Enter.finish();
+    CH.forEach(function(c){ if(c.finish && c.el.contains(t) && !c.doneO) c.finish(); });
+  });
   ScrollTrigger.create({ trigger: ".end", start: "top 70%", end: "center 55%", scrub: .6, onUpdate: function(t){ renderEnd(t.progress); } });
   ScrollTrigger.addEventListener("refresh", function(){ layout1(); layout2(); CH.forEach(function(c){ c.layout(); }); });
   var wantMap = location.hash === "#projetos" || location.hash === "#mapa";

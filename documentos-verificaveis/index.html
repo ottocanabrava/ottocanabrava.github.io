@@ -565,7 +565,7 @@
   var $ = function(id){ return document.getElementById(id); };
   var sf = $("dm"), svg = $("th"), NS = "http://www.w3.org/2000/svg";
   var narrow = window.matchMedia("(max-width:1023px)");
-  var S, tick = null, last = {};
+  var S, tick = null, pdfT = null, last = {};
 
   function fresh(){
     return { rows: REG.map(function(r){ var o = {}; for(var k in r) o[k] = r[k]; return o; }),
@@ -818,8 +818,8 @@
   function makePdf(){
     var r = S.rows[S.sel]; if(!ativo(r)) return;   /* pdf_for(): revogado não gera PDF */
     S.panel = "pdf"; S.busy = true; S.doc = null; S.threads = []; S.hit = {}; S.late = false; S.reading = S.sel; S.qrNext = null; render();
-    setTimeout(function(){
-      S.busy = false; S.reading = null; S.doc = { id: r.id, kind: "gerado" }; S.page = 0; S.docPre = !reduce; S.threads = ["pdf"]; S.evt = "pdf";
+    pdfT = setTimeout(function(){
+      pdfT = null; S.busy = false; S.reading = null; S.doc = { id: r.id, kind: "gerado" }; S.page = 0; S.docPre = !reduce; S.threads = ["pdf"]; S.evt = "pdf";
       render("pdf", function(){
         S.docPre = false; S.docAnim = !reduce; S.qrNext = r.id; render();
         setTimeout(function(){ if(S.docAnim){ S.docAnim = false; render(); } }, 700);
@@ -882,7 +882,7 @@
     else if(id === "ph-f") check($("ph-q").value);
   });
 
-  function reset(){ clearInterval(tick); A = null; S = fresh(); last = {}; $("ph-q").value = ""; render(); say("Demonstração no estado inicial."); }
+  function reset(){ clearInterval(tick); clearTimeout(pdfT); A = null; S = fresh(); last = {}; $("ph-q").value = ""; render(); say("Demonstração no estado inicial."); }
   if(window.ResizeObserver) new ResizeObserver(function(){ drawThreads(); }).observe(sf);
   else addEventListener("resize", function(){ drawThreads(); });
 
