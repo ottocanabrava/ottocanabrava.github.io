@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agente de Qualificação de Leads · Otto Canabrava</title>
+<meta name="description" content="Um agente de IA que conversa com o lead de plano de saúde assim que ele chega, dá uma nota de 0 a 100 e passa ao corretor autônomo.">
+<meta name="theme-color" content="#F7F7F5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<!-- Componentes compartilhados dos cases (topo, fechamento, base). Fonte e uso: .claude/template-de-cases.md -->
+<link rel="stylesheet" href="../assets/case/case.css">
+<style>
+  /* Abertura, seções de texto, etapas (.ln), colunas (.kv), pontos (.pts) e detalhes (.dt):
+     copiados de documentos-verificaveis/index.html, sem alteração de valores. */
+  .dm-sec{ padding:calc(64px + clamp(40px,8vh,96px)) 0 0; }
+  .dm-hd{ padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
+  .dm-hd .ix{ font-size:.875rem; color:var(--ink-3); }
+  .dm-hd h1{ margin:.5em 0 0; font-size:clamp(1.75rem,3.4vw,3.25rem); font-weight:500; letter-spacing:-.04em; line-height:1.04; max-width:22ch; }
+  .dm-hd p{ margin:1em 0 0; font-size:clamp(1rem,1.5vw,1.375rem); line-height:1.45; color:var(--ink-2); max-width:44ch; }
+  .dm-hd .fic{ font-size:.875rem; color:var(--ink-3); max-width:72ch; line-height:1.5; }
+
+  code{ font-family:"Geist Mono",ui-monospace,monospace; font-size:.86em; }
+  .tx-lead{ margin:0; font-size:clamp(2.25rem,5.6vw,5.5rem); font-weight:500; letter-spacing:-.05em; line-height:1; max-width:14ch; }
+  .tx-note{ margin:clamp(56px,8vh,88px) 0 0; font-size:clamp(1rem,1.2vw,1.125rem); line-height:1.55; color:var(--ink-3); max-width:60ch; }
+
+  .ln{ list-style:none; margin:clamp(64px,9vh,104px) 0 0; padding:44px 0 0; display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:clamp(20px,2.6vw,40px); position:relative; }
+  .ln::before{ content:""; position:absolute; left:0; right:0; top:21px; height:1.5px; background:var(--ink); transform-origin:left; transition:transform 1.25s cubic-bezier(.45,0,.55,1); }
+  .ln li{ --dl:0s; position:relative; transition:opacity .45s var(--ease) var(--dl), transform .45s var(--ease) var(--dl); }
+  .ln li::before{ content:""; position:absolute; left:0; top:-27px; width:9px; height:9px; border-radius:50%; background:var(--ink); transition:transform .35s var(--ease) var(--dl), background-color .4s var(--ease) var(--dl); }
+  .ln li:nth-child(2){ --dl:.31s; } .ln li:nth-child(3){ --dl:.62s; } .ln li:nth-child(4){ --dl:.94s; } .ln li:nth-child(5){ --dl:1.25s; }
+  .ln li:last-child::before{ background:var(--fire); transition:transform .35s var(--ease) var(--dl), background-color .4s var(--ease) 1.5s; }
+  .ln-n{ display:block; font-family:"Geist Mono",ui-monospace,monospace; font-size:.75rem; color:var(--ink-3); margin-bottom:14px; }
+  .ln b{ display:block; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; margin-bottom:10px; }
+  .ln li > span:last-child{ display:block; font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); line-height:1.5; }
+  html.js:not(.static) .ln:not(.on)::before{ transform:scaleX(0); }
+  html.js:not(.static) .ln:not(.on) li{ opacity:0; transform:translateY(8px); }
+  html.js:not(.static) .ln:not(.on) li::before{ transform:scale(.4); }
+  html.js:not(.static) .ln:not(.on) li:last-child::before{ background:var(--ink); }
+
+  .cols{ display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(32px,6vw,96px); margin-top:clamp(64px,9vh,104px); max-width:1100px; }
+  .col-h{ margin:0 0 18px; font-size:clamp(1.25rem,1.9vw,1.75rem); font-weight:500; letter-spacing:-.03em; line-height:1.1; }
+  .kv{ list-style:none; margin:0; padding:0; border-top:1px solid var(--line); }
+  .kv li{ --i:0; display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding:12px 0; border-bottom:1px solid var(--line); font-size:clamp(.9375rem,1.1vw,1.0625rem); color:var(--ink-2); transition:opacity .4s var(--ease) calc(var(--i) * 70ms); }
+  .kv code{ color:var(--ink); font-size:.82em; }
+  .kv span{ text-align:right; }
+  .col-n{ margin:18px 0 0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:44ch; transition:opacity .4s var(--ease) 1.3s; }
+  html.js:not(.static) .cols:not(.on) li, html.js:not(.static) .cols:not(.on) .col-n{ opacity:0; }
+
+  @keyframes appear{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+  .pts{ list-style:none; margin:clamp(56px,8vh,88px) 0 0; padding:0; max-width:64ch; }
+  .pts li{ position:relative; padding:0 0 18px 26px; font-size:clamp(1rem,1.25vw,1.1875rem); line-height:1.55; color:var(--ink-2); }
+  .pts li::before{ content:""; position:absolute; left:2px; top:.62em; width:7px; height:7px; border-radius:50%; background:var(--ink); }
+
+  html.js:not(.static) .dm-hd > *{ animation:appear .6s var(--ease) both; }
+  html.js:not(.static) .dm-hd > :nth-child(2){ animation-delay:.08s; }
+  html.js:not(.static) .dm-hd > :nth-child(3){ animation-delay:.16s; }
+  html.js:not(.static) .dm-hd > :nth-child(4){ animation-delay:.24s; }
+
+  .dt{ margin:0; max-width:1100px; border-top:1px solid var(--line); }
+  .dt div{ display:grid; grid-template-columns:minmax(0,15em) minmax(0,1fr); gap:24px; padding:20px 0; border-bottom:1px solid var(--line); }
+  .dt dt{ font-weight:500; font-size:clamp(1rem,1.25vw,1.1875rem); letter-spacing:-.015em; }
+  .dt dd{ margin:0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:64ch; }
+  .stk{ margin:32px 0 0; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
+
+  /* Próprio deste case: o vídeo é a superfície de produto. Fundo claro também no modo escuro,
+     como a .sf da Home, porque é a tela do sistema. Cabe na altura da janela. */
+  .vd{ margin:0; padding:0 clamp(12px,2.4vw,40px); }
+  .vd video{ display:block; width:min(100%, 860px, calc(100vh - 160px)); aspect-ratio:1/1; height:auto; border-radius:20px; background:#F7F7F5; box-shadow:0 0 0 1px rgba(14,15,18,.06), 0 40px 100px -50px rgba(14,15,18,.3); }
+  .vd figcaption{ margin:16px 0 0; padding:0 calc(clamp(20px,6vw,96px) - clamp(12px,2.4vw,40px)); font-size:.75rem; color:var(--ink-3); }
+
+  @media (max-width:900px){
+    .ln{ grid-template-columns:1fr; gap:36px; padding:0 0 0 30px; margin-top:56px; }
+    .ln::before{ left:4px; right:auto !important; top:7px; bottom:7px; width:1.5px; height:auto; transform-origin:top; }
+    html.js:not(.static) .ln:not(.on)::before{ transform:scaleY(0); }
+    .ln li::before{ left:-30px; top:3px; }
+    .ln li > span:last-child{ font-size:1rem; max-width:52ch; }
+  }
+  @media (max-width:760px){
+    .cols{ grid-template-columns:1fr; gap:56px; }
+    .kv li, .col-n, .pts li, .dt dd{ font-size:1rem; }
+    .kv li{ flex-wrap:wrap; }
+    .kv span{ text-align:left; }
+    .dt div{ grid-template-columns:1fr; gap:6px; }
+    .vd{ padding:0 10px; }
+    .vd video{ border-radius:16px; width:100%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a href="/"><b>Otto Canabrava</b></a>
+  <nav><a href="/#projetos">Sistemas</a><a href="/#sobre">Sobre</a><a href="/#contato">Contato</a></nav>
+</header>
+
+<main>
+  <section class="dm-sec" id="video" aria-labelledby="dm-t">
+    <div class="dm-hd">
+      <span class="ix">Agente de Qualificação de Leads</span>
+      <h1 id="dm-t">Um lead chega às 22h. O agente conversa, dá a nota e passa ao corretor.</h1>
+      <p>Um agente de IA que conversa com quem pede um plano de saúde assim que a pessoa chega, a qualquer hora, e entrega ao corretor autônomo o lead com nota, resumo e perfil.</p>
+      <p class="fic">O vídeo é uma animação da conversa simulada de uma das personas de teste. Corretor Fulano, Carlos Lima e EMPRESA EXEMPLO LTDA são fictícios, e o CNPJ está mascarado. As mensagens do agente foram escritas seguindo o prompt; a nota, a planilha e o aviso saem do código do projeto.</p>
+    </div>
+    <figure class="vd">
+      <video id="vd" muted playsinline controls preload="metadata" poster="video/poster.webp" aria-describedby="vd-d">
+        <source src="video/como-funciona.webm" type="video/webm">
+        <source src="video/como-funciona.mp4" type="video/mp4">
+      </video>
+      <figcaption id="vd-d" class="mono">57 s · sem som · conversa, nota e aviso ao corretor</figcaption>
+    </figure>
+  </section>
+
+  <!-- Por dentro: as etapas da conversa, na ordem em que acontecem -->
+  <section class="tx" id="por-dentro" aria-labelledby="pd-t">
+    <h2 class="tx-k" id="pd-t">Por dentro</h2>
+    <p class="tx-lead">Uma pergunta por vez. A nota fica no código.</p>
+    <p class="tx-sub">O modelo conduz a conversa e chama ferramentas. As regras do negócio, como a elegibilidade do CNPJ, a nota e o perfil do lead, ficam no código, e não no modelo.</p>
+    <ol class="ln">
+      <li><span class="ln-n">01</span><b>Apresentação</b><span>Se apresenta como assistente virtual do corretor e diz para que servem os dados. Pedido que não é de plano de saúde é encerrado com educação.</span></li>
+      <li><span class="ln-n">02</span><b>CNPJ</b><span>A primeira pergunta. O número é consultado em fonte pública e a empresa é confirmada com o lead. Sem CNPJ elegível, segue como pessoa física, sem descarte.</span></li>
+      <li><span class="ln-n">03</span><b>Coleta</b><span>Pessoas e idades, cidade, profissão, plano atual e há quanto tempo, e para quando quer contratar.</span></li>
+      <li><span class="ln-n">04</span><b>Confirmação</b><span>Repete o que entendeu e ajusta o que o lead corrigir antes de registrar.</span></li>
+      <li><span class="ln-n">05</span><b>Nota e aviso</b><span>Nota de 0 a 100, uma linha na planilha e o aviso ao corretor na hora.</span></li>
+    </ol>
+  </section>
+
+  <!-- A nota: pesos e faixas -->
+  <section class="tx" id="nota" aria-labelledby="nt-t">
+    <h2 class="tx-k" id="nt-t">A nota</h2>
+    <p class="tx-lead">A nota prioriza. Não descarta.</p>
+    <div class="cols">
+      <div>
+        <h3 class="col-h">Pesos</h3>
+        <ul class="kv">
+          <li style="--i:0">Prazo<span>30</span></li>
+          <li style="--i:1">Plano atual<span>20</span></li>
+          <li style="--i:2">Caminho (empresa ou pessoa física)<span>20</span></li>
+          <li style="--i:3">Vidas<span>20</span></li>
+          <li style="--i:4">Autoridade<span>10</span></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="col-h">Faixas</h3>
+        <ul class="kv">
+          <li style="--i:5">Quente<span>70 ou mais</span></li>
+          <li style="--i:6">Morno<span>50 a 69</span></li>
+          <li style="--i:7">Frio<span>abaixo de 50</span></li>
+        </ul>
+        <p class="col-n">Todo lead dentro do escopo vai para o corretor. Idade, saúde e orçamento ficam fora da nota. Os pesos foram definidos por julgamento e devem ser recalibrados com os desfechos reais.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Limites: o que fica com o corretor -->
+  <section class="tx" id="limites" aria-labelledby="lm-t">
+    <h2 class="tx-k" id="lm-t">Limites</h2>
+    <p class="tx-lead">O que fica com o corretor.</p>
+    <ul class="pts">
+      <li>Se apresenta como assistente virtual e diz a verdade quando perguntam se é um robô.</li>
+      <li>Não informa preço e não fala de cobertura, carência ou rede credenciada.</li>
+      <li>Não pergunta sobre saúde. Se o lead conta algo, não registra.</li>
+      <li>Sem urgência falsa nem gatilhos de escassez.</li>
+      <li>Passa a conversa ao corretor, com o histórico, quando o lead pede uma pessoa, se irrita ou traz uma reclamação.</li>
+    </ul>
+    <p class="tx-note">Cada regra é conferida automaticamente nas conversas simuladas. São checagens por palavras: pegam os erros mais graves, mas não substituem ler as transcrições.</p>
+  </section>
+
+  <!-- Detalhes técnicos: só o que o repositório comprova -->
+  <section class="tx" id="detalhes" aria-labelledby="dt-t">
+    <h2 class="tx-k" id="dt-t">Detalhes técnicos</h2>
+    <dl class="dt">
+      <div><dt>Estado</dt><dd>Protótipo local. A planilha é um CSV com as colunas da planilha do Google, e o aviso ao corretor é gravado num arquivo. Planilha do Google, e-mail e chat web vêm na publicação.</dd></div>
+      <div><dt>Modelo</dt><dd>Gemini, atrás de uma interface simples, para trocar de fornecedor sem mexer no resto. Com dados reais de leads, só num projeto com faturamento ativo, para as conversas não serem usadas em treino.</dd></div>
+      <div><dt>Consulta de CNPJ</dt><dd>CNPJá, com a Minha Receita como alternativa. Só leitura e só do CNPJ que o lead informou. MEI com menos de 6 meses segue como pessoa física.</dd></div>
+      <div><dt>Testes de conversa</dt><dd>9 personas de lead: empresa com urgência, MEI recente, família só pesquisando, perguntas de preço e carência, informação de saúde espontânea, tentativa de mudar as instruções, pedido de falar com uma pessoa, pedido fora do escopo e correção de um dado. Na fase 2, um segundo modelo interpreta cada persona para testar o Gemini.</dd></div>
+      <div><dt>Testes</dt><dd>207 testes automatizados (pytest), incluindo todas as 180 combinações possíveis da nota e as verificações de regra.</dd></div>
+      <div><dt>Origem</dt><dd>Uma entrevista com um corretor autônomo e pesquisa secundária sobre leads, rotina do corretor e regras da ANS.</dd></div>
+      <div><dt>Fora do escopo</dt><dd>Canal WhatsApp e integração com o HubSpot, previstos para fases seguintes.</dd></div>
+    </dl>
+    <p class="stk mono">Python · Gemini · pytest · CNPJá · Minha Receita · Remotion</p>
+  </section>
+
+  <section class="tx tx-end" id="autoria" aria-labelledby="au-t">
+    <h2 class="tx-k" id="au-t">Sobre o projeto</h2>
+    <p class="tx-sub tx-au">Feito a partir de uma entrevista com um corretor autônomo, que estimou cerca de 100 ligações para fechar uma venda, e de pesquisa secundária. Antes de qualquer uso com cliente real, faltam a validação jurídica de LGPD e a confirmação de que o uso comercial da API de CNPJ é permitido.</p>
+    <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="end-a" href="/#projetos">Todos os sistemas</a></div>
+  </section>
+  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#video">↑ Topo</a></footer>
+</main>
+
+<script>
+/* Seções de texto: cada fio se desenha uma vez, quando entra na tela (o padrão do Sobre da Home).
+   Vídeo: toca uma vez, sem som, quando 55% dele está visível, e para no quadro final.
+   Com movimento reduzido ou sem IntersectionObserver, tudo aparece no estado final e o vídeo
+   fica parado no pôster, com os controles. */
+(function(){
+  var d = document.documentElement;
+  if(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) d.classList.add("static");
+  var els = document.querySelectorAll(".ln, .cols"), v = document.getElementById("vd");
+  if(!("IntersectionObserver" in window) || d.classList.contains("static")){ Array.prototype.forEach.call(els, function(l){ l.classList.add("on"); }); return; }
+  Array.prototype.forEach.call(els, function(l){
+    var o = new IntersectionObserver(function(en){ if(en[0].isIntersecting){ l.classList.add("on"); o.disconnect(); } }, { rootMargin: "0px 0px -20% 0px" });
+    o.observe(l);
+  });
+  var ov = new IntersectionObserver(function(en){
+    if(en[0].intersectionRatio >= .55){ var p = v.play(); if(p && p.catch) p.catch(function(){}); ov.disconnect(); }
+  }, { threshold: [.55] });
+  ov.observe(v);
+})();
+</script>
+<script src="../assets/case/case.js"></script>
+</body>
+</html>
