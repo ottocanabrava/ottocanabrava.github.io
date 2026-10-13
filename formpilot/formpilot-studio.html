@@ -1138,6 +1138,20 @@
   }
 
   // ---------- document renderer (shared by Mapear / Preencher / Validar) ----------
+  /* campos e chips são <div> (o grupo tem uma tabela dentro, que não cabe num <button>):
+     o teclado chega por tabindex e escolhe com Enter ou espaço; o foco volta ao item depois de redesenhar */
+  function selecionavel(el, id){
+    el.setAttribute("role", "button"); el.tabIndex = 0;
+    el.setAttribute("aria-pressed", String(id === state.selectedId));
+    function escolher(){
+      state.selectedId = id; renderMap();
+      var novo = document.querySelector('[data-sel="' + id + '"]'); if(novo) novo.focus();
+    }
+    el.setAttribute("data-sel", id);
+    el.addEventListener("click", escolher);
+    el.addEventListener("keydown", function(e){ if(e.key === "Enter" || e.key === " "){ e.preventDefault(); escolher(); } });
+  }
+
   function renderDoc(container, mode){
     container.innerHTML = "";
 
@@ -1175,7 +1189,7 @@
       if(demo.done.map && f.id === DEMO_FIELD) mark.classList.add("mapped");
       var pill = f.condField ? '<span class="cond-pill">se '+f.condValue+'</span>' : "";
       mark.innerHTML = '<span class="idx">'+(i+1)+'</span>'+f.docLabel+pill;
-      mark.addEventListener("click", function(){ state.selectedId = f.id; renderMap(); });
+      selecionavel(mark, f.id);
       container.appendChild(mark);
     });
 
@@ -1191,7 +1205,7 @@
     gmark.innerHTML = '<div class="dg-title">['+(fields.length+1)+'] '+group.docLabel+'</div>'+
       '<table><thead><tr><th>Nome</th><th>Vínc.</th><th>Nasc.</th><th>Prod.</th></tr></thead><tbody>'+rowsHtml+'</tbody></table>';
     if(state.selectedId === group.id) gmark.classList.add("selected");
-    gmark.addEventListener("click", function(){ state.selectedId = group.id; renderMap(); });
+    selecionavel(gmark, group.id);
     container.appendChild(gmark);
 
     // signature area (decorative, not a configurable field)
@@ -1293,9 +1307,7 @@
       return '<div class="'+cls+'" data-id="'+f.id+'">'+f.label+'</div>';
     }).join("");
     document.getElementById("logicalChips").innerHTML = html;
-    document.querySelectorAll(".logical-chip").forEach(function(chip){
-      chip.addEventListener("click", function(){ state.selectedId = chip.getAttribute("data-id"); renderMap(); });
-    });
+    document.querySelectorAll(".logical-chip").forEach(function(chip){ selecionavel(chip, chip.getAttribute("data-id")); });
   }
 
   function chainStep(k, v, mid){
@@ -1359,12 +1371,12 @@
     }
 
     if(it.rule === "logico"){
-      html += '<div class="field-row"><label class="field-label">Rótulo</label><input type="text" id="cfgLabel" value="'+it.label+'"></div>';
-      html += '<div class="field-row"><label class="field-label">Fonte do dado</label><select id="cfgSource">'+
+      html += '<div class="field-row"><label class="field-label" for="cfgLabel">Rótulo</label><input type="text" id="cfgLabel" value="'+it.label+'"></div>';
+      html += '<div class="field-row"><label class="field-label" for="cfgSource">Fonte do dado</label><select id="cfgSource">'+
         Object.keys(sourceLabels).map(function(k){ return '<option value="'+k+'"'+(k===it.source?" selected":"")+'>'+sourceLabels[k]+'</option>'; }).join("")+'</select></div>';
       html += '<div class="field-row"><label class="field-label">Tipo</label><input type="text" value="Escolha" disabled></div>';
       html += '<div class="field-row"><label class="field-label">Regra</label><input type="text" value="Campo lógico — não estampado" disabled></div>';
-      html += '<div class="field-row"><label class="field-label">Status da configuração</label><select id="cfgStatus">'+
+      html += '<div class="field-row"><label class="field-label" for="cfgStatus">Status da configuração</label><select id="cfgStatus">'+
         Object.keys(statusLabels).map(function(k){ return '<option value="'+k+'"'+(k===it.status?" selected":"")+'>'+statusLabels[k]+'</option>'; }).join("")+
         '</select><div style="margin-top:6px;"><span class="badge '+it.status+'" id="cfgStatusBadge">'+statusLabels[it.status]+'</span></div></div>';
       document.getElementById("configPanel").innerHTML = html;
@@ -1383,23 +1395,23 @@
     var ruleOptions = ["nenhuma","condicional","espelho","limite"].map(function(k){ return '<option value="'+k+'"'+(k===it.rule?" selected":"")+'>'+ruleLabels[k]+'</option>'; }).join("");
     var statusOptions = Object.keys(statusLabels).map(function(k){ return '<option value="'+k+'"'+(k===it.status?" selected":"")+'>'+statusLabels[k]+'</option>'; }).join("");
 
-    html += '<div class="field-row"><label class="field-label">Rótulo no painel</label><input type="text" id="cfgLabel" value="'+it.label+'"></div>';
-    html += '<div class="field-row"><label class="field-label">Fonte do dado</label><select id="cfgSource">'+sourceOptions+'</select></div>';
+    html += '<div class="field-row"><label class="field-label" for="cfgLabel">Rótulo no painel</label><input type="text" id="cfgLabel" value="'+it.label+'"></div>';
+    html += '<div class="field-row"><label class="field-label" for="cfgSource">Fonte do dado</label><select id="cfgSource">'+sourceOptions+'</select></div>';
     html += '<div class="field-row coord-row">';
-    html += '<div class="field-row"><label class="field-label">Posição X</label><input type="number" id="cfgX" value="'+it.x+'"></div>';
-    html += '<div class="field-row"><label class="field-label">Posição topo</label><input type="number" id="cfgTop" value="'+it.top+'"></div>';
+    html += '<div class="field-row"><label class="field-label" for="cfgX">Posição X</label><input type="number" id="cfgX" value="'+it.x+'"></div>';
+    html += '<div class="field-row"><label class="field-label" for="cfgTop">Posição topo</label><input type="number" id="cfgTop" value="'+it.top+'"></div>';
     html += '</div>';
-    html += '<div class="field-row"><label class="field-label">Tipo</label><select id="cfgType">'+typeOptions+'</select></div>';
-    html += '<div class="field-row"><label class="field-label">Regra</label><select id="cfgRule">'+ruleOptions+'</select></div>';
+    html += '<div class="field-row"><label class="field-label" for="cfgType">Tipo</label><select id="cfgType">'+typeOptions+'</select></div>';
+    html += '<div class="field-row"><label class="field-label" for="cfgRule">Regra</label><select id="cfgRule">'+ruleOptions+'</select></div>';
 
     if(it.rule === "limite"){
-      html += '<div class="field-row"><label class="field-label">Limite de caracteres</label><input type="number" id="cfgMax" value="'+(it.maxChars||200)+'"></div>';
+      html += '<div class="field-row"><label class="field-label" for="cfgMax">Limite de caracteres</label><input type="number" id="cfgMax" value="'+(it.maxChars||200)+'"></div>';
     }
     if(it.rule === "condicional"){
       html += '<div class="field-row"><label class="field-label">Comportamento condicional</label><div class="caption-mono">mostra quando "'+itemById(it.condField||"possui_complementar").label+'" = '+(it.condValue||"Sim")+'</div></div>';
     }
 
-    html += '<div class="field-row"><label class="field-label">Status da configuração</label><select id="cfgStatus">'+statusOptions+'</select><div style="margin-top:6px;"><span class="badge '+it.status+'" id="cfgStatusBadge">'+statusLabels[it.status]+'</span></div></div>';
+    html += '<div class="field-row"><label class="field-label" for="cfgStatus">Status da configuração</label><select id="cfgStatus">'+statusOptions+'</select><div style="margin-top:6px;"><span class="badge '+it.status+'" id="cfgStatusBadge">'+statusLabels[it.status]+'</span></div></div>';
 
     document.getElementById("configPanel").innerHTML = html;
 

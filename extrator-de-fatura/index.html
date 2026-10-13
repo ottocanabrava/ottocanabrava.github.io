@@ -347,7 +347,7 @@
     return t.map(function(seg, i){
       if(i < 2) return (i ? '<div class="r' : "") + seg;
       var k = i - 1, st = S.rp[k] || "na fila";
-      seg = seg.replace(/^[^"]*"/, (st === "baixado" ? " ok" : "") + (S.evt === "rp" + k ? " now" : "") + '"');
+      seg = seg.replace(/^[^"]*"/, (st === "baixado" ? " ok" : "") + '"');
       return '<div class="r' + seg.replace(/(<span role="cell" class="c-st">)[^<]*(<\/span>)/, "$1" + st + "$2");
     }).join("");
   }
