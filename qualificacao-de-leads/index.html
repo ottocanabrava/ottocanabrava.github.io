@@ -127,6 +127,15 @@
   .sn{ margin:14px 0 0; font-size:12px; color:var(--u-2); min-height:1.45em; }
   .note{ grid-column:1 / -1; margin:18px 0 0; padding-top:14px; border-top:1px solid var(--u-line); font-size:12px; color:var(--u-3); max-width:90ch; }
   html.static .m, html.static .fl div, html.static .fl div::before{ animation:none; transition:none; }
+  html.static .log{ scroll-behavior:auto; }
+  /* o foco não fica escondido sob a navegação fixa (64px) */
+  #dm .ch, #dm .rs{ scroll-margin:88px 0 24px; }
+  /* o fio: do resumo que o lead confirmou até a planilha (padrão .th de Documentos Verificáveis) */
+  .th{ position:absolute; inset:0; width:100%; height:100%; pointer-events:none; overflow:visible; z-index:3; }
+  .th path{ fill:none; stroke:var(--u-ink); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; transition:stroke-dashoffset .9s var(--ease); }
+  .th circle{ fill:var(--u-ink); transition:opacity .3s var(--ease); }
+  .th circle.end.now{ fill:var(--fire); }
+  html.static .th path, html.static .th circle{ transition:none; }
 
   /* Próprio deste case: o vídeo é a superfície de produto. Fundo claro também no modo escuro,
      como a .sf da Home, porque é a tela do sistema. Cabe na altura da janela. */
@@ -171,7 +180,7 @@
     <div class="dm-hd">
       <span class="ix">06 · Agente de Qualificação de Leads</span>
       <h1 id="dm-t">Um lead chega às 22h. O agente conversa, dá a nota e passa ao corretor.</h1>
-      <p>Um agente de IA que conversa com quem pede um plano de saúde assim que a pessoa chega, a qualquer hora, e entrega ao corretor autônomo o lead com nota e resumo. Abaixo, faça o papel do lead: responda, pergunte o que o agente não responde e veja a nota sair.</p>
+      <p>Um corretor autônomo entrevistado contou que precisava ligar para cerca de 100 leads para vender um plano e que atendia à noite e no fim de semana para não perder a venda. Este é um agente de IA que conversa com quem pede um plano de saúde assim que a pessoa chega, a qualquer hora, e entrega ao corretor autônomo o lead com nota e resumo. Abaixo, faça o papel do lead: responda, pergunte o que o agente não responde e veja a nota sair.</p>
       <p class="fic">Reprodução do roteiro do agente, sem modelo de IA nem servidor: as mensagens seguem o prompt e as regras do projeto, e a nota usa os mesmos pesos e faixas da configuração. Corretor Fulano e EMPRESA EXEMPLO LTDA são fictícios.</p>
     </div>
     <div class="sf dm" id="dm">
@@ -182,10 +191,10 @@
       </div>
       <div class="cv">
         <div class="qh"><b>Corretor Fulano</b><span>assistente virtual · 22:14</span></div>
-        <div class="log" id="log" role="log" aria-live="polite" aria-label="Conversa entre o lead e o agente"></div>
-        <div class="op" id="op" aria-label="Respostas do lead"></div>
-        <div class="qs" id="qs">
-          <span class="lb">perguntas do lead</span>
+        <div class="log" id="log" role="log" aria-live="polite" aria-label="Conversa entre o lead e o agente" tabindex="0"></div>
+        <div class="op" id="op" role="group" aria-label="Respostas do lead"></div>
+        <div class="qs" id="qs" role="group" aria-labelledby="qs-lb">
+          <span class="lb" id="qs-lb">perguntas do lead</span>
           <button type="button" class="ch" data-q="preco">Quanto custa?</button>
           <button type="button" class="ch" data-q="carencia">Vou ter carência?</button>
           <button type="button" class="ch" data-q="robo">Você é um robô?</button>
@@ -196,17 +205,18 @@
       <div class="rg">
         <span class="lb">planilha de leads · nova linha</span>
         <dl class="fl" id="fl">
-          <div data-f="nome"><dt>nome</dt><dd class="vz">—</dd><span class="pt"></span></div>
-          <div data-f="caminho"><dt>caminho</dt><dd class="vz">—</dd><span class="pt"></span></div>
-          <div data-f="vidas"><dt>vidas</dt><dd class="vz">—</dd><span class="pt"></span></div>
-          <div data-f="plano"><dt>plano atual</dt><dd class="vz">—</dd><span class="pt"></span></div>
-          <div data-f="prazo"><dt>prazo</dt><dd class="vz">—</dd><span class="pt"></span></div>
-          <div data-f="autoridade"><dt>autoridade</dt><dd class="vz">—</dd><span class="pt"></span></div>
+          <div data-f="nome"><dt>nome</dt><dd class="vz">—</dd><dd class="pt"></dd></div>
+          <div data-f="caminho"><dt>caminho</dt><dd class="vz">—</dd><dd class="pt"></dd></div>
+          <div data-f="vidas"><dt>vidas</dt><dd class="vz">—</dd><dd class="pt"></dd></div>
+          <div data-f="plano"><dt>plano atual</dt><dd class="vz">—</dd><dd class="pt"></dd></div>
+          <div data-f="prazo"><dt>prazo</dt><dd class="vz">—</dd><dd class="pt"></dd></div>
+          <div data-f="autoridade"><dt>autoridade</dt><dd class="vz">—</dd><dd class="pt"></dd></div>
         </dl>
         <div class="nt" id="nt"><span class="vz">A nota sai do código quando o lead confirma o resumo.</span></div>
         <div class="av"><span class="lb">aviso ao corretor</span><span class="mono vz" id="av">—</span></div>
         <p class="sn" id="sn"></p>
       </div>
+      <svg class="th" id="th" aria-hidden="true"><path id="th-p"></path><circle class="end" id="th-c" r="4" opacity="0"></circle></svg>
       <p class="note">A demo pula nome, contato, cidade, idades e profissão. Eles vão para o corretor, mas não mudam a nota; a cidade fora da área de atuação só gera um aviso.</p>
     </div>
   </section>
@@ -297,7 +307,7 @@
 
   <section class="tx tx-end" id="autoria" aria-labelledby="au-t">
     <h2 class="tx-k" id="au-t">Sobre o projeto</h2>
-    <p class="tx-sub tx-au">Feito a partir de uma entrevista com um corretor autônomo, que estimou cerca de 100 ligações para fechar uma venda, e de pesquisa secundária. Antes de qualquer uso com cliente real, faltam a validação jurídica de LGPD e a confirmação de que o uso comercial da API de CNPJ é permitido.</p>
+    <p class="tx-sub tx-au">Protótipo local, construído a partir de uma entrevista com um corretor autônomo e de pesquisa secundária sobre leads, a rotina do corretor e as regras da ANS. Não está em uso com clientes. [A CONFIRMAR: a sua participação, por exemplo quem conduziu a entrevista e a pesquisa, quem definiu o escopo, os critérios e os pesos da nota, e quem revisou e aprovou cada decisão.] Estão implementados o roteiro do agente, a consulta de CNPJ, o cálculo da nota, o registro numa planilha em CSV e o aviso ao corretor em arquivo, validados por 207 testes automatizados e por conversas simuladas com respostas escritas à mão; com o Gemini, o modelo que o agente usa nas conversas, só uma conversa foi testada. O código, a documentação e o vídeo foram desenvolvidos com o apoio do Claude Code, ferramenta de IA. Antes de qualquer uso com cliente real, faltam a rodada completa de testes com o modelo, a validação jurídica de LGPD e a confirmação de que o uso comercial da API de CNPJ é permitido.</p>
     <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="end-a" href="/#projetos">Todos os sistemas</a></div>
   </section>
   <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#demo">↑ Topo</a></footer>
@@ -321,7 +331,8 @@
   var VIDAS = [["Só eu", 1], ["Duas", 2], ["Quatro", 4], ["Doze", 12], ["Trinta e cinco", 35]];
   var PLANO = [["Não temos", "não tem", 14], ["Sim, há 3 anos", "tem, há 3 anos", 20], ["Sim, há 1 ano", "tem, há 1 ano", 6]];
   var PRAZO = [["Este mês", "até 30 dias", 30, "contratar este mês"], ["Em 2 ou 3 meses", "1 a 3 meses", 15, "contratar em 2 ou 3 meses"], ["Só pesquisando", "sem prazo", 0, "sem prazo definido"]];
-  var S, timers = [];
+  var S, timers = [], foco = false;
+  var th = document.getElementById("th"), thP = document.getElementById("th-p"), thC = document.getElementById("th-c"), dm = document.getElementById("dm");
   function ptsVidas(n){ return n >= 30 ? 20 : n >= 5 ? 15 : n >= 2 ? 10 : 5; }
   function faixa(n){ return n >= 70 ? "quente" : n >= 50 ? "morno" : "frio"; }
 
@@ -329,7 +340,8 @@
   function later(fn, ms){ if(reduce || instant) return fn(); timers.push(setTimeout(fn, ms)); }
   function add(kind, text){
     var el = document.createElement("div"); el.className = "m " + kind; el.textContent = text; log.appendChild(el);
-    log.scrollTop = log.scrollHeight; return el;
+    /* rolagem direta: a suave era interrompida quando o foco ia para outro controle */
+    log.scrollTo({ top: log.scrollHeight, behavior: "instant" }); return el;
   }
   function busy(on){
     Array.prototype.forEach.call(document.querySelectorAll("#dm .ch"), function(b){ b.disabled = on || S.fim; });
@@ -340,8 +352,8 @@
     var dots = null;
     later(function(){
       if(tool) add("tl", tool);
-      if(!reduce && !instant){ dots = add("ag dots", ""); dots.innerHTML = "<i></i><i></i><i></i>"; }
-      later(function(){ if(dots) dots.remove(); add("ag", text); busy(false); if(then) then(); }, 650);
+      if(!reduce && !instant){ dots = add("ag dots", ""); dots.setAttribute("aria-hidden", "true"); dots.innerHTML = "<i></i><i></i><i></i>"; }
+      later(function(){ if(dots) dots.remove(); var el = add("ag", text); if(S.step === "conf" && !S.fim) S.sum = el; busy(false); if(then) then(); proximo(); }, 650);
     }, tool ? 350 : 150);
   }
   function lead(text){ add("ld", text); }
@@ -351,11 +363,50 @@
     Array.prototype.forEach.call(fl.children, function(r){ r.classList.remove("now"); });
     row.classList.add("now"); later(function(){ row.classList.remove("now"); }, 1400);
   }
+  /* foco: quem respondeu pelo teclado continua na próxima resposta; no fim, vai para "Recomeçar" */
+  function proximo(){
+    if(!foco) return; foco = false;
+    var b = op.querySelector(".ch:not(:disabled)") || document.getElementById("rs");
+    b.focus();
+  }
+  /* o fio: liga o resumo que o lead confirmou à linha da planilha. Lado a lado, sai da direita
+     do resumo; empilhado (celular), desce pela margem esquerda. Redesenha ao rolar e ao redimensionar. */
+  function fio(animar){
+    if(!S.sum || !S.fio){ thP.setAttribute("d", ""); thC.setAttribute("opacity", "0"); return; }
+    var base = dm.getBoundingClientRect(), a = S.sum.getBoundingClientRect(), lg = log.getBoundingClientRect(), rg = fl.getBoundingClientRect(), fim = nt.getBoundingClientRect();
+    function cl(v, x, y){ return Math.max(x, Math.min(y, v)); }
+    var ay = cl(a.top + a.height / 2, lg.top + 8, lg.bottom - 8) - base.top, d, bx, by;
+    if(rg.top > lg.bottom){
+      var ax = a.left - 6 - base.left; bx = rg.left - 6 - base.left; by = rg.top + 14 - base.top;
+      var mx = Math.max(4, Math.min(ax, bx) - 14);
+      d = "M" + ax + " " + ay + " C" + mx + " " + (ay + (by - ay) * .35) + " " + mx + " " + (by - (by - ay) * .35) + " " + bx + " " + by;
+    } else {
+      var ax2 = Math.min(a.right, lg.right) + 10 - base.left; bx = rg.left - 14 - base.left;
+      by = cl(ay + base.top, rg.top + 16, fim.bottom - 16) - base.top;
+      var dx = (bx - ax2) * .5;
+      d = "M" + ax2 + " " + ay + " C" + (ax2 + dx) + " " + ay + " " + (bx - dx) + " " + by + " " + bx + " " + by;
+    }
+    th.setAttribute("viewBox", "0 0 " + base.width + " " + base.height);
+    thP.setAttribute("d", d); thC.setAttribute("cx", bx); thC.setAttribute("cy", by);
+    if(animar && !reduce){
+      /* durante o desenho, a rolagem do chat só reposiciona o fio, sem cortar a animação */
+      S.desenhando = true;
+      thP.setAttribute("pathLength", "1"); thP.style.transition = "none"; thP.style.strokeDasharray = "1"; thP.style.strokeDashoffset = "1";
+      thC.setAttribute("opacity", "0"); thP.getBoundingClientRect(); thP.style.transition = ""; thP.style.strokeDashoffset = "0";
+      later(function(){ S.desenhando = false; thC.setAttribute("opacity", "1"); thC.classList.add("now"); later(function(){ thC.classList.remove("now"); }, 1400); }, 900);
+    } else if(!S.desenhando){
+      thP.removeAttribute("pathLength"); thP.style.strokeDasharray = ""; thP.style.strokeDashoffset = ""; thC.setAttribute("opacity", "1");
+    }
+  }
+  var quadro = 0;
+  function redesenha(){ if(quadro) return; quadro = requestAnimationFrame(function(){ quadro = 0; if(S) fio(false); }); }
+  log.addEventListener("scroll", redesenha, { passive: true });
+  addEventListener("resize", redesenha);
   function options(list){
     op.innerHTML = "";
     list.forEach(function(o){
       var b = document.createElement("button"); b.type = "button"; b.className = "ch"; b.textContent = o[0];
-      b.addEventListener("click", function(){ if(b.disabled) return; lead(o[2] || o[0]); o[1](); });
+      b.addEventListener("click", function(){ if(b.disabled) return; foco = !instant; lead(o[2] || o[0]); o[1](); });
       op.appendChild(b);
     });
   }
@@ -403,6 +454,7 @@
       nt.innerHTML = "<b>" + nota + "</b><span>" + fx + "</span>";
       av.className = "mono"; av.textContent = "[" + fx.toUpperCase() + "] Novo lead: " + S.nome + ", " + cam + ", " + S.vidas + " vida(s)";
       busy(true);
+      S.fio = true; fio(!instant);
     });
   }
   /* perguntas que o agente não responde: ele diz por quê e volta à pergunta da vez */
@@ -414,7 +466,7 @@
   };
   qs.addEventListener("click", function(e){
     var b = e.target.closest("button"); if(!b || b.disabled || S.fim) return;
-    var k = b.getAttribute("data-q"); lead(b.textContent);
+    var k = b.getAttribute("data-q"); foco = true; lead(b.textContent);
     if(k === "pessoa"){
       S.fim = true; busy(true); op.innerHTML = "";
       agent("Claro. Vou passar a conversa para o corretor, com o que você já me contou, para você não precisar repetir. Ele retorna " + HORARIO + ".", "passar_para_humano → motivo: pediu_pessoa", function(){
@@ -431,6 +483,7 @@
   function clear(nome){
     timers.forEach(clearTimeout); timers = [];
     S = { step: "cnpj", fim: false, nome: nome };
+    foco = false; fio(false);
     log.innerHTML = ""; op.innerHTML = ""; sn.textContent = "";
     Array.prototype.forEach.call(fl.children, function(r){ r.classList.remove("now"); var dd = r.querySelector("dd"); dd.textContent = "—"; dd.className = "vz"; r.querySelector(".pt").textContent = ""; });
     nt.innerHTML = '<span class="vz">A nota sai do código quando o lead confirma o resumo.</span>';
@@ -442,6 +495,7 @@
     add("ag", SAUDACAO + STEP.cnpj.q);
     STEP.cnpj.show(); busy(false);
     var n = fl.querySelector('[data-f="nome"] dd'); n.textContent = "Visitante"; n.className = "";
+    foco = true; proximo();
   }
   /* abertura: a mesma conversa do capítulo 06 da Home, já registrada (persona 01 dos testes) */
   function pick(texto){ Array.prototype.some.call(op.querySelectorAll(".ch"), function(b){ if(b.textContent === texto){ b.click(); return true; } }); }
@@ -458,6 +512,7 @@
     var b = document.createElement("button"); b.type = "button"; b.className = "ch go1"; b.textContent = "Fazer o papel do lead";
     b.addEventListener("click", reset); op.appendChild(b);
     log.scrollTop = log.scrollHeight;
+    fio(false);
   }
   document.getElementById("rs").addEventListener("click", reset);
   abertura();
