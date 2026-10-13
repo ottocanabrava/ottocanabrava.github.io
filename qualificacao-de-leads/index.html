@@ -83,6 +83,10 @@
   /* demo: a conversa à esquerda, o registro à direita. Próprio deste case. */
   .dm{ display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); grid-template-areas:"bar bar" "cv rg"; column-gap:clamp(28px,4vw,64px); padding:clamp(18px,2vw,28px); }
   .cv{ grid-area:cv; display:flex; flex-direction:column; min-width:0; }
+  .qh{ display:flex; gap:.8em; align-items:baseline; padding-bottom:10px; margin-bottom:6px; border-bottom:1px solid var(--u-line); }
+  .qh b{ font-weight:500; }
+  .qh span{ font-size:12px; color:var(--u-3); }
+  .ch.go1{ background:var(--u-ink); color:#fff; border-color:var(--u-ink); }
   .log{ height:420px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px 2px 12px; scroll-behavior:smooth; border-bottom:1px solid var(--u-line); }
   .m{ max-width:38ch; padding:.6em .95em; border-radius:16px; font-size:14px; line-height:1.45; animation:rise .35s var(--ease) both; }
   .m.ld{ align-self:flex-end; background:var(--u-ink); color:#fff; }
@@ -173,10 +177,11 @@
     <div class="sf dm" id="dm">
       <div class="bar">
         <span class="lb">conversa com o lead · chat</span>
-        <span class="py">Uma pergunta por vez. O registro se preenche junto.</span>
+        <span class="py">Uma conversa já registrada. Faça o papel do lead para ver outra nota.</span>
         <button type="button" class="rs" id="rs">Recomeçar</button>
       </div>
       <div class="cv">
+        <div class="qh"><b>Corretor Fulano</b><span>assistente virtual · 22:14</span></div>
         <div class="log" id="log" role="log" aria-live="polite" aria-label="Conversa entre o lead e o agente"></div>
         <div class="op" id="op" aria-label="Respostas do lead"></div>
         <div class="qs" id="qs">
@@ -189,8 +194,9 @@
         </div>
       </div>
       <div class="rg">
-        <span class="lb">registro do lead · planilha</span>
+        <span class="lb">planilha de leads · nova linha</span>
         <dl class="fl" id="fl">
+          <div data-f="nome"><dt>nome</dt><dd class="vz">—</dd><span class="pt"></span></div>
           <div data-f="caminho"><dt>caminho</dt><dd class="vz">—</dd><span class="pt"></span></div>
           <div data-f="vidas"><dt>vidas</dt><dd class="vz">—</dd><span class="pt"></span></div>
           <div data-f="plano"><dt>plano atual</dt><dd class="vz">—</dd><span class="pt"></span></div>
@@ -307,7 +313,7 @@
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   var HORARIO = "de segunda a sexta, das 9h às 18h";
   var CNPJ = {
-    ltda: { lead: "Tenho, é uma LTDA", tool: "consultar_cnpj → EMPRESA EXEMPLO LTDA · ativa desde 1999", nome: "EMPRESA EXEMPLO LTDA", caminho: ["PME", 20] },
+    ltda: { lead: "Tenho, é uma LTDA", msg: "Tenho, é uma LTDA: XX.XXX.XXX/0001-XX", tool: "consultar_cnpj → EMPRESA EXEMPLO LTDA · ativa desde 1999", nome: "EMPRESA EXEMPLO LTDA", caminho: ["PME", 20] },
     mei_novo: { lead: "Tenho MEI, aberto há 2 meses", tool: "consultar_cnpj → MEI · ativo há 2 meses", caminho: ["PF · MEI com menos de 6 meses", 10] },
     mei: { lead: "Tenho MEI há 3 anos", tool: "consultar_cnpj → MEI · ativo há 3 anos", caminho: ["PME", 20] },
     nao: { lead: "Não tenho", caminho: ["PF", 10] }
@@ -319,7 +325,8 @@
   function ptsVidas(n){ return n >= 30 ? 20 : n >= 5 ? 15 : n >= 2 ? 10 : 5; }
   function faixa(n){ return n >= 70 ? "quente" : n >= 50 ? "morno" : "frio"; }
 
-  function later(fn, ms){ if(reduce) return fn(); timers.push(setTimeout(fn, ms)); }
+  var instant = false;
+  function later(fn, ms){ if(reduce || instant) return fn(); timers.push(setTimeout(fn, ms)); }
   function add(kind, text){
     var el = document.createElement("div"); el.className = "m " + kind; el.textContent = text; log.appendChild(el);
     log.scrollTop = log.scrollHeight; return el;
@@ -333,7 +340,7 @@
     var dots = null;
     later(function(){
       if(tool) add("tl", tool);
-      if(!reduce){ dots = add("ag dots", ""); dots.innerHTML = "<i></i><i></i><i></i>"; }
+      if(!reduce && !instant){ dots = add("ag dots", ""); dots.innerHTML = "<i></i><i></i><i></i>"; }
       later(function(){ if(dots) dots.remove(); add("ag", text); busy(false); if(then) then(); }, 650);
     }, tool ? 350 : 150);
   }
@@ -348,14 +355,14 @@
     op.innerHTML = "";
     list.forEach(function(o){
       var b = document.createElement("button"); b.type = "button"; b.className = "ch"; b.textContent = o[0];
-      b.addEventListener("click", function(){ if(b.disabled) return; lead(o[0]); o[1](); });
+      b.addEventListener("click", function(){ if(b.disabled) return; lead(o[2] || o[0]); o[1](); });
       op.appendChild(b);
     });
   }
 
   /* o roteiro: cada etapa faz uma pergunta e oferece as respostas */
   var STEP = {
-    cnpj: { q: "Você tem CNPJ, como MEI ou empresa?", show: function(){ options(Object.keys(CNPJ).map(function(k){ return [CNPJ[k].lead, function(){ S.cnpj = k; afterCnpj(); }]; })); } },
+    cnpj: { q: "Você tem CNPJ, como MEI ou empresa?", show: function(){ options(Object.keys(CNPJ).map(function(k){ return [CNPJ[k].lead, function(){ S.cnpj = k; afterCnpj(); }, CNPJ[k].msg]; })); } },
     empresa: { q: "", show: function(){
       if(S.cnpj === "ltda") options([["É essa, sou sócio", function(){ S.socio = true; confirmEmpresa(); }], ["É essa, trabalho lá", function(){ S.socio = false; confirmEmpresa(); }]]);
       else options([["Sou eu mesmo", function(){ S.socio = true; confirmEmpresa(); }]]);
@@ -394,7 +401,7 @@
     S.fim = true; busy(true); op.innerHTML = "";
     agent("Pronto! Passei tudo para o corretor Fulano. Ele entra em contato " + HORARIO + ".", "registrar_lead → planilha e aviso ao corretor", function(){
       nt.innerHTML = "<b>" + nota + "</b><span>" + fx + "</span>";
-      av.className = "mono"; av.textContent = "[" + fx.toUpperCase() + "] Novo lead: Visitante, " + cam + ", " + S.vidas + " vida(s)";
+      av.className = "mono"; av.textContent = "[" + fx.toUpperCase() + "] Novo lead: " + S.nome + ", " + cam + ", " + S.vidas + " vida(s)";
       busy(true);
     });
   }
@@ -412,7 +419,7 @@
       S.fim = true; busy(true); op.innerHTML = "";
       agent("Claro. Vou passar a conversa para o corretor, com o que você já me contou, para você não precisar repetir. Ele retorna " + HORARIO + ".", "passar_para_humano → motivo: pediu_pessoa", function(){
         nt.innerHTML = '<span class="vz">Sem nota: passado ao corretor.</span>';
-        av.className = "mono"; av.textContent = "[ATENDER] Visitante pediu para falar com você"; busy(true);
+        av.className = "mono"; av.textContent = "[ATENDER] " + S.nome + " pediu para falar com você"; busy(true);
       });
       return;
     }
@@ -420,18 +427,40 @@
     agent(FORA[k] + question(S.step), null, STEP[S.step].show);
   });
 
-  function reset(){
+  var SAUDACAO = "Olá! Sou o assistente virtual do corretor Fulano. Vou fazer algumas perguntas rápidas para ele te atender melhor, e os dados servem só para esse atendimento. ";
+  function clear(nome){
     timers.forEach(clearTimeout); timers = [];
-    S = { step: "cnpj", fim: false };
+    S = { step: "cnpj", fim: false, nome: nome };
     log.innerHTML = ""; op.innerHTML = ""; sn.textContent = "";
     Array.prototype.forEach.call(fl.children, function(r){ r.classList.remove("now"); var dd = r.querySelector("dd"); dd.textContent = "—"; dd.className = "vz"; r.querySelector(".pt").textContent = ""; });
     nt.innerHTML = '<span class="vz">A nota sai do código quando o lead confirma o resumo.</span>';
     av.className = "mono vz"; av.textContent = "—";
-    add("ag", "Olá! Sou o assistente virtual do corretor Fulano. Vou fazer algumas perguntas rápidas para ele te atender melhor, e os dados servem só para esse atendimento. " + STEP.cnpj.q);
+  }
+  /* o visitante faz o papel do lead: a conversa começa do zero */
+  function reset(){
+    clear("Visitante");
+    add("ag", SAUDACAO + STEP.cnpj.q);
     STEP.cnpj.show(); busy(false);
+    var n = fl.querySelector('[data-f="nome"] dd'); n.textContent = "Visitante"; n.className = "";
+  }
+  /* abertura: a mesma conversa do capítulo 06 da Home, já registrada (persona 01 dos testes) */
+  function pick(texto){ Array.prototype.some.call(op.querySelectorAll(".ch"), function(b){ if(b.textContent === texto){ b.click(); return true; } }); }
+  function abertura(){
+    instant = true;
+    clear("Carlos Lima");
+    add("ld", "Oi, vi o anúncio. Quero um plano para a empresa onde trabalho.");
+    add("ag", SAUDACAO + STEP.cnpj.q);
+    STEP.cnpj.show(); busy(false);
+    ["Tenho, é uma LTDA", "É essa, trabalho lá", "Doze", "Não temos", "Este mês", "Isso mesmo"].forEach(pick);
+    var n = fl.querySelector('[data-f="nome"] dd'); n.textContent = "Carlos Lima"; n.className = "";
+    Array.prototype.forEach.call(fl.children, function(r){ r.classList.remove("now"); });
+    instant = false;
+    var b = document.createElement("button"); b.type = "button"; b.className = "ch go1"; b.textContent = "Fazer o papel do lead";
+    b.addEventListener("click", reset); op.appendChild(b);
+    log.scrollTop = log.scrollHeight;
   }
   document.getElementById("rs").addEventListener("click", reset);
-  reset();
+  abertura();
 })();
 </script>
 <script>
