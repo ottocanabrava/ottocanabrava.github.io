@@ -263,7 +263,7 @@
       <li>Sem urgência falsa nem gatilhos de escassez.</li>
       <li>Passa a conversa ao corretor, com o histórico, quando o lead pede uma pessoa, se irrita ou traz uma reclamação.</li>
     </ul>
-    <p class="tx-note">Cada regra é conferida automaticamente nas conversas simuladas. São checagens por palavras: pegam os erros mais graves, mas não substituem ler as transcrições.</p>
+    <p class="tx-note">As checagens automáticas de regra rodaram nas conversas simuladas da primeira fase, em que as respostas do agente foram escritas à mão seguindo o prompt. São checagens por palavras: pegam os erros mais graves, mas não substituem ler as transcrições. Com o Gemini, só uma conversa foi conferida até agora (ver os detalhes técnicos).</p>
   </section>
 
   <!-- Em vídeo: o fluxo inteiro, para quem não vai operar a demo -->
@@ -276,7 +276,7 @@
         <source src="video/como-funciona.webm" type="video/webm">
         <source src="video/como-funciona.mp4" type="video/mp4">
       </video>
-      <figcaption id="vd-d" class="mono">57 s · sem som · conversa, nota e aviso ao corretor</figcaption>
+      <figcaption id="vd-d" class="mono">57 s · sem som · conversa, nota e aviso ao corretor · animação feita com Remotion</figcaption>
     </figure>
   </section>
 
@@ -287,12 +287,12 @@
       <div><dt>Estado</dt><dd>Protótipo local. A planilha é um CSV com as colunas da planilha do Google, e o aviso ao corretor é gravado num arquivo. Planilha do Google, e-mail e chat web vêm na publicação.</dd></div>
       <div><dt>Modelo</dt><dd>Gemini, atrás de uma interface simples, para trocar de fornecedor sem mexer no resto. Com dados reais de leads, só num projeto com faturamento ativo, para as conversas não serem usadas em treino.</dd></div>
       <div><dt>Consulta de CNPJ</dt><dd>CNPJá, com a Minha Receita como alternativa. Só leitura e só do CNPJ que o lead informou. MEI com menos de 6 meses segue como pessoa física.</dd></div>
-      <div><dt>Testes de conversa</dt><dd>9 personas de lead: empresa com urgência, MEI recente, família só pesquisando, perguntas de preço e carência, informação de saúde espontânea, tentativa de mudar as instruções, pedido de falar com uma pessoa, pedido fora do escopo e correção de um dado. Na fase 2, um segundo modelo interpreta cada persona para testar o Gemini.</dd></div>
-      <div><dt>Testes</dt><dd>207 testes automatizados (pytest), incluindo todas as 180 combinações possíveis da nota e as verificações de regra.</dd></div>
+      <div><dt>Testes de conversa</dt><dd>9 personas de lead: empresa com urgência, MEI recente, família só pesquisando, perguntas de preço e carência, informação de saúde espontânea, tentativa de mudar as instruções, pedido de falar com uma pessoa, pedido fora do escopo e correção de um dado. Na primeira fase, as respostas do agente foram escritas à mão seguindo o prompt, para validar o roteiro, as ferramentas e o registro. Na segunda, um segundo modelo interpreta cada persona e conversa com o Gemini. O simulador está implementado, mas a rodada das nove conversas não foi concluída: a cota gratuita da API acabou na primeira. Nessa conversa, o agente encerrou corretamente o pedido fora do escopo, mas não se apresentou como assistente virtual, e o prompt foi ajustado. Ainda não há evidência de que o modelo obedeça a todas as regras.</dd></div>
+      <div><dt>Testes</dt><dd>207 testes automatizados (pytest), incluindo todas as 180 combinações possíveis da nota e as próprias checagens de regra. Eles validam a parte determinística (nota, faixas, caminho, ferramentas, registro e aviso), não o comportamento do modelo de linguagem.</dd></div>
       <div><dt>Origem</dt><dd>Uma entrevista com um corretor autônomo e pesquisa secundária sobre leads, rotina do corretor e regras da ANS.</dd></div>
       <div><dt>Fora do escopo</dt><dd>Canal WhatsApp e integração com o HubSpot, previstos para fases seguintes.</dd></div>
     </dl>
-    <p class="stk mono">Python · Gemini · pytest · CNPJá · Minha Receita · Remotion</p>
+    <p class="stk mono">Python · Gemini · pytest · CNPJá · Minha Receita</p>
   </section>
 
   <section class="tx tx-end" id="autoria" aria-labelledby="au-t">
