@@ -51,7 +51,7 @@ Estrutura de um capítulo (`section.scn`): `.ttl` (índice `01` + nome grande) �
 
 Números: só os que o case já publica, com a mesma redação. Hoje: `2–4h / mês`,
 `30–60 min → verificação direta`, `10–20 min → ~2 min`, `5 tipos de documento`,
-`1 clique`, `Nota de 0 a 100, na hora` (Agente de Qualificação). Daily Ops não tem número. Nada de número novo, arredondado ou
+`1 clique`, `Nota de 0 a 100, a cada conversa` (Agente de Qualificação). Daily Ops não tem número. Nada de número novo, arredondado ou
 "estimado".
 
 ## Tipografia e hierarquia

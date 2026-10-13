@@ -140,7 +140,7 @@
   /* Próprio deste case: o vídeo é a superfície de produto. Fundo claro também no modo escuro,
      como a .sf da Home, porque é a tela do sistema. Cabe na altura da janela. */
   .vd{ margin:0; padding:0 clamp(12px,2.4vw,40px); }
-  .tx .vd{ padding:0; }
+  .tx .vd{ padding:0; margin-top:clamp(56px,8vh,88px); }
   .tx .vd figcaption{ padding:0; }
   .vd video{ display:block; width:min(100%, 860px, calc(100vh - 160px)); aspect-ratio:1/1; height:auto; border-radius:20px; background:#F7F7F5; box-shadow:0 0 0 1px rgba(14,15,18,.06), 0 40px 100px -50px rgba(14,15,18,.3); }
   .vd figcaption{ margin:16px 0 0; padding:0 calc(clamp(20px,6vw,96px) - clamp(12px,2.4vw,40px)); font-size:.75rem; color:var(--ink-3); }
@@ -221,6 +221,20 @@
     </div>
   </section>
 
+  <!-- Em vídeo: a mesma conversa da abertura da demo, para quem prefere assistir -->
+  <section class="tx" id="video" aria-labelledby="vd-t">
+    <h2 class="tx-k" id="vd-t">Em vídeo</h2>
+    <p class="tx-lead">O mesmo fluxo, em menos de um minuto.</p>
+    <p class="tx-sub">A conversa da abertura da demo, da primeira mensagem ao aviso ao corretor, animada. Carlos Lima e EMPRESA EXEMPLO LTDA são fictícios, e o CNPJ está mascarado.</p>
+    <figure class="vd">
+      <video id="vd" muted playsinline controls preload="metadata" poster="video/poster.webp" aria-describedby="vd-d">
+        <source src="video/como-funciona.webm" type="video/webm">
+        <source src="video/como-funciona.mp4" type="video/mp4">
+      </video>
+      <figcaption id="vd-d" class="mono">57 s · sem som · conversa, nota e aviso ao corretor · animação feita com Remotion</figcaption>
+    </figure>
+  </section>
+
   <!-- Por dentro: as etapas da conversa, na ordem em que acontecem -->
   <section class="tx" id="por-dentro" aria-labelledby="pd-t">
     <h2 class="tx-k" id="pd-t">Por dentro</h2>
@@ -231,7 +245,7 @@
       <li><span class="ln-n">02</span><b>CNPJ</b><span>A primeira pergunta. O número é consultado em fonte pública e a empresa é confirmada com o lead. Sem CNPJ elegível, segue como pessoa física, sem descarte.</span></li>
       <li><span class="ln-n">03</span><b>Coleta</b><span>Pessoas e idades, cidade, profissão, plano atual e há quanto tempo, e para quando quer contratar.</span></li>
       <li><span class="ln-n">04</span><b>Confirmação</b><span>Repete o que entendeu e ajusta o que o lead corrigir antes de registrar.</span></li>
-      <li><span class="ln-n">05</span><b>Nota e aviso</b><span>Nota de 0 a 100, uma linha na planilha e o aviso ao corretor na hora.</span></li>
+      <li><span class="ln-n">05</span><b>Nota e aviso</b><span>Nota de 0 a 100, uma linha na planilha e o aviso ao corretor no fim da conversa.</span></li>
     </ol>
   </section>
 
@@ -274,20 +288,6 @@
       <li>Passa a conversa ao corretor, com o histórico, quando o lead pede uma pessoa, se irrita ou traz uma reclamação.</li>
     </ul>
     <p class="tx-note">As checagens automáticas de regra rodaram nas conversas simuladas da primeira fase, em que as respostas do agente foram escritas à mão seguindo o prompt. São checagens por palavras: pegam os erros mais graves, mas não substituem ler as transcrições. Com o Gemini, só uma conversa foi conferida até agora (ver os detalhes técnicos).</p>
-  </section>
-
-  <!-- Em vídeo: o fluxo inteiro, para quem não vai operar a demo -->
-  <section class="tx" id="video" aria-labelledby="vd-t">
-    <h2 class="tx-k" id="vd-t">Em vídeo</h2>
-    <p class="tx-lead">O fluxo em menos de um minuto.</p>
-    <p class="tx-sub">Animação da conversa simulada de uma das personas de teste. Carlos Lima e EMPRESA EXEMPLO LTDA são fictícios, e o CNPJ está mascarado.</p>
-    <figure class="vd" style="margin-top:clamp(56px,8vh,88px)">
-      <video id="vd" muted playsinline controls preload="metadata" poster="video/poster.webp" aria-describedby="vd-d">
-        <source src="video/como-funciona.webm" type="video/webm">
-        <source src="video/como-funciona.mp4" type="video/mp4">
-      </video>
-      <figcaption id="vd-d" class="mono">57 s · sem som · conversa, nota e aviso ao corretor · animação feita com Remotion</figcaption>
-    </figure>
   </section>
 
   <!-- Detalhes técnicos: só o que o repositório comprova -->
@@ -402,6 +402,11 @@
   function redesenha(){ if(quadro) return; quadro = requestAnimationFrame(function(){ quadro = 0; if(S) fio(false); }); }
   log.addEventListener("scroll", redesenha, { passive: true });
   addEventListener("resize", redesenha);
+  /* fim da conversa: uma ação visível para recomeçar, no lugar das respostas */
+  function recomecar(){
+    var b = document.createElement("button"); b.type = "button"; b.className = "ch go1"; b.textContent = "Recomeçar a conversa";
+    b.addEventListener("click", reset); op.appendChild(b);
+  }
   function options(list){
     op.innerHTML = "";
     list.forEach(function(o){
@@ -454,6 +459,7 @@
       nt.innerHTML = "<b>" + nota + "</b><span>" + fx + "</span>";
       av.className = "mono"; av.textContent = "[" + fx.toUpperCase() + "] Novo lead: " + S.nome + ", " + cam + ", " + S.vidas + " vida(s)";
       busy(true);
+      if(!instant) recomecar();
       S.fio = true; fio(!instant);
     });
   }
@@ -472,6 +478,7 @@
       agent("Claro. Vou passar a conversa para o corretor, com o que você já me contou, para você não precisar repetir. Ele retorna " + HORARIO + ".", "passar_para_humano → motivo: pediu_pessoa", function(){
         nt.innerHTML = '<span class="vz">Sem nota: passado ao corretor.</span>';
         av.className = "mono"; av.textContent = "[ATENDER] " + S.nome + " pediu para falar com você"; busy(true);
+        recomecar();
       });
       return;
     }
