@@ -65,9 +65,70 @@
   .dt dd{ margin:0; font-size:clamp(.9375rem,1.1vw,1.0625rem); line-height:1.55; color:var(--ink-2); max-width:64ch; }
   .stk{ margin:32px 0 0; font-size:.75rem; color:var(--ink-3); line-height:1.6; }
 
+  /* superfície de trabalho: tokens e barra copiados de Documentos Verificáveis */
+  .sf{
+    --u-ink:#111318; --u-2:#4B4F58; --u-3:#8C9099; --u-line:#E6E7EA; --u-soft:#F4F5F6; --hit:#FFF1E8;
+    position:relative; margin:0 clamp(12px,2.4vw,40px);
+    background:#fff; color:var(--u-ink); border-radius:20px;
+    box-shadow:0 0 0 1px rgba(14,15,18,.06), 0 40px 100px -50px rgba(14,15,18,.3);
+    font-size:14px; line-height:1.45;
+  }
+  .lb{ display:block; font-size:12px; color:var(--u-3); margin-bottom:10px; }
+  .bar{ grid-area:bar; display:flex; align-items:baseline; gap:12px 24px; flex-wrap:wrap; margin-bottom:10px; }
+  .bar .lb{ margin:0; }
+  .bar .py{ font-size:12px; color:var(--u-2); }
+  .rs{ margin-left:auto; font:inherit; font-size:12px; color:var(--u-2); background:none; border:0; padding:4px 0; cursor:pointer; text-decoration:underline; text-decoration-color:var(--u-line); text-underline-offset:3px; }
+  .rs:hover{ color:var(--u-ink); text-decoration-color:currentColor; }
+
+  /* demo: a conversa à esquerda, o registro à direita. Próprio deste case. */
+  .dm{ display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); grid-template-areas:"bar bar" "cv rg"; column-gap:clamp(28px,4vw,64px); padding:clamp(18px,2vw,28px); }
+  .cv{ grid-area:cv; display:flex; flex-direction:column; min-width:0; }
+  .log{ height:420px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:4px 2px 12px; scroll-behavior:smooth; border-bottom:1px solid var(--u-line); }
+  .m{ max-width:38ch; padding:.6em .95em; border-radius:16px; font-size:14px; line-height:1.45; animation:rise .35s var(--ease) both; }
+  .m.ld{ align-self:flex-end; background:var(--u-ink); color:#fff; }
+  .m.ag{ align-self:flex-start; background:var(--u-soft); }
+  .m.tl{ align-self:flex-start; max-width:none; padding:2px 0; background:none; border-radius:0; font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; color:var(--u-3); display:flex; align-items:center; gap:8px; }
+  .m.tl::before{ content:""; width:7px; height:7px; border-radius:50%; background:var(--u-3); flex-shrink:0; }
+  .m.dots{ display:flex; gap:5px; padding:.85em 1em; }
+  .m.dots i{ width:6px; height:6px; border-radius:50%; background:var(--u-3); animation:blink 1s infinite; }
+  .m.dots i:nth-child(2){ animation-delay:.15s; } .m.dots i:nth-child(3){ animation-delay:.3s; }
+  @keyframes blink{ 0%, 100%{ opacity:.3; } 50%{ opacity:1; } }
+  @keyframes rise{ from{ opacity:0; transform:translateY(4px); } to{ opacity:1; transform:none; } }
+  .op, .qs{ display:flex; flex-wrap:wrap; gap:8px; }
+  .op{ padding:14px 0 12px; min-height:62px; }
+  .qs{ padding-top:12px; border-top:1px solid var(--u-line); }
+  .qs .lb{ flex-basis:100%; margin:0 0 2px; }
+  .ch{ font:inherit; font-size:13px; color:var(--u-ink); background:#fff; border:1px solid #CDD0D5; border-radius:99px; padding:.4em .95em; cursor:pointer; transition:border-color .2s, background-color .2s; }
+  .ch:hover{ border-color:var(--u-ink); }
+  .qs .ch{ color:var(--u-2); background:var(--u-soft); border-color:var(--u-soft); }
+  .qs .ch:hover{ color:var(--u-ink); border-color:#CDD0D5; }
+  .ch:disabled{ opacity:.4; cursor:default; border-color:#CDD0D5; }
+  .rg{ grid-area:rg; min-width:0; }
+  .fl{ margin:0; border-top:1px solid var(--u-line); }
+  .fl div{ position:relative; display:grid; grid-template-columns:7.5em minmax(0,1fr) 3em; gap:12px; align-items:baseline; padding:11px 0; border-bottom:1px solid var(--u-line); transition:background-color .6s var(--ease); }
+  .fl dt{ font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; color:var(--u-3); }
+  .fl dd{ margin:0; color:var(--u-ink); }
+  .fl .pt{ font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; color:var(--u-2); text-align:right; }
+  .fl .vz{ color:var(--u-3); }
+  .fl div::before{ content:""; position:absolute; left:-14px; top:50%; width:7px; height:7px; margin-top:-3.5px; border-radius:50%; background:var(--fire); opacity:0; transition:opacity .4s var(--ease) .9s; }
+  .fl div.now{ background:var(--hit); }
+  .fl div.now::before{ opacity:1; transition-delay:0s; }
+  .nt{ display:flex; align-items:baseline; gap:12px; margin-top:22px; min-height:58px; }
+  .nt b{ font-size:52px; font-weight:500; letter-spacing:-.05em; line-height:1; font-variant-numeric:tabular-nums; }
+  .nt span{ color:var(--u-2); }
+  .nt .vz{ font-size:13px; color:var(--u-3); }
+  .av{ margin-top:18px; padding-top:14px; border-top:1px solid var(--u-line); }
+  .av .mono{ font-size:12px; color:var(--u-ink); word-break:break-word; }
+  .av .vz{ color:var(--u-3); }
+  .sn{ margin:14px 0 0; font-size:12px; color:var(--u-2); min-height:1.45em; }
+  .note{ grid-column:1 / -1; margin:18px 0 0; padding-top:14px; border-top:1px solid var(--u-line); font-size:12px; color:var(--u-3); max-width:90ch; }
+  html.static .m, html.static .fl div, html.static .fl div::before{ animation:none; transition:none; }
+
   /* Próprio deste case: o vídeo é a superfície de produto. Fundo claro também no modo escuro,
      como a .sf da Home, porque é a tela do sistema. Cabe na altura da janela. */
   .vd{ margin:0; padding:0 clamp(12px,2.4vw,40px); }
+  .tx .vd{ padding:0; }
+  .tx .vd figcaption{ padding:0; }
   .vd video{ display:block; width:min(100%, 860px, calc(100vh - 160px)); aspect-ratio:1/1; height:auto; border-radius:20px; background:#F7F7F5; box-shadow:0 0 0 1px rgba(14,15,18,.06), 0 40px 100px -50px rgba(14,15,18,.3); }
   .vd figcaption{ margin:16px 0 0; padding:0 calc(clamp(20px,6vw,96px) - clamp(12px,2.4vw,40px)); font-size:.75rem; color:var(--ink-3); }
 
@@ -85,6 +146,11 @@
     .kv span{ text-align:left; }
     .dt div{ grid-template-columns:1fr; gap:6px; }
     .vd{ padding:0 10px; }
+    .dm{ grid-template-columns:minmax(0,1fr); grid-template-areas:"bar" "cv" "rg"; padding:16px; }
+    .log{ height:380px; }
+    .rg{ margin-top:28px; }
+    .fl div{ grid-template-columns:6.5em minmax(0,1fr) 2.6em; }
+    .fl div::before{ left:-10px; }
     .vd video{ border-radius:16px; width:100%; }
   }
 </style>
@@ -97,20 +163,46 @@
 </header>
 
 <main>
-  <section class="dm-sec" id="video" aria-labelledby="dm-t">
+  <section class="dm-sec" id="demo" aria-labelledby="dm-t">
     <div class="dm-hd">
-      <span class="ix">Agente de Qualificação de Leads</span>
+      <span class="ix">06 · Agente de Qualificação de Leads</span>
       <h1 id="dm-t">Um lead chega às 22h. O agente conversa, dá a nota e passa ao corretor.</h1>
-      <p>Um agente de IA que conversa com quem pede um plano de saúde assim que a pessoa chega, a qualquer hora, e entrega ao corretor autônomo o lead com nota, resumo e perfil.</p>
-      <p class="fic">O vídeo é uma animação da conversa simulada de uma das personas de teste. Corretor Fulano, Carlos Lima e EMPRESA EXEMPLO LTDA são fictícios, e o CNPJ está mascarado. As mensagens do agente foram escritas seguindo o prompt; a nota, a planilha e o aviso saem do código do projeto.</p>
+      <p>Um agente de IA que conversa com quem pede um plano de saúde assim que a pessoa chega, a qualquer hora, e entrega ao corretor autônomo o lead com nota e resumo. Abaixo, faça o papel do lead: responda, pergunte o que o agente não responde e veja a nota sair.</p>
+      <p class="fic">Reprodução do roteiro do agente, sem modelo de IA nem servidor: as mensagens seguem o prompt e as regras do projeto, e a nota usa os mesmos pesos e faixas da configuração. Corretor Fulano e EMPRESA EXEMPLO LTDA são fictícios.</p>
     </div>
-    <figure class="vd">
-      <video id="vd" muted playsinline controls preload="metadata" poster="video/poster.webp" aria-describedby="vd-d">
-        <source src="video/como-funciona.webm" type="video/webm">
-        <source src="video/como-funciona.mp4" type="video/mp4">
-      </video>
-      <figcaption id="vd-d" class="mono">57 s · sem som · conversa, nota e aviso ao corretor</figcaption>
-    </figure>
+    <div class="sf dm" id="dm">
+      <div class="bar">
+        <span class="lb">conversa com o lead · chat</span>
+        <span class="py">Uma pergunta por vez. O registro se preenche junto.</span>
+        <button type="button" class="rs" id="rs">Recomeçar</button>
+      </div>
+      <div class="cv">
+        <div class="log" id="log" role="log" aria-live="polite" aria-label="Conversa entre o lead e o agente"></div>
+        <div class="op" id="op" aria-label="Respostas do lead"></div>
+        <div class="qs" id="qs">
+          <span class="lb">perguntas do lead</span>
+          <button type="button" class="ch" data-q="preco">Quanto custa?</button>
+          <button type="button" class="ch" data-q="carencia">Vou ter carência?</button>
+          <button type="button" class="ch" data-q="robo">Você é um robô?</button>
+          <button type="button" class="ch" data-q="saude">Minha esposa está grávida</button>
+          <button type="button" class="ch" data-q="pessoa">Quero falar com uma pessoa</button>
+        </div>
+      </div>
+      <div class="rg">
+        <span class="lb">registro do lead · planilha</span>
+        <dl class="fl" id="fl">
+          <div data-f="caminho"><dt>caminho</dt><dd class="vz">—</dd><span class="pt"></span></div>
+          <div data-f="vidas"><dt>vidas</dt><dd class="vz">—</dd><span class="pt"></span></div>
+          <div data-f="plano"><dt>plano atual</dt><dd class="vz">—</dd><span class="pt"></span></div>
+          <div data-f="prazo"><dt>prazo</dt><dd class="vz">—</dd><span class="pt"></span></div>
+          <div data-f="autoridade"><dt>autoridade</dt><dd class="vz">—</dd><span class="pt"></span></div>
+        </dl>
+        <div class="nt" id="nt"><span class="vz">A nota sai do código quando o lead confirma o resumo.</span></div>
+        <div class="av"><span class="lb">aviso ao corretor</span><span class="mono vz" id="av">—</span></div>
+        <p class="sn" id="sn"></p>
+      </div>
+      <p class="note">A demo pula nome, contato, cidade, idades e profissão. Eles vão para o corretor, mas não mudam a nota; a cidade fora da área de atuação só gera um aviso.</p>
+    </div>
   </section>
 
   <!-- Por dentro: as etapas da conversa, na ordem em que acontecem -->
@@ -168,6 +260,20 @@
     <p class="tx-note">Cada regra é conferida automaticamente nas conversas simuladas. São checagens por palavras: pegam os erros mais graves, mas não substituem ler as transcrições.</p>
   </section>
 
+  <!-- Em vídeo: o fluxo inteiro, para quem não vai operar a demo -->
+  <section class="tx" id="video" aria-labelledby="vd-t">
+    <h2 class="tx-k" id="vd-t">Em vídeo</h2>
+    <p class="tx-lead">O fluxo em menos de um minuto.</p>
+    <p class="tx-sub">Animação da conversa simulada de uma das personas de teste. Carlos Lima e EMPRESA EXEMPLO LTDA são fictícios, e o CNPJ está mascarado.</p>
+    <figure class="vd" style="margin-top:clamp(56px,8vh,88px)">
+      <video id="vd" muted playsinline controls preload="metadata" poster="video/poster.webp" aria-describedby="vd-d">
+        <source src="video/como-funciona.webm" type="video/webm">
+        <source src="video/como-funciona.mp4" type="video/mp4">
+      </video>
+      <figcaption id="vd-d" class="mono">57 s · sem som · conversa, nota e aviso ao corretor</figcaption>
+    </figure>
+  </section>
+
   <!-- Detalhes técnicos: só o que o repositório comprova -->
   <section class="tx" id="detalhes" aria-labelledby="dt-t">
     <h2 class="tx-k" id="dt-t">Detalhes técnicos</h2>
@@ -188,9 +294,146 @@
     <p class="tx-sub tx-au">Feito a partir de uma entrevista com um corretor autônomo, que estimou cerca de 100 ligações para fechar uma venda, e de pesquisa secundária. Antes de qualquer uso com cliente real, faltam a validação jurídica de LGPD e a confirmação de que o uso comercial da API de CNPJ é permitido.</p>
     <div class="end-row"><span class="end-ln"></span><span class="end-pt"></span><a class="end-a" href="/#projetos">Todos os sistemas</a></div>
   </section>
-  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#video">↑ Topo</a></footer>
+  <footer class="foot"><span>© 2026 Otto Canabrava</span><a href="#demo">↑ Topo</a></footer>
 </main>
 
+<script>
+/* Demo: o visitante faz o papel do lead. O roteiro segue o prompt do agente (uma pergunta por vez,
+   sem preço, sem saúde, passagem ao corretor) e a nota usa os pesos e faixas de config/qualificacao.yaml.
+   Nada é enviado: tudo acontece nesta página. */
+(function(){
+  var log = document.getElementById("log"), op = document.getElementById("op"), qs = document.getElementById("qs");
+  var fl = document.getElementById("fl"), nt = document.getElementById("nt"), av = document.getElementById("av"), sn = document.getElementById("sn");
+  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var HORARIO = "de segunda a sexta, das 9h às 18h";
+  var CNPJ = {
+    ltda: { lead: "Tenho, é uma LTDA", tool: "consultar_cnpj → EMPRESA EXEMPLO LTDA · ativa desde 1999", nome: "EMPRESA EXEMPLO LTDA", caminho: ["PME", 20] },
+    mei_novo: { lead: "Tenho MEI, aberto há 2 meses", tool: "consultar_cnpj → MEI · ativo há 2 meses", caminho: ["PF · MEI com menos de 6 meses", 10] },
+    mei: { lead: "Tenho MEI há 3 anos", tool: "consultar_cnpj → MEI · ativo há 3 anos", caminho: ["PME", 20] },
+    nao: { lead: "Não tenho", caminho: ["PF", 10] }
+  };
+  var VIDAS = [["Só eu", 1], ["Duas", 2], ["Quatro", 4], ["Doze", 12], ["Trinta e cinco", 35]];
+  var PLANO = [["Não temos", "não tem", 14], ["Sim, há 3 anos", "tem, há 3 anos", 20], ["Sim, há 1 ano", "tem, há 1 ano", 6]];
+  var PRAZO = [["Este mês", "até 30 dias", 30, "contratar este mês"], ["Em 2 ou 3 meses", "1 a 3 meses", 15, "contratar em 2 ou 3 meses"], ["Só pesquisando", "sem prazo", 0, "sem prazo definido"]];
+  var S, timers = [];
+  function ptsVidas(n){ return n >= 30 ? 20 : n >= 5 ? 15 : n >= 2 ? 10 : 5; }
+  function faixa(n){ return n >= 70 ? "quente" : n >= 50 ? "morno" : "frio"; }
+
+  function later(fn, ms){ if(reduce) return fn(); timers.push(setTimeout(fn, ms)); }
+  function add(kind, text){
+    var el = document.createElement("div"); el.className = "m " + kind; el.textContent = text; log.appendChild(el);
+    log.scrollTop = log.scrollHeight; return el;
+  }
+  function busy(on){
+    Array.prototype.forEach.call(document.querySelectorAll("#dm .ch"), function(b){ b.disabled = on || S.fim; });
+  }
+  /* o agente digita, depois fala; as ferramentas aparecem antes da resposta */
+  function agent(text, tool, then){
+    busy(true); op.innerHTML = "";
+    var dots = null;
+    later(function(){
+      if(tool) add("tl", tool);
+      if(!reduce){ dots = add("ag dots", ""); dots.innerHTML = "<i></i><i></i><i></i>"; }
+      later(function(){ if(dots) dots.remove(); add("ag", text); busy(false); if(then) then(); }, 650);
+    }, tool ? 350 : 150);
+  }
+  function lead(text){ add("ld", text); }
+  function field(f, value, pts){
+    var row = fl.querySelector('[data-f="' + f + '"]'), dd = row.querySelector("dd");
+    dd.textContent = value; dd.className = ""; row.querySelector(".pt").textContent = pts == null ? "" : "+" + pts;
+    Array.prototype.forEach.call(fl.children, function(r){ r.classList.remove("now"); });
+    row.classList.add("now"); later(function(){ row.classList.remove("now"); }, 1400);
+  }
+  function options(list){
+    op.innerHTML = "";
+    list.forEach(function(o){
+      var b = document.createElement("button"); b.type = "button"; b.className = "ch"; b.textContent = o[0];
+      b.addEventListener("click", function(){ if(b.disabled) return; lead(o[0]); o[1](); });
+      op.appendChild(b);
+    });
+  }
+
+  /* o roteiro: cada etapa faz uma pergunta e oferece as respostas */
+  var STEP = {
+    cnpj: { q: "Você tem CNPJ, como MEI ou empresa?", show: function(){ options(Object.keys(CNPJ).map(function(k){ return [CNPJ[k].lead, function(){ S.cnpj = k; afterCnpj(); }]; })); } },
+    empresa: { q: "", show: function(){
+      if(S.cnpj === "ltda") options([["É essa, sou sócio", function(){ S.socio = true; confirmEmpresa(); }], ["É essa, trabalho lá", function(){ S.socio = false; confirmEmpresa(); }]]);
+      else options([["Sou eu mesmo", function(){ S.socio = true; confirmEmpresa(); }]]);
+    } },
+    vidas: { q: "Quantas pessoas entrariam no plano?", show: function(){ options(VIDAS.map(function(v){ return [v[0], function(){ S.vidas = v[1]; field("vidas", String(v[1]), ptsVidas(v[1])); ask("plano"); }]; })); } },
+    plano: { q: "Vocês já têm plano de saúde hoje?", show: function(){ options(PLANO.map(function(v){ return [v[0], function(){ S.plano = v; field("plano", v[1], v[2]); ask("prazo"); }]; })); } },
+    prazo: { q: "E para quando pensam em ter o plano?", show: function(){ options(PRAZO.map(function(v){ return [v[0], function(){ S.prazo = v; field("prazo", v[1], v[2]); ask("conf"); }]; })); } },
+    conf: { q: "", show: function(){ options([["Isso mesmo", register]]); } }
+  };
+  function question(k){
+    if(k === "empresa") return S.cnpj === "ltda" ? "Encontrei a EMPRESA EXEMPLO LTDA. É essa a empresa?" : "Encontrei o MEI. Você é o dono?";
+    if(k === "conf"){
+      var c = S.cnpj === "nao" ? "sem CNPJ" : S.cnpj === "ltda" ? "empresa com CNPJ" : "MEI";
+      var pessoas = S.vidas === 1 ? "só você" : S.vidas + " pessoas";
+      var plano = S.plano[2] === 14 ? "sem plano hoje" : "com plano " + S.plano[1].replace("tem, ", "");
+      return "Deixa eu confirmar: " + c + ", " + pessoas + ", " + plano + " e " + S.prazo[3] + ". Está certo?";
+    }
+    return STEP[k].q;
+  }
+  function ask(k, prefix, tool){ S.step = k; agent((prefix || "") + question(k), tool, STEP[k].show); }
+  function afterCnpj(){
+    var c = CNPJ[S.cnpj];
+    if(S.cnpj === "nao"){ field("caminho", c.caminho[0], c.caminho[1]); field("autoridade", "titular", 10); S.aut = 10; ask("vidas", "Sem problema, o corretor também atende pessoa física. "); }
+    else ask("empresa", "", c.tool);
+  }
+  function confirmEmpresa(){
+    var c = CNPJ[S.cnpj];
+    field("caminho", c.caminho[0], c.caminho[1]);
+    S.aut = S.socio ? 10 : 5;
+    field("autoridade", S.cnpj === "ltda" ? (S.socio ? "sócio" : "fora do QSA") : "dono do MEI", S.aut);
+    ask("vidas");
+  }
+  function register(){
+    var c = CNPJ[S.cnpj], nota = c.caminho[1] + ptsVidas(S.vidas) + S.plano[2] + S.prazo[2] + S.aut, fx = faixa(nota);
+    var cam = c.caminho[0].indexOf("PME") === 0 ? "PME" : "PF";
+    S.fim = true; busy(true); op.innerHTML = "";
+    agent("Pronto! Passei tudo para o corretor Fulano. Ele entra em contato " + HORARIO + ".", "registrar_lead → planilha e aviso ao corretor", function(){
+      nt.innerHTML = "<b>" + nota + "</b><span>" + fx + "</span>";
+      av.className = "mono"; av.textContent = "[" + fx.toUpperCase() + "] Novo lead: Visitante, " + cam + ", " + S.vidas + " vida(s)";
+      busy(true);
+    });
+  }
+  /* perguntas que o agente não responde: ele diz por quê e volta à pergunta da vez */
+  var FORA = {
+    preco: "O valor depende da cotação personalizada, que é feita pelo corretor. ",
+    carencia: "Carência, cobertura e rede quem orienta é o corretor, na cotação. ",
+    robo: "Sou um assistente virtual. Quando terminarmos, o corretor assume pessoalmente. ",
+    saude: "Entendo. Não registro informações de saúde por aqui; esse assunto você conversa direto com o corretor. "
+  };
+  qs.addEventListener("click", function(e){
+    var b = e.target.closest("button"); if(!b || b.disabled || S.fim) return;
+    var k = b.getAttribute("data-q"); lead(b.textContent);
+    if(k === "pessoa"){
+      S.fim = true; busy(true); op.innerHTML = "";
+      agent("Claro. Vou passar a conversa para o corretor, com o que você já me contou, para você não precisar repetir. Ele retorna " + HORARIO + ".", "passar_para_humano → motivo: pediu_pessoa", function(){
+        nt.innerHTML = '<span class="vz">Sem nota: passado ao corretor.</span>';
+        av.className = "mono"; av.textContent = "[ATENDER] Visitante pediu para falar com você"; busy(true);
+      });
+      return;
+    }
+    if(k === "saude") sn.textContent = "Saúde: nada foi registrado.";
+    agent(FORA[k] + question(S.step), null, STEP[S.step].show);
+  });
+
+  function reset(){
+    timers.forEach(clearTimeout); timers = [];
+    S = { step: "cnpj", fim: false };
+    log.innerHTML = ""; op.innerHTML = ""; sn.textContent = "";
+    Array.prototype.forEach.call(fl.children, function(r){ r.classList.remove("now"); var dd = r.querySelector("dd"); dd.textContent = "—"; dd.className = "vz"; r.querySelector(".pt").textContent = ""; });
+    nt.innerHTML = '<span class="vz">A nota sai do código quando o lead confirma o resumo.</span>';
+    av.className = "mono vz"; av.textContent = "—";
+    add("ag", "Olá! Sou o assistente virtual do corretor Fulano. Vou fazer algumas perguntas rápidas para ele te atender melhor, e os dados servem só para esse atendimento. " + STEP.cnpj.q);
+    STEP.cnpj.show(); busy(false);
+  }
+  document.getElementById("rs").addEventListener("click", reset);
+  reset();
+})();
+</script>
 <script>
 /* Seções de texto: cada fio se desenha uma vez, quando entra na tela (o padrão do Sobre da Home).
    Vídeo: toca uma vez, sem som, quando 55% dele está visível, e para no quadro final.

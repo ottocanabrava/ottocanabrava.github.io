@@ -9,7 +9,8 @@ também carregam os arquivos compartilhados de `assets/case/`.
   mudar qualquer página, leia [`identidade.md`](identidade.md).
 - `<projeto>/index.html`: case de cada sistema. Documentos Verificáveis é a
   referência oficial; todos os outros cases (Extrator de Fatura, Daily Ops,
-  Motor de Triagem, TicketScript e FormPilot) já seguem a mesma linguagem.
+  Motor de Triagem, TicketScript, FormPilot e Agente de Qualificação de Leads)
+  já seguem a mesma linguagem.
 - `assets/case/` e `_template/case.html`: componentes compartilhados dos cases,
   o topo e o fechamento, extraídos de Documentos Verificáveis. Antes de criar
   ou mudar um case, leia [`template-de-cases.md`](template-de-cases.md).
