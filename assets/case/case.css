@@ -8,7 +8,7 @@
 
 /* ---------- base: tokens (claro e escuro), página, foco ---------- */
   :root{
-    --bg:#F7F7F5; --ink:#0E0F12; --ink-2:#4A4D55; --ink-3:#8A8D95; --ink-4:#C4C6CB; --line:#E2E3E0;
+    --bg:#F7F7F5; --ink:#0E0F12; --ink-2:#4A4D55; --ink-3:#6B6E76; --ink-4:#C4C6CB; --line:#E2E3E0;
     --fire:#E5482A;
     --ease:cubic-bezier(.22,.61,.36,1);
     color-scheme:light dark;
