@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Otto Canabrava — fluxos complexos, sistemas simples</title>
-<meta name="description" content="Transformo fluxos complexos em sistemas simples. Seis sistemas de automação e operações: Extrator de Fatura, Daily Ops Dashboard, Motor de Triagem, TicketScript, FormPilot e Documentos Verificáveis.">
+<meta name="description" content="Transformo fluxos complexos em sistemas simples. Sete sistemas de automação e operações: Extrator de Fatura, Daily Ops Dashboard, Motor de Triagem, TicketScript, FormPilot, Documentos Verificáveis e Agente de Qualificação de Leads.">
 <meta name="theme-color" content="#F7F7F5">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -313,6 +313,24 @@
   .d-ft .d-id{ font-weight:400; color:var(--u-ink); }
   .sf.dv{ --dvh:min(470px, calc(100% - 72px - var(--band) - 4vh)); top:calc(72px + (100% - 72px - var(--band) - var(--dvh)) / 2); height:var(--dvh); }
   .th .tip{ fill:var(--u-ink); stroke:none; }
+  /* Agente de Qualificação: a conversa confirmada vira uma linha da planilha; a nota sai do código */
+  .q-in{ position:absolute; inset:0; padding:clamp(18px,3.4vw,56px); display:flex; gap:clamp(40px,8vw,140px); align-items:center; font-size:1.05em; }
+  .q-chat{ width:46%; display:flex; flex-direction:column; gap:.7em; }
+  .q-hd{ display:flex; gap:.8em; align-items:baseline; padding-bottom:.9em; margin-bottom:.3em; border-bottom:1px solid var(--u-line); }
+  .q-hd b{ font-weight:500; }
+  .q-hd span{ font-size:.72em; color:var(--u-3); }
+  .q-m{ max-width:34ch; padding:.6em .95em; border-radius:16px; font-size:.9em; line-height:1.4; opacity:0; will-change:transform,opacity; }
+  .q-m.ld{ align-self:flex-end; background:var(--u-ink); color:#fff; }
+  .q-m.ag{ align-self:flex-start; background:var(--u-soft); }
+  .q-sh{ flex:1; max-width:440px; opacity:0; }
+  .q-lb{ font-size:.72em; color:var(--u-3); padding-bottom:.8em; border-bottom:1px solid var(--u-line); }
+  .q-r{ display:flex; justify-content:space-between; align-items:baseline; gap:1em; padding:.7em 0; border-bottom:1px solid var(--u-line); }
+  .q-r .q-v{ opacity:0; }
+  .q-r span:last-child{ font-family:"Geist Mono",ui-monospace,monospace; font-size:.72em; color:var(--u-3); }
+  .q-nt{ display:flex; align-items:center; gap:.55em; margin-top:.7em; opacity:0; }
+  .q-nt b{ font-size:2.6em; font-weight:500; letter-spacing:-.05em; line-height:1; font-variant-numeric:tabular-nums; }
+  .q-nt span{ color:var(--u-2); }
+  .q-nt i{ width:.55em; height:.55em; border-radius:50%; background:var(--fire); opacity:0; }
   /* capítulos em fluxo: a cena não fica fixada; a sequência roda sozinha ao entrar na tela */
   .scn.flow{ height:auto; overflow:visible; padding:clamp(96px,14vh,160px) 0 clamp(40px,7vh,88px); }
   .scn.flow .ttl{ position:relative; left:auto; right:auto; top:auto; transform:none; padding:0 clamp(20px,6vw,96px) clamp(28px,4vw,48px); }
@@ -426,6 +444,10 @@
     .scn.flow .band{ height:96px; }
     .stage2{ height:88svh; }
     #documentos.flow .sf{ height:600px; }
+    .q-in{ flex-direction:column; align-items:stretch; justify-content:center; gap:28px; padding:16px; font-size:.95em; }
+    .q-chat{ width:auto; }
+    .q-sh{ max-width:none; }
+    #qualificador.flow .sf{ height:780px; }
     #documentos.flow .band{ height:96px; }
     .sf.dv{ --dvh:min(620px, calc(100% - 66px - var(--band) - 2vh)); top:calc(66px + (100% - 66px - var(--band) - var(--dvh)) / 2); }
     .ab-m, .ab-t{ grid-template-columns:1fr; gap:36px; padding:0 0 0 30px; margin-top:36px; }
@@ -463,6 +485,8 @@
   html.static .p2 .sf{ position:relative; left:auto; right:auto; top:auto; margin:0 clamp(12px,2.4vw,40px); height:70vh; opacity:1 !important; transform:none !important; }
   html.static .scn .sf.dv{ height:auto; }
   html.static #documentos .d-va{ position:relative; inset:auto; padding:clamp(28px,4vw,48px) clamp(16px,3.4vw,56px); }
+  html.static #qualificador .sf{ height:auto; }
+  html.static #qualificador .q-in{ position:relative; }
   html.static .end-ln{ transform:none; }
   html.static .end-pt{ opacity:1; }
 </style>
@@ -476,13 +500,13 @@
 
 <main>
   <!-- 1 · o nó: as entradas reais, emaranhadas. O scroll as desfaz e elas viram o mapa. -->
-  <section class="p1" id="mapa" aria-label="Transformo fluxos complexos em sistemas simples. Seis sistemas e as fontes que os alimentam.">
+  <section class="p1" id="mapa" aria-label="Transformo fluxos complexos em sistemas simples. Sete sistemas e as fontes que os alimentam.">
     <span id="projetos" style="position:absolute;top:0" aria-hidden="true"></span>
     <svg aria-hidden="true"><g class="g-str"></g><path class="link" d=""/></svg>
     <div class="labels"></div>
     <div class="say">
       <p class="s1" aria-hidden="true">Transformo fluxos complexos <span class="b s1b">em sistemas simples<span class="dot">.</span></span></p>
-      <p class="s2" aria-hidden="true">Seis sistemas. Uma mesma forma de trabalhar.</p>
+      <p class="s2" aria-hidden="true">Sete sistemas. Uma mesma forma de trabalhar.</p>
       <div class="pos">
         <p>Projetos, processos, dados e automação para transformar problemas operacionais em soluções.</p>
         <ul><li>Projetos</li><li>Processos</li><li>Dados</li><li>Automação</li></ul>
@@ -697,6 +721,41 @@
     <div class="res"><b>5 tipos de documento</b> <small>todos com ID, QR e validação pública. Uma especificação, duas implementações: Python e n8n.</small> <a class="go" href="/documentos-verificaveis/">Explore o sistema <i>→</i></a></div>
   </section>
 
+  <!-- 06 · Agente de Qualificação: a conversa confirmada → uma linha da planilha → a nota -->
+  <section class="scn" id="qualificador" aria-labelledby="q-t">
+    <div class="ttl"><span class="ix">06</span> <h2 id="q-t">Agente de Qualificação</h2></div>
+    <div class="sf" aria-hidden="true">
+      <div class="q-in">
+        <div class="q-chat">
+          <div class="q-hd"><b>Corretor Fulano</b><span>assistente virtual · 22:14</span></div>
+          <div class="q-m ld">Oi, vi o anúncio. Quero um plano para a empresa onde trabalho.</div>
+          <div class="q-m ag">Olá! Sou o assistente virtual do corretor Fulano. Vou fazer algumas perguntas rápidas para ele te atender melhor, e os dados servem só para esse atendimento. Você tem CNPJ, como MEI ou empresa?</div>
+          <div class="q-m ld">Tenho, é uma LTDA: XX.XXX.XXX/0001-XX</div>
+          <div class="q-m ag" data-sum>Deixa eu confirmar: empresa com CNPJ, 12 pessoas, sem plano hoje e contratar este mês. Está certo?</div>
+          <div class="q-m ld">Isso mesmo</div>
+        </div>
+        <div class="q-sh">
+          <div class="q-lb">planilha de leads · nova linha</div>
+          <div class="q-r"><span class="q-v">Carlos Lima</span><span>nome</span></div>
+          <div class="q-r"><span class="q-v">PME</span><span>caminho</span></div>
+          <div class="q-r"><span class="q-v">12</span><span>vidas</span></div>
+          <div class="q-r"><span class="q-v">não tem</span><span>plano atual</span></div>
+          <div class="q-r"><span class="q-v">até 30 dias</span><span>prazo</span></div>
+          <div class="q-r"><span class="q-v">fora do QSA</span><span>autoridade</span></div>
+          <div class="q-nt"><b>84</b><span>quente</span><i></i></div>
+        </div>
+      </div>
+      <svg class="th"><g></g></svg>
+    </div>
+    <div class="band" aria-hidden="true">
+      <div class="nm"><span>Agente de Qualificação de Leads</span></div>
+      <p>Um lead chega às 22h.</p>
+      <p>O agente conversa e confirma o resumo.</p>
+      <p>A conversa vira uma linha. A nota sai do código.</p>
+    </div>
+    <div class="res"><b class="long">Nota de 0 a 100, na hora</b> <small>quente, morno ou frio. Todo lead dentro do escopo vai para o corretor; a nota diz por onde começar.</small> <a class="go" href="/qualificacao-de-leads/">Explore o sistema <i>→</i></a></div>
+  </section>
+
   <!-- Sobre: quem, que problema, como, com que experiência.
        O fio do método é uma transformação real (processo → ferramenta em uso);
        o da trajetória é o tempo. O ponto vermelho só no fim do método. -->
@@ -754,7 +813,8 @@
   /* Só relações comprovadas pelos cases. Na dúvida, fica de fora. */
   var INPUTS = [
     ["portais", "Portais"], ["hubspot", "HubSpot"], ["dw", "Data warehouse"], ["drive", "Google Drive"], ["backoffice", "Backoffice × fatura"],
-    ["sheets", "Google Sheets"], ["zendesk", "Zendesk"], ["pdfs", "PDFs das operadoras"]
+    ["sheets", "Google Sheets"], ["zendesk", "Zendesk"], ["pdfs", "PDFs das operadoras"],
+    ["anuncios", "Anúncios"], ["receita", "Receita Federal"]
   ];
   var SYSTEMS = [
     ["extrator", "Extrator de Fatura", "#extrator"],
@@ -762,10 +822,12 @@
     ["motor", "Motor de Triagem", "#motor"],
     ["ticketscript", "TicketScript", "#evolucao"],
     ["formpilot", "FormPilot", "#evolucao"],
-    ["docs", "Documentos Verificáveis", "#documentos"]
+    ["docs", "Documentos Verificáveis", "#documentos"],
+    ["qualificador", "Agente de Qualificação", "#qualificador"]
   ];
   var REL = [["portais","extrator"],["hubspot","dailyops"],["dw","dailyops"],["drive","motor"],["backoffice","motor"],
-             ["sheets","ticketscript"],["sheets","docs"],["zendesk","formpilot"],["pdfs","formpilot"]];
+             ["sheets","ticketscript"],["sheets","docs"],["zendesk","formpilot"],["pdfs","formpilot"],
+             ["anuncios","qualificador"],["receita","qualificador"]];
 
   var p1 = document.querySelector(".p1"), g = p1.querySelector(".g-str"), link = p1.querySelector(".link"), labels = p1.querySelector(".labels");
   var s1 = p1.querySelector(".s1"), s1b = p1.querySelector(".s1b"), s2 = p1.querySelector(".s2");
@@ -1362,6 +1424,32 @@
     };
   })();
 
+  /* ---------- 06 · Agente de Qualificação: a conversa confirmada vira uma linha; a nota sai do código ---------- */
+  (function(){
+    var c = chapter("qualificador", 300, { lines: [[.18, .36], [.36, .56], [.56, .86]] });
+    var ms = c.el.querySelectorAll(".q-m"), sum = c.el.querySelector("[data-sum]"), sh = c.el.querySelector(".q-sh");
+    var vals = c.el.querySelectorAll(".q-r .q-v"), nt = c.el.querySelector(".q-nt"), dot = nt.querySelector("i");
+    var f = document.createElementNS(NS, "path"); c.g.appendChild(f);
+    c.layout = function(){ measure(c, function(){
+      var a = relTo(sum, c.sf), b = relTo(sh, c.sf);
+      /* o fio sai do resumo que o lead confirmou e chega ao registro */
+      c.F = c.nar ? bez([a.l + a.w * .5, a.t + a.h + 8], [a.l + a.w * .5, a.t + a.h + 60], [b.l + b.w * .5, b.t - 50], [b.l + b.w * .5, b.t - 8], 56)
+                  : curve([a.l + a.w + 12, a.t + a.h * .5], [b.l - 14, Math.min(b.t + b.h - 24, Math.max(b.t + 24, a.t + a.h * .5))]);
+    }); c.render(c.p); };
+    c.render = function(p){
+      chrome(c, p);
+      Array.prototype.forEach.call(ms, function(m, i){ var a = seg(p, .19 + i * .055, .22 + i * .055); m.style.opacity = a; m.style.transform = "translateY(" + ((1 - a) * 10) + "px)"; });
+      var fq = fade(p, .47, .5, .6, .64);
+      sum.style.boxShadow = "0 0 0 1.5px rgba(17,19,24," + fq.toFixed(3) + ")";
+      sh.style.opacity = seg(p, .44, .5);
+      var k = io(seg(p, .5, .58));
+      f.setAttribute("d", k > 0 && c.F ? poly(partial(c.F, k)) : "");
+      Array.prototype.forEach.call(vals, function(v, i){ v.style.opacity = seg(p, .58 + i * .025, .6 + i * .025); });
+      nt.style.opacity = seg(p, .71, .74);
+      dot.style.opacity = fade(p, .73, .74, .8, .84);
+    };
+  })();
+
   /* ---------- gatilho por entrada na tela (o mesmo do 05) ----------
      Entrou na tela → a animação própria da cena roda uma vez → para no estado final.
      Só volta ao começo quando a cena sai inteira da tela, para não piscar durante o scroll. */
@@ -1412,6 +1500,7 @@
   autoplayChapter(byId["daily-ops"], .17, .9, 10);
   autoplayChapter(byId.motor, .17, .86, 8);
   byId0().autoplay();
+  autoplayChapter(byId.qualificador, .17, .86, 10);
   /* 04: a cena inteira, do ticket ao fechamento, num palco abaixo do título */
   p2.classList.add("flow"); Q2 = 1;
   var stage2 = document.createElement("div"); stage2.className = "stage2";

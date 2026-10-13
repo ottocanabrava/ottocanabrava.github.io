@@ -103,6 +103,7 @@ Ordem dos projetos (a mesma da Home):
 4. TicketScript (`/ticketscript/`)
 5. FormPilot (`/formpilot/`)
 6. Documentos Verificáveis (`/documentos-verificaveis/`)
+7. Agente de Qualificação de Leads (`/qualificacao-de-leads/`)
 
 Comportamentos do componente:
 - **Posição:** "Projeto N de 6".
