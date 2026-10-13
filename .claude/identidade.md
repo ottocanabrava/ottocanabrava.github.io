@@ -4,11 +4,6 @@ Referência de trabalho para criar ou atualizar páginas. A fonte é a Home
 (`index.html`): quando este texto e a Home divergirem, a Home vale e este texto
 deve ser corrigido.
 
-> As páginas de case (`extrator-de-fatura/`, `daily-ops-dashboard/`,
-> `motor-triagem/`, `ticketscript/`, `formpilot/`, `documentos-verificaveis/`)
-> ainda usam a identidade anterior (DM Sans, fundo `#ECEEF2`, nav escura, um
-> acento por case). Não copie estilos delas para páginas novas.
-
 ## Ideia central: o fio
 
 Tese da Home: *Transformo fluxos complexos em sistemas simples.* Tudo sai de

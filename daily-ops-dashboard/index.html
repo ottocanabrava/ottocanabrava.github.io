@@ -310,7 +310,7 @@
   function fresh(){ return { st: "fontes", sel: null, evt: null, cdIn: false, wait: false }; }
   var esc = function(s){ return String(s).replace(/[&<>"']/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
   var say = function(t){ $("live").textContent = t; };
-  $("hoje").textContent = " · " + new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  $("hoje").textContent = " · terça-feira, 22 de setembro de 2026";   /* data fictícia fixa, coerente com a competência Set/2026 e as datas das faturas */
 
   /* ---------- telas ---------- */
   function runHTML(){

@@ -72,12 +72,12 @@
   .r.d{ cursor:pointer; }
   .r.d:hover{ background:var(--u-soft); }
   .r.d:hover::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:#B9BCC3; }
-  .r.d[aria-selected="true"]{ background:var(--u-soft); }
-  .r.d[aria-selected="true"]::before, .r.on::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--u-ink); }
+  .r.d[aria-current="true"]{ background:var(--u-soft); }
+  .r.d[aria-current="true"]::before, .r.on::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:2px; background:var(--u-ink); }
   .r .c-id{ font-family:"Geist Mono",ui-monospace,monospace; font-size:12px; }
   .r .c-as{ color:var(--u-ink); }
   .pick{ font:inherit; color:inherit; background:none; border:0; padding:0; margin:0; cursor:pointer; text-align:left; max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-decoration:underline; text-decoration-color:#B9BCC3; text-decoration-thickness:1px; text-underline-offset:3px; transition:text-decoration-color .2s; }
-  .r.d:hover .pick, .pick:focus-visible, .r.d[aria-selected="true"] .pick{ text-decoration-color:var(--u-ink); }
+  .r.d:hover .pick, .pick:focus-visible, .r.d[aria-current="true"] .pick{ text-decoration-color:var(--u-ink); }
   .r .hit{ background:var(--hit); color:var(--u-ink); }
   .r .hit.late{ animation:cell .45s var(--ease) .62s both; }
   @keyframes cell{ from{ background:transparent; color:transparent; } to{ background:var(--hit); color:var(--u-ink); } }
@@ -289,7 +289,7 @@
         <span class="py">Escolha qualquer ticket da fila e use o painel da extensão. Todos os nomes, operadoras e scripts são fictícios.</span>
         <button type="button" class="rs" data-act="reset">Recomeçar</button>
       </div>
-      <div class="q tb" id="q" role="grid" aria-label="Tickets abertos (fictícios). Escolha um ticket."><div class="r h" role="row"><span role="columnheader" class="c-id">ticket</span><span role="columnheader" class="c-as">assunto</span><span role="columnheader" class="c-cl">cliente</span><span role="columnheader" class="c-ts">aberto</span></div><div class="r d" role="row" data-row="0" aria-selected="false"><span role="gridcell" class="c-id">TKT-4821</span><span role="gridcell" class="c-as">Pacote não chegou — entrega FleetEx</span><span role="gridcell" class="c-cl">Marcos T.</span><span role="gridcell" class="c-ts">Hoje, 09h14</span></div><div class="r d" role="row" data-row="1" aria-selected="false"><span role="gridcell" class="c-id">TKT-5033</span><span role="gridcell" class="c-as">Caixa danificada — entrega NovaPak</span><span role="gridcell" class="c-cl">Priya S.</span><span role="gridcell" class="c-ts">Hoje, 10h42</span></div><div class="r d" role="row" data-row="2" aria-selected="false"><span role="gridcell" class="c-id">TKT-5119</span><span role="gridcell" class="c-as">Entrega QuickSend — 10 dias de atraso</span><span role="gridcell" class="c-cl">Jordan L.</span><span role="gridcell" class="c-ts">Ontem, 16h08</span></div><div class="r d" role="row" data-row="3" aria-selected="false"><span role="gridcell" class="c-id">TKT-5244</span><span role="gridcell" class="c-as">Item errado enviado — entrega AirDrop</span><span role="gridcell" class="c-cl">Yuki M.</span><span role="gridcell" class="c-ts">Ontem, 11h55</span></div></div>
+      <div class="q tb" id="q" role="table" aria-label="Tickets abertos (fictícios). Escolha um ticket."><div class="r h" role="row"><span role="columnheader" class="c-id">ticket</span><span role="columnheader" class="c-as">assunto</span><span role="columnheader" class="c-cl">cliente</span><span role="columnheader" class="c-ts">aberto</span></div><div class="r d" role="row" data-row="0" aria-current="false"><span role="cell" class="c-id">TKT-4821</span><span role="cell" class="c-as">Pacote não chegou — entrega FleetEx</span><span role="cell" class="c-cl">Marcos T.</span><span role="cell" class="c-ts">Hoje, 09h14</span></div><div class="r d" role="row" data-row="1" aria-current="false"><span role="cell" class="c-id">TKT-5033</span><span role="cell" class="c-as">Caixa danificada — entrega NovaPak</span><span role="cell" class="c-cl">Priya S.</span><span role="cell" class="c-ts">Hoje, 10h42</span></div><div class="r d" role="row" data-row="2" aria-current="false"><span role="cell" class="c-id">TKT-5119</span><span role="cell" class="c-as">Entrega QuickSend — 10 dias de atraso</span><span role="cell" class="c-cl">Jordan L.</span><span role="cell" class="c-ts">Ontem, 16h08</span></div><div class="r d" role="row" data-row="3" aria-current="false"><span role="cell" class="c-id">TKT-5244</span><span role="cell" class="c-as">Item errado enviado — entrega AirDrop</span><span role="cell" class="c-cl">Yuki M.</span><span role="cell" class="c-ts">Ontem, 11h55</span></div></div>
 
       <div class="tk">
         <span class="lb">ticket</span>
@@ -445,9 +445,9 @@
   function qHTML(){
     var h = '<div class="r h" role="row"><span role="columnheader" class="c-id">ticket</span><span role="columnheader" class="c-as">assunto</span><span role="columnheader" class="c-cl">cliente</span><span role="columnheader" class="c-ts">aberto</span></div>';
     return h + T.map(function(t, i){
-      return '<div class="r d" role="row" data-row="' + i + '" aria-selected="' + (S.sel === i) + '"><span role="gridcell" class="c-id">' + t.id + "</span>" +
-        '<span role="gridcell" class="c-as"><button type="button" class="pick" data-act="pick" data-i="' + i + '" data-k="pick' + i + '">' + esc(t.assunto) + "</button></span>" +
-        '<span role="gridcell" class="c-cl">' + esc(t.cliente) + '</span><span role="gridcell" class="c-ts">' + esc(t.ts) + "</span></div>";
+      return '<div class="r d" role="row" data-row="' + i + '" aria-current="' + (S.sel === i) + '"><span role="cell" class="c-id">' + t.id + "</span>" +
+        '<span role="cell" class="c-as"><button type="button" class="pick" data-act="pick" data-i="' + i + '" data-k="pick' + i + '">' + esc(t.assunto) + "</button></span>" +
+        '<span role="cell" class="c-cl">' + esc(t.cliente) + '</span><span role="cell" class="c-ts">' + esc(t.ts) + "</span></div>";
     }).join("");
   }
   /* a planilha de scripts: uma linha por operadora × tipo de problema × resolução */

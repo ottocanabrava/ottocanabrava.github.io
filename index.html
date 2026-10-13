@@ -28,6 +28,7 @@
   body{ margin:0; background:var(--bg); color:var(--ink); font-family:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; -webkit-font-smoothing:antialiased; overflow-x:clip; }
   a{ color:inherit; text-decoration:none; }
   :focus-visible{ outline:2px solid var(--fire); outline-offset:4px; border-radius:2px; }
+  .sr-only{ position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0; }
 
   .nav{ position:fixed; inset:0 0 auto 0; z-index:40; height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 clamp(20px,4vw,56px); font-size:.875rem; pointer-events:none; }
   .nav > *{ pointer-events:auto; }
@@ -177,7 +178,6 @@
   .after a span{ color:var(--ink-3); font-size:.55em; letter-spacing:0; }
   .after a:hover i{ transform:translateX(5px); }
   .after a i{ font-style:normal; transition:transform .3s var(--ease); }
-  .after .note{ margin-top:48px; font-size:.8125rem; color:var(--ink-3); max-width:52ch; line-height:1.6; }
 
   /* celular: a mesma cena, em coluna */
   @media (max-width:760px){
@@ -500,7 +500,8 @@
 
 <main>
   <!-- 1 · o nó: as entradas reais, emaranhadas. O scroll as desfaz e elas viram o mapa. -->
-  <section class="p1" id="mapa" aria-label="Transformo fluxos complexos em sistemas simples. Sete sistemas e as fontes que os alimentam.">
+  <section class="p1" id="mapa" aria-labelledby="tese">
+    <h1 class="sr-only" id="tese">Transformo fluxos complexos em sistemas simples. Sete sistemas e as fontes que os alimentam.</h1>
     <span id="projetos" style="position:absolute;top:0" aria-hidden="true"></span>
     <svg aria-hidden="true"><g class="g-str"></g><path class="link" d=""/></svg>
     <div class="labels"></div>
@@ -1002,7 +1003,7 @@
   var PAIRS = [["op", "op"], ["mov", "mov"], ["ben", "ben"], ["cpf", "cpf"], ["nas", "nas"], ["ben", "cor"]];
   var dashP = PAIRS.map(function(){ return mkPath("dash"); }), solidP = PAIRS.map(function(){ return mkPath(); });
   var ORD_A = { cpf: 0, nas: 1, ben: 2, cor: 3, mov: 4 }, ORD_B = { mov: 0, ben: 1, cpf: 2, nas: 3, cor: 4 };
-  var A2 = {}, FPL = {}, P2 = 0, Q2 = 1, SW, SH, nar2, curTicket = null, ttl2 = p2.querySelector(".ttl");
+  var A2 = {}, FPL = {}, P2 = 0, SW, SH, nar2, curTicket = null;
 
   function rel(el){ var r = el.getBoundingClientRect(), s = sf.getBoundingClientRect(); return { l: r.left - s.left, t: r.top - s.top, w: r.width, h: r.height }; }
   function resample(pts, n){
@@ -1089,7 +1090,7 @@
     /* a superfície sai para as frases de tela inteira e volta transformada */
     var sfIn = 1 - seg(p, .37, .40), sfBack = seg(p, .62, .655), sfOut = 1 - seg(p, .944, .958);
     var base = p < .5 ? sfIn : sfBack;
-    sf.style.opacity = Math.min(base, sfOut) * Q2; sf.style.transform = "scale(" + (.965 + .035 * base) + ")";
+    sf.style.opacity = Math.min(base, sfOut); sf.style.transform = "scale(" + (.965 + .035 * base) + ")";
     vts.style.opacity = p < .5 ? 1 : 0; vfp.style.opacity = p < .5 ? 0 : 1;
     var fpOn = p >= .5;
 
@@ -1167,11 +1168,11 @@
     var LR = [[0, .06], [.06, .11], [.11, .3], [.3, .37], [.645, .745]];
     Array.prototype.forEach.call(lines, function(el, i){
       var a = LR[i][0], z = LR[i][1];
-      el.style.opacity = i === 0 ? (1 - seg(p, .05, .062)) * Q2 : fade(p, a, a + .008, z - .008, z);
+      el.style.opacity = i === 0 ? 1 - seg(p, .05, .062) : fade(p, a, a + .008, z - .008, z);
     });
     var WR = [[.745, .8], [.8, .875], [.875, .915], [.915, .944]];
     Array.prototype.forEach.call(words, function(el, i){ el.style.opacity = fade(p, WR[i][0], WR[i][0] + .006, WR[i][1] - .005, WR[i][1]); });
-    nmTs.style.opacity = (1 - seg(p, .36, .38)) * Q2;
+    nmTs.style.opacity = 1 - seg(p, .36, .38);
     nmFp.style.opacity = fade(p, .645, .66, .935, .945);
 
     /* fecho: as quatro palavras num fio reto; depois, os números */
@@ -1479,7 +1480,6 @@
   /* =========================================================
      motor
      ========================================================= */
-  function byId0(){ for(var i = 0; i < CH.length; i++) if(CH[i].el.id === "documentos") return CH[i]; }
   function staticMode(){
     P1 = 1; layout1();
     P2 = .945; layout2();
@@ -1499,10 +1499,10 @@
   autoplayChapter(byId.extrator, .17, .86, 11);
   autoplayChapter(byId["daily-ops"], .17, .9, 10);
   autoplayChapter(byId.motor, .17, .86, 8);
-  byId0().autoplay();
+  byId.documentos.autoplay();
   autoplayChapter(byId.qualificador, .17, .86, 10);
   /* 04: a cena inteira, do ticket ao fechamento, num palco abaixo do título */
-  p2.classList.add("flow"); Q2 = 1;
+  p2.classList.add("flow");
   var stage2 = document.createElement("div"); stage2.className = "stage2";
   [sf, p2.querySelector(".band"), bigOne, bigBut, p2.querySelector(".close")].forEach(function(el){ stage2.appendChild(el); });
   p2.appendChild(stage2);
