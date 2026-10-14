@@ -506,7 +506,7 @@
     else {
       h = '<span class="lb">detectado</span><dl class="idf' + (S.evt === "ler" ? " in" : "") + '" id="idf"><dt>Operadora</dt><dd>' + esc(t.det.carrier) + "</dd><dt>Tipo de problema</dt><dd>" + esc(t.det.issue) + "</dd><dt>Resolução</dt><dd>" + esc(t.det.resolution) + "</dd></dl>";
       var late = (S.evt === "ler" || S.evt === "csv") && !reduce ? " late" : "";
-      h += '<div class="pnl"><p class="lk' + late + '" id="lk"><b>Script gerado</b> · linha da planilha</p><div class="sc' + late + '">' + esc(t.script) + "</div></div>";
+      h += '<div class="pnl"><p class="lk' + late + '" id="lk"><b>Script gerado</b> · linha da planilha</p><div class="sc' + late + '" tabindex="0" role="region" aria-label="Script gerado">' + esc(t.script) + "</div></div>";
       if(st === "detected") h += '<div class="acts"><button type="button" class="bt pri big" data-act="inserir" data-k="inserir">Inserir no ticket</button></div>';
       else h += '<p class="meta" style="margin-top:14px">Inserido · ' + esc(t.det.carrier) + " · " + esc(t.det.issue) + "<br>Script inserido no campo de resposta.</p>";
     }
