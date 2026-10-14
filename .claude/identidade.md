@@ -75,7 +75,7 @@ Números: só os que o case já publica, com a mesma redação. Hoje: `2–4h / 
 
 ```css
 :root{
-  --bg:#F7F7F5; --ink:#0E0F12; --ink-2:#4A4D55; --ink-3:#8A8D95; --ink-4:#C4C6CB; --line:#E2E3E0;
+  --bg:#F7F7F5; --ink:#0E0F12; --ink-2:#4A4D55; --ink-3:#6B6E76; --ink-4:#C4C6CB; --line:#E2E3E0;
   --fire:#E5482A;
   --ease:cubic-bezier(.22,.61,.36,1);
   color-scheme:light dark;
@@ -86,10 +86,12 @@ Números: só os que o case já publica, com a mesma redação. Hoje: `2–4h / 
 ```
 
 - A página é neutra; a única cor é `--fire`.
+- `--ink-3` e `--u-3` no modo claro são `#6B6E76`: contraste AA nos textos
+  pequenos (4,8:1 sobre `--bg`, 5,1:1 sobre branco). Não clarear.
 - **Superfície de produto** (`.sf`): cartão branco que representa a interface
   real, com tokens próprios que **não mudam no modo escuro**, porque é a tela do
   sistema:
-  `--u-ink:#111318; --u-2:#4B4F58; --u-3:#8C9099; --u-line:#E6E7EA; --u-soft:#F4F5F6`,
+  `--u-ink:#111318; --u-2:#4B4F58; --u-3:#6B6E76; --u-line:#E6E7EA; --u-soft:#F4F5F6`,
   `border-radius:20px` (16px no celular), sombra
   `0 0 0 1px rgba(14,15,18,.06), 0 40px 100px -50px rgba(14,15,18,.3)`.
   Destaque de linha recém-lida: fundo `#FFF1E8`.
