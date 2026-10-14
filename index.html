@@ -6,6 +6,9 @@
 <title>Otto Canabrava — fluxos complexos, sistemas simples</title>
 <meta name="description" content="Transformo fluxos complexos em sistemas simples. Sete sistemas de automação e operações: Extrator de Fatura, Daily Ops Dashboard, Motor de Triagem, TicketScript, FormPilot, Documentos Verificáveis e Agente de Qualificação de Leads.">
 <meta name="theme-color" content="#F7F7F5">
+<link rel="icon" href="favicon.ico" sizes="48x48">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
@@ -35,6 +38,10 @@
   .nav b{ font-weight:500; letter-spacing:-.01em; }
   .nav nav{ display:flex; gap:28px; color:var(--ink-2); }
   .nav nav a:hover{ color:var(--ink); }
+  /* marca: traço na cor do texto; o ponto é o único vermelho (exceção registrada em identidade.md) */
+  .nav .marca{ display:block; height:16px; width:auto; overflow:visible; }  /* altura-x do logo ≈ altura-x do texto */
+  .marca .mt{ stroke:var(--ink); }
+  .marca .mp{ fill:var(--fire); }
 
   /* ============ 1 · o nó → os fios → o mapa ============ */
   .p1{ position:relative; height:100vh; height:100svh; overflow:hidden; }
@@ -419,6 +426,7 @@
   .foot{ display:flex; justify-content:space-between; padding:28px clamp(20px,4vw,56px) 36px; font-size:.8125rem; color:var(--ink-3); }
 
   @media (max-width:760px){
+    .nav .marca{ height:15px; }
     .scn{ --band:150px; }
     .ttl h2{ font-size:clamp(2.75rem,14vw,4.5rem); }
     .res b{ font-size:clamp(3rem,18vw,5.5rem); }
@@ -494,7 +502,7 @@
 <body>
 
 <header class="nav">
-  <b>Otto Canabrava</b>
+  <b><!-- marca --><svg class="marca" viewBox="16 37 1308.2 158" role="img" aria-label="Otto Canabrava" data-lente="265 140 46" data-corte="0 15 40" data-c="431" data-otto="5"><g class="mt" fill="none" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"><path d="M71 94 A46 46 0 0 0 71 186 A46 46 0 0 0 71 94"/><path d="M99.64 104 H236.36" stroke-linecap="butt"/><path d="M145 88 V172 Q145 186 157 186"/><path d="M179 88 V172 Q179 186 191 186"/><path d="M309.43 128.09 A46 46 0 1 0 309.43 151.91" stroke-linecap="butt"/><path d="M466.24 110.43 A46 46 0 1 0 466.24 169.57" stroke-linecap="butt" class="mc"/><path d="M535.2 94 A46 46 0 0 0 535.2 186 A46 46 0 0 0 535.2 94"/><path d="M581.2 94 V186"/><path d="M611.2 94 V186"/><path d="M611.2 132 A38 38 0 0 1 687.2 132 V186"/><path d="M759.2 94 A46 46 0 0 0 759.2 186 A46 46 0 0 0 759.2 94"/><path d="M805.2 94 V186"/><path d="M835.2 46 V186"/><path d="M881.2 94 A46 46 0 0 0 881.2 186 A46 46 0 0 0 881.2 94"/><path d="M953.2 94 V186"/><path d="M953.2 132 A38 38 0 0 1 991.2 94"/><path d="M1051.2 94 A46 46 0 0 0 1051.2 186 A46 46 0 0 0 1051.2 94"/><path d="M1097.2 94 V186"/><path d="M1122.2 94 L1162.2 186 L1202.2 94"/><path d="M1269.2 94 A46 46 0 0 0 1269.2 186 A46 46 0 0 0 1269.2 94"/><path d="M1315.2 94 V186"/></g><circle class="mp" cx="311.00" cy="140.0" r="9.0"/></svg><!-- /marca --></b>
   <nav><a href="#mapa">Sistemas</a><a href="#sobre">Sobre</a><a href="#contato">Contato</a></nav>
 </header>
 
@@ -1565,6 +1573,100 @@
     var o = new IntersectionObserver(function(en){ if(en[0].isIntersecting){ l.classList.add("on"); o.disconnect(); } }, { rootMargin: "0px 0px -20% 0px" });
     o.observe(l);
   });
+})();
+</script>
+<script>
+/* marca: o ponto completa a lente; a lente se duplica e vira o C; o ponto escreve o nome e volta.
+   Toca uma vez, ao carregar. Com html.static (movimento reduzido ou sem GSAP), fica no quadro final,
+   que é a própria marcação. Mesma coreografia dos vídeos (.claude/marca/remotion), mais curta. */
+(function(){
+  var svg = document.querySelector(".nav .marca");
+  if(!svg || document.documentElement.classList.contains("static")) return;
+  var g = svg.querySelector(".mt"), dot = svg.querySelector(".mp"), cPath = svg.querySelector(".mc");
+  var lente = svg.getAttribute("data-lente").split(" ").map(Number), corte = svg.getAttribute("data-corte").split(" ").map(Number);
+  var LX = lente[0], MID = lente[1], R = lente[2], AT = corte[0], FECHADO = corte[1], ABERTO = corte[2];
+  var CX = +svg.getAttribute("data-c"), N_OTTO = +svg.getAttribute("data-otto");
+  var SPEED = 1500, LIFT = .05, SLIDE = .55, VOLTA = .5, SALTO = 150;   // unidades do desenho por segundo; segundos
+  var DX = +dot.getAttribute("cx"), DY = +dot.getAttribute("cy"), DR = +dot.getAttribute("r");
+
+  function ring(cx, half){
+    function p(d){ var a = d * Math.PI / 180; return (cx + R * Math.cos(a)) + " " + (MID - R * Math.sin(a)); }
+    return "M" + p(AT + half) + " A" + R + " " + R + " 0 1 0 " + p(AT - half);
+  }
+  function clamp(x){ return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function suave(k){ return (1 - Math.cos(Math.PI * k)) / 2; }
+  function cubica(k){ return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; }
+  function mola(k){ var c = 1.70158; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); }   // passa um pouco e volta
+
+  // linha do tempo: o otto se desenha; o resto do nome (sem o c, que é a lente duplicada) é escrito pelo ponto
+  var t = .2, otto = [], resto = [];
+  Array.prototype.forEach.call(g.querySelectorAll("path"), function(p, i){
+    if(p === cPath) return;
+    var s = { el: p, len: p.getTotalLength() };
+    p.style.strokeDasharray = s.len; p.style.strokeDashoffset = s.len;
+    if(i < N_OTTO){ s.ini = t; s.dur = s.len / (SPEED * 1.3); t = s.ini + s.dur + .03; otto.push(s); }
+    else resto.push(s);
+  });
+  var tPonto = t + .05, tDesliza = tPonto + .45, tChega = tDesliza + SLIDE;
+  t = tChega + LIFT;
+  resto.forEach(function(s){ s.ini = t; s.dur = s.len / SPEED; t = s.ini + s.dur + LIFT; });
+  var tFim = t, tCasa = tFim - LIFT + VOLTA, FIM = tCasa + .35;
+
+  var copia = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  copia.setAttribute("stroke-linecap", "butt");
+  cPath.style.visibility = "hidden";
+  dot.setAttribute("r", 0);
+
+  function traco(s, tt){
+    var k = suave(clamp((tt - s.ini) / s.dur));
+    s.el.style.strokeDashoffset = s.len * (1 - k);
+    return k;
+  }
+  function render(tt){
+    otto.forEach(function(s){ traco(s, tt); });
+    var x = DX, y = DY, r = tt < tPonto ? 0 : DR * mola(clamp((tt - tPonto) / .3));
+    if(tt >= tDesliza){
+      if(!copia.parentNode) g.appendChild(copia);
+      var k = cubica(clamp((tt - tDesliza) / SLIDE)), cx = LX + (CX - LX) * k;
+      copia.setAttribute("d", ring(cx, FECHADO + (ABERTO - FECHADO) * k));
+      x = cx + R; y = MID;   // o ponto viaja na abertura da cópia
+    }
+    if(tt >= tChega){
+      var ativo = -1;
+      for(var i = 0; i < resto.length; i++){ if(tt < resto[i].ini + resto[i].dur){ ativo = i; break; } }
+      resto.forEach(function(s){ traco(s, tt); });
+      var ultimo = resto[resto.length - 1], pt;
+      if(ativo === -1){   // salto em arco por cima do nome, de volta à lente
+        var fim = ultimo.el.getPointAtLength(ultimo.len), h = cubica(clamp((tt - (tFim - LIFT)) / VOLTA));
+        x = fim.x + (DX - fim.x) * h; y = fim.y + (DY - fim.y) * h - SALTO * Math.sin(Math.PI * h);
+        if(tt >= tCasa) r = DR * mola(clamp((tt - tCasa) / .3));
+      } else {
+        var s = resto[ativo];
+        if(tt >= s.ini){ pt = s.el.getPointAtLength(s.len * suave(clamp((tt - s.ini) / s.dur))); x = pt.x; y = pt.y; }
+        else {   // caneta levantada: do fim do traço anterior (ou da abertura do C) ao início deste
+          var de = ativo ? resto[ativo - 1].el.getPointAtLength(resto[ativo - 1].len) : { x: CX + R, y: MID };
+          var para = s.el.getPointAtLength(0), ant = ativo ? resto[ativo - 1].ini + resto[ativo - 1].dur : tChega;
+          var g2 = suave(clamp((tt - ant) / (s.ini - ant)));
+          x = de.x + (para.x - de.x) * g2; y = de.y + (para.y - de.y) * g2;
+        }
+      }
+    }
+    dot.setAttribute("cx", x); dot.setAttribute("cy", y); dot.setAttribute("r", r);
+  }
+  function final(){   // devolve a marcação original: o quadro final é o logo estático
+    otto.concat(resto).forEach(function(s){ s.el.style.strokeDasharray = ""; s.el.style.strokeDashoffset = ""; });
+    if(copia.parentNode) copia.parentNode.removeChild(copia);
+    cPath.style.visibility = "";
+    dot.setAttribute("cx", DX); dot.setAttribute("cy", DY); dot.setAttribute("r", DR);
+  }
+  var t0 = null;
+  function quadro(agora){
+    if(t0 === null) t0 = agora;
+    var tt = (agora - t0) / 1000;
+    try { render(tt); } catch(e){ final(); return; }
+    if(tt < FIM) requestAnimationFrame(quadro); else final();
+  }
+  requestAnimationFrame(quadro);
 })();
 </script>
 </body>
