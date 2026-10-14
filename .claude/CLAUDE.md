@@ -95,3 +95,14 @@ cases existentes.
 6. **Não abrir PR vazio ou prematuro.** Primeiro concluir a tarefa e validar o
    resultado. Havendo decisão visual ou arquitetural pendente, apresentar a
    dúvida antes de avançar para a etapa que depende dela.
+
+## Identidade Git (obrigatória)
+
+Antes de criar qualquer commit:
+
+- Conferir `git config user.name` e `git config user.email`: devem ser
+  `ottocanabrava` e `ottocanabrava@gmail.com`. Se estiverem diferentes,
+  corrigir a configuração local do repositório antes do commit.
+- Nunca usar `Claude` nem `noreply@anthropic.com` como autor dos commits.
+- Não adicionar a linha `Co-Authored-By` do Claude na mensagem do commit.
+- Não reescrever commits antigos nem fazer push sem autorização explícita do Otto.
