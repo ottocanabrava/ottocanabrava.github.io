@@ -17,6 +17,9 @@ também carregam os arquivos compartilhados de `assets/case/`.
   A navegação entre projetos (`assets/case/projetos.css`) está guardada, mas
   não faz parte do template ativo. Ela não é usada até o Otto decidir a
   identidade visual dela.
+- `assets/marca/`, `favicon.*` e `apple-touch-icon.png`: o logo e os ícones,
+  gerados por `.claude/marca/gerar.py` a partir da fonte Otto. Regras em
+  [`identidade.md`](identidade.md#marca) e `.claude/marca/guia-de-uso.md`.
 - `.claude/`: documentação de trabalho; o Jekyll do Pages não publica pastas
   que começam com ponto.
 

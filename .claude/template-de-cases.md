@@ -27,7 +27,7 @@ servidor local e nas pré-visualizações (raw.githack).
 
 | Arquivo | O que é | Fonte |
 |---|---|---|
-| `assets/case/case.css` | Base (tokens claro/escuro, página, foco, `.mono`, `.sr-only`), **topo** (`.nav`) e **fechamento** (`.tx`, `.tx-k`, `.tx-sub`, `.tx-end`, `.tx-au`, `.tx-src`, `.end-row`, `.end-ln`, `.end-pt`, `.end-a`, `.foot`), com as regras de celular | Extraído de Documentos Verificáveis |
+| `assets/case/case.css` | Base (tokens claro/escuro, página, foco, `.mono`, `.sr-only`), **topo** (`.nav`, com o logo `.marca`) e **fechamento** (`.tx`, `.tx-k`, `.tx-sub`, `.tx-end`, `.tx-au`, `.tx-src`, `.end-row`, `.end-ln`, `.end-pt`, `.end-a`, `.foot`), com as regras de celular | Extraído de Documentos Verificáveis |
 | `assets/case/case.js` | Revelação do fio do fechamento (`.end-row` ganha `.on` ao entrar na tela; com movimento reduzido ou sem `IntersectionObserver`, já aparece pronto) | Extraído do script "Seções de texto" de Documentos Verificáveis, mais dois acréscimos (ver abaixo) |
 | `assets/case/projetos.css` | Navegação entre projetos ("Continue explorando": ← Anterior · Todos os projetos · Próximo →), prefixo `cx-` | Extraído dos cinco cases que a usam (CSS idêntico nos cinco) |
 | `_template/case.html` | Esqueleto de um case com a marcação exata dos componentes e as partes variáveis marcadas com ✎ | Marcação de Documentos Verificáveis |
@@ -62,6 +62,7 @@ de uma página.
 
 1. Parta de `_template/case.html`.
 2. Mantenha no `<head>`, nesta ordem:
+   - os ícones (`../favicon.ico`, `../favicon.svg`, `../apple-touch-icon.png`);
    - as fontes Geist e Geist Mono;
    - `<script>document.documentElement.classList.add("js");</script>`, que precisa vir antes do CSS, porque as regras de revelação dependem de `html.js`;
    - `<link rel="stylesheet" href="../assets/case/case.css">`, **antes** do `<style>` do case, para que o case possa acrescentar estilos sem disputar a cascata com os componentes.
@@ -84,7 +85,7 @@ de uma página.
 ## O que não deve ser duplicado nem recriado
 
 - Os tokens `:root`, a `.nav`, `.tx`, `.tx-k`, `.tx-sub`, `.tx-end`, `.tx-au`, `.tx-src`, `.end-*` e `.foot`. Não redefina essas classes no `<style>` do case. Se uma página precisar de outro valor, é sinal de que o componente compartilhado deve mudar (em `assets/case/`), não de que a página deve divergir.
-- A marcação do topo e do fechamento: mesmos elementos, classes e ordem do esqueleto.
+- A marcação do topo e do fechamento: mesmos elementos, classes e ordem do esqueleto. O logo do topo é o `<img class="marca">` de `assets/marca/`; não troque por texto nem por outro desenho.
 - O script de revelação do fio: não copie para a página, ligue `case.js`.
 
 ## Navegação entre projetos (decisão pendente)

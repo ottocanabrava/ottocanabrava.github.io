@@ -30,6 +30,7 @@
   .nav b{ font-weight:500; letter-spacing:-.01em; }
   .nav nav{ display:flex; gap:28px; color:var(--ink-2); }
   .nav nav a:hover{ color:var(--ink); }
+  .nav .marca{ display:block; height:16px; width:auto; }  /* logo: altura-x ≈ altura-x do texto */
 
 /* ---------- fechamento "Sobre o projeto": rótulo, texto editorial, link, fio → ponto → saída ---------- */
   .tx{ padding:clamp(96px,14vh,160px) clamp(20px,6vw,96px) 0; }
@@ -54,5 +55,6 @@
 /* ---------- celular ---------- */
   @media (max-width:760px){
     .nav nav{ gap:20px; }
+    .nav .marca{ height:15px; }
     .end-row{ flex-wrap:wrap; gap:12px; }
   }

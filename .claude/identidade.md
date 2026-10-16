@@ -24,11 +24,28 @@ Regras:
 - O fio nunca é decoração, moldura, divisória ou fundo.
 - **Vermelhão (`--fire`) só no instante em que algo acontece**: o ponto final de
   uma transformação, o campo que acabou de ser preenchido, o item em foco.
-  Nunca como cor de marca, de botão ou de título.
+  Nunca como cor de marca, de botão ou de título. **Única exceção: o ponto do
+  logo** (ver "Marca"), que é o ponto final da transformação do nome e fica
+  permanente.
 - Pontos pretos marcam etapas; o ponto vermelho, a conclusão. Ponto vazado e
   fio tracejado = relação que não é sequência (ex.: "em paralelo" no Sobre).
 - Mapa da Home: só relações entrada → sistema comprovadas pelos cases (lista em
   `REL`, no script da Home). Não acrescente relação sem prova no case.
+
+## Marca
+
+O logo é **otto canabrava** na **fonte Otto**: um traço só, da grossura e com o
+raio das lentes. Em "otto", os dois o são lentes de óculos e o tt é a ponte. O
+**ponto vermelho** completa a segunda lente, cortada às 3h. Fontes e regras:
+`.claude/marca/` (`fonte.py`, `gerar.py`, `guia-de-uso.md`).
+
+- Na Home, o logo é embutido e anima uma vez ao carregar: o ponto pousa na
+  lente, ela se duplica e vira o C, o ponto escreve o nome e volta para fechar o
+  O. Com `html.static`, aparece parado no quadro final.
+- Nos cases, é `assets/marca/otto-canabrava.svg` (troca claro/escuro sozinho).
+- O favicon é o O cortado com o ponto (`favicon.svg`, `.ico`, `apple-touch-icon.png`).
+- Não digitar o nome numa fonte nem redesenhar o logo à mão: mudanças passam por
+  `fonte.py` e `python3 .claude/marca/gerar.py`.
 
 ## Narrativa: causa → operação → transformação → resultado
 
@@ -105,7 +122,7 @@ Números: só os que o case já publica, com a mesma redação. Hoje: `2–4h / 
   padding vertical. Entre blocos de uma mesma seção, `clamp(88px, 12vh, 140px)`.
 - Texto alinhado à esquerda; nada de colunas centralizadas, cards em grade ou
   ícones. Listas são linhas com ponto e fio, ou texto corrido.
-- Nav fixa de 64px, transparente, só texto: nome à esquerda; Sistemas, Sobre e
+- Nav fixa de 64px, transparente: o logo à esquerda (ver "Marca"); Sistemas, Sobre e
   Contato à direita.
 
 ## Animação
@@ -164,7 +181,7 @@ fictícios declarados como tal.
 - Estética de dashboard genérico: grade de cards, KPIs coloridos, gráficos de
   enfeite, badges, ícones decorativos, gradiente, glassmorphism.
 - Fio, ponto ou linha sem relação real por trás.
-- Vermelhão como cor de marca, botão ou destaque permanente.
+- Vermelhão como cor de marca, botão ou destaque permanente (exceção: o ponto do logo).
 - Uma cor de acento por página.
 - Texto explicando o que a interface já mostra.
 - Fatos, números, tecnologias, cargos ou resultados que não estejam no case ou
